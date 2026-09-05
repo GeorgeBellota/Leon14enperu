@@ -29,7 +29,7 @@ $meta = [
     'ruta'        => '',
     'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'website',
-    'scripts'     => ['assets/vendor/swiper-bundle.min.js', 'assets/js/hero.js', 'assets/js/hitos.js', 'assets/js/countdown.js', 'assets/js/cta-modal.js'],
+    'scripts'     => ['assets/vendor/swiper-bundle.min.js', 'assets/js/hero.js', 'assets/js/hitos.js', 'assets/js/cta-modal.js', 'assets/js/colecta.js'],
     'css'         => ['assets/vendor/swiper-bundle.min.css'],
     'head_extra'  => '<script type="application/ld+json" nonce="' . $esc($sitio->nonce()) . '">
 {
@@ -115,18 +115,45 @@ $fotosHero = [
     $foto('pontifice/retrato-oficial', 1131, 1600, 'Su Santidad el Papa León XIV', [640, 1024, 1131], '(min-width:900px) 42vw, 100vw', true),
     $foto('fotos/hero-multitud', 1600, 851, 'Vista aérea de una explanada llena de fieles durante una celebración papal', [640, 1024, 1600], '(min-width:900px) 42vw, 100vw'),
     $foto('ciudades/lima-g', 720, 540, 'Catedral de Lima iluminada en la plaza Mayor', [480, 720], '(min-width:900px) 42vw, 100vw'),
+    /* Cuarta lámina, la de la Colecta Nacional. La fotografía es la misma del
+       cartel que envió la Conferencia Episcopal: el Santo Padre con el brazo en
+       alto. Va limpia, sin filtro ni velo, como todas las suyas. */
+    $foto('hitos/hito-anuncio', 1440, 1080, 'El Santo Padre saluda con los brazos en alto desde la logia', [640, 960, 1440], '(min-width:900px) 42vw, 100vw'),
+    /* Quinta lámina, la de los santos. Va a sangre, así que la fotografía se
+       pide a 100vw y no a 42. */
+    $foto('fotos/hero-papamovil', 1080, 720, 'El Santo Padre saluda desde el papamóvil a los fieles congregados', [640, 1024, 1080], '100vw'),
 ];
 
 $laminas = $bloques('hero', [
     ['rotulo' => 'Viaje apostólico', 'titulo' => 'Abramos el corazón',
      'texto'  => 'Visita Apostólica del Papa León XIV al Perú.',
      'enlace_texto' => 'Conoce la visita', 'enlace_url' => 'el-papa/'],
+    /* A sangre: la fotografía es una toma aérea de una explanada llena de
+       fieles, sin ningún rostro en primer plano que el velo pudiera invadir. */
     ['rotulo' => 'Los amigos de León', 'titulo' => 'Sirve en la visita',
      'texto'  => 'Hay un lugar para cada talento y cada corazón.',
-     'enlace_texto' => 'Quiero ser voluntario', 'enlace_url' => 'voluntariado/'],
+     'enlace_texto' => 'Quiero ser voluntario', 'enlace_url' => 'voluntariado/',
+     'datos'  => ['diseno' => 'fondo']],
     ['rotulo' => 'Cuatro ciudades', 'titulo' => 'Lima · Chiclayo · Cusco · Pucallpa',
      'texto'  => 'El recorrido del Santo Padre por la costa, la sierra y la selva.',
      'enlace_texto' => 'Ver las sedes', 'enlace_url' => 'sedes/'],
+    /* La Colecta Nacional. Los textos son los del cartel de la Conferencia
+       Episcopal, palabra por palabra; aquí no se ha redactado nada.
+
+       Los números de cuenta NO van en la lámina: no se leen de un vistazo en un
+       carrusel que pasa cada siete segundos, y un dígito mal copiado en una
+       cuenta bancaria es un error caro. Viven en /donativo/, que es donde
+       alguien los puede leer con calma, copiar y comprobar. */
+    ['rotulo' => 'Colecta Nacional', 'titulo' => 'Súmate con tu donación',
+     'texto'  => 'Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.',
+     'enlace_texto' => 'Cómo donar', 'enlace_url' => '#colecta'],
+    /* Quinta lámina, a sangre. Los textos son los de la sección «Tierra de
+       santos» que ya está publicada, y la frase de la bajada es la del
+       documento de la Conferencia Episcopal. Nada redactado aquí. */
+    ['rotulo' => 'Cinco caminos de santidad', 'titulo' => 'Cinco santos, un mismo corazón',
+     'texto'  => 'Cinco santos nos muestran distintos caminos para vivir la fe y servir a los demás.',
+     'enlace_texto' => 'Conoce sus historias', 'enlace_url' => 'tierra-de-santos/',
+     'datos'  => ['diseno' => 'fondo']],
 ]);
 
 $laminas = array_values($laminas);
@@ -140,62 +167,105 @@ $total   = count($laminas);
         $titular = (string) ($l['titulo'] ?? '');
         $enlaceT = (string) ($l['enlace_texto'] ?? '');
         $enlaceU = $destino($l['enlace_url'] ?? '');
+
+        /* ── El diseño de cada lámina se elige en el panel ─────────────────
+           Dos composiciones, y la decide quien edita, lámina a lámina, desde
+           «Diseño de la lámina» (viaja en la columna JSON `datos`, así que no
+           hizo falta ni una columna nueva):
+
+             · vacío   → composición PARTIDA: el texto en el panel de color y la
+                         imagen en su propia columna al lado. Es la de siempre,
+                         y la única que admite el retrato del Santo Padre, que
+                         no puede llevar velo ni degradado encima.
+             · «fondo» → fotografía A SANGRE con el texto sobre ella, dentro de
+                         un bloque opaco. Para fotos de multitud o de ambiente,
+                         donde no hay un rostro que proteger en primer plano.
+
+           Se normaliza a minúsculas y sin espacios: cualquier otra cosa cae en
+           la partida. Una errata en el panel no rompe la portada. */
+        $aSangre = mb_strtolower(trim((string) ($l['datos']['diseno'] ?? ''))) === 'fondo';
+
+        /* El contenido es EL MISMO en los dos diseños. Va en un cierre para no
+           tenerlo escrito dos veces: dos copias del mismo bloque acaban
+           descuadrándose en cuanto alguien toca una y olvida la otra. */
+        $pintarLamina = static function () use ($l, $i, $titular, $enlaceT, $enlaceU, $esc, $sitio): void {
+            ?>
+            <?php if (($l['rotulo'] ?? '') !== ''): ?>
+              <span class="rotulo rotulo--claro"><?= $esc($l['rotulo']) ?></span>
+            <?php endif; ?>
+
+            <?php /* Sólo la primera lámina es el <h1>. Un documento con cinco
+                     encabezados de nivel 1 no tiene título: tiene cinco, y
+                     ninguno manda. */ ?>
+            <?php if ($i === 0): ?>
+              <h1 class="hero__titulo"><?= $esc($titular) ?></h1>
+            <?php else: ?>
+              <p class="hero__titulo" role="heading" aria-level="2"><?= $esc($titular) ?></p>
+            <?php endif; ?>
+
+            <?php if (($l['texto'] ?? '') !== ''): ?>
+              <p class="hero__bajada"><?= $esc(strip_tags((string) $l['texto'])) ?></p>
+            <?php endif; ?>
+
+            <p class="hero__dato">
+              <span>11–16 noviembre 2026</span><span>Lima</span><span>Chiclayo</span><span>Cusco</span><span>Pucallpa</span>
+            </p>
+
+            <?php /* El segundo botón lleva SIEMPRE al voluntariado: es la única
+                     acción abierta hoy y no puede depender de qué lámina esté a
+                     la vista. Salvo cuando la lámina ya va allí —entonces
+                     saldrían dos veces el mismo botón—. */ ?>
+            <?php $voluntariado = $sitio->enlace('voluntariado/'); ?>
+            <div class="hero__acciones">
+              <?php if ($enlaceT !== '' && $enlaceU !== ''): ?>
+                <a class="btn btn--claro" href="<?= $esc($enlaceU) ?>"><?= $esc($enlaceT) ?></a>
+              <?php endif; ?>
+              <?php if ($enlaceU !== $voluntariado): ?>
+                <a class="btn btn--contorno-claro" href="<?= $esc($voluntariado) ?>">Sé voluntario</a>
+              <?php endif; ?>
+            </div>
+            <?php
+        };
         ?>
         <div class="swiper-slide" role="group" aria-roledescription="diapositiva"
              aria-label="<?= $i + 1 ?> de <?= $total ?>">
-          <?php /* El panel va PRIMERO en el documento: en escritorio esto es
-                   una rejilla, y en una rejilla el orden del código es el
-                   orden en pantalla. Texto a la izquierda, retrato a la
-                   derecha, que es la composición que pidió el cliente. */ ?>
-          <div class="hero__doble hero__doble--texto-izq">
-            <div class="hero__panel">
-              <div class="hero__panel-interior">
-                <?php if (($l['rotulo'] ?? '') !== ''): ?>
-                  <span class="rotulo rotulo--claro"><?= $esc($l['rotulo']) ?></span>
-                <?php endif; ?>
 
-                <?php /* Sólo la primera lámina es el <h1>. Un documento con
-                         tres encabezados de nivel 1 no tiene título: tiene
-                         tres, y ninguno manda. */ ?>
-                <?php if ($i === 0): ?>
-                  <h1 class="hero__titulo"><?= $esc($titular) ?></h1>
-                <?php else: ?>
-                  <p class="hero__titulo" role="heading" aria-level="2"><?= $esc($titular) ?></p>
-                <?php endif; ?>
-
-                <?php if (($l['texto'] ?? '') !== ''): ?>
-                  <p class="hero__bajada"><?= $esc(strip_tags((string) $l['texto'])) ?></p>
-                <?php endif; ?>
-
-                <p class="hero__dato">
-                  <span>11–16 noviembre 2026</span><span>Lima</span><span>Chiclayo</span><span>Cusco</span><span>Pucallpa</span>
-                </p>
-
-                <?php /* El segundo botón lleva SIEMPRE al voluntariado: es la
-                         única acción abierta hoy y no puede depender de qué
-                         lámina esté a la vista. Salvo cuando la lámina ya va
-                         allí —entonces salen «Quiero ser voluntario» y «Sé
-                         voluntario» uno al lado del otro, que es el mismo
-                         botón dos veces. */ ?>
-                <?php $voluntariado = $sitio->enlace('voluntariado/'); ?>
-                <div class="hero__acciones">
-                  <?php if ($enlaceT !== '' && $enlaceU !== ''): ?>
-                    <a class="btn btn--claro" href="<?= $esc($enlaceU) ?>"><?= $esc($enlaceT) ?></a>
-                  <?php endif; ?>
-                  <?php if ($enlaceU !== $voluntariado): ?>
-                    <a class="btn btn--contorno-claro" href="<?= $esc($voluntariado) ?>">Sé voluntario</a>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </div>
-
-            <div class="hero__retrato retrato">
+          <?php if ($aSangre): ?>
+            <?php /* La fotografía llena la diapositiva y el texto va encima.
+                     El velo es --hero: un foco elíptico anclado fuera del
+                     encuadre, por la esquina inferior izquierda, que cubre la
+                     zona del texto y se apaga antes de llegar a ningún rostro.
+                     Sus porcentajes están medidos; no se tocan al reutilizarlo. */ ?>
+            <div class="hero__media">
               <?= $sitio->imagen($l, $fotosHero[$i % count($fotosHero)], [
-                  'sizes'     => '(min-width:900px) 42vw, 100vw',
+                  'sizes'     => '100vw',
                   'prioridad' => $i === 0,
               ]) ?>
             </div>
-          </div>
+            <div class="capa velo velo--hero" aria-hidden="true"></div>
+            <div class="contenedor hero__contenido">
+              <div class="hero__bloque"><?php $pintarLamina(); ?></div>
+            </div>
+
+          <?php else: ?>
+            <?php /* El panel va PRIMERO en el documento: en escritorio esto es
+                     una rejilla, y en una rejilla el orden del código es el
+                     orden en pantalla. Texto a la izquierda, imagen a la
+                     derecha, que es la composición que pidió el cliente. */ ?>
+            <div class="hero__doble hero__doble--texto-izq">
+              <div class="hero__panel">
+                <div class="hero__panel-interior"><?php $pintarLamina(); ?></div>
+              </div>
+
+              <div class="hero__retrato retrato">
+                <?= $sitio->imagen($l, $fotosHero[$i % count($fotosHero)], [
+                    'sizes'     => '(min-width:900px) 42vw, 100vw',
+                    'prioridad' => $i === 0,
+                ]) ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
         </div>
       <?php endforeach; ?>
     </div>
@@ -219,47 +289,134 @@ $total   = count($laminas);
   <p class="solo-lectores" data-hero-vivo aria-live="polite"></p>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════════
-     2. LA CUENTA ATRÁS, PEGADA AL CARRUSEL
-
-     La fecha NO está escrita aquí ni dentro del JavaScript: sale del ajuste
-     `viaje.inicio`, que se edita en el panel → Configuración general →
-     Fechas del viaje. El atributo data-objetivo es lo único que lee
-     countdown.js, así que cambiar el día del viaje es entrar al panel.
-     ══════════════════════════════════════════════════════════════════════ -->
-<div class="tira-contador banda-oscura" data-contador data-objetivo="<?= $esc($sitio->objetivoCuentaAtras()) ?>">
-  <div class="contenedor tira-contador__interior">
-
-    <div class="fase-pre tira-contador__bloque">
-      <ol class="tira-contador__marcas">
-        <li><span class="tira-contador__num" data-unidad="dias">—</span><span class="tira-contador__uni">Días</span></li>
-        <li><span class="tira-contador__num" data-unidad="horas">—</span><span class="tira-contador__uni">Horas</span></li>
-        <li><span class="tira-contador__num" data-unidad="minutos">—</span><span class="tira-contador__uni">Minutos</span></li>
-        <li><span class="tira-contador__num" data-unidad="segundos">—</span><span class="tira-contador__uni">Segundos</span></li>
-      </ol>
-      <p class="tira-contador__leyenda">
-        <?= $esc($campo('falta-poco-encuentro', 'texto', 'Hasta el inicio del Viaje Apostólico · 11 de noviembre de 2026')) ?>
-      </p>
-      <p class="solo-lectores" data-contador-lectura></p>
-    </div>
-
-    <p class="tira-contador__aviso fase-live">El Santo Padre está en el Perú</p>
-    <p class="tira-contador__aviso fase-post">Gracias, Santo Padre</p>
-
-  </div>
-</div>
+<?php /* Aquí estaba la tira de la cuenta atrás. Se ha movido a la cabecera
+         (assets/parciales/cabecera.php), donde sale en las veinticuatro
+         páginas y no sólo en ésta. La fecha sigue saliendo del panel.
+         Para recuperarla aquí: git show HEAD:views/portada.php. */ ?>
 
 <!-- ══════════════════════════════════════════════════════════════════════
      3. ABRAMOS EL CORAZÓN — el lema, explicado
      ══════════════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════
+     2 bis. LA COLECTA NACIONAL
+
+     Aquí aterriza la lámina «Colecta Nacional» del carrusel: su botón apunta a
+     #colecta, así que el clic baja a este bloque en lugar de sacar a nadie de
+     la portada.
+
+     ⚠ LAS CUENTAS. Los números salen del comunicado oficial de la Conferencia
+     Episcopal y se guardan en la base, editables desde el panel. Dos avisos
+     para quien los toque:
+
+       · Un dígito cambiado manda el dinero de alguien a otra cuenta. No se
+         escriben de memoria ni se copian de una captura de pantalla: se copian
+         del comunicado.
+       · Los dos CCI son coherentes con sus cuentas —banco 002, oficina 191, el
+         número de cuenta y los dos dígitos de control—, y esa coherencia es
+         comprobable. Si alguien cambia un número y el CCI deja de cuadrar, es
+         que uno de los dos está mal.
+
+     La página /donativo/ lleva un aviso que dice que sólo son oficiales las
+     cuentas publicadas allí o por la Conferencia Episcopal. Estas lo son: hay
+     que dejar esa página al día para que las dos no se contradigan.
+     ══════════════════════════════════════════════════════════════════════ -->
+<?php $cuentas = $bloques('colecta'); ?>
+<?php if ($hay('colecta')): ?>
+<section class="seccion colecta seccion--tinte" id="colecta" aria-labelledby="t-colecta">
+  <div class="contenedor">
+    <div class="colecta__interior">
+
+      <div class="colecta__dicho" data-reveal="fade-rise">
+        <span class="rotulo"><?= $esc($campo('colecta', 'rotulo', 'Colecta Nacional')) ?></span>
+        <h2 class="colecta__titulo" id="t-colecta">
+          <?= $esc($campo('colecta', 'titulo', 'Súmate con tu donación')) ?>
+        </h2>
+        <?php if ($campo('colecta', 'subtitulo') !== ''): ?>
+          <p class="colecta__sub"><?= $esc($campo('colecta', 'subtitulo')) ?></p>
+        <?php endif; ?>
+        <div class="colecta__texto">
+          <?= $rico($campo('colecta', 'texto',
+              '<p>Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.</p>')) ?>
+        </div>
+        <?php if ($campo('colecta', 'cta_texto') !== ''): ?>
+          <p class="colecta__pie">
+            <a class="btn btn--primario" href="<?= $esc($destino($campo('colecta', 'cta_url', 'donativo/'))) ?>">
+              <?= $esc($campo('colecta', 'cta_texto')) ?>
+            </a>
+          </p>
+        <?php endif; ?>
+      </div>
+
+      <?php if ($cuentas !== []): ?>
+        <?php /* Una lista de descripción y no una tabla: cada cuenta es un
+                 rótulo con sus dos datos, no una matriz de filas y columnas.
+                 Los dígitos van en <span> con la clase que fija cifras
+                 tabulares, para que se lean de un vistazo y sin que ninguna
+                 fuente los junte. */ ?>
+        <ul class="colecta__cuentas" data-reveal="fade-rise" data-reveal-delay="0.08">
+          <?php foreach ($cuentas as $c): ?>
+            <?php
+            $numero = trim((string) ($c['datos']['numero'] ?? ''));
+            $cci    = trim((string) ($c['datos']['cci'] ?? ''));
+            ?>
+            <li class="cuenta">
+              <p class="cuenta__banco"><?= $esc($c['rotulo'] ?? '') ?></p>
+              <?php if (($c['titulo'] ?? '') !== ''): ?>
+                <p class="cuenta__titular"><?= $esc($c['titulo']) ?></p>
+              <?php endif; ?>
+              <dl class="cuenta__datos">
+                <?php if ($numero !== ''): ?>
+                  <div class="cuenta__linea">
+                    <dt>Cuenta</dt>
+                    <dd><span class="cifras" data-copiar="<?= $esc($numero) ?>"><?= $esc($numero) ?></span></dd>
+                  </div>
+                <?php endif; ?>
+                <?php if ($cci !== ''): ?>
+                  <div class="cuenta__linea">
+                    <dt>CCI</dt>
+                    <dd><span class="cifras" data-copiar="<?= $esc($cci) ?>"><?= $esc($cci) ?></span></dd>
+                  </div>
+                <?php endif; ?>
+              </dl>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+
+      <?php $nota = (string) (\Intranet\Publico\Sitio::dato($secciones, 'colecta', 'nota', '') ?? ''); ?>
+      <?php if (trim($nota) !== ''): ?>
+        <p class="colecta__nota"><?= $esc($nota) ?></p>
+      <?php endif; ?>
+
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
+<?php /* La decoración de esta sección es TODA de vista: ni un campo nuevo, ni una
+         consulta nueva. Se leen exactamente los mismos cuatro valores de antes.
+
+         Por qué hacía falta: el titular del hero y éste son la misma frase, con
+         el mismo cuerpo, a 467 px de distancia, y esto iba sobre papel liso
+         entre dos bandas de color. Se leía como el hueco entre dos secciones y
+         no como la sección que explica el lema.
+
+         Tres cosas lo arreglan, y las tres salen del sistema que ya existe:
+         suelo propio (la banda de tinte cálido), el corazón atravesado del
+         escudo agustino del Santo Padre como grafismo, y un filete de oro. El
+         corazón grande del fondo es ornamento: va con aria-hidden y no aporta
+         significado que se pierda si no se ve. */ ?>
 <?php if ($hay('abramos-el-corazon')): ?>
-<section class="seccion lema-bloque" id="abramos-el-corazon" aria-labelledby="t-lema">
+<section class="seccion lema-bloque seccion--tinte seccion--pastel-acento" id="abramos-el-corazon" aria-labelledby="t-lema">
+  <svg class="lema-bloque__fondo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><use href="#i-corazon"/></svg>
   <div class="contenedor">
     <div class="lema-bloque__interior" data-reveal="fade-rise">
+      <svg class="ornamento lema-bloque__signo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><use href="#i-corazon"/></svg>
       <span class="rotulo"><?= $esc($campo('abramos-el-corazon', 'rotulo', 'El lema')) ?></span>
       <h2 class="lema-bloque__titulo" id="t-lema">
         <?= $esc($campo('abramos-el-corazon', 'titulo', 'Abramos el corazón')) ?>
       </h2>
+      <hr class="filete filete--corto lema-bloque__filete">
       <div class="lema-bloque__texto">
         <?= $rico($campo('abramos-el-corazon', 'texto',
             '<p>Una invitación a recibir al Santo Padre, encontrarnos como Iglesia y renovar nuestra esperanza.</p>')) ?>
@@ -407,7 +564,13 @@ $sedes = array_values($bloques('el-recorrido'));
      ══════════════════════════════════════════════════════════════════════ -->
 <?php $jornadas = $bloques('itinerario'); ?>
 <?php if ($jornadas !== []): ?>
-<section class="seccion itinerario" id="itinerario" aria-labelledby="t-itinerario">
+<?php /* Banda propia. Medido antes de ponerla: el itinerario, los destacados y
+         las crónicas sumaban 2.863 px seguidos sobre exactamente el mismo papel
+         —y eran 4.091 px antes de compactar esta sección—, tres bloques que el
+         ojo no distingue como secciones distintas porque nada cambia entre
+         ellos. El tinte es uno de los tres que ya usa el sitio, con su
+         contraste comprobado; no entra ningún color nuevo. */ ?>
+<section class="seccion itinerario seccion--tinte" id="itinerario" aria-labelledby="t-itinerario">
   <div class="contenedor">
 
     <header class="seccion__encabezado seccion__encabezado--mayor">
@@ -424,28 +587,53 @@ $sedes = array_values($bloques('el-recorrido'));
       se sustituirán por el programa oficial cuando la Santa Sede lo publique.
     </p>
 
-    <ol class="jornadas">
-      <?php foreach ($jornadas as $j): ?>
+    <?php /* ── El formato ─────────────────────────────────────────────────────
+             Antes: seis filas a todo el ancho, la fecha en una columna estrecha
+             y el cuerpo al lado. 2.445 px, la sección más alta de la portada, y
+             las seis jornadas idénticas entre sí: el día que llega el Santo
+             Padre y el día que se va se veían igual.
+
+             Ahora: una jornada por tarjeta, en dos o tres columnas según el
+             ancho, cada una abierta por un filete con su punto de oro. Se lee
+             como un recorrido con paradas y no como una lista larga.
+
+             Lo que NO cambia, porque es lo que sostiene la sección:
+              · sigue siendo <ol> con <li>, que es lo que hace que un lector de
+                pantalla diga «elemento 3 de 6»;
+              · un <h3> por jornada, dentro del esquema de encabezados;
+              · la fecha va ANTES del titular en el documento, como iba;
+              · las actividades siguen en <ul> de verdad;
+              · el aviso de programa referencial sigue arriba y a la vista;
+              · ni un texto se acorta, se resume ni se esconde. Se pintan los
+                mismos campos, con el mismo escapado y el mismo $destino().
+
+             El numeral es un índice de secuencia, como el 01–04 de las sedes:
+             va con aria-hidden porque no añade información, sólo orienta. */ ?>
+    <ol class="ruta">
+      <?php foreach ($jornadas as $i => $j): ?>
         <?php
         $u    = $destino($j['enlace_url'] ?? '');
         $acts = (array) ($j['datos']['actividades'] ?? []);
         ?>
-        <li class="jornada" data-reveal="fade-rise">
-          <p class="jornada__fecha"><?= $esc($j['rotulo'] ?? '') ?></p>
-          <div class="jornada__cuerpo">
-            <h3 class="jornada__titulo"><?= $esc($j['titulo'] ?? '') ?></h3>
+        <li class="ruta__dia" data-reveal="fade-rise" data-reveal-delay="<?= $esc(number_format(($i % 3) * 0.07, 2, '.', '')) ?>">
+          <p class="ruta__fecha">
+            <span class="indice ruta__num" aria-hidden="true"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+            <?= $esc($j['rotulo'] ?? '') ?>
+          </p>
+          <div class="ruta__cuerpo">
+            <h3 class="ruta__titulo"><?= $esc($j['titulo'] ?? '') ?></h3>
             <?php if (($j['texto'] ?? '') !== ''): ?>
-              <p class="jornada__texto"><?= $esc(strip_tags((string) $j['texto'])) ?></p>
+              <p class="ruta__texto"><?= $esc(strip_tags((string) $j['texto'])) ?></p>
             <?php endif; ?>
             <?php if ($acts !== []): ?>
-              <ul class="jornada__actos">
+              <ul class="ruta__actos">
                 <?php foreach ($acts as $a): ?>
                   <li><?= $esc((string) $a) ?></li>
                 <?php endforeach; ?>
               </ul>
             <?php endif; ?>
             <?php if ($u !== ''): ?>
-              <p class="jornada__pie">
+              <p class="ruta__pie">
                 <a class="enlace-flecha" href="<?= $esc($u) ?>">
                   <?= $esc(($j['enlace_texto'] ?? '') !== '' ? $j['enlace_texto'] : 'Conoce la sede') ?>
                   <svg aria-hidden="true"><use href="#i-flecha"/></svg>

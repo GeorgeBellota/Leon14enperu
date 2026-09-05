@@ -224,6 +224,12 @@
 }
 @media (min-width: 900px) {
   .hero__panel { padding: var(--space-xl) clamp(32px, 4vw, 64px) 76px; }
+  /* El contenido se alineaba abajo y dejaba 290 px de rojo vacío por encima
+     —más de la mitad de la columna—. Centrado, el titular queda a la altura
+     del rostro del retrato de al lado y la paginación se queda con el pie.
+     Sólo a partir de 900: por debajo las dos piezas se apilan y el panel tiene
+     que seguir pegado abajo para no subirse a la fotografía. */
+  .hero__panel { align-items: center; }
 }
 .hero__panel-interior { width: 100%; max-width: 672px; }
 @media (max-width: 899px) {
@@ -255,14 +261,45 @@
 .hero__dato > span:first-child { padding-inline-start: 0; }
 .hero__dato > span + span { border-left: 1px solid color-mix(in srgb, var(--on-primary) 34%, transparent); }
 
+/* Por debajo de 1240 px la fila ya no cabe en un renglón y envuelve. Al
+   envolver, el filete separador quedaba al PRINCIPIO del segundo renglón —un
+   palito suelto delante de «Pucallpa», con el hueco a su izquierda—, que es lo
+   que se veía a 1100 y en móvil. CSS no sabe decir «el primero de cada
+   renglón», así que donde puede haber más de uno se separan por aire. */
+@media (max-width: 1239px) {
+  .hero__dato { gap: 4px clamp(14px, 2.4vw, 26px); }
+  .hero__dato > span { padding-inline: 0; }
+  .hero__dato > span + span { border-left: 0; }
+}
+/* Y lo mismo, a cualquier ancho, dentro del bloque de la lámina a sangre: ese
+   bloque mide 672 px como mucho, así que la fila envuelve siempre y el filete
+   huérfano aparecía también a 1440. */
+.hero__bloque .hero__dato { gap: 4px clamp(14px, 2.4vw, 26px); }
+.hero__bloque .hero__dato > span { padding-inline: 0; }
+.hero__bloque .hero__dato > span + span { border-left: 0; }
+
 .hero__acciones { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 
-/* Paginación numerada con filete */
+/* Paginación numerada con filete.
+
+   Va pegada al PANEL, a la izquierda, y no al borde derecho de la sección.
+   Contra el borde derecho caía encima de la fotografía: sobre la casulla
+   blanca del Santo Padre los números quedaban blanco sobre blanco, y sobre la
+   toma aérea de la multitud tampoco se leían. Además nada del sitio debe
+   superponerse al retrato.
+
+   A la izquierda cae sobre el panel liso, que es superficie sólida y de
+   contraste conocido, y queda alineada con el titular y los botones. */
 .hero__controles {
   position: absolute; z-index: 6;
-  right: max(var(--gutter), calc(50% - var(--maxw) / 2 + var(--gutter)));
+  left: var(--gutter);
+  right: auto;
   bottom: clamp(26px, 4vh, 44px);
   display: flex; align-items: center; gap: var(--space-s);
+}
+@media (min-width: 900px) {
+  /* Alineada con el texto del panel, que arranca en este mismo valor. */
+  .hero__controles { left: clamp(32px, 4vw, 64px); bottom: 28px; }
 }
 .hero__paginacion { display: flex; align-items: center; gap: 9px; }
 .hero__punto {
@@ -298,8 +335,16 @@
   color: var(--on-primary); cursor: pointer;
   font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
-  opacity: 0;
+  /* Se veía SÓLO al pasar el cursor. En una pantalla táctil no hay cursor que
+     pasar, así que en móvil y en tableta no había ninguna forma de parar el
+     carrusel: el requisito 2.2.2 de las WCAG pide justo lo contrario para
+     cualquier cosa que se mueva sola. Ahora se ve siempre, discreto, y sube a
+     opacidad plena al enfocarlo o al pasar por encima. */
+  opacity: .72;
+  border-color: color-mix(in srgb, var(--on-primary) 32%, transparent);
+  transition: opacity .25s var(--ease), border-color .25s var(--ease);
 }
+.hero__pausa:hover,
 .hero__pausa:focus-visible, .hero:hover .hero__pausa { opacity: 1; border-color: color-mix(in srgb, var(--on-primary) 55%, transparent); }
 
 .hero__scroll {
@@ -527,6 +572,24 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   display: flex; align-items: flex-end;
   color: var(--on-primary);
 }
+/* La misma declaración otra vez, con un ascendiente delante. No es redundante.
+
+   La tarjeta ES la diapositiva —lleva las dos clases— y la hoja de Swiper, que
+   _plantilla.php carga la ÚLTIMA, después de sections.css, trae
+   «.swiper-slide { display: block }» con exactamente la misma especificidad que
+   «.hito-tarjeta». Ganaba Swiper por orden de carga, la tarjeta dejaba de ser
+   caja flexible y el «align-items: flex-end» de arriba no se aplicaba a nada.
+
+   Lo que se veía: el texto arriba —medido, del 0 % al 47 % de la altura—, justo
+   donde el velo ya se ha desvanecido, mientras la zona densa quedaba abajo y
+   vacía. En las cinco tarjetas. Sobre la casulla blanca del Santo Padre y sobre
+   el fresco de la Sixtina eso es blanco sobre blanco.
+
+   Se arregla con especificidad, no con !important. Y no se toca el velo: sus
+   porcentajes están medidos para que ningún rostro quede debajo, que es la
+   regla dura del encargo. El que estaba mal colocado era el texto. */
+.hitos-carril .hito-tarjeta { display: flex; align-items: flex-end; }
+
 @media (min-width: 768px)  { .hito-tarjeta { inline-size: 400px; max-inline-size: 400px; } }
 @media (min-width: 1024px) { .hito-tarjeta { inline-size: 460px; max-inline-size: 460px; } }
 
@@ -979,63 +1042,156 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 @media (max-width: 899px) {
   .hero__bajada { display: none; }   /* en móvil no cabe sin comerse los botones */
 }
+/* La tira de la cuenta atrás que había aquí se retiró con el bloque de la
+   portada: el contador vive ahora en la cabecera, en todas las páginas.
+   Sus estilos están en components.css, sección 8 (.cuenta-cab). */
 
-/* ── La cuenta atrás, pegada al carrusel ────────────────────────────────
-   Una tira sólida bajo el hero, sin separación: leídos de arriba abajo son
-   una sola pieza —la promesa y el plazo—, que es lo que pidió el cliente. */
-.tira-contador {
-  background: var(--surface-invert);
-  color: var(--on-primary);
-  padding-block: clamp(var(--space-m), 3vw, var(--space-xl));
+
+/* ── La colecta nacional ────────────────────────────────────────────────
+   El destino del botón de la lámina «Colecta Nacional» del carrusel.
+
+   Dos mitades: a la izquierda la llamada, a la derecha las cuentas. Las
+   cuentas mandan visualmente —son a lo que viene quien pulsa el botón— así
+   que van en cajas de superficie propia sobre la banda, no en un párrafo
+   corrido donde veinte dígitos se pierden.
+
+   Los números se pintan con --font-ui y cifras tabulares. No es capricho: una
+   serie de veinte dígitos en una serif con cifras de estilo antiguo se lee mal
+   y se copia peor, y copiar mal aquí significa transferir a otra cuenta. */
+/* Tono propio, y distinto del que lleva el lema justo debajo: los dos con el
+   mismo tinte cálido se leían como una sola banda de 818 px y se perdía la
+   frontera entre pedir un aporte y explicar el lema. */
+.colecta { --tono: var(--primary-tint); }
+.colecta__interior {
+  display: grid;
+  gap: var(--space-xl);
+  align-items: start;
 }
-.tira-contador__interior { display: grid; gap: var(--space-s); }
+@media (min-width: 900px) {
+  .colecta__interior { grid-template-columns: 5fr 7fr; gap: var(--space-2xl); }
+}
 
-.tira-contador__marcas {
+.colecta__dicho { display: grid; gap: var(--space-s); justify-items: start; }
+.colecta__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-3);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.colecta__sub {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+.colecta__texto {
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+.colecta__texto p { margin: 0; }
+.colecta__pie { margin: var(--space-2xs) 0 0; }
+
+.colecta__cuentas {
   list-style: none; margin: 0; padding: 0;
-  display: flex; flex-wrap: wrap;
-  gap: clamp(var(--space-m), 4vw, var(--space-2xl));
-  align-items: baseline;
+  display: grid; gap: var(--space-m);
 }
-.tira-contador__marcas > li { display: grid; gap: 2px; }
+@media (min-width: 620px) {
+  .colecta__cuentas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
-.tira-contador__num {
-  display: block;
+.cuenta {
+  background: var(--surface);
+  border-top: 3px solid var(--primary);
+  padding: var(--space-m);
+  box-shadow: var(--sombra-s);
+  display: grid;
+  gap: var(--space-2xs);
+  align-content: start;
+  break-inside: avoid;
+}
+.cuenta__banco {
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  /* Sin esto los dígitos bailan de ancho y la fila entera se mueve cada
-     segundo, que es justo el efecto que no se quiere en un contador. */
-  font-variant-numeric: tabular-nums;
+  font-size: var(--step-1b);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
-.tira-contador__uni {
-  font-family: var(--font-ui);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--on-primary) 66%, transparent);
-}
-.tira-contador__leyenda {
+.cuenta__titular {
   margin: 0;
   font-family: var(--font-ui);
   font-size: var(--step--1);
-  color: color-mix(in srgb, var(--on-primary) 78%, transparent);
+  color: var(--ink-soft);
 }
-.tira-contador__aviso {
+.cuenta__datos { margin: var(--space-2xs) 0 0; display: grid; gap: 6px; }
+.cuenta__linea { display: grid; gap: 1px; }
+.cuenta__linea dt {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.cuenta__linea dd {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--step-2);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-family: var(--font-ui);
+  font-size: var(--step-1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: .01em;
+  /* Un CCI son veinte dígitos seguidos: en pantallas estrechas tiene que poder
+     partir, o desborda la caja. */
+  overflow-wrap: anywhere;
+}
+/* El botón de copiar lo añade colecta.js y sólo existe si hay JavaScript y
+   portapapeles. Sin él los dígitos siguen siendo texto seleccionable, que es
+   como se copian desde siempre. */
+.cuenta__copiar {
+  margin-block-start: 4px;
+  justify-self: start;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 32px;
+  padding-inline: 10px;
+  background: transparent;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: var(--track-accion);
+  text-transform: uppercase;
+}
+.cuenta__copiar:hover { border-color: var(--primary); color: var(--primary-strong); }
+.cuenta__copiar[data-hecho] { border-color: var(--accent); color: var(--accent-strong); }
+
+.colecta__nota {
+  margin: 0;
+  grid-column: 1 / -1;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
 }
 
 /* ── El lema, explicado ─────────────────────────────────────────────────
    Un bloque corto y centrado. Es un respiro entre el contador y el cuerpo de
    la página, y la única sección de la portada sin fotografía: el lema tiene
    que poder leerse sin nada que compita con él. */
-.lema-bloque { text-align: center; }
+.lema-bloque { text-align: center; overflow: clip; }
+/* Un poco más de aire que el resto: es la única sección de la portada cuyo
+   trabajo es que te detengas, y con el relleno común quedaba del alto de un
+   pie de página. */
+.lema-bloque { padding-block: clamp(var(--space-2xl), 7vw, 96px); }
+
 .lema-bloque__interior {
   max-width: 62ch;
   margin-inline: auto;
@@ -1043,20 +1199,56 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   gap: var(--space-s);
   justify-items: center;
 }
+
+/* ── El corazón atravesado ─────────────────────────────────────────────
+   Es el del escudo del Santo Padre, agustino: un corazón traspasado por una
+   flecha. No es un corazón decorativo cualquiera y por eso vale aquí —«Abramos
+   el corazón» es su lema— en lugar de un adorno inventado.
+
+   Va dos veces y con dos papeles distintos: pequeño y en oro sobre el rótulo,
+   como viñeta; y muy grande y muy tenue detrás del titular, como marca de agua.
+   El grande queda por debajo del contenido y por encima de la banda de tinte:
+   el ::before de .seccion--tinte también está en la capa -1, y entre iguales
+   manda el orden del documento, donde el pseudoelemento va primero. */
+.lema-bloque__signo { width: 30px; height: 30px; }
+.lema-bloque__fondo {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  /* Tiene que caber ENTERO dentro de la sección. A 560 px se salía por arriba y
+     por abajo y, con el overflow recortado, lo que se veía no era una marca de
+     agua sino una mancha cortada con un palo saliendo por una esquina. */
+  inline-size: min(360px, 52vw);
+  block-size: auto;
+  aspect-ratio: 1;
+  color: var(--gold);
+  /* Al 9 % el corazón se intuye y no compite. Los dos tonos que van encima son
+     --ink y --ink-soft sobre --accent-tint, que tienen margen de sobra. */
+  opacity: .09;
+  pointer-events: none;
+}
+
+/* Un peldaño por debajo del titular del hero. Son la misma frase a 467 px de
+   distancia; al mismo cuerpo, la segunda parecía un error de maquetación en vez
+   de la sección que desarrolla el lema. */
 .lema-bloque__titulo {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: var(--step-4);
+  font-size: var(--step-3);
   line-height: 1;
   letter-spacing: -0.04em;
   margin: 0;
   text-wrap: balance;
 }
+.lema-bloque__filete { margin-block: var(--space-2xs); }
 .lema-bloque__texto {
   font-family: var(--font-read);
-  font-size: var(--step-1);
-  line-height: 1.55;
+  font-size: var(--step-1b);
+  line-height: 1.5;
   color: var(--ink-soft);
+  text-wrap: pretty;
 }
 .lema-bloque__texto p { margin: 0; }
 .lema-bloque__pie { margin: 0; }
@@ -1096,9 +1288,21 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   color: var(--accent-strong); border-bottom-color: var(--accent);
 }
 
-/* ── El itinerario ──────────────────────────────────────────────────────
-   Una jornada por fila: la fecha en una columna estrecha y el día en la
-   ancha, con un filete que hace de línea de tiempo. */
+/* ── El recorrido del Santo Padre ───────────────────────────────────────
+   Una tarjeta por jornada, en dos o tres columnas.
+
+   Antes era una jornada por fila a todo el ancho: la fecha en una columna de
+   210 px y el cuerpo en 914 px al lado. Medido, la sección entera ocupaba
+   2.445 px a 1440 y 2.864 px a 390 —la más alta de la portada, el 20 % del
+   scroll— y las seis filas eran mecánicamente iguales: 352, 352, 326, 326, 326
+   y 327 px. El día que llega el Santo Padre y el día que se va se veían igual.
+
+   En tarjetas, las seis caben en dos hileras y el bloque pasa a leerse como un
+   trayecto con paradas: cada una abre con un filete grueso y un punto de oro,
+   que es la viñeta de hito que ya usa el sitio.
+
+   Sin JavaScript se ve todo: es una rejilla, no un desplegable ni un carrusel.
+   Nada queda detrás de un gesto ni de un clic. */
 .aviso-referencial {
   margin-block: var(--space-l) var(--space-xl);
   padding: var(--space-s) var(--space-m);
@@ -1110,56 +1314,101 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   color: var(--ink-soft);
 }
 
-.jornadas { list-style: none; margin: 0; padding: 0; }
-.jornada {
+.ruta {
+  list-style: none; margin: 0; padding: 0;
   display: grid;
-  gap: var(--space-xs) var(--space-xl);
-  padding-block: var(--space-l);
-  border-top: var(--rule) solid var(--line);
+  gap: var(--space-xl) var(--space-l);
 }
-.jornada:last-child { border-bottom: var(--rule) solid var(--line); }
-@media (min-width: 800px) {
-  .jornada { grid-template-columns: minmax(9rem, 18ch) minmax(0, 1fr); }
+/* Dos columnas en cuanto hay sitio y tres a partir de 1080. Con seis jornadas
+   salen dos hileras de tres; con las doce que admite el panel, cuatro. La
+   rejilla no depende del número: no hay que tocar nada si añaden un día. */
+@media (min-width: 700px)  { .ruta { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .ruta { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.ruta__dia {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  padding-block-start: var(--space-m);
+  /* El filete grueso de apertura es el patrón del sitio para abrir una pieza
+     (.ficha-sede, .ayuda, .estado-actual, .accesos). Aquí además hace de tramo
+     del recorrido. */
+  border-top: 2px solid var(--ink);
+  break-inside: avoid;
 }
-.jornada__fecha {
+/* La parada: un punto de oro montado sobre el filete. Es ornamento —la
+   información está en la fecha— así que no lleva texto ni rol. */
+.ruta__dia::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-start: 0;
+  inline-size: 10px; block-size: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.ruta__fecha {
   margin: 0;
+  display: flex; align-items: baseline; gap: var(--space-2xs);
   font-family: var(--font-ui);
   font-size: var(--step--1);
   font-weight: 600;
-  letter-spacing: .14em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--accent-strong);
+  text-wrap: balance;
 }
-.jornada__cuerpo { display: grid; gap: var(--space-xs); }
-.jornada__titulo {
+.ruta__num { font-size: var(--step-1); letter-spacing: 0; }
+
+/* Columna flexible y no rejilla: es lo que permite que el enlace del pie se
+   empuje al fondo con margin-block-start:auto. En grid, ese auto no hace nada
+   y los seis enlaces quedaban a seis alturas distintas. */
+.ruta__cuerpo {
+  flex: 1;
+  inline-size: 100%;
+  display: flex; flex-direction: column;
+  gap: var(--space-xs);
+}
+.ruta__titulo {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: var(--step-2);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  /* Un escalón por debajo del que tenía a todo el ancho: en una columna de un
+     tercio, --step-2 partía «El reencuentro con una Iglesia que lo conoce» —el
+     titular más largo, 44 caracteres— en cinco líneas. */
+  font-size: var(--step-1b);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
-.jornada__texto { margin: 0; color: var(--ink-soft); max-width: var(--measure); }
-.jornada__actos {
+.ruta__texto { margin: 0; color: var(--ink-soft); }
+.ruta__actos {
   margin: var(--space-2xs) 0 0; padding: 0;
   list-style: none;
   display: grid; gap: var(--space-2xs);
-  max-width: var(--measure);
 }
-.jornada__actos > li {
+.ruta__actos > li {
   position: relative;
   padding-inline-start: var(--space-m);
   font-family: var(--font-read);
+  font-size: var(--step-0);
+  line-height: 1.45;
   color: var(--ink-soft);
 }
-.jornada__actos > li::before {
+.ruta__actos > li::before {
   content: "";
   position: absolute;
-  inset-inline-start: 0; inset-block-start: .62em;
+  inset-inline-start: 0; inset-block-start: .58em;
   width: 6px; height: 6px;
   background: var(--gold);
 }
-.jornada__pie { margin: var(--space-2xs) 0 0; }
+/* El enlace se pega al fondo de la tarjeta. Sin esto queda a la altura que le
+   toque según lo largo que sea el texto de cada día, y seis enlaces a seis
+   alturas distintas deshacen la hilera. */
+.ruta__pie { margin: 0; margin-block-start: auto; padding-block-start: var(--space-xs); }
 
 /* ── Tierra de santos ───────────────────────────────────────────────────
    Cinco medallones en fila. En móvil se desplazan de lado en lugar de

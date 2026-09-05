@@ -131,6 +131,10 @@ document.documentElement.className += ' js';
 <script src="<?= $esc($sitio->asset('assets/vendor/gsap.min.js')) ?>" defer></script>
 <script src="<?= $esc($sitio->asset('assets/vendor/ScrollTrigger.min.js')) ?>" defer></script>
 <script src="<?= $esc($sitio->asset('assets/js/nav.js')) ?>" defer></script>
+<?php /* countdown.js es de TODAS las páginas desde que la cuenta atrás vive
+         en la cabecera: si sólo lo cargara la portada, el contador de la barra
+         se quedaría con los guiones puestos en las otras veintitrés. */ ?>
+<script src="<?= $esc($sitio->asset('assets/js/countdown.js')) ?>" defer></script>
 <script src="<?= $esc($sitio->asset('assets/js/reveal.js')) ?>" defer></script>
 <?php foreach ($extras as $script): ?>
 <script src="<?= $esc($sitio->asset($script)) ?>" defer></script>

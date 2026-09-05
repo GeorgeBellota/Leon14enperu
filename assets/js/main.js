@@ -138,6 +138,7 @@ window.L14 = window.L14 || {};
     if (L14.hero) L14.hero.init();
     if (L14.hitos) L14.hitos.init();
     if (L14.contador) L14.contador.init();
+    if (L14.colecta) L14.colecta.init();
     if (L14.form) L14.form.init();
     if (L14.reveal) L14.reveal.init();
 

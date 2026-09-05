@@ -119,7 +119,27 @@ final class Plantillas
                     'nombre' => 'Lámina',
                     'plural' => 'Láminas',
                     'campos' => ['rotulo', 'titulo', 'texto', 'imagen', 'imagen_movil', 'enlace_texto', 'enlace_url'],
-                    'maximo' => 6,
+                    // El diseño viaja en `datos`, que es una columna JSON que la
+                    // tabla `bloques` ya tiene. Así no hace falta ni una columna
+                    // nueva ni un ALTER: una lámina sin este valor se pinta
+                    // exactamente como se pintaba antes.
+                    //
+                    // Es un campo de texto porque el editor del panel sabe pintar
+                    // tres cosas —imagen, área y texto— y añadir un desplegable
+                    // obligaría a tocar la vista del panel. La vista pública
+                    // normaliza lo que llegue: cualquier cosa que no sea «fondo»
+                    // cae en el diseño partido, que es el de siempre. Una errata
+                    // no rompe la portada, sólo no cambia el diseño.
+                    'datos'  => [
+                        'diseno' => [
+                            'etiqueta' => 'Diseño de la lámina — escribe «fondo» para la '
+                                        . 'fotografía a sangre con el texto encima; déjalo '
+                                        . 'vacío para el diseño partido, con el texto en el '
+                                        . 'panel de color al lado de la imagen',
+                            'tipo'     => 'texto',
+                        ],
+                    ],
+                    'maximo' => 8,
                 ],
                 'datos'   => [
                     'lema'    => ['etiqueta' => 'Lema principal', 'tipo' => 'texto',
@@ -260,6 +280,37 @@ final class Plantillas
                     'maximo' => 60,
                 ],
                 'datos'   => [],
+            ],
+
+            // ── La colecta nacional ─────────────────────────────────────
+            //
+            // Plantilla NUEVA. No sustituye ni modifica ninguna de las que ya
+            // había: se añade al mapa y con eso el panel ya sabe dibujarla,
+            // porque el formulario se genera recorriendo estas declaraciones.
+            //
+            // Cada cuenta es un bloque. El número y el CCI van en `datos` y no
+            // en columnas propias: son dos cadenas de dígitos y la tabla
+            // `bloques` ya tiene su columna JSON. Cero cambios de esquema.
+            'colecta' => [
+                'nombre'  => 'Colecta nacional',
+                'ayuda'   => 'La llamada a colaborar con la visita, con las cuentas para el '
+                           . 'depósito. Los números se copian tal cual del comunicado oficial '
+                           . 'de la Conferencia Episcopal: un dígito cambiado manda el dinero '
+                           . 'de alguien a otra cuenta. Revísalos dos veces antes de guardar.',
+                'campos'  => ['rotulo', 'titulo', 'subtitulo', 'texto_html', 'cta_texto', 'cta_url'],
+                'bloques' => [
+                    'nombre' => 'Cuenta',
+                    'plural' => 'Cuentas',
+                    'campos' => ['rotulo', 'titulo'],
+                    'datos'  => [
+                        'numero' => ['etiqueta' => 'Número de cuenta', 'tipo' => 'texto'],
+                        'cci'    => ['etiqueta' => 'Código de cuenta interbancario (CCI)', 'tipo' => 'texto'],
+                    ],
+                    'maximo' => 6,
+                ],
+                'datos'   => [
+                    'nota' => ['etiqueta' => 'Nota al pie de las cuentas', 'tipo' => 'area'],
+                ],
             ],
 
             'destacado' => [

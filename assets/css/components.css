@@ -677,6 +677,124 @@
 .cabecera .btn--primario { display: none; }
 @media (min-width: 1100px) { .cabecera .btn--primario { display: none; } }
 
+/* ── La cuenta atrás de la cabecera ─────────────────────────────────────────
+   Antes vivía sólo en la portada, en una tira bajo el carrusel. Aquí sale en
+   las veinticuatro páginas y no se va con el scroll.
+
+   Tres decisiones que no son de gusto:
+
+   · Cifras tabulares y ancho mínimo por casilla. Sin eso, cada segundo cambia
+     el ancho de los dígitos, la fila se mueve entera y arrastra al botón de
+     menú. Un contador que tiembla en la barra fija es peor que no tenerlo.
+   · El oro sólo como filete de separación (§5.4 de los tokens: nunca texto).
+     Las cifras van en --ink y las unidades en --ink-soft, que sí tiene
+     contraste suficiente por debajo de 16 px.
+   · Se apaga por partes al estrechar —primero «Faltan», luego los segundos,
+     luego los minutos—, en vez de desaparecer de golpe. A 320 px quedan los
+     días, que es el dato por el que la gente mira. */
+.cuenta-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cuenta-cab__reloj,
+.cuenta-cab__aviso { margin: 0; display: flex; align-items: baseline; gap: 9px; }
+
+.cuenta-cab__rotulo {
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  /* El filete de oro separa el contador de la navegación sin meter una caja
+     ni un borde alrededor. Es ornamento, que es para lo único que sirve. */
+  padding-inline-end: 10px;
+  border-right: var(--rule) solid var(--gold);
+}
+.cuenta-cab__par { display: inline-flex; align-items: baseline; gap: 2px; }
+.cuenta-cab__num {
+  min-width: 2ch;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+.cuenta-cab__uni {
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.cuenta-cab__aviso {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+
+/* ── Cómo se encoge la copia de la barra ──────────────────────────────── */
+@media (max-width: 1023px) { .cuenta-cab--cabecera .cuenta-cab__rotulo { display: none; } }
+@media (max-width: 639px)  { .cuenta-cab--cabecera .cuenta-cab__par--segundos { display: none; } }
+@media (max-width: 419px)  { .cuenta-cab--cabecera .cuenta-cab__par--minutos { display: none; } }
+@media (max-width: 359px)  { .cuenta-cab--cabecera .cuenta-cab__par--horas { display: none; } }
+@media (max-width: 639px)  { .cuenta-cab--cabecera .cuenta-cab__aviso { font-size: var(--step-0); } }
+
+/* Con muchas entradas visibles el contador se retira de la barra en cuanto
+   aparece la navegación de escritorio.
+
+   Medido con las dieciséis entradas del menú completo: la navegación sola
+   ocupa 1857 px dentro de un hueco de 1148 a 1440 px de ancho, o sea que la
+   cabecera ya desborda por sí misma, sin contador. Eso viene de antes y se
+   arregla en otro sitio —submenús o menos entradas—, pero mientras siga así
+   el contador no va a añadir 221 px al problema.
+
+   Debajo de 1100 px no hay navegación de escritorio y sí hay sitio, así que
+   ahí se queda. La clase la pone la cabecera contando las entradas visibles,
+   no un número escrito aquí a ojo. */
+@media (min-width: 1100px) {
+  .cabecera--menu-largo .cuenta-cab--cabecera { display: none; }
+}
+
+/* ── La copia del menú móvil ──────────────────────────────────────────────
+   Ahí no hay que competir con nada: el panel ocupa la pantalla entera. Se
+   pinta grande, encima de los enlaces, con el filete de separación debajo. */
+.cuenta-cab--menu {
+  display: block;
+  padding-block: var(--space-s) var(--space-m);
+  border-bottom: var(--rule) solid var(--line);
+}
+.cuenta-cab--menu .cuenta-cab__reloj { gap: var(--space-m); }
+.cuenta-cab--menu .cuenta-cab__rotulo {
+  border-right: 0;
+  padding-inline-end: 0;
+  width: 100%;
+  margin-block-end: 4px;
+}
+.cuenta-cab--menu .cuenta-cab__reloj { flex-wrap: wrap; }
+.cuenta-cab--menu .cuenta-cab__num { font-size: var(--step-2); font-family: var(--font-display); }
+/* Con la palabra entera —«días», no «d»— la unidad va debajo de la cifra y en
+   versalitas, que es como lo pide el documento de la Conferencia Episcopal:
+   XX DÍAS · XX HORAS · XX MINUTOS · XX SEGUNDOS. */
+.cuenta-cab--menu .cuenta-cab__par { flex-direction: column; align-items: flex-start; gap: 0; }
+.cuenta-cab--menu .cuenta-cab__uni {
+  font-size: var(--step--2);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+}
+/* La frase de cierre. Va en la voz de lectura del sitio, no en la de interfaz:
+   es una frase, no un dato. */
+.cuenta-cab--menu .cuenta-cab__cierre {
+  margin: var(--space-2xs) 0 0;
+  font-family: var(--font-read);
+  font-size: var(--step-0);
+  color: var(--ink-soft);
+}
+@media (min-width: 1100px) { .cuenta-cab--menu { display: none; } }
+
 /* Botón de menú */
 .boton-menu {
   display: inline-flex; align-items: center; justify-content: center;
