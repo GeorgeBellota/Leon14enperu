@@ -309,8 +309,36 @@ final class Plantillas
                     'maximo' => 6,
                 ],
                 'datos'   => [
-                    'nota' => ['etiqueta' => 'Nota al pie de las cuentas', 'tipo' => 'area'],
+                    // El encabezado que /donativo/ pone encima de la lista de
+                    // cuentas. La portada no lo usa: allí la sección ya tiene su
+                    // propio titular.
+                    'titulo_cuentas' => ['etiqueta' => 'Encabezado de las cuentas en la página de donativos', 'tipo' => 'texto'],
+                    'nota'           => ['etiqueta' => 'Nota al pie de las cuentas', 'tipo' => 'area'],
                 ],
+            ],
+
+            // ── A qué se destina el aporte ──────────────────────────────
+            //
+            // Plantilla NUEVA, para la sección «destinan» de /donativo/. Sus
+            // tres tarjetas estaban escritas en la vista y no había forma de
+            // tocarlas sin desplegar.
+            //
+            // El icono se escribe con el nombre del símbolo del sprite
+            // (assets/parciales/sprite.php). Si se deja vacío o se escribe uno
+            // que no existe, la vista pinta el del corazón y la tarjeta sigue
+            // funcionando: una errata aquí no rompe la página.
+            'destinos_aporte' => [
+                'nombre'  => 'Destinos del aporte',
+                'ayuda'   => 'Las tarjetas de «A qué se destinan». Cada una con su icono, su '
+                           . 'título y su explicación.',
+                'campos'  => ['rotulo', 'titulo', 'texto_html'],
+                'bloques' => [
+                    'nombre' => 'Destino',
+                    'plural' => 'Destinos',
+                    'campos' => ['icono', 'titulo', 'texto'],
+                    'maximo' => 6,
+                ],
+                'datos'   => [],
             ],
 
             'destacado' => [

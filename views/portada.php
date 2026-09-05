@@ -827,100 +827,25 @@ $claveSanto = static function (string $s): string {
 <?php endif; ?>
 
 <!-- ══════════════════════════════════════════════════════════════════════
-     2 bis. LA COLECTA NACIONAL
-
-     Aquí aterriza la lámina «Colecta Nacional» del carrusel: su botón apunta a
-     #colecta, así que el clic baja a este bloque en lugar de sacar a nadie de
-     la portada.
-
-     ⚠ LAS CUENTAS. Los números salen del comunicado oficial de la Conferencia
-     Episcopal y se guardan en la base, editables desde el panel. Dos avisos
-     para quien los toque:
-
-       · Un dígito cambiado manda el dinero de alguien a otra cuenta. No se
-         escriben de memoria ni se copian de una captura de pantalla: se copian
-         del comunicado.
-       · Los dos CCI son coherentes con sus cuentas —banco 002, oficina 191, el
-         número de cuenta y los dos dígitos de control—, y esa coherencia es
-         comprobable. Si alguien cambia un número y el CCI deja de cuadrar, es
-         que uno de los dos está mal.
-
-     La página /donativo/ lleva un aviso que dice que sólo son oficiales las
-     cuentas publicadas allí o por la Conferencia Episcopal. Estas lo son: hay
-     que dejar esa página al día para que las dos no se contradigan.
+     9 bis. LA COLECTA NACIONAL
+     El bloque entero, cuentas incluidas, vive en assets/parciales/colecta.php
+     porque /donativo/ pinta el mismo. Allí está explicado por qué.
      ══════════════════════════════════════════════════════════════════════ -->
-<?php $cuentas = $bloques('colecta'); ?>
-<?php if ($hay('colecta')): ?>
-<section class="seccion colecta seccion--tinte" id="colecta" aria-labelledby="t-colecta">
-  <div class="contenedor">
-    <div class="colecta__interior">
+<?php /* Las cuentas de la Colecta Nacional viven en su propio parcial porque
+         esta misma sección se pinta también en /donativo/. Un solo sitio con
+         los números: con el marcado duplicado, el día que alguien corrija un
+         dígito en una página y olvide la otra, el sitio publicaría dos cuentas
+         distintas para lo mismo y el dinero de alguien acabaría donde no debe.
 
-      <div class="colecta__dicho" data-reveal="fade-rise">
-        <span class="rotulo"><?= $esc($campo('colecta', 'rotulo', 'Colecta Nacional')) ?></span>
-        <h2 class="colecta__titulo" id="t-colecta">
-          <?= $esc($campo('colecta', 'titulo', 'Súmate con tu donación')) ?>
-        </h2>
-        <?php if ($campo('colecta', 'subtitulo') !== ''): ?>
-          <p class="colecta__sub"><?= $esc($campo('colecta', 'subtitulo')) ?></p>
-        <?php endif; ?>
-        <div class="colecta__texto">
-          <?= $rico($campo('colecta', 'texto',
-              '<p>Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.</p>')) ?>
-        </div>
-        <?php if ($campo('colecta', 'cta_texto') !== ''): ?>
-          <p class="colecta__pie">
-            <a class="btn btn--primario" href="<?= $esc($destino($campo('colecta', 'cta_url', 'donativo/'))) ?>">
-              <?= $esc($campo('colecta', 'cta_texto')) ?>
-            </a>
-          </p>
-        <?php endif; ?>
-      </div>
-
-      <?php if ($cuentas !== []): ?>
-        <?php /* Una lista de descripción y no una tabla: cada cuenta es un
-                 rótulo con sus dos datos, no una matriz de filas y columnas.
-                 Los dígitos van en <span> con la clase que fija cifras
-                 tabulares, para que se lean de un vistazo y sin que ninguna
-                 fuente los junte. */ ?>
-        <ul class="colecta__cuentas" data-reveal="fade-rise" data-reveal-delay="0.08">
-          <?php foreach ($cuentas as $c): ?>
-            <?php
-            $numero = trim((string) ($c['datos']['numero'] ?? ''));
-            $cci    = trim((string) ($c['datos']['cci'] ?? ''));
-            ?>
-            <li class="cuenta">
-              <p class="cuenta__banco"><?= $esc($c['rotulo'] ?? '') ?></p>
-              <?php if (($c['titulo'] ?? '') !== ''): ?>
-                <p class="cuenta__titular"><?= $esc($c['titulo']) ?></p>
-              <?php endif; ?>
-              <dl class="cuenta__datos">
-                <?php if ($numero !== ''): ?>
-                  <div class="cuenta__linea">
-                    <dt>Cuenta</dt>
-                    <dd><span class="cifras" data-copiar="<?= $esc($numero) ?>"><?= $esc($numero) ?></span></dd>
-                  </div>
-                <?php endif; ?>
-                <?php if ($cci !== ''): ?>
-                  <div class="cuenta__linea">
-                    <dt>CCI</dt>
-                    <dd><span class="cifras" data-copiar="<?= $esc($cci) ?>"><?= $esc($cci) ?></span></dd>
-                  </div>
-                <?php endif; ?>
-              </dl>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endif; ?>
-
-      <?php $nota = (string) (\Intranet\Publico\Sitio::dato($secciones, 'colecta', 'nota', '') ?? ''); ?>
-      <?php if (trim($nota) !== ''): ?>
-        <p class="colecta__nota"><?= $esc($nota) ?></p>
-      <?php endif; ?>
-
-    </div>
-  </div>
-</section>
-<?php endif; ?>
+         Aquí aterriza la lámina «Colecta Nacional» del carrusel: su botón
+         apunta a #colecta, así que el clic baja a este bloque en vez de sacar a
+         nadie de la portada. Por eso es esta copia la que lleva el ancla. */ ?>
+<?php
+$colectaSecciones   = $secciones;
+$colectaSoloCuentas = false;
+$colectaConAncla    = true;
+require dirname(__DIR__) . '/assets/parciales/colecta.php';
+?>
 
 
 <!-- ══════════════════════════════════════════════════════════════════════

@@ -1073,6 +1073,61 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 }
 @media (min-width: 900px) {
   .colecta__interior { grid-template-columns: 5fr 7fr; gap: var(--space-2xl); }
+  /* En /donativo/ el parcial pinta SÓLO las cuentas: no hay bloque de texto a
+     la izquierda que llene la primera columna, así que las dos tarjetas se
+     metían en los 5fr y dejaban los 7fr vacíos. Con 500 px repartidos entre
+     dos, un número de cuenta se parte en dos renglones y un CCI en tres, que es
+     justo lo que no puede pasar con unos dígitos que hay que copiar. */
+  .colecta__interior--cuentas { grid-template-columns: minmax(0, 1fr); }
+}
+/* ── El modo «solo cuentas» va centrado ─────────────────────────────────
+   Es una pieza única en medio de la página, no una columna de texto: con el
+   contenido pegado al margen izquierdo quedaban 700 px de banda vacía a la
+   derecha y el bloque parecía descolgado.
+
+   Se centra el conjunto —rótulo, titular, bajada y tarjetas— y las tarjetas
+   ocupan el contenedor entero, que a 1440 son 1.148 px de los 1.440 de la
+   ventana: el 80 % del ancho. Dentro de cada tarjeta el texto vuelve a la
+   izquierda, porque unos dígitos centrados se leen peor y se copian peor. */
+.colecta__interior--cuentas { text-align: center; }
+.colecta__interior--cuentas .cuenta { text-align: start; }
+/* Ojo con el «margin-inline: auto» aquí: en una rejilla, un margen automático
+   deja de estirar el elemento y lo encoge a su contenido para centrarlo. La
+   lista se quedaba en 590 px en medio de una banda de 1.148. Como la columna ya
+   es única, estirar es el comportamiento por defecto y no hace falta nada.
+
+   Con las dos tarjetas ocupando el contenedor entero, cada una mide 566 px y
+   los dos datos caben uno al lado del otro en vez de uno debajo del otro. Así
+   el ancho se usa para algo y no queda medio metro de tarjeta vacía. */
+@media (min-width: 900px) {
+  .colecta__interior--cuentas .cuenta__datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-m);
+  }
+}
+
+/* El encabezado hereda de layout.css el contrafilete de 44 px que se pinta con
+   un ::after anclado a la izquierda. Centrado el titular, el filete se quedaba
+   en la esquina: aquí se lleva al centro con él. */
+.colecta__encabezado { margin-block-end: var(--space-l); }
+.colecta__interior--cuentas .colecta__encabezado > h2::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.colecta__interior--cuentas .colecta__sub {
+  margin-block-start: var(--space-xs);
+  margin-inline: auto;
+  max-width: 52ch;
+}
+
+/* Los tres destinos del aporte, en /donativo/. El icono va en oro, que es el
+   color del ornamento en este sitio, y al tamaño de los demás iconos de
+   sección. */
+.destino-aporte { display: grid; gap: var(--space-2xs); align-content: start; }
+.destino-aporte__icono {
+  inline-size: 30px; block-size: 30px;
+  color: var(--gold);
+  margin-block-end: var(--space-2xs);
 }
 
 .colecta__dicho { display: grid; gap: var(--space-s); justify-items: start; }

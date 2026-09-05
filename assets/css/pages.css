@@ -63,6 +63,20 @@
   filter: none;
   display: block;
 }
+/* La cabecera de /donativo/ es la única con una composición muy apaisada
+   —2,6:1— y con el sujeto pegado al borde derecho: el Santo Padre en el balcón,
+   con la plaza Mayor de Lima a su izquierda. Con el encuadre centrado, a 390 px
+   de ancho el recorte se queda con la plaza y lo deja fuera, así que la
+   fotografía pierde justo lo que la hace esta fotografía.
+
+   Se ancla a la derecha mientras la ventana sea estrecha. A partir de 768 el
+   marco ya es lo bastante apaisado para que quepan los dos y vuelve al centro.
+
+   Si algún día se sube una imagen de móvil desde el panel —el campo existe—
+   esto deja de hacer falta: esa foto vendrá ya encuadrada en vertical. */
+@media (max-width: 767px) {
+  .cabecera-pagina--colecta .cabecera-pagina__media img { object-position: 86% 0%; }
+}
 
 .cabecera-pagina__contenido {
   position: relative; z-index: 4;
@@ -123,7 +137,7 @@
 }
 /* El min-height sube con la reserva: si sólo creciera el relleno de dentro, la
    foto se recortaría por abajo y el aire ganado arriba se perdería. */
-@media (min-width: 1024px) { .cabecera-pagina { min-height: 700px; } }
+@media (min-width: 1024px) { .cabecera-pagina { min-height: 600px; } }
 
 .cabecera-pagina__titulo { font-size: var(--step-3); line-height: .96; max-width: 14ch; margin-block: var(--space-s) var(--space-m); }
 .cabecera-pagina__bajada { max-width: 42ch; font-size: var(--step-1); line-height: 1.4; color: color-mix(in srgb, var(--on-primary) 88%, transparent); }
