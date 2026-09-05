@@ -115,13 +115,23 @@ $fotosHero = [
     $foto('pontifice/retrato-oficial', 1131, 1600, 'Su Santidad el Papa León XIV', [640, 1024, 1131], '(min-width:900px) 42vw, 100vw', true),
     $foto('fotos/hero-multitud', 1600, 851, 'Vista aérea de una explanada llena de fieles durante una celebración papal', [640, 1024, 1600], '(min-width:900px) 42vw, 100vw'),
     $foto('ciudades/lima-g', 720, 540, 'Catedral de Lima iluminada en la plaza Mayor', [480, 720], '(min-width:900px) 42vw, 100vw'),
-    /* Cuarta lámina, la de la Colecta Nacional. La fotografía es la misma del
-       cartel que envió la Conferencia Episcopal: el Santo Padre con el brazo en
-       alto. Va limpia, sin filtro ni velo, como todas las suyas. */
-    $foto('hitos/hito-anuncio', 1440, 1080, 'El Santo Padre saluda con los brazos en alto desde la logia', [640, 960, 1440], '(min-width:900px) 42vw, 100vw'),
-    /* Quinta lámina, la de los santos. Va a sangre, así que la fotografía se
-       pide a 100vw y no a 42. */
+    /* ── Cuarta y quinta lámina: por qué esta fotografía y no la otra ───────
+       La cuarta es la de la Colecta y va A SANGRE, con el bloque de texto
+       encima. Eso obliga a elegir una fotografía donde el Santo Padre NO esté
+       en la mitad izquierda, porque ahí es donde se apoya el bloque y un panel
+       opaco sobre su cara es tan inaceptable como un velo.
+
+       Se probó con «hito-anuncio», que es la del cartel de la Conferencia
+       Episcopal: el Santo Padre está centrado y la imagen es 4:3, así que al
+       recortarla a la franja del hero se recorta por arriba y por abajo, nunca
+       por los lados. La cara se quedaba justo debajo del bloque. Con
+       «papamovil» está a la derecha, que además es la composición del propio
+       cartel: texto a la izquierda, Santo Padre a la derecha.
+
+       Y «hito-anuncio» se va a la quinta, que es partida: allí la imagen tiene
+       su columna entera y nada se le pone encima. */
     $foto('fotos/hero-papamovil', 1080, 720, 'El Santo Padre saluda desde el papamóvil a los fieles congregados', [640, 1024, 1080], '100vw'),
+    $foto('hitos/hito-anuncio', 1440, 1080, 'El Santo Padre saluda con los brazos en alto desde la logia', [640, 960, 1440], '(min-width:900px) 42vw, 100vw'),
 ];
 
 $laminas = $bloques('hero', [
@@ -146,15 +156,26 @@ $laminas = $bloques('hero', [
        alguien los puede leer con calma, copiar y comprobar. */
     ['rotulo' => 'Colecta Nacional', 'titulo' => 'Súmate con tu donación',
      'texto'  => 'Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.',
-     'enlace_texto' => 'Cómo donar', 'enlace_url' => '#colecta'],
+     'enlace_texto' => 'Cómo donar', 'enlace_url' => '#colecta',
+     'datos'  => ['diseno' => 'fondo']],
     /* Quinta lámina, a sangre. Los textos son los de la sección «Tierra de
        santos» que ya está publicada, y la frase de la bajada es la del
        documento de la Conferencia Episcopal. Nada redactado aquí. */
     ['rotulo' => 'Cinco caminos de santidad', 'titulo' => 'Cinco santos, un mismo corazón',
      'texto'  => 'Cinco santos nos muestran distintos caminos para vivir la fe y servir a los demás.',
-     'enlace_texto' => 'Conoce sus historias', 'enlace_url' => 'tierra-de-santos/',
-     'datos'  => ['diseno' => 'fondo']],
+     'enlace_texto' => 'Conoce sus historias', 'enlace_url' => 'tierra-de-santos/'],
 ]);
+
+/* ── El orden de los diseños ──────────────────────────────────────────────
+   Las láminas alternan: partida, a sangre, partida, a sangre, partida. Es lo
+   que da variedad al carrusel sin que dos composiciones iguales se sigan.
+
+   La primera es SIEMPRE partida, y eso no es alternancia sino regla: lleva el
+   retrato oficial del Santo Padre, y sobre ese retrato no va ningún velo ni
+   degradado. Por eso su texto vive en el panel de color de al lado.
+
+   Lo que hay aquí es la reserva. El orden real lo manda el panel, lámina a
+   lámina, en el campo «Diseño de la lámina». */
 
 $laminas = array_values($laminas);
 $total   = count($laminas);
@@ -297,102 +318,6 @@ $total   = count($laminas);
 <!-- ══════════════════════════════════════════════════════════════════════
      3. ABRAMOS EL CORAZÓN — el lema, explicado
      ══════════════════════════════════════════════════════════════════════ -->
-<!-- ══════════════════════════════════════════════════════════════════════
-     2 bis. LA COLECTA NACIONAL
-
-     Aquí aterriza la lámina «Colecta Nacional» del carrusel: su botón apunta a
-     #colecta, así que el clic baja a este bloque en lugar de sacar a nadie de
-     la portada.
-
-     ⚠ LAS CUENTAS. Los números salen del comunicado oficial de la Conferencia
-     Episcopal y se guardan en la base, editables desde el panel. Dos avisos
-     para quien los toque:
-
-       · Un dígito cambiado manda el dinero de alguien a otra cuenta. No se
-         escriben de memoria ni se copian de una captura de pantalla: se copian
-         del comunicado.
-       · Los dos CCI son coherentes con sus cuentas —banco 002, oficina 191, el
-         número de cuenta y los dos dígitos de control—, y esa coherencia es
-         comprobable. Si alguien cambia un número y el CCI deja de cuadrar, es
-         que uno de los dos está mal.
-
-     La página /donativo/ lleva un aviso que dice que sólo son oficiales las
-     cuentas publicadas allí o por la Conferencia Episcopal. Estas lo son: hay
-     que dejar esa página al día para que las dos no se contradigan.
-     ══════════════════════════════════════════════════════════════════════ -->
-<?php $cuentas = $bloques('colecta'); ?>
-<?php if ($hay('colecta')): ?>
-<section class="seccion colecta seccion--tinte" id="colecta" aria-labelledby="t-colecta">
-  <div class="contenedor">
-    <div class="colecta__interior">
-
-      <div class="colecta__dicho" data-reveal="fade-rise">
-        <span class="rotulo"><?= $esc($campo('colecta', 'rotulo', 'Colecta Nacional')) ?></span>
-        <h2 class="colecta__titulo" id="t-colecta">
-          <?= $esc($campo('colecta', 'titulo', 'Súmate con tu donación')) ?>
-        </h2>
-        <?php if ($campo('colecta', 'subtitulo') !== ''): ?>
-          <p class="colecta__sub"><?= $esc($campo('colecta', 'subtitulo')) ?></p>
-        <?php endif; ?>
-        <div class="colecta__texto">
-          <?= $rico($campo('colecta', 'texto',
-              '<p>Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.</p>')) ?>
-        </div>
-        <?php if ($campo('colecta', 'cta_texto') !== ''): ?>
-          <p class="colecta__pie">
-            <a class="btn btn--primario" href="<?= $esc($destino($campo('colecta', 'cta_url', 'donativo/'))) ?>">
-              <?= $esc($campo('colecta', 'cta_texto')) ?>
-            </a>
-          </p>
-        <?php endif; ?>
-      </div>
-
-      <?php if ($cuentas !== []): ?>
-        <?php /* Una lista de descripción y no una tabla: cada cuenta es un
-                 rótulo con sus dos datos, no una matriz de filas y columnas.
-                 Los dígitos van en <span> con la clase que fija cifras
-                 tabulares, para que se lean de un vistazo y sin que ninguna
-                 fuente los junte. */ ?>
-        <ul class="colecta__cuentas" data-reveal="fade-rise" data-reveal-delay="0.08">
-          <?php foreach ($cuentas as $c): ?>
-            <?php
-            $numero = trim((string) ($c['datos']['numero'] ?? ''));
-            $cci    = trim((string) ($c['datos']['cci'] ?? ''));
-            ?>
-            <li class="cuenta">
-              <p class="cuenta__banco"><?= $esc($c['rotulo'] ?? '') ?></p>
-              <?php if (($c['titulo'] ?? '') !== ''): ?>
-                <p class="cuenta__titular"><?= $esc($c['titulo']) ?></p>
-              <?php endif; ?>
-              <dl class="cuenta__datos">
-                <?php if ($numero !== ''): ?>
-                  <div class="cuenta__linea">
-                    <dt>Cuenta</dt>
-                    <dd><span class="cifras" data-copiar="<?= $esc($numero) ?>"><?= $esc($numero) ?></span></dd>
-                  </div>
-                <?php endif; ?>
-                <?php if ($cci !== ''): ?>
-                  <div class="cuenta__linea">
-                    <dt>CCI</dt>
-                    <dd><span class="cifras" data-copiar="<?= $esc($cci) ?>"><?= $esc($cci) ?></span></dd>
-                  </div>
-                <?php endif; ?>
-              </dl>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endif; ?>
-
-      <?php $nota = (string) (\Intranet\Publico\Sitio::dato($secciones, 'colecta', 'nota', '') ?? ''); ?>
-      <?php if (trim($nota) !== ''): ?>
-        <p class="colecta__nota"><?= $esc($nota) ?></p>
-      <?php endif; ?>
-
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
 <?php /* La decoración de esta sección es TODA de vista: ni un campo nuevo, ni una
          consulta nueva. Se leen exactamente los mismos cuatro valores de antes.
 
@@ -805,7 +730,41 @@ $claseEstado = static function (mixed $e): string {
      un medallón con su inicial. Es preferible a una imagen prestada: poner la
      cara de un santo en el sitio de otro es peor que no poner ninguna.
      ══════════════════════════════════════════════════════════════════════ -->
-<?php $santos = array_values($bloques('tierra-de-santos')); ?>
+<?php
+$santos = array_values($bloques('tierra-de-santos'));
+
+/* ── Los retratos de los cinco santos ──────────────────────────────────────
+   Los archivos los dejó el cliente en assets/img/. Se emparejan por NOMBRE y
+   no por posición: si alguien reordena las fichas desde el panel, cada retrato
+   sigue con su santo. Poner la cara de un santo en el sitio de otro es peor que
+   no poner ninguna, y con una lista por índice eso pasa al primer arrastre.
+
+   Los nombres de archivo van tal cual llegaron, mayúsculas incluidas.
+   Producción es Linux: ahí «Santo-Toribio-Mogrovejo.jpg» y
+   «santo-toribio-mogrovejo.jpg» son dos archivos distintos, y el segundo no
+   existe.
+
+   Siguen siendo el RESPALDO, no el contenido: en cuanto alguien suba un
+   retrato desde el panel, Sitio::imagen() sirve el de la biblioteca con sus
+   variantes y esto deja de pintarse. Y el santo que no tenga archivo aquí
+   conserva su medallón con la inicial. */
+$retratosSantos = [
+    'santa rosa de lima'         => ['santa-rosa.webp',             768, 512, 'Retrato de Santa Rosa de Lima'],
+    'san martin de porres'       => ['san-martin.avif',            1200, 1200, 'Retrato de San Martín de Porres'],
+    'san juan macias'            => ['san-juan-macias.jpg',         300, 300, 'Retrato de San Juan Macías'],
+    'san francisco solano'       => ['san-francisco-solano.jpg',    447, 447, 'Retrato de San Francisco Solano'],
+    'santo toribio de mogrovejo' => ['Santo-Toribio-Mogrovejo.jpg', 319, 390, 'Retrato de Santo Toribio de Mogrovejo'],
+];
+
+/* Sin tildes y en minúsculas, para que «San Martín» encuentre su archivo
+   aunque el panel guarde el nombre con o sin acento. */
+$claveSanto = static function (string $s): string {
+    $s = mb_strtolower(trim($s));
+    $s = strtr($s, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n']);
+
+    return (string) preg_replace('~\s+~u', ' ', $s);
+};
+?>
 <?php if ($santos !== []): ?>
 <section class="seccion seccion--tinte santos" id="tierra-de-santos" aria-labelledby="t-santos">
   <div class="contenedor">
@@ -831,11 +790,20 @@ $claseEstado = static function (mixed $e): string {
         // cinco medallones dirían lo mismo.
         $propio  = (string) preg_replace('~^(San|Santa|Santo)\s+~ui', '', $nombre);
         $inicial = mb_strtoupper(mb_substr($propio !== '' ? $propio : $nombre, 0, 1));
+
+        /* El retrato del cliente si lo hay para este santo; si no, el medallón
+           con la inicial, que es lo que había. */
+        $retrato = $retratosSantos[$claveSanto($nombre)] ?? null;
+        $reserva = $retrato !== null
+            ? '<img src="' . $esc($sitio->asset('assets/img/' . $retrato[0])) . '"'
+              . ' width="' . $retrato[1] . '" height="' . $retrato[2] . '"'
+              . ' alt="' . $esc($retrato[3]) . '" loading="lazy" decoding="async">'
+            : '<span class="santo__inicial" aria-hidden="true">' . $esc($inicial) . '</span>';
         ?>
         <li class="santo" data-reveal="fade-rise" data-reveal-delay="<?= number_format($i * 0.06, 2, '.', '') ?>">
           <a class="santo__enlace" href="<?= $esc($u !== '' ? $u : $sitio->enlace('tierra-de-santos/')) ?>">
-            <span class="santo__medallon">
-              <?= $sitio->imagen($s, '<span class="santo__inicial" aria-hidden="true">' . $esc($inicial) . '</span>', [
+            <span class="santo__medallon<?= $retrato !== null ? ' santo__medallon--foto' : '' ?>">
+              <?= $sitio->imagen($s, $reserva, [
                   'sizes' => '(min-width:900px) 15vw, 40vw',
               ]) ?>
             </span>
@@ -857,6 +825,103 @@ $claseEstado = static function (mixed $e): string {
   </div>
 </section>
 <?php endif; ?>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     2 bis. LA COLECTA NACIONAL
+
+     Aquí aterriza la lámina «Colecta Nacional» del carrusel: su botón apunta a
+     #colecta, así que el clic baja a este bloque en lugar de sacar a nadie de
+     la portada.
+
+     ⚠ LAS CUENTAS. Los números salen del comunicado oficial de la Conferencia
+     Episcopal y se guardan en la base, editables desde el panel. Dos avisos
+     para quien los toque:
+
+       · Un dígito cambiado manda el dinero de alguien a otra cuenta. No se
+         escriben de memoria ni se copian de una captura de pantalla: se copian
+         del comunicado.
+       · Los dos CCI son coherentes con sus cuentas —banco 002, oficina 191, el
+         número de cuenta y los dos dígitos de control—, y esa coherencia es
+         comprobable. Si alguien cambia un número y el CCI deja de cuadrar, es
+         que uno de los dos está mal.
+
+     La página /donativo/ lleva un aviso que dice que sólo son oficiales las
+     cuentas publicadas allí o por la Conferencia Episcopal. Estas lo son: hay
+     que dejar esa página al día para que las dos no se contradigan.
+     ══════════════════════════════════════════════════════════════════════ -->
+<?php $cuentas = $bloques('colecta'); ?>
+<?php if ($hay('colecta')): ?>
+<section class="seccion colecta seccion--tinte" id="colecta" aria-labelledby="t-colecta">
+  <div class="contenedor">
+    <div class="colecta__interior">
+
+      <div class="colecta__dicho" data-reveal="fade-rise">
+        <span class="rotulo"><?= $esc($campo('colecta', 'rotulo', 'Colecta Nacional')) ?></span>
+        <h2 class="colecta__titulo" id="t-colecta">
+          <?= $esc($campo('colecta', 'titulo', 'Súmate con tu donación')) ?>
+        </h2>
+        <?php if ($campo('colecta', 'subtitulo') !== ''): ?>
+          <p class="colecta__sub"><?= $esc($campo('colecta', 'subtitulo')) ?></p>
+        <?php endif; ?>
+        <div class="colecta__texto">
+          <?= $rico($campo('colecta', 'texto',
+              '<p>Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.</p>')) ?>
+        </div>
+        <?php if ($campo('colecta', 'cta_texto') !== ''): ?>
+          <p class="colecta__pie">
+            <a class="btn btn--primario" href="<?= $esc($destino($campo('colecta', 'cta_url', 'donativo/'))) ?>">
+              <?= $esc($campo('colecta', 'cta_texto')) ?>
+            </a>
+          </p>
+        <?php endif; ?>
+      </div>
+
+      <?php if ($cuentas !== []): ?>
+        <?php /* Una lista de descripción y no una tabla: cada cuenta es un
+                 rótulo con sus dos datos, no una matriz de filas y columnas.
+                 Los dígitos van en <span> con la clase que fija cifras
+                 tabulares, para que se lean de un vistazo y sin que ninguna
+                 fuente los junte. */ ?>
+        <ul class="colecta__cuentas" data-reveal="fade-rise" data-reveal-delay="0.08">
+          <?php foreach ($cuentas as $c): ?>
+            <?php
+            $numero = trim((string) ($c['datos']['numero'] ?? ''));
+            $cci    = trim((string) ($c['datos']['cci'] ?? ''));
+            ?>
+            <li class="cuenta">
+              <p class="cuenta__banco"><?= $esc($c['rotulo'] ?? '') ?></p>
+              <?php if (($c['titulo'] ?? '') !== ''): ?>
+                <p class="cuenta__titular"><?= $esc($c['titulo']) ?></p>
+              <?php endif; ?>
+              <dl class="cuenta__datos">
+                <?php if ($numero !== ''): ?>
+                  <div class="cuenta__linea">
+                    <dt>Cuenta</dt>
+                    <dd><span class="cifras" data-copiar="<?= $esc($numero) ?>"><?= $esc($numero) ?></span></dd>
+                  </div>
+                <?php endif; ?>
+                <?php if ($cci !== ''): ?>
+                  <div class="cuenta__linea">
+                    <dt>CCI</dt>
+                    <dd><span class="cifras" data-copiar="<?= $esc($cci) ?>"><?= $esc($cci) ?></span></dd>
+                  </div>
+                <?php endif; ?>
+              </dl>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+
+      <?php $nota = (string) (\Intranet\Publico\Sitio::dato($secciones, 'colecta', 'nota', '') ?? ''); ?>
+      <?php if (trim($nota) !== ''): ?>
+        <p class="colecta__nota"><?= $esc($nota) ?></p>
+      <?php endif; ?>
+
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 
 <!-- ══════════════════════════════════════════════════════════════════════
      10. NOTICIAS

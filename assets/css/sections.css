@@ -1058,10 +1058,14 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
    Los números se pintan con --font-ui y cifras tabulares. No es capricho: una
    serie de veinte dígitos en una serif con cifras de estilo antiguo se lee mal
    y se copia peor, y copiar mal aquí significa transferir a otra cuenta. */
-/* Tono propio, y distinto del que lleva el lema justo debajo: los dos con el
-   mismo tinte cálido se leían como una sola banda de 818 px y se perdía la
-   frontera entre pedir un aporte y explicar el lema. */
-.colecta { --tono: var(--primary-tint); }
+/* Tono propio, elegido por los vecinos que le tocan. La sección va entre
+   «Tierra de santos» (fondo alterno) y «Noticias» (tinte rosa): con el rosa se
+   pegaba a Noticias y las dos se leían como una banda de 1.523 px. El tinte
+   cálido se distingue de las dos.
+
+   Si algún día se mueve de sitio, esto hay que volver a mirarlo: el color de
+   una banda no se elige sola, se elige contra la de arriba y la de abajo. */
+.colecta { --tono: var(--accent-tint); }
 .colecta__interior {
   display: grid;
   gap: var(--space-xl);
@@ -1450,6 +1454,15 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 }
 .santo__medallon picture, .santo__medallon img { width: 100%; height: 100%; }
 .santo__medallon img { object-fit: cover; }
+/* Con retrato dentro, el fondo crema del medallón ya no se ve y el borde
+   claro se pierde contra la fotografía. Se cambia por un filete de oro, que es
+   lo que el sitio usa para enmarcar. El encuadre se ancla arriba: son retratos,
+   y centrado un recorte cuadrado sobre una imagen vertical corta la frente. */
+.santo__medallon--foto {
+  background: var(--surface-alt);
+  border-color: var(--gold);
+}
+.santo__medallon--foto img { object-position: 50% 22%; }
 .santo__inicial {
   font-family: var(--font-display);
   font-weight: 500;
