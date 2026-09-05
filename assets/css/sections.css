@@ -1664,3 +1664,146 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   padding-inline-end: .08em;
   margin-block-start: .04em;
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   EL CARRUSEL EN MÓVIL · un solo patrón
+
+   En escritorio conviven dos maquetas y está bien que así sea: la partida
+   —panel a un lado, fotografía al otro— y la que lleva el texto sobre la
+   imagen a sangre. Dan variedad y hay sitio de sobra.
+
+   En un teléfono la segunda no funciona. El panel cae en mitad del encuadre
+   y tapa justo lo que la fotografía quiere enseñar, y no hay forma de
+   encuadrar para que el centro quede libre cuando cada lámina lleva una
+   imagen distinta y se cambian desde el panel. Quien sube una foto no puede
+   estar adivinando dónde caerá el texto.
+
+   Aquí las dos se comportan igual:
+
+       ┌──────────────────┐
+       │                  │
+       │    FOTOGRAFÍA    │  70 %
+       │                  │
+       ├──────────────────┤
+       │  rótulo, titular │  30 %
+       │  y un botón      │
+       └──────────────────┘
+
+   Con eso, una imagen se elige por lo que se ve en ella, no por dónde cae
+   el texto encima. Y el reclamo siempre está en el mismo sitio, que es lo
+   que hace que el carrusel se lea como uno y no como cinco.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 899px) {
+
+  /* Más bajo que los 740px de antes. Con la banda de texto abajo ya no hace
+     falta tanto alto para que quepa todo, y así asoma la sección siguiente,
+     que es lo que invita a seguir bajando. */
+  .hero { height: min(86svh, 600px); }
+
+  /* ── La maqueta partida ───────────────────────────────────────────────
+     Deja de ser «panel absoluto encima del retrato» y pasa a dos filas.
+     El orden se invierte porque en el documento el panel va primero —en
+     escritorio manda la rejilla y el texto tiene que ir a la izquierda—,
+     pero aquí la fotografía va arriba. */
+  .hero__doble {
+    display: grid;
+    grid-template-rows: 70% 30%;
+  }
+  .hero__doble > .hero__retrato,
+  .hero__doble > .hero__panel {
+    position: relative;
+    inset: auto;
+    min-height: 0;          /* sin esto una fila no baja de su contenido */
+  }
+  .hero__doble > .hero__retrato { order: 1; }
+  .hero__doble > .hero__panel   { order: 2; }
+
+  /* ── La maqueta a sangre ──────────────────────────────────────────────
+     La fotografía se recoge al 70 % superior y el texto baja a una banda
+     sólida. El velo sobra: ya no hay texto encima de la imagen, y quitarlo
+     devuelve la foto limpia. */
+  .hero__media { inset: 0 0 30% 0; }
+  .velo--hero  { display: none; }
+
+  .hero__contenido {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 30%;
+    /* Los mismos márgenes que la maqueta partida: si aquí van a cero, el
+       rótulo y el titular quedan pegados al borde de la pantalla. */
+    padding: var(--space-s) var(--gutter);
+    background: var(--surface-invert);
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* La tarjeta deja de ser tarjeta: ya es la banda entera. */
+  .hero__bloque {
+    background: transparent;
+    padding: 0;
+    max-width: none;
+  }
+
+  /* ── Lo que va dentro de la banda ─────────────────────────────────────
+     Treinta por ciento de 600px son 180. Ahí caben un rótulo, dos líneas de
+     titular y un botón, y no cabe nada más: cada elemento que se añada sale
+     de lo que se ve de la fotografía. */
+  .hero__panel {
+    padding: var(--space-s) var(--gutter);
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero__panel-interior { max-width: none; }
+
+  /* La barandilla de fechas y ciudades se va. Es idéntica en las cinco
+     láminas, se parte en dos líneas y se lleva medio panel; y lo que dice
+     —las fechas y las cuatro sedes— vuelve a salir dos secciones más abajo,
+     en la cuenta atrás y en el recorrido. */
+  .hero__dato,
+  .hero__bajada { display: none; }
+
+  /* Treinta por ciento de un carrusel de 600px son unos 160 píxeles. Ahí
+     caben un rótulo, dos líneas de titular y un botón, y nada más. Con
+     --step-2 el titular se comía el sitio del botón y lo empujaba fuera de
+     la banda, encima de la sección siguiente. */
+  /* Los DOS selectores, y con dos clases cada uno. «.hero__bloque
+     .hero__titulo» ya existe más arriba y vale 0-2-0; una regla de una sola
+     clase no lo gana por muy abajo que esté en el archivo, y el titular se
+     quedaba en --step-3 empujando el botón fuera de la banda.
+
+     El tamaño va escrito y no con un peldaño de la escala porque no hay
+     ninguno que sirva: --step-1 son 19px —tamaño de texto corrido— y
+     --step-2 se va a 46. Aquí hace falta el punto intermedio. */
+  .hero__bloque .hero__titulo,
+  .hero__panel .hero__titulo {
+    font-size: clamp(22px, 6.2vw, 28px);
+    line-height: 1.06;
+    max-width: 22ch;
+    margin-block: 2px var(--space-xs);
+  }
+
+  .hero__acciones { width: 100%; }
+  .hero__acciones .btn { width: 100%; min-height: 44px; }
+
+  /* ── Los mandos ───────────────────────────────────────────────────────
+     Suben a la esquina inferior de la FOTOGRAFÍA, justo encima de la banda.
+     Antes iban anclados al fondo del carrusel y quedaban sobre el texto. */
+  .hero__controles {
+    left: var(--gutter);
+    right: auto;
+    bottom: calc(30% + var(--space-xs));
+  }
+}
+
+/* Pantallas cortas —un móvil apaisado, o uno pequeño— donde el 30 % se
+   queda sin sitio para el titular. La banda crece un poco a costa de la
+   fotografía, que es la que puede permitírselo. */
+@media (max-width: 899px) and (max-height: 620px) {
+  .hero { height: 96svh; }
+  .hero__doble { grid-template-rows: 62% 38%; }
+  .hero__media { inset: 0 0 38% 0; }
+  .hero__contenido { height: 38%; }
+  .hero__controles { bottom: calc(38% + var(--space-2xs)); }
+  .hero__titulo { font-size: var(--step-1); }
+}
