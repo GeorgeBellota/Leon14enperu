@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es" data-theme="bandera">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comprobación de contraste — leon14enperu.com</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="../../css/tokens.css">
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 2rem clamp(1rem, 4vw, 3rem); background: #fff; color: #111; }
+  h1 { font-size: 1.5rem; margin: 0 0 .35rem; }
+  p.intro { margin: 0 0 1.5rem; color: #555; max-width: 70ch; }
+  #veredicto { font-weight: 700; font-size: 1.1rem; padding: .8rem 1rem; border-radius: 4px; margin-bottom: 1.5rem; }
+  .ok { background: #e6f4ea; color: #125c2b; }
+  .ko { background: #fdecea; color: #8b1a12; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #e5e5e5; }
+  th { background: #fafafa; position: sticky; top: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.falla td { background: #fdecea; }
+  .muestra { display: inline-block; width: 2.4rem; height: 1.1rem; border: 1px solid #ccc; vertical-align: -3px; }
+  h2 { font-size: 1rem; margin: 2rem 0 .6rem; text-transform: uppercase; letter-spacing: .1em; color: #666; }
+</style>
+</head>
+<body>
+  <h1>Comprobación de contraste</h1>
+  <p class="intro">
+    Lee las variables computadas de <code>tokens.css</code> en cada una de las tres paletas y
+    verifica todas las combinaciones que permiten las reglas de uso de §5.4 con la fórmula de
+    luminancia relativa de WCAG 2.2. El resultado esperado es <strong>cero fallos</strong>.
+    Si algo falla, el error está en el script o en que se ha roto una regla de uso.
+  </p>
+  <div id="veredicto">Calculando…</div>
+  <div id="tablas"></div>
+
+  <script src="check-contrast.js"></script>
+  <script>
+    (function () {
+      var r = L14dev.comprobarContraste(true);
+      var v = document.getElementById('veredicto');
+      v.className = r.fallos === 0 ? 'ok' : 'ko';
+      v.textContent = (r.fallos === 0 ? '✔ ' : '✖ ') + r.fallos + ' fallo(s) de ' + r.total +
+        ' comprobaciones en las tres paletas.';
+
+      var raiz = document.documentElement;
+      var contenedor = document.getElementById('tablas');
+      ['bandera', 'escudo', 'sereno'].forEach(function (tema) {
+        var filas = r.informe.filter(function (f) { return f.tema === tema; });
+        var h = document.createElement('h2');
+        h.textContent = 'Tema ' + tema;
+        contenedor.appendChild(h);
+
+        raiz.setAttribute('data-theme', tema);
+        var e = getComputedStyle(raiz);
+        var t = document.createElement('table');
+        t.innerHTML = '<thead><tr><th>Frente</th><th>Fondo</th><th></th><th class="num">Exigido</th>' +
+          '<th class="num">Obtenido</th><th>Nota</th></tr></thead><tbody></tbody>';
+        var cuerpo = t.querySelector('tbody');
+
+        filas.forEach(function (f) {
+          var fg = f.frente.indexOf('@') === -1 ? e.getPropertyValue(f.frente).trim() : '';
+          var bg = e.getPropertyValue(f.fondo).trim();
+          var tr = document.createElement('tr');
+          if (!f.pasa) tr.className = 'falla';
+          tr.innerHTML = '<td><code>' + f.frente + '</code></td>' +
+            '<td><code>' + f.fondo + '</code></td>' +
+            '<td><span class="muestra" style="background:' + (bg || '#fff') + ';color:' + (fg || '#000') + '">' +
+              (fg ? '&nbsp;Aa&nbsp;' : '') + '</span></td>' +
+            '<td class="num">' + f.exigido.toFixed(1) + '</td>' +
+            '<td class="num"><strong>' + f.obtenido.toFixed(2) + '</strong></td>' +
+            '<td>' + (f.error || f.nota) + '</td>';
+          cuerpo.appendChild(tr);
+        });
+        contenedor.appendChild(t);
+      });
+      raiz.setAttribute('data-theme', 'bandera');
+    })();
+  </script>
+</body>
+</html>

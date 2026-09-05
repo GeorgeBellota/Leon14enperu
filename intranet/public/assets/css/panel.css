@@ -1,0 +1,1415 @@
+/* ============================================================================
+   INTRANET · hoja de estilos del panel
+   ----------------------------------------------------------------------------
+   NO define ni un solo color hexadecimal. Todo sale de assets/css/tokens.css
+   del sitio público, que se carga antes que este archivo. Si mañana cambia la
+   paleta de la web, el panel cambia con ella y nadie tiene que acordarse.
+
+   Las tres familias tipográficas también son las del sitio: Fraunces para los
+   titulares, Instrument Sans para la interfaz. Newsreader no se usa aquí: es
+   para lectura larga y en un panel no hay lectura larga.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+}
+
+h1 { font-size: var(--step-2); }
+h2 { font-size: var(--step-1b); }
+h3 { font-size: var(--step-1); }
+
+a { color: var(--primary-strong); }
+a:hover { color: var(--ink); }
+
+/* Foco visible siempre. Media intranet se recorre con el tabulador. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.salto {
+  position: absolute;
+  left: -9999px;
+}
+.salto:focus {
+  left: var(--space-s);
+  top: var(--space-s);
+  z-index: 100;
+  background: var(--surface);
+  padding: var(--space-xs) var(--space-s);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.rotulo {
+  font-size: var(--step--2);
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 var(--space-2xs);
+}
+
+/* ══════════════ ARMAZÓN ══════════════ */
+
+.armazon {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+  /* minmax(0, 1fr) y no «1fr»: «1fr» es minmax(AUTO, 1fr), y con «auto» la
+     columna se niega a encoger por debajo de su contenido. Basta una tabla
+     ancha para que se desplace en horizontal la pantalla entera en lugar de
+     la tabla sola, que es la que tiene su propio scroll para eso. */
+  .armazon { grid-template-columns: minmax(0, 1fr); }
+}
+
+.lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding: var(--space-l) var(--space-m);
+  background: var(--surface-invert);
+  color: var(--on-primary);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .lateral { position: static; height: auto; }
+}
+
+.marca {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  line-height: 1.1;
+}
+.marca--centrada { text-align: center; margin: 0 0 var(--space-l); }
+
+.marca__nombre {
+  font-family: var(--font-display);
+  font-size: var(--step-1b);
+  font-weight: 600;
+}
+.marca__lugar {
+  font-size: var(--step--2);
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  opacity: .78;
+}
+
+.menu { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.menu__grupo {
+  font-size: var(--step--2);
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  opacity: .6;
+  margin: var(--space-m) 0 var(--space-2xs);
+}
+
+.menu__enlace {
+  display: block;
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--step-0);
+}
+.menu__enlace:hover {
+  background: color-mix(in srgb, var(--on-primary) 12%, transparent);
+  color: inherit;
+}
+/* El activo se marca con aria-current, no con una clase: así el estado
+   visual y el estado accesible no pueden decir cosas distintas. */
+.menu__enlace[aria-current="page"] {
+  background: color-mix(in srgb, var(--on-primary) 18%, transparent);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--gold-invert);
+}
+
+.lateral__pie {
+  border-top: var(--rule) solid color-mix(in srgb, var(--on-primary) 22%, transparent);
+  padding-top: var(--space-m);
+  display: grid;
+  gap: var(--space-xs);
+}
+.lateral__usuario { margin: 0; display: grid; line-height: 1.3; }
+.lateral__usuario span { font-size: var(--step--1); opacity: .75; }
+.lateral__ver { color: var(--gold-invert); font-size: var(--step--1); text-decoration: none; }
+.lateral__ver:hover { color: var(--on-primary); text-decoration: underline; }
+
+.principal {
+  padding: var(--space-xl) var(--gutter);
+  max-width: 1180px;
+  width: 100%;
+  /* Sin esto, el contenido más ancho —una tabla de seis columnas— empuja al
+     contenedor y es la PÁGINA la que se desplaza en horizontal, no la tabla.
+     Un elemento de rejilla no baja de su ancho de contenido salvo que se le
+     diga, y la tabla ya tiene su propio scroll para eso. */
+  min-width: 0;
+}
+
+.encabezado { margin-bottom: var(--space-xl); }
+
+/* ══════════════ PANTALLAS SIN SESIÓN ══════════════ */
+
+.cuerpo-limpio { background: var(--surface-alt); }
+
+.portada {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-l);
+}
+
+.portada__caja {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-m);
+  padding: var(--space-xl) var(--space-l);
+}
+.portada__caja .marca { color: var(--ink); }
+.portada__caja .marca__lugar { color: var(--ink-mute); opacity: 1; }
+
+.portada__titulo  { margin-bottom: var(--space-2xs); }
+.portada__bajada  { color: var(--ink-soft); margin: 0 0 var(--space-l); }
+.portada__codigo  { font-family: var(--font-display); font-size: var(--step-3); color: var(--primary-strong); margin: 0; }
+.portada__nota    { font-size: var(--step--1); color: var(--ink-soft); margin: var(--space-l) 0 0; }
+
+/* ══════════════ FORMULARIOS ══════════════ */
+
+.formulario { display: grid; gap: var(--space-m); }
+
+.campo { display: grid; gap: var(--space-2xs); }
+
+.campo__etiqueta { font-size: var(--step--1); font-weight: 600; }
+
+/* Las casillas y los botones de radio quedan FUERA de esta regla.
+   Se declara arriba, antes que la general, para que se lea en el mismo sitio
+   donde está el problema que evita.
+
+   Lo que evita: un `width: 100%` sobre un radio lo estira a todo el ancho del
+   formulario y empuja su texto fuera del recuadro. Pasó al hacer los
+   comunicados, donde las opciones van dentro de un `.campo` —en las demás
+   pantallas van sueltas, en un `.opciones`, y por eso no se había visto—.
+   Un control que sólo se rompe según dónde lo pongas es una trampa esperando
+   a la siguiente pantalla que se escriba. */
+.campo input[type="radio"],
+.campo input[type="checkbox"] {
+  width: auto;
+  flex: none;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  /* --line-strong, no --line: los bordes de control necesitan 3:1 de
+     contraste (WCAG 2.2 SC 1.4.11). Es la misma regla que sigue el sitio. */
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-s);
+  width: 100%;
+}
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus { border-color: var(--focus); }
+
+.campo__ayuda { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--step--1);
+  letter-spacing: var(--track-accion);
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius);
+  border: var(--rule) solid transparent;
+  cursor: pointer;
+  transition: background .18s var(--ease), color .18s var(--ease);
+}
+.btn--primario { background: var(--primary); color: var(--on-primary); }
+.btn--primario:hover { background: var(--primary-strong); color: var(--on-primary); }
+.btn--linea { background: transparent; border-color: currentColor; color: inherit; }
+.btn--linea:hover { background: color-mix(in srgb, currentColor 12%, transparent); color: inherit; }
+.btn--bloque { width: 100%; }
+
+/* ══════════════ AVISOS ══════════════ */
+
+.destellos { display: grid; gap: var(--space-xs); margin-bottom: var(--space-m); }
+
+.destello {
+  margin: 0;
+  padding: var(--space-xs) var(--space-s);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--line-strong);
+  font-size: var(--step--1);
+  background: var(--surface-alt);
+}
+.destello--exito { border-left-color: var(--accent-strong); background: var(--accent-tint); }
+.destello--error { border-left-color: var(--primary-strong); background: var(--primary-tint); }
+.destello--aviso { border-left-color: var(--gold); background: var(--accent-tint); }
+
+/* ══════════════ CIFRAS Y TARJETAS ══════════════ */
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-s);
+  margin-bottom: var(--space-xl);
+}
+
+.cifra {
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-m);
+  box-shadow: var(--sombra-s);
+}
+.cifra__numero {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  line-height: 1;
+  margin: 0 0 var(--space-2xs);
+  color: var(--primary-strong);
+}
+.cifra__pie {
+  margin: 0;
+  font-size: var(--step--2);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.tarjeta {
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-m) var(--space-l) var(--space-l);
+  margin-bottom: var(--space-l);
+  box-shadow: var(--sombra-s);
+}
+.tarjeta__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-m);
+}
+.enlace-flecha { font-size: var(--step--1); font-weight: 600; text-decoration: none; }
+.enlace-flecha:hover { text-decoration: underline; }
+
+.vacio { color: var(--ink-soft); margin: 0; }
+
+/* ══════════════ TABLAS ══════════════ */
+
+/* La tabla desborda con su propio scroll: la página nunca se mueve en
+   horizontal, que es lo que arruina un listado en un portátil pequeño. */
+.tabla-envoltorio { overflow-x: auto; }
+
+.tabla { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+.tabla th,
+.tabla td { text-align: left; padding: var(--space-xs) var(--space-s); border-bottom: var(--rule) solid var(--line); }
+.tabla thead th {
+  font-size: var(--step--2);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  border-bottom-color: var(--line-strong);
+  white-space: nowrap;
+}
+.tabla tbody tr:hover { background: var(--surface-alt); }
+.tabla__mono { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Dato sensible enmascarado: se distingue de un texto normal a simple vista. */
+.mascara {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
+  color: var(--ink-soft);
+}
+
+.pildora {
+  display: inline-block;
+  font-size: var(--step--2);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  padding: 2px var(--space-xs);
+  border-radius: 999px;
+  border: var(--rule) solid var(--line-strong);
+  white-space: nowrap;
+}
+.pildora--nuevo         { background: var(--primary-tint); border-color: var(--primary-strong); color: var(--primary-strong); }
+.pildora--en_validacion { background: var(--accent-tint);  border-color: var(--accent-strong);  color: var(--accent-strong); }
+.pildora--validado,
+.pildora--acreditado    { background: var(--surface-alt);  border-color: var(--ink-soft);       color: var(--ink); }
+.pildora--rechazado,
+.pildora--baja          { background: transparent;         border-color: var(--line-strong);    color: var(--ink-mute); }
+
+.lista-conteo { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2xs); }
+.lista-conteo li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-s);
+  padding: var(--space-2xs) 0;
+  border-bottom: var(--rule) solid var(--line);
+}
+
+.lista-estado { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2xs); font-size: var(--step--1); }
+.lista-estado .ok { color: var(--accent-strong); font-weight: 700; }
+.lista-estado .pendiente { color: var(--ink-mute); font-weight: 700; }
+
+@media print {
+  .lateral, .btn { display: none; }
+  .armazon { grid-template-columns: 1fr; }
+}
+
+/* ══════════════ CMS · LISTA DE SECCIONES ══════════════ */
+
+.encabezado__pie { color: var(--ink-soft); font-size: var(--step--1); margin: var(--space-2xs) 0 0; }
+
+.secciones-lista { display: grid; gap: var(--space-s); }
+
+.seccion-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: var(--space-m);
+  box-shadow: var(--sombra-s);
+}
+/* Una sección apagada no se ve en la web: aquí tiene que notarse de un vistazo,
+   no leyendo la etiqueta. */
+.seccion-fila--apagada { border-left-color: var(--line-strong); opacity: .72; }
+
+.seccion-fila__cuerpo { flex: 1 1 22rem; }
+.seccion-fila__meta   { display: flex; gap: var(--space-2xs); flex-wrap: wrap; margin: 0 0 var(--space-2xs); }
+.seccion-fila__titulo { font-size: var(--step-1); margin: 0 0 var(--space-2xs); }
+.seccion-fila__texto  { margin: 0 0 var(--space-2xs); color: var(--ink-soft); }
+.seccion-fila__pie    { margin: 0; font-size: var(--step--1); color: var(--ink-mute); }
+.seccion-fila__accion { display: flex; align-items: center; gap: var(--space-s); flex-wrap: wrap; }
+
+/* ══════════════ CMS · EDITOR ══════════════ */
+
+.formulario-cms .campo { margin-bottom: var(--space-m); }
+
+.formulario-cms textarea {
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 4.5em;
+}
+
+.campo__ayuda--aviso {
+  border-left: 3px solid var(--gold);
+  padding-left: var(--space-xs);
+  color: var(--ink-soft);
+}
+
+.interruptor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+}
+.interruptor input { width: auto; accent-color: var(--primary); }
+
+.bloques { display: grid; gap: var(--space-m); margin-top: var(--space-m); }
+
+.bloque {
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--space-m);
+  background: var(--surface-alt);
+}
+
+.bloque__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  margin-bottom: var(--space-xs);
+}
+
+.bloque__num {
+  font-family: var(--font-display);
+  font-size: var(--step-1b);
+  color: var(--primary-strong);
+  line-height: 1;
+}
+
+.bloque__mandos { display: flex; gap: var(--space-2xs); }
+
+.mando-mini {
+  font: inherit;
+  font-size: var(--step--1);
+  line-height: 1;
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.mando-mini:hover:not(:disabled) { background: var(--primary-tint); }
+.mando-mini:disabled { opacity: .4; cursor: not-allowed; }
+.mando-mini--peligro { color: var(--primary-strong); }
+
+/* Barra de guardado pegada abajo: en un formulario de dos pantallas de alto,
+   el botón al final obliga a bajar del todo cada vez que se cambia un campo. */
+.barra-guardar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-s);
+  padding: var(--space-s) 0;
+  margin-top: var(--space-l);
+  background: linear-gradient(to top, var(--surface) 70%, transparent);
+}
+
+/* ══════════════ VOLUNTARIOS ══════════════ */
+
+/* ── Los filtros ─────────────────────────────────────────────────────────
+   `align-items: start` y no `end`. Con `end`, el campo del DNI —que lleva
+   una línea de ayuda debajo— empujaba a sus vecinos hacia arriba y la fila
+   quedaba en escalera: la etiqueta «DNI» flotando por encima de las demás.
+   Alineando arriba, todas las etiquetas quedan a la misma altura vengan con
+   ayuda o sin ella. */
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-s);
+  align-items: start;
+  margin-bottom: var(--space-m);
+}
+.filtros .campo { margin: 0; }
+
+/* Los botones se alinean con los campos, no con sus etiquetas: van una línea
+   más abajo, a la altura de los recuadros. */
+.filtros__acciones { display: flex; gap: var(--space-2xs); align-self: end; }
+
+/* Los rangos rápidos ocupan la fila entera, debajo de todo. */
+.filtros__rangos {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding-block-start: var(--space-xs);
+  border-block-start: var(--rule) solid var(--line);
+}
+.filtros__rangos:empty { display: none; }
+
+.chip {
+  font: inherit;
+  font-size: var(--step--1);
+  padding: 5px 11px;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  margin-top: var(--space-m);
+  font-size: var(--step--1);
+}
+.paginacion__paginas { display: flex; gap: var(--space-2xs); flex-wrap: wrap; }
+.paginacion__paginas a,
+.paginacion__paginas span {
+  padding: var(--space-2xs) var(--space-xs);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.paginacion__paginas [aria-current="page"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+}
+
+.ficha { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-l); align-items: start; }
+@media (max-width: 900px) { .ficha { grid-template-columns: 1fr; } }
+
+.datos-lista { margin: 0; display: grid; grid-template-columns: minmax(9rem, auto) 1fr; gap: var(--space-2xs) var(--space-m); }
+.datos-lista dt { font-size: var(--step--1); color: var(--ink-mute); }
+.datos-lista dd { margin: 0; }
+
+.sensible {
+  border: var(--rule) dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--space-s);
+  margin-top: var(--space-s);
+}
+.sensible__aviso { font-size: var(--step--1); color: var(--ink-soft); margin: 0 0 var(--space-xs); }
+
+.linea-tiempo { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-s); }
+.linea-tiempo li { border-left: 2px solid var(--line-strong); padding-left: var(--space-s); }
+.linea-tiempo time { font-size: var(--step--1); color: var(--ink-mute); display: block; }
+
+/* ══════════════ ESTADO DEL SITIO ══════════════ */
+
+/* La paleta no tiene verde. Abierto = superficie normal; cerrado = la banda
+   roja de la marca. Aun así el estado lo dice el texto, no sólo el color. */
+.estado-sitio {
+  border: var(--rule) solid var(--line-strong);
+  border-left: 6px solid var(--accent-strong);
+  border-radius: var(--radius);
+  padding: var(--space-m) var(--space-l);
+  margin-bottom: var(--space-m);
+  background: var(--surface);
+  box-shadow: var(--sombra-s);
+}
+.estado-sitio--cerrado {
+  background: var(--surface-invert);
+  color: var(--on-primary);
+  border-color: var(--surface-invert);
+  border-left-color: var(--gold-invert);
+}
+
+.estado-sitio__rotulo {
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--step--2);
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  opacity: .75;
+}
+.estado-sitio__valor {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-display);
+  font-size: var(--step-1b);
+  font-weight: 600;
+}
+.estado-sitio__nota { margin: 0; font-size: var(--step--1); opacity: .9; }
+
+.fila { display: flex; align-items: center; gap: var(--space-s); flex-wrap: wrap; }
+.sep-m { margin-top: var(--space-m); }
+
+.solo-lectores {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+code {
+  font-size: .92em;
+  background: var(--surface-alt);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ══════════════ CONFIGURACIÓN ══════════════ */
+
+.lista-casillas { display: grid; gap: var(--space-xs); }
+.lista-casillas .interruptor { align-items: center; }
+
+.opciones { display: grid; gap: var(--space-xs); }
+
+.opcion {
+  display: flex;
+  gap: var(--space-s);
+  align-items: flex-start;
+  padding: var(--space-s) var(--space-m);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.opcion:hover { background: var(--surface-alt); }
+.opcion input { margin-top: 3px; accent-color: var(--primary); flex: none; width: auto; }
+
+/* El texto ocupa lo que queda. Sin esto, un texto largo se reparte en una
+   columna estrecha en lugar de usar el ancho del recuadro. */
+.opcion > span { flex: 1 1 auto; min-width: 0; }
+.opcion:has(input:checked) { border-color: var(--primary); background: var(--primary-tint); }
+
+.opcion__nota {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ESCRITORIO · CONTADORES Y RITMO
+
+   Todo lo de aquí se dibuja con divs y porcentajes, sin librería de gráficos.
+   Son siete barras y veinticuatro rayas: traer cien kilobytes de JavaScript
+   para eso sería desproporcionado, y además obligaría a que el panel dependa
+   de un CDN para enseñar una cifra.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.tarjeta__nota { font-size: var(--step--1); color: var(--ink-soft); }
+.tarjeta__nota strong { color: var(--ink); }
+
+.subtitulo {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-block: var(--space-m) var(--space-xs);
+}
+
+/* ── Los siete días ─────────────────────────────────────────────────────── */
+.barras {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  align-items: end;
+  min-height: 160px;
+}
+
+.barras__item { display: flex; }
+
+.barras__enlace {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  gap: 4px;
+  width: 100%; height: 148px;   /* más alto: con 118 las barras quedaban
+                                   aplastadas y no se distinguía un 22 de
+                                   un 31, que es justo para lo que sirven */
+  text-decoration: none;
+  color: var(--ink-soft);
+  border-radius: var(--radius);
+  padding-block-end: 4px;
+  transition: background .18s ease;
+}
+.barras__enlace:hover { background: var(--surface-alt); }
+
+.barras__cifra { font-family: var(--font-ui); font-size: var(--step--1); font-weight: 700; color: var(--ink); }
+
+.barras__vara {
+  width: 100%;
+  max-width: 34px;
+  background: var(--primary);
+  border-radius: 3px 3px 0 0;
+  /* El mínimo de 2px del atributo style hace que un día con cero se vea como
+     una línea y no como un hueco: un cero es un dato, no una ausencia. */
+  transition: height .25s ease;
+}
+
+.barras__pie { font-size: 11px; white-space: nowrap; }
+
+/* El día que se está mirando, y hoy. Se distinguen porque no siempre son el
+   mismo: se puede estar mirando el martes desde el jueves. */
+.barras__item.es-hoy .barras__cifra { color: var(--primary-strong); }
+.barras__item.es-elegido .barras__enlace { background: var(--surface-alt); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.barras__item.es-elegido .barras__vara { background: var(--primary-strong); }
+
+/* ── El selector de día ─────────────────────────────────────────────────── */
+.filtro-dia {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+  margin-block: var(--space-s) var(--space-m);
+  padding-block-end: var(--space-s);
+  border-block-end: var(--rule) solid var(--line);
+}
+.filtro-dia input[type="date"] {
+  min-height: 38px;
+  padding: 6px 10px;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.btn--menor { padding: 7px 12px; min-height: 38px; }
+
+/* ── Las veinticuatro horas ─────────────────────────────────────────────── */
+.horas {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  align-items: end;
+  height: 96px;
+}
+
+.horas__item {
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  height: 100%;
+  /* La franja de fondo dibuja la hora aunque esté vacía: sin ella no se
+     distingue «no hubo nadie» de «aquí no hay hora». */
+  background: linear-gradient(var(--surface-alt), var(--surface-alt)) bottom / 100% 76px no-repeat;
+  border-radius: 2px;
+}
+
+.horas__vara { width: 100%; background: var(--primary); border-radius: 2px 2px 0 0; }
+.horas__item.con-datos .horas__vara { background: var(--primary-strong); }
+
+.horas__pie {
+  font-size: 10px; color: var(--ink-mute);
+  margin-block-start: 3px; height: 12px;
+}
+
+/* ── Dos tablas, una al lado de la otra ─────────────────────────────────── */
+.rejilla-dos { display: grid; gap: var(--space-m); }
+@media (min-width: 1000px) { .rejilla-dos { grid-template-columns: 1fr 1fr; } }
+
+/* Las listas de departamentos y jurisdicciones crecen sin freno —veinticinco
+   y pico cada una—, así que se les pone techo y se desplazan por dentro. Sin
+   esto, el escritorio se convierte en dos columnas kilométricas y lo demás
+   queda enterrado. */
+.tabla-envoltorio--alta { max-height: 340px; overflow-y: auto; }
+
+.tabla--compacta th, .tabla--compacta td { padding-block: 6px; }
+.tabla .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* La fila que tuvo movimiento el día elegido, marcada al margen. */
+.tabla tr.es-activa td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EL CALENDARIO DE LOS FILTROS
+
+   Propio, no el del navegador. El nativo se ve distinto en cada sistema y
+   escribía la fecha en formato del ordenador —aquí «mm/dd/yyyy»—, que en Perú
+   se lee al revés y hace elegir el día equivocado sin que nadie lo note.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.campo--fecha { position: relative; }
+
+.calendario {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 246px;
+  padding: 10px;
+  background: var(--surface);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgb(28 20 22 / .18);
+}
+
+.calendario__barra {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 6px;
+  margin-block-end: 8px;
+}
+.calendario__barra strong {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  text-transform: capitalize;
+}
+
+.calendario__paso {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px; line-height: 1;
+  cursor: pointer;
+}
+.calendario__paso:hover { background: var(--surface-alt); }
+
+.calendario__rejilla {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+
+.calendario__dia {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-mute);
+  padding-block-end: 4px;
+}
+
+.calendario__numero {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+.calendario__numero:hover { background: var(--surface-alt); }
+
+/* Hoy se marca con un punto y no con un color de fondo: el fondo está
+   reservado para el día ELEGIDO, y usarlo para las dos cosas hace que no se
+   distinga cuál está seleccionado. */
+.calendario__numero.es-hoy { font-weight: 700; box-shadow: inset 0 -2px 0 var(--primary); }
+.calendario__numero.es-elegido { background: var(--primary); color: #fff; font-weight: 700; }
+
+.calendario__pie {
+  display: flex; justify-content: space-between; gap: 6px;
+  margin-block-start: 8px;
+  padding-block-start: 8px;
+  border-block-start: var(--rule) solid var(--line);
+}
+.calendario__atajo {
+  border: 0; background: transparent;
+  color: var(--primary-strong);
+  font: inherit; font-size: var(--step--1);
+  cursor: pointer; padding: 2px 4px;
+}
+.calendario__atajo:hover { text-decoration: underline; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LA TABLA DE INSCRIPCIONES
+
+   El listado tiene nueve columnas y todas competían por el mismo ancho, así
+   que el navegador repartía a partes iguales: «María Fernanda Quispe Rojas»
+   se partía en cuatro renglones mientras la columna del estado —que dice
+   «Sin revisar» y nada más— tenía sitio de sobra. Y aun así la tabla se
+   desbordaba y el estado quedaba cortado tras una barra horizontal.
+
+   Con anchos mínimos por columna cada dato ocupa lo que necesita. Se aplica
+   sólo a esta tabla, no a todas: es la única con tantas columnas.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.tabla--inscripciones { min-width: 940px; }
+
+/* El nombre es lo que se lee y sobre lo que se pulsa: se le da el ancho que
+   hace falta para que quepa en una línea o dos, no en cuatro. */
+.tabla--inscripciones td:nth-child(2) { min-width: 190px; }
+.tabla--inscripciones td:nth-child(2) a { text-wrap: balance; }
+
+/* Código, DNI y estado no se parten nunca: son cadenas cortas y partirlas las
+   hace ilegibles. */
+.tabla--inscripciones td:nth-child(1),
+.tabla--inscripciones td:nth-child(3),
+.tabla--inscripciones td:last-child { white-space: nowrap; }
+
+/* Los anchos, ajustados para que las nueve columnas quepan sin barra en una
+   pantalla de escritorio corriente. La suma importa: con 170 + 150 + 190 y el
+   relleno de nueve columnas se pasaba de 1400 píxeles y la última —la fecha—
+   quedaba cortada justo por el borde. */
+.tabla--inscripciones td:nth-child(4) { min-width: 150px; }   /* contacto */
+.tabla--inscripciones td:nth-child(5) { min-width: 130px; }   /* dónde vive */
+.tabla--inscripciones td:nth-child(7) { max-width: 130px; }   /* servicio */
+
+/* El relleno lateral baja de 20 a 12: multiplicado por nueve columnas y dos
+   lados son 144 píxeles, que es justo lo que faltaba. */
+.tabla--inscripciones th,
+.tabla--inscripciones td { padding-inline: 12px; }
+
+/* La barra de desplazamiento horizontal se queda —con nueve columnas en una
+   pantalla estrecha es inevitable— pero se hace visible en lugar de aparecer
+   sólo al pasar por encima: una barra que no se ve es una columna perdida. */
+.tabla-envoltorio { overflow-x: auto; scrollbar-width: thin; padding-block-end: 2px; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LA TARJETA ANCHA
+
+   El listado de inscripciones tiene nueve columnas y no cabe en el ancho de
+   lectura del panel —1180 píxeles, pensado para textos y formularios—. En un
+   monitor de 1920 sobraba medio metro de pantalla a la derecha mientras la
+   tabla se desplazaba por dentro.
+
+   Esta tarjeta se sale de ese corsé y llega hasta donde dé la pantalla,
+   dejando sólo los márgenes. El resto del panel no cambia: un formulario a
+   1900 píxeles de ancho sería ilegible, y por eso el ancho de lectura sigue
+   siendo el normal.
+   ══════════════════════════════════════════════════════════════════════════ */
+/* El ancho lo suelta el CONTENEDOR, no la tarjeta.
+
+   La primera versión estiraba la tarjeta con `calc(100vw - …)`, restando a
+   ojo el ancho del menú lateral. Eso es adivinar: basta que el menú cambie de
+   ancho, o que aparezca una barra de desplazamiento, para que la cuenta se
+   desvíe y la tarjeta se salga de la pantalla.
+
+   Con `:has()` es el propio contenido el que dice lo que necesita: si dentro
+   hay una tarjeta ancha, la zona de contenido se ensancha. Sin ella, se queda
+   en el ancho de lectura de siempre, que es el que conviene a formularios y
+   textos —uno a 1900 píxeles no hay quien lo lea—.
+
+   En un navegador sin `:has()` no pasa nada: el panel se ve como antes, con
+   la tabla desplazándose por dentro. */
+.principal:has(.tarjeta--ancha) {
+  max-width: 1680px;
+  /* Y con menos margen lateral: el margen ancho es para leer textos, y aquí
+     lo que hay es una tabla. Esos píxeles son los que faltaban para que la
+     columna de la fecha entrara entera. */
+  padding-inline: var(--space-l);
+}
+
+/* Con la tarjeta ancha, la tabla ya no necesita un mínimo que fuerce la barra:
+   se reparte en el sitio que hay. El mínimo se queda para pantallas pequeñas,
+   donde sí hace falta desplazarse. */
+@media (min-width: 1400px) {
+  .tabla--inscripciones { min-width: 0; }
+}
+
+/* En pantallas donde el menú lateral se pliega, la cuenta anterior no vale:
+   ahí la tarjeta ocupa lo que ocupa el contenido y nada más. */
+@media (max-width: 900px) {
+  .tarjeta--ancha { width: auto; }
+}
+
+/* La cabecera de la tarjeta, con el botón de descarga a la derecha. */
+.tarjeta__cabecera { display: flex; align-items: center; justify-content: space-between; gap: var(--space-s); flex-wrap: wrap; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COMUNICADOS
+
+   Cada uno es una fila con su miniatura, su estado y sus cifras. Publicados e
+   historial se ven igual salvo por la pastilla de estado: un aviso retirado no
+   es basura, es un dato con el que comparar el siguiente.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.comunicado {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--space-s);
+  padding-block: var(--space-s);
+  border-block-end: var(--rule) solid var(--line);
+}
+.comunicado:last-child { border-block-end: 0; }
+
+.comunicado__miniatura {
+  width: 96px; height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+.comunicado__miniatura--vacia {
+  display: grid; place-items: center;
+  color: var(--ink-mute);
+  border: var(--rule) dashed var(--line-strong);
+}
+
+.comunicado__nombre { margin: 0; font-size: var(--step-0); }
+.comunicado__meta {
+  margin: 4px 0 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+  font-size: var(--step--1);
+}
+
+/* Las cifras, en columna y con el número grande: es lo que se viene a mirar. */
+.comunicado__cifras {
+  display: flex; gap: var(--space-m);
+  margin: 0;
+  text-align: right;
+}
+.comunicado__cifras dt {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-mute);
+}
+.comunicado__cifras dd {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  font-variant-numeric: tabular-nums;
+}
+.comunicado__cifras dd.es-destacada { font-weight: 700; color: var(--primary-strong); }
+
+.comunicado__accion { margin: 0; }
+
+/* El que está saliendo, marcado al margen. */
+.comunicado.es-vigente { box-shadow: inset 3px 0 0 var(--primary); padding-inline-start: var(--space-s); }
+
+@media (max-width: 760px) {
+  .comunicado { grid-template-columns: auto 1fr; }
+  .comunicado__cifras, .comunicado__accion { grid-column: 1 / -1; }
+  .comunicado__cifras { text-align: left; }
+}
+
+/* Las casillas de páginas, en rejilla para que no ocupen catorce líneas. */
+.casillas-rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 2px var(--space-s);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BIBLIOTECA DE IMÁGENES
+   ------------------------------------------------------------------------
+   Rejilla de miniaturas. El ancho mínimo de 220px es deliberado: por debajo
+   no se distingue una foto de otra y hay que abrirlas una a una para saber
+   cuál es cuál, que es justo lo que la biblioteca tiene que evitar.
+   ══════════════════════════════════════════════════════════════════════════ */
+.medios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.medio {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Fondo a cuadros: sin él, un logotipo con fondo transparente parece tener
+   fondo blanco y no se ve que la transparencia está ahí. */
+.medio__vista {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f2f1;
+  background-image:
+    linear-gradient(45deg, #e7e2e0 25%, transparent 25%, transparent 75%, #e7e2e0 75%),
+    linear-gradient(45deg, #e7e2e0 25%, transparent 25%, transparent 75%, #e7e2e0 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
+.medio__vista img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.medio__cuerpo {
+  padding: .7rem .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.medio__nombre {
+  margin: 0;
+  font-weight: 600;
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+
+.medio__meta {
+  margin: 0;
+  font-size: .78rem;
+  color: var(--ink-mute);
+}
+
+.medio__form { display: flex; flex-direction: column; gap: .4rem; }
+.medio__form input[type="text"] { width: 100%; }
+
+.medio__casilla {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .8rem;
+  color: var(--ink-soft);
+}
+
+/* La casilla no debe estirarse al ancho del campo como el resto de inputs. */
+.medio__casilla input[type="checkbox"] { width: auto; flex: none; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SELECTOR DE IMAGEN
+   Se usa en las secciones y en cada pieza. El <select> funciona sin
+   JavaScript; la vista previa es un añadido.
+   ══════════════════════════════════════════════════════════════════════════ */
+.selector-imagen {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: .8rem;
+  align-items: start;
+}
+
+.selector-imagen__vista {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f4f2f1;
+  overflow: hidden;
+}
+
+.selector-imagen__vista img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.selector-imagen__vacia {
+  font-size: .74rem;
+  color: var(--ink-mute);
+  text-align: center;
+  padding: .3rem;
+}
+
+@media (max-width: 540px) {
+  .selector-imagen { grid-template-columns: 1fr; }
+  .selector-imagen__vista { max-width: 140px; }
+}
+
+/* ── Dirección de la pieza ─────────────────────────────────────────────────
+   Se muestra en contexto —con el prefijo de la página delante— para que se
+   vea la dirección completa que se está creando y no un campo suelto cuyo
+   efecto haya que imaginar. */
+.campo-slug {
+  display: flex;
+  align-items: center;
+  gap: .15rem;
+  flex-wrap: wrap;
+}
+
+.campo-slug__base {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .85rem;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+
+.campo-slug input {
+  flex: 1 1 12rem;
+  min-width: 8rem;
+  width: auto;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .88rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   COLECCIONES · el segundo nivel de la lista de páginas
+
+   «Sedes» no es una página: es una colección con cuatro sedes dentro, cada
+   una con su propia dirección. Antes las veinticuatro páginas iban en una
+   sola tabla y esas fichas no aparecían en ninguna pantalla.
+
+   Lo que esta pantalla tiene que dejar claro de una ojeada es la jerarquía:
+   una colección contiene fichas. De ahí el recuadro, la sangría y el filete
+   vertical que las une.
+   ════════════════════════════════════════════════════════════════════════ */
+.colecciones { display: grid; gap: var(--space-m); margin-top: var(--space-m); }
+
+.coleccion {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+/* ── Cabecera: quién es a la izquierda, qué se puede hacer a la derecha ──
+   En dos columnas de verdad. Con los mandos en línea con el texto, el botón
+   de publicar caía solo a la línea de abajo y la ficha se leía como tres
+   cosas sueltas en lugar de una. */
+.coleccion__cabecera {
+  display: flex; flex-wrap: wrap; gap: var(--space-s);
+  align-items: flex-start; justify-content: space-between;
+  padding: var(--space-m);
+}
+.coleccion__quien { min-width: 0; }
+
+.coleccion__titulo {
+  margin: 0;
+  font-size: 1.06rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+}
+.coleccion__titulo a { color: inherit; text-decoration: none; }
+.coleccion__titulo a:hover { text-decoration: underline; }
+
+.coleccion__meta {
+  margin: var(--space-2xs) 0 0;
+  color: var(--ink-soft);
+  font-size: .84rem;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2xs);
+}
+.coleccion__punto { color: var(--ink-mute); }
+
+.coleccion__mandos {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs);
+}
+/* El formulario de publicar/ocultar es un bloque; sin esto añadía un salto
+   de línea invisible y descuadraba la fila de botones. */
+.coleccion__mandos form { display: inline-flex; margin: 0; }
+
+/* ── El desplegable de fichas ─────────────────────────────────────────── */
+.fichas { border-top: 1px solid var(--line); background: var(--surface-alt, transparent); }
+
+.fichas__resumen {
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-m);
+  font-size: .84rem;
+  color: var(--ink-soft);
+  display: flex; align-items: center; gap: var(--space-2xs);
+  list-style: none;
+  user-select: none;
+}
+.fichas__resumen::-webkit-details-marker { display: none; }
+.fichas__resumen:hover { color: var(--ink); }
+
+/* El triángulo se dibuja aquí para poder girarlo: el marcador nativo no se
+   puede animar y en Safari ni siquiera se oculta de forma fiable. */
+.fichas__flecha {
+  width: 0; height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform .18s ease;
+}
+.fichas[open] > .fichas__resumen .fichas__flecha { transform: rotate(90deg); }
+
+.fichas__cuenta {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.fichas__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-m) var(--space-xs) calc(var(--space-m) + var(--space-l));
+  position: relative;
+}
+/* El filete vertical es lo que dice «esto cuelga de aquello». Se para antes
+   del final para que no parezca que sigue hacia abajo. */
+.fichas__lista::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-m) + var(--space-s));
+  top: 0; bottom: calc(var(--space-xs) + 1.1rem);
+  width: 1px;
+  background: var(--line);
+}
+
+/* ── Una ficha ────────────────────────────────────────────────────────── */
+.ficha {
+  display: flex; align-items: center; gap: var(--space-s);
+  position: relative;
+  border-radius: 4px;
+}
+.ficha + .ficha { border-top: 1px solid var(--line); }
+.ficha:hover { background: var(--surface); }
+.ficha--apagada { opacity: .55; }
+
+/* El codo que sale del filete vertical hasta la ficha. */
+.ficha::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-l) * -1 + var(--space-s));
+  top: 50%;
+  width: calc(var(--space-l) - var(--space-s) - var(--space-2xs));
+  height: 1px;
+  background: var(--line);
+}
+
+/* Toda la zona de texto es el enlace de editar: el objetivo de clic es la
+   fila entera y no siete caracteres de un título corto como «Lima». */
+.ficha__principal {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  padding: var(--space-xs) var(--space-2xs);
+  text-decoration: none; color: inherit;
+}
+.ficha__principal:hover .ficha__nombre { text-decoration: underline; }
+
+/* Los titulares de noticia miden ochenta caracteres. Sin esto, uno solo
+   ensancha la fila, la fila ensancha la tarjeta y la pantalla entera acaba
+   desplazándose en horizontal. */
+.ficha__nombre { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.ficha__rotulo { color: var(--ink-soft); font-size: .84rem; }
+
+/* La dirección se va al final de la línea y no compite con el nombre. En
+   pantallas estrechas cae a su propia línea, que es donde estorba menos. */
+.ficha__ruta {
+  margin-left: auto;
+  color: var(--ink-mute);
+  font-size: .78rem;
+  /* En una línea y con puntos suspensivos si no cabe. El min-width:0 es lo
+     que le permite encoger: sin él, un elemento flexible no baja de su
+     ancho de contenido y los puntos suspensivos no llegan a aplicarse. */
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.ficha__mandos {
+  display: flex; align-items: center; gap: var(--space-2xs);
+  flex-shrink: 0;
+  padding-right: var(--space-2xs);
+}
+
+@media (max-width: 760px) {
+  .coleccion__cabecera { flex-direction: column; }
+  .coleccion__mandos { width: 100%; }
+  .fichas__lista { padding-left: calc(var(--space-s) + var(--space-l)); }
+  .ficha { align-items: flex-start; flex-direction: column; gap: 0; }
+  /* En pantalla estrecha la dirección se parte en varias líneas en lugar de
+     recortarse: aquí es la única forma de saber a qué página apunta. */
+  .ficha__ruta {
+    margin-left: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+  }
+  .ficha__mandos { padding: 0 0 var(--space-xs) var(--space-2xs); }
+  .ficha::before { top: 1.1rem; }
+}
+
+/* Dentro de una página, las fichas cuelgan de su sección con la misma forma
+   pero sin el recuadro: allí el recuadro ya lo pone la fila de la sección. */
+.fichas--sueltas {
+  margin: 0 0 var(--space-m);
+  padding: 0 0 0 var(--space-l);
+}
+/* El filete arranca desde el borde izquierdo de la fila de la sección, no
+   desde el borde del recuadro: aquí no hay recuadro. */
+.fichas--sueltas::before { left: var(--space-s); bottom: var(--space-xs); }
+.fichas--sueltas .ficha::before {
+  left: calc(var(--space-l) * -1 + var(--space-s));
+  width: calc(var(--space-l) - var(--space-s) - var(--space-2xs));
+}

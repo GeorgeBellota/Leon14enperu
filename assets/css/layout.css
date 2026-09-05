@@ -1,0 +1,229 @@
+/* ============================================================================
+   LAYOUT — contenedor, retícula y ritmo vertical
+   Un único sistema de espaciado, aplicado en un único nivel: .seccion.
+   Ninguna regla de elemento añade márgenes verticales por su cuenta.
+   ========================================================================== */
+
+.contenedor {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.contenedor--estrecho { max-width: 992px; }
+
+/* ── Ritmo vertical ────────────────────────────────────────────────────
+   Media separación arriba y abajo: entre dos secciones consecutivas la
+   distancia resultante es exactamente --space-3xl. Sin excepciones. */
+.seccion { padding-block: calc(var(--space-3xl) / 2); position: relative; }
+.seccion--alt  { background: var(--surface-alt); }
+.seccion--sin-aire-abajo { padding-block-end: 0; }
+
+/* ── Encabezado de sección ─────────────────────────────────────────────
+   El filete horizontal que abría cada sección se ha retirado por decisión
+   del cliente, junto con los cantos en diagonal de las bandas. Lo que
+   separa ahora una sección de otra es el cambio de fondo y el titular.
+
+   Y el titular tiene que sostenerlo él solo, así que deja de ser texto
+   plano: lleva el color principal en el rótulo, un contrafilete corto que
+   nace bajo la primera palabra, y una palabra destacada en --primary. */
+.seccion__encabezado {
+  margin-block-end: var(--space-xl);
+  display: block;
+  gap: var(--space-xs);
+}
+/* El <hr> sigue en el marcado para no tocar veinte páginas, pero no pinta.
+   Su animación de entrada (line-draw) ya no tiene nada que dibujar. */
+.seccion__filete { display: none; }
+
+.seccion__encabezado > p {
+  max-width: 46ch;
+  margin-block-start: var(--space-s);
+  color: var(--ink-soft);
+  font-size: var(--step-1);
+  line-height: 1.45;
+}
+
+/* ── El titular de sección ─────────────────────────────────────────────
+   Punto de anclaje de la página: es lo que dice de un vistazo qué estás
+   mirando. Tres capas, todas derivadas de los tokens:
+   1. el rótulo en --primary-strong (ya venía de base.css),
+   2. un contrafilete de 44 px en --primary bajo el titular,
+   3. --destaque para la palabra clave del titular. */
+.seccion__encabezado > h1,
+.seccion__encabezado > h2 {
+  position: relative;
+  padding-block-end: var(--space-s);
+  text-wrap: balance;
+}
+.seccion__encabezado > h1::after,
+.seccion__encabezado > h2::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 44px; height: 4px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+.banda-oscura .seccion__encabezado > h2::after { background: var(--gold-invert); }
+
+/* Palabra destacada dentro del titular. Va en el marcado, no se adivina:
+   <span class="destaque">Sedes</span>. Nunca sobre banda oscura, donde
+   --primary está prohibido (§5.4). */
+.destaque { color: var(--primary-strong); }
+.banda-oscura .destaque { color: var(--gold-invert); }
+
+/* Dos niveles de encabezado, no uno repetido trece veces.
+   NIVEL MAYOR (agenda, sedes, carta): rótulo desplazado a la columna de
+   margen y titular a --step-3. NIVEL NORMAL: rótulo encima, titular a
+   --step-2. La diferencia es lo que da relieve a una página larga. */
+@media (min-width: 1024px) {
+  .seccion__encabezado--mayor {
+    grid-template-columns: 176px minmax(0, 1fr);
+    column-gap: var(--gutter);
+    align-items: start;
+    margin-block-end: var(--space-2xl);
+  }
+  .seccion__encabezado--mayor .rotulo { grid-column: 1; grid-row: 2; padding-block-start: .9em; }
+  .seccion__encabezado--mayor > h1,
+  .seccion__encabezado--mayor > h2 { grid-column: 2; grid-row: 2; }
+  .seccion__encabezado--mayor > p  { grid-column: 2; grid-row: 3; }
+}
+
+.seccion__pie { margin-block-start: var(--space-l); }
+
+/* ── Retícula: 12 / 6 / 4 columnas ─────────────────────────────────────── */
+.reticula {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-l) var(--gutter);
+}
+.reticula > * { grid-column: 1 / -1; }
+.reticula--ajustada { gap: var(--space-m) var(--gutter); }
+
+.col-m-1 { grid-column: span 1; } .col-m-2 { grid-column: span 2; }
+.col-m-3 { grid-column: span 3; } .col-m-4 { grid-column: span 4; }
+
+@media (min-width: 768px) {
+  .reticula { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .col-t-1 { grid-column: span 1; } .col-t-2 { grid-column: span 2; }
+  .col-t-3 { grid-column: span 3; } .col-t-4 { grid-column: span 4; }
+  .col-t-5 { grid-column: span 5; } .col-t-6 { grid-column: span 6; }
+}
+
+@media (min-width: 1024px) {
+  .reticula { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .col-d-1 { grid-column: span 1; }   .col-d-2 { grid-column: span 2; }
+  .col-d-3 { grid-column: span 3; }   .col-d-4 { grid-column: span 4; }
+  .col-d-5 { grid-column: span 5; }   .col-d-6 { grid-column: span 6; }
+  .col-d-7 { grid-column: span 7; }   .col-d-8 { grid-column: span 8; }
+  .col-d-9 { grid-column: span 9; }   .col-d-10 { grid-column: span 10; }
+  .col-d-11 { grid-column: span 11; } .col-d-12 { grid-column: span 12; }
+  .inicio-d-2 { grid-column-start: 2; }
+  .inicio-d-4 { grid-column-start: 4; }
+}
+
+/* ── Pilas verticales de ritmo conocido ────────────────────────────────── */
+.pila > * + * { margin-block-start: var(--space-s); }
+.pila-m > * + * { margin-block-start: var(--space-m); }
+.pila-l > * + * { margin-block-start: var(--space-l); }
+
+.fila { display: flex; flex-wrap: wrap; gap: var(--space-s); align-items: center; }
+.fila--entre { justify-content: space-between; }
+
+/* Separadores puntuales, para no escribir estilos en línea en el marcado */
+.sep-m { margin-block-start: var(--space-m); }
+.sep-l { margin-block-start: var(--space-l); }
+
+/* ── A sangre ──────────────────────────────────────────────────────────
+   Rompe el contenedor y llega a los dos bordes de la ventana. Sin esto la
+   página entera vive dentro de un rectángulo centrado de 1320 px, que es
+   justo la sensación de tríptico que había que quitar.
+   Usa 100cqw/100vw con corrección de barra de scroll para no provocar
+   desbordamiento horizontal. */
+.a-sangre {
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+@supports (width: 100dvw) {
+  .a-sangre { width: 100dvw; max-width: 100dvw; margin-inline: calc(50% - 50dvw); }
+}
+
+/* Media sangre: llega al borde por un solo lado y respeta la retícula por el otro */
+.a-sangre-der { margin-inline-end: calc(50% - 50vw); }
+.a-sangre-izq { margin-inline-start: calc(50% - 50vw); }
+@media (max-width: 767px) {
+  .a-sangre-der, .a-sangre-izq { margin-inline: calc(var(--gutter) * -1); }
+}
+
+/* ── Página ────────────────────────────────────────────────────────────
+   El «hilo peregrino» —la línea roja ondulada que recorría el margen
+   izquierdo de toda la página— se ha eliminado. Decoraba sin ordenar y
+   arrastraba la pieza al registro de folleto. La continuidad entre secciones
+   ahora la dan la retícula y el ritmo vertical, no un adorno. */
+.pagina { position: relative; }
+.pagina > * { position: relative; z-index: 1; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   FONDOS Y FORMAS
+   Manchas ovaladas muy tenues, bandas con el canto en diagonal y arcos.
+   Todo sale de los tokens: al conmutar la paleta cambian con ella, y
+   ninguna forma lleva texto encima que dependa de su contraste.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Banda tintada con los cantos en diagonal, en lugar de un rectángulo.
+   El tono sale de --tono, que por defecto es el fondo alterno; las variantes
+   pastel lo cambian por los tintes de la paleta activa. Los tres tonos están
+   verificados contra todo lo que se les pone encima (153 comprobaciones). */
+/* Banda tintada RECTA. Los cantos en diagonal (clip-path) se retiraron por
+   decisión del cliente: cortaban el fondo en cuña y dejaban triángulos de
+   papel blanco entre secciones. Ahora el bloque de color llega de borde a
+   borde y lo que separa una sección de otra es el propio cambio de tono. */
+.seccion--tinte { position: relative; isolation: isolate; --tono: var(--surface-alt); }
+.seccion--tinte::before {
+  content: "";
+  position: absolute; z-index: -1;
+  inset: 0;
+  background: var(--tono);
+}
+/* El gris de este bloque estaba escrito como un hexadecimal literal. Dos
+   motivos para cambiarlo por el token: rompía la regla de que tokens.css es el
+   único archivo con valores hexadecimales, y sobre el fondo pastel daba 2,6:1,
+   por debajo del mínimo legible. --ink-mute es el gris de texto secundario del
+   sistema y está dentro de las 153 comprobaciones de contraste. */
+.seccion__pie.cierre-servicios.is-revealed {
+  width: 100%;
+  max-width: 100%;
+  font-style: oblique;
+  color: var(--ink-mute);
+  margin: 40px 0;
+}
+.seccion--pastel        { --tono: var(--primary-tint); }
+.seccion--pastel-acento { --tono: var(--accent-tint); }
+
+/* Las manchas ovaladas de fondo se retiraron por decisión del cliente: eran
+   adorno que no decía nada. El relieve lo dan ahora las sombras (--sombra-s /
+   -m / -g en tokens.css) y las bandas de color de sección. */
+
+/* Arco: el canto superior de la imagen se cierra en medio punto.
+   Es la forma de una ventana de iglesia, no un border-radius de plantilla. */
+.figura--arco { border-radius: 50% 50% 0 0 / 26% 26% 0 0; }
+@media (max-width: 767px) { .figura--arco { border-radius: 50% 50% 0 0 / 18% 18% 0 0; } }
+
+/* ── Visibilidad por dispositivo ───────────────────────────────────────
+   Móvil no es el «responsive» del escritorio: hay bloques que existen solo
+   en uno de los dos. */
+.solo-movil { display: none; }
+@media (max-width: 767px) {
+  .solo-movil { display: block; }
+  .oculto-movil { display: none; }
+}
+
+/* ── Banda a sangre ────────────────────────────────────────────────────── */
+.banda-oscura {
+  background: var(--surface-invert);
+  color: var(--on-primary);
+}
+.banda-oscura .rotulo { color: var(--gold-invert); }
+.banda-oscura .filete { background: var(--gold-invert); opacity: .5; }
+.banda-oscura .filete--corto { background: var(--gold-invert); opacity: 1; }

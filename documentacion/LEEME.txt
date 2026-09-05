@@ -1,0 +1,40 @@
+DOCUMENTACIÓN DEL PROYECTO · leon14enperu.com
+======================================================================
+
+  INSTALACION.md      Cómo levantar el proyecto en tu máquina, paso a
+                      paso. Empieza por aquí si es tu primer día.
+
+                      Lo que más suele atascar: Laragon viene con MySQL
+                      y este proyecto necesita MariaDB. Está explicado
+                      en el apartado 2.
+
+  arquitectura.html   Los cuatro flujos del servicio y el resumen de las
+                      medidas de seguridad. Se abre con doble clic.
+
+  inventario-cms.json Qué secciones y qué campos tiene cada página en el
+                      gestor de contenidos. Es una referencia, no se
+                      edita a mano.
+
+  ultima-solicitud.pdf  El informe del cliente de septiembre de 2026:
+                      de aquí salen el carrusel, el itinerario, los
+                      santos, las noticias y el bloque de la CEP.
+
+
+  ⚠ NO SUBIR ESTA CARPETA AL SERVIDOR
+
+  arquitectura.html describe cada control de seguridad y dónde está.
+  Publicado, es un mapa para quien quiera atacar el sitio.
+
+  Y ojo: el vhost bloquea .md, .sql, .txt y .zip, pero NO .html. Un
+  archivo .html dentro de la raíz web SE SIRVE.
+
+  Si alguna vez hiciera falta tenerlo en el servidor, primero esta
+  regla en el vhost, antes de subirlo:
+
+      location ^~ /documentacion/ { return 404; }
+
+
+  ⚠ Y SI EL REPOSITORIO VA A SER PÚBLICO
+
+  Esta carpeta no debería estar en él, por lo mismo. En un repositorio
+  privado del equipo, sin problema.

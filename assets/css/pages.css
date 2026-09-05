@@ -1,0 +1,1015 @@
+/* ============================================================================
+   PÁGINAS INTERNAS — agenda, sedes, voluntariado, 404
+   ========================================================================== */
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. CABECERA DE PÁGINA — compacta, nunca un hero a pantalla completa
+   ════════════════════════════════════════════════════════════════════════ */
+/* LA FOTOGRAFÍA LLENA LA BANDA, Y EL RECORTE SIEMPRE CAE ABAJO.
+
+   Antes había dos tratamientos y dos redimensionamientos: en móvil la foto
+   llevaba aspect-ratio 3/2 y max-height 46vh, y en escritorio pasaba a fondo
+   absoluto. De ahí salían los dos defectos:
+
+   · El «zoom» de móvil. Meter una foto de 2.33:1 en un marco de 3/2 obliga a
+     cover a escalar por altura y a comerse 215 px por los lados. No había
+     zoom: había un marco con la proporción equivocada.
+   · La cabeza cortada. object-position: 50% 32% desplaza el encuadre HACIA
+     ARRIBA, así que lo primero que se pierde cuando el marco se hace más
+     apaisado que la foto es el borde superior. Y en estas fotografías el
+     borde superior es la cabeza del Santo Padre.
+
+   Ahora hay un solo tratamiento en todos los anchos: la foto es fondo absoluto
+   y llena el 100% de la banda, sin proporción impuesta y sin tope de alto.
+
+   LA REGLA QUE PROTEGE LA CABEZA es object-position: 50% 0%. cover recorta
+   siempre —es lo que hace—, pero anclando el encuadre al borde superior lo que
+   se recorta es SIEMPRE la parte de abajo. La cabeza no se toca nunca, mida lo
+   que mida la banda y sea cual sea la proporción de la foto.
+
+   Sigue siendo un <img> con <picture> y no un background-size: cover, aunque
+   el resultado visual sea el mismo: el WebP y el srcset sólo funcionan con
+   <source>, y pasarlo a fondo CSS obligaría a servir un único JPG a todo el
+   mundo. Es justo lo contrario de lo pedido. */
+.cabecera-pagina {
+  position: relative;
+  margin-block-end: var(--space-2xl);
+  padding-block-start: var(--header-h);   /* la cabecera es sólida y ocupa su sitio */
+  color: var(--on-primary);
+  background: var(--surface-invert);
+  min-height: 380px;
+  display: flex; align-items: flex-end;
+}
+
+/* Sin aspect-ratio y sin max-height: el marco ya no le impone forma a la
+   fotografía, sólo la contiene. */
+.cabecera-pagina__media {
+  position: absolute; inset: 0;
+  overflow: hidden;
+}
+/* <picture> es un elemento en línea y sin altura propia, así que el
+   `height: 100%` de la imagen se apoyaba en la nada y la foto se quedaba con
+   su alto natural. Con la cabecera baja no se notaba —la imagen daba de sobra—
+   pero al subir la reserva quedó una banda de rojo vacío bajo la fotografía. */
+.cabecera-pagina__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cabecera-pagina__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;   /* ← ancla arriba: el recorte cae abajo */
+  filter: none;
+  display: block;
+}
+
+.cabecera-pagina__contenido {
+  position: relative; z-index: 4;
+  width: 100%;
+  /* Reserva de foto visible por encima del texto. Crece con el ancho en vez de
+     ser un valor fijo, para que la franja se mantenga en cualquier pantalla.
+
+     Subida a la mitad más de lo que era: con la reserva anterior el bloque
+     rojo empezaba a la altura de las caras de la fotografía y las tapaba.
+     Una foto de gente en la que no se ven las caras no cuenta nada. */
+  padding-block: clamp(225px, 33vw, 348px) 0;
+}
+.cabecera-pagina__bloque {
+  background: var(--surface-invert);
+  padding: var(--space-l) var(--space-l) var(--space-m);
+  max-width: 736px;
+  margin-block-end: calc(var(--space-2xl) * -1);
+  position: relative;
+  box-shadow: var(--sombra-g), 0 0 0 1px color-mix(in srgb, var(--on-primary) 12%, transparent);
+}
+
+/* ── En móvil, el bloque deja ver la fotografía ──────────────────────────
+   En una pantalla estrecha la tarjeta ocupa casi todo el ancho y tapaba la
+   mitad de la imagen. Con el fondo al 50% se sigue viendo lo que hay detrás.
+
+   El problema de bajar la opacidad a secas es el contraste: el texto es
+   blanco, y un rojo al 50% sobre una zona clara de la foto —un cielo, una
+   camisa— da una mezcla clara sobre la que el blanco baja a unos 2:1. El
+   mínimo legible es 4,5:1.
+
+   Por eso no se sube la opacidad, sino que se OSCURECE lo que queda detrás:
+   brightness(.45) apaga el fondo antes de que el rojo lo cubra, así que el
+   resultado es oscuro venga la foto como venga. La imagen se sigue viendo
+   —difuminada y más oscura, pero se ve—, que es lo que se pedía, y el texto
+   se lee igual que antes. */
+@media (max-width: 767px) {
+  .cabecera-pagina__bloque {
+    margin-bottom: -150px;
+    background: color-mix(in srgb, var(--surface-invert) 50%, transparent);
+    backdrop-filter: blur(7px) brightness(.45) saturate(1.15);
+    -webkit-backdrop-filter: blur(7px) brightness(.45) saturate(1.15);
+  }
+
+  /* Sin backdrop-filter no hay forma de oscurecer el fondo, y el texto
+     quedaría ilegible: ahí se vuelve al fondo sólido. Un titular que no se lee
+     es peor que una foto que se ve menos. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .cabecera-pagina__bloque {
+      background: color-mix(in srgb, var(--surface-invert) 92%, transparent);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .cabecera-pagina { min-height: 620px; }
+  .cabecera-pagina__contenido { padding-block: clamp(180px, 23vw, 348px) 0; }
+  .cabecera-pagina__bloque { padding: var(--space-xl) var(--space-xl) var(--space-l); }
+}
+/* El min-height sube con la reserva: si sólo creciera el relleno de dentro, la
+   foto se recortaría por abajo y el aire ganado arriba se perdería. */
+@media (min-width: 1024px) { .cabecera-pagina { min-height: 700px; } }
+
+.cabecera-pagina__titulo { font-size: var(--step-3); line-height: .96; max-width: 14ch; margin-block: var(--space-s) var(--space-m); }
+.cabecera-pagina__bajada { max-width: 42ch; font-size: var(--step-1); line-height: 1.4; color: color-mix(in srgb, var(--on-primary) 88%, transparent); }
+.cabecera-pagina .migas { margin-block-start: var(--space-l); color: color-mix(in srgb, var(--on-primary) 82%, transparent); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   GRILLA DE SEDES (home)
+   Sustituye al diagrama de nodos y al índice móvil: una sola pieza para los
+   dos anchos. Cuatro columnas en escritorio, dos en tableta, una en móvil.
+   ════════════════════════════════════════════════════════════════════════ */
+.sedes-grilla {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: var(--space-m);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 600px)  { .sedes-grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .sedes-grilla { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-l) var(--space-m); } }
+
+.sede-caja__enlace {
+  display: flex; flex-direction: column; height: 100%;
+  text-decoration: none;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--sombra-m);
+  transition: box-shadow .25s var(--ease), transform .25s var(--ease);
+}
+.sede-caja__enlace:hover { box-shadow: var(--sombra-g); transform: translateY(-3px); }
+
+.sede-caja__media { display: block; position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+.sede-caja__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
+.sede-caja__enlace:hover .sede-caja__media img { transform: scale(1.05); }
+/* Velo inferior: la ficha se apoya en él y la foto no choca con el texto.
+   Aquí no hay rostros —son catedrales y plazas—, así que el degradado es
+   libre; es justo el caso para el que se escribió el componente. */
+.sede-caja__media::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top,
+    color-mix(in srgb, var(--ink) 42%, transparent) 0%,
+    transparent 46%);
+}
+
+.sede-caja__cuerpo {
+  display: flex; flex-direction: column; gap: var(--space-2xs);
+  padding: var(--space-m);
+  flex: 1;
+}
+.sede-caja__num { font-size: var(--step--1); letter-spacing: var(--track-meta); }
+.sede-caja__nombre {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: var(--step-1b); line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.sede-caja__meta {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.sede-caja__linea { color: var(--ink-soft); font-size: var(--step--1); line-height: 1.5; }
+.sede-caja__ir {
+  margin-block-start: auto; padding-block-start: var(--space-s);
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-accion); text-transform: uppercase;
+  color: var(--primary-strong);
+}
+.sede-caja__ir svg { width: 1.1em; height: 1.1em; transition: transform .25s var(--ease); }
+.sede-caja__enlace:hover .sede-caja__ir svg { transform: translateX(4px); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   CÓMO AYUDAR — tres iconos, sin fotografía
+   ════════════════════════════════════════════════════════════════════════ */
+.ayuda-grilla { row-gap: var(--space-xl); }
+
+.ayuda-caja { display: flex; flex-direction: column; gap: var(--space-2xs); }
+
+.ayuda-caja__disco {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px;
+  margin-block-end: var(--space-s);
+  border-radius: 50%;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+  box-shadow: var(--sombra-s);
+}
+.ayuda-caja__disco svg { width: 38px; height: 38px; }
+
+.ayuda-caja__titulo { font-size: var(--step-1b); line-height: 1.1; }
+.ayuda-caja__lema {
+  font-family: var(--font-read); font-style: italic;
+  font-size: var(--step--1); color: var(--ink-soft);
+}
+.ayuda-caja__texto { color: var(--ink-soft); font-size: var(--step-0); line-height: 1.55; max-width: 42ch; }
+.ayuda-caja__pie { margin-block-start: auto; padding-block-start: var(--space-s); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   MASONRY DE NOTICIAS
+   Columnas CSS, no grid: es lo que hace que las tarjetas se empaqueten por
+   altura sin dejar huecos, que es el punto del masonry. El precio es que el
+   orden de lectura baja por columnas; por eso el orden del marcado pone lo
+   importante primero y cada tarjeta es autónoma.
+   ════════════════════════════════════════════════════════════════════════ */
+.noticia-masonry {
+  list-style: none; padding: 0; margin: 0;
+  column-count: 1;
+  column-gap: var(--space-m);
+}
+@media (min-width: 600px)  { .noticia-masonry { column-count: 2; } }
+@media (min-width: 1024px) { .noticia-masonry { column-count: 3; column-gap: var(--space-l); } }
+
+.noticia-m {
+  break-inside: avoid;
+  margin-block-end: var(--space-m);
+}
+@media (min-width: 1024px) { .noticia-m { margin-block-end: var(--space-l); } }
+
+.noticia-m__enlace {
+  display: flex; flex-direction: column;
+  text-decoration: none;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--sombra-s);
+  transition: box-shadow .25s var(--ease), transform .25s var(--ease);
+}
+.noticia-m__enlace:hover { box-shadow: var(--sombra-g); transform: translateY(-2px); }
+
+.noticia-m__media { display: block; overflow: hidden; }
+.noticia-m__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
+.noticia-m__enlace:hover .noticia-m__media img { transform: scale(1.04); }
+/* Las tres alturas: es la variación de recorte lo que hace el masonry. */
+.noticia-m--a .noticia-m__media { aspect-ratio: 16 / 10; }
+.noticia-m--m .noticia-m__media { aspect-ratio: 4 / 3; }
+
+.noticia-m__cuerpo { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-m); }
+.noticia-m__meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.noticia-m__fecha {
+  font-family: var(--font-ui); font-size: var(--step--2);
+  letter-spacing: var(--track-meta); text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Sello de contenido no publicable. Ver el bloque de aviso en index.html:
+   ocho de las nueve entradas son redacción del estudio, no noticias. */
+.noticia-m__ejemplo {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-rotulo); text-transform: uppercase;
+  color: var(--accent-strong);
+  border: 1px solid var(--accent-strong);
+  border-radius: 2px;
+  padding: 1px 6px;
+}
+
+.noticia-m__titulo {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: var(--step-1); line-height: 1.15; letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-block-start: 4px;
+  text-wrap: balance;
+}
+.noticia-m--destacada .noticia-m__titulo { font-size: var(--step-1b); }
+.noticia-m__enlace:hover .noticia-m__titulo { text-decoration: underline; text-decoration-color: var(--primary); text-underline-offset: .18em; }
+.noticia-m__texto { color: var(--ink-soft); font-size: var(--step--1); line-height: 1.55; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   VOLUNTARIADO — piezas de orientación
+   La página es larga: seis servicios, tres fases y un formulario de diez
+   campos. Estas tres piezas son las que impiden que se lea como un muro.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* 1. El resumen de tres pasos, arriba del todo */
+.resumen-pasos {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: var(--space-m);
+  grid-template-columns: minmax(0, 1fr);
+  counter-reset: none;
+}
+@media (min-width: 768px) { .resumen-pasos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-l); } }
+
+.resumen-paso {
+  display: flex; flex-direction: column; gap: var(--space-2xs);
+  padding: var(--space-m);
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-s);
+}
+.resumen-paso__num { font-size: var(--step-1b); line-height: 1; }
+.resumen-paso__titulo {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: var(--step-1); line-height: 1.15; letter-spacing: -0.015em;
+}
+.resumen-paso__texto { color: var(--ink-soft); font-size: var(--step--1); line-height: 1.5; }
+.resumen-paso__ir {
+  margin-block-start: auto; padding-block-start: var(--space-s);
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-accion); text-transform: uppercase;
+  color: var(--primary-strong); text-decoration: none;
+}
+.resumen-paso__ir svg { width: 1.1em; height: 1.1em; transition: transform .25s var(--ease); }
+.resumen-paso__ir:hover svg { transform: translateX(4px); }
+
+/* 2. «Ten a mano»: los diez datos, antes de empezar a teclear */
+.ten-a-mano {
+  border-left: 3px solid var(--primary);
+  background: var(--primary-tint);
+  padding: var(--space-m) var(--space-m) var(--space-m) var(--space-l);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-block-end: var(--space-m);
+}
+.ten-a-mano__titulo {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-rotulo); text-transform: uppercase;
+  color: var(--primary-strong);
+  margin-block-end: var(--space-s);
+}
+.ten-a-mano__titulo svg { width: 1.25em; height: 1.25em; flex: none; }
+.ten-a-mano__lista { margin: 0; padding-inline-start: 1.15em; display: grid; gap: 5px; }
+.ten-a-mano__lista li { font-size: var(--step--1); line-height: 1.5; color: var(--ink-soft); }
+.ten-a-mano__lista strong { color: var(--ink); }
+.ten-a-mano__nota { margin-block-start: var(--space-s); font-size: var(--step--2); color: var(--ink-soft); }
+
+/* 3. Línea de contexto bajo el titular de cada paso del formulario */
+.paso__pie {
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  max-width: 56ch;
+  margin-block: -2px 10px;   /* era var(--space-m): 20px de aire que no aportaban */
+}
+
+/* 4. Caja lateral de «¿qué pasa después?» */
+.caja-lateral {
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  padding: var(--space-m);
+  align-self: start;
+  box-shadow: var(--sombra-s);
+}
+.caja-lateral__titulo {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: var(--step-1); line-height: 1.2;
+  margin-block-end: var(--space-s);
+}
+.caja-lateral__lista { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-s); }
+.caja-lateral__lista li { font-size: var(--step--1); line-height: 1.5; color: var(--ink-soft); }
+.caja-lateral__lista a { font-weight: 600; color: var(--primary-strong); }
+
+/* Cabecera sin fotografía: para las páginas legales y de servicio, donde una
+   imagen del Santo Padre sobre un texto de cookies sería puro relleno. */
+.cabecera-pagina--lisa {
+  min-height: 0;
+  margin-block-end: var(--space-2xl);
+  background: var(--surface-invert);
+  align-items: stretch;
+}
+.cabecera-pagina--lisa .cabecera-pagina__contenido { padding-block: var(--space-2xl) var(--space-xl); }
+.cabecera-pagina--lisa .cabecera-pagina__bloque {
+  background: transparent;
+  padding: 0;
+  margin-block-end: 0;
+  box-shadow: none;
+  max-width: 832px;
+}
+
+/* Ficha de datos de la biografía */
+.ficha-datos { display: grid; gap: 0; margin: 0; }
+.ficha-datos > div {
+  display: grid; gap: var(--space-2xs);
+  padding-block: var(--space-s);
+  border-top: 1px solid var(--line);
+}
+.ficha-datos > div:last-child { border-bottom: 1px solid var(--line); }
+@media (min-width: 700px) {
+  .ficha-datos > div { grid-template-columns: 224px minmax(0, 1fr); column-gap: var(--space-m); align-items: baseline; }
+}
+.ficha-datos dt {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-rotulo); text-transform: uppercase; color: var(--ink-soft);
+}
+.ficha-datos dd { margin: 0; font-size: var(--step-0); }
+
+/* El escudo a tamaño de lámina en la página del Papa */
+.escudo-pagina { width: 100%; max-width: 352px; height: auto; }
+
+/* Páginas legales: los títulos interiores respiran dentro del texto corrido */
+.legal__titulo {
+  font-size: var(--step-1b);
+  margin-block: var(--space-xl) var(--space-s);
+}
+.legal__titulo:first-child { margin-block-start: 0; }
+.texto-lectura code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em;
+  background: var(--surface-alt);
+  padding: .1em .35em;
+  border-radius: 3px;
+}
+
+/* Pie de foto: dice qué se ve, sin atribuirlo a la sede */
+.pie-foto {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  color: var(--ink-soft);
+  margin-block-start: var(--space-xs);
+  max-width: 52ch;
+}
+.pie-foto span {
+  display: block;
+  font-size: var(--step--2);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-block-start: 5px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. AGENDA
+   ════════════════════════════════════════════════════════════════════════ */
+/* Sin recuadro discontinuo: la frase del cliente, a cuerpo de declaración,
+   bajo un filete grueso. Un rectángulo de puntos parecía un hueco sin resolver. */
+.estado-actual {
+  border: 0;
+  border-top: 2px solid var(--ink);
+  border-radius: 0;
+  padding: var(--space-m) 0 0;
+}
+.estado-actual__frase {
+  font-family: var(--font-read);
+  font-size: var(--step-2);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+}
+.estado-actual__meta {
+  font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-soft);
+  letter-spacing: var(--track-meta); text-transform: uppercase;
+  margin-block-start: var(--space-l);
+  display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-l);
+}
+
+.ventanas { list-style: none; padding: 0; margin: 0; }
+.ventana {
+  display: grid; gap: var(--space-2xs) var(--gutter);
+  padding-block: var(--space-l);
+  border-top: 1px solid var(--line);
+}
+.ventana:last-child { border-bottom: 1px solid var(--line); }
+@media (min-width: 768px) {
+  .ventana { grid-template-columns: minmax(0, 1fr) 224px 256px; align-items: baseline; }
+}
+.ventana__sede { font-family: var(--font-display); font-size: var(--step-1b); font-weight: 500; letter-spacing: -0.02em; }
+.ventana__franja {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.actos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.acto { padding-block: var(--space-m); border-top: var(--rule) solid var(--line); }
+.acto:last-child { border-bottom: var(--rule) solid var(--line); }
+.acto__titulo { font-size: var(--step-1); }
+.acto__texto { color: var(--ink-soft); max-width: var(--measure); margin-block-start: 5px; }
+@media (min-width: 1024px) {
+  .actos { grid-template-columns: repeat(2, 1fr); column-gap: var(--gutter); }
+  .acto:nth-child(2) { border-top: var(--rule) solid var(--line); }
+  .acto:nth-last-child(2):nth-child(odd) { border-bottom: var(--rule) solid var(--line); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. SEDES
+   ════════════════════════════════════════════════════════════════════════ */
+.sede { scroll-margin-top: calc(var(--header-h) + var(--space-m)); }
+.sede + .sede { margin-block-start: var(--space-3xl); }
+.sede__figura { margin-block-end: var(--space-m); }
+.sede__nombre { font-size: var(--step-2); }
+.sede__jurisdiccion {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft);
+  margin-block: var(--space-2xs) var(--space-m);
+}
+.sede__bloque { margin-block-start: var(--space-m); }
+.sede__bloque h3 {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .15em; text-transform: uppercase; color: var(--ink-soft);
+  margin-block-end: var(--space-2xs);
+}
+.sede__bloque p { max-width: var(--measure); font-family: var(--font-read); font-size: var(--step-0); line-height: 1.62; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. VOLUNTARIADO
+   ════════════════════════════════════════════════════════════════════════ */
+/* Seis servicios en fila abierta bajo un filete, no seis recuadros. */
+.servicio {
+  display: flex; flex-direction: column; gap: var(--space-2xs);
+  padding: var(--space-m) 0 0;
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+  border-radius: 0;
+  height: 100%;
+}
+.servicio__icono { width: 26px; height: 26px; color: var(--gold); margin-block-end: var(--space-xs); }
+.servicio__titulo { font-size: var(--step-1b); max-width: 14ch; }
+.servicio__texto { color: var(--ink-soft); font-size: var(--step-0); max-width: 38ch; }
+
+.cierre-servicios { max-width: 34ch; }
+.cierre-servicios .ornamento { margin-inline: 0; }
+.cierre-servicios p { font-family: var(--font-read); font-size: var(--step-1); }
+.cierre-servicios p + p { margin-block-start: var(--space-2xs); }
+.cierre-servicios__grito {
+  font-family: var(--font-display); font-size: var(--step-2); font-weight: 500;
+  letter-spacing: -0.03em; line-height: 1;
+  margin-block-start: var(--space-m);
+}
+
+/* Las tres fases: aquí la numeración codifica una secuencia real (§4.5) */
+.fases { list-style: none; padding: 0; margin: 0; position: relative; }
+.fase { display: grid; gap: var(--space-s); padding-block: var(--space-l); border-top: var(--rule) solid var(--line); }
+.fase:last-child { border-bottom: var(--rule) solid var(--line); }
+@media (min-width: 768px) { .fase { grid-template-columns: 112px 1fr; gap: var(--space-l); } }
+.fase__numero {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.fase__titulo { font-size: var(--step-1); }
+.fase__texto { color: var(--ink-soft); max-width: var(--measure); margin-block-start: 6px; }
+.fase__lista { margin-block-start: var(--space-s); padding-inline-start: 18px; color: var(--ink-soft); }
+.fase__lista li { margin-block-start: 6px; }
+.fase__lista li::marker { color: var(--gold); }
+
+/* ── Formulario en tres pasos ─────────────────────────────────────────── */
+.formulario { max-width: 736px; }
+/* El margen bajo la barra de progreso era de var(--space-l) —unos 40px— y
+   no hace falta tanto: el filete de la barra ya separa. */
+.progreso { margin-block-end: 14px; }
+.progreso__barra { height: 3px; background: var(--line); position: relative; overflow: hidden; }
+.progreso__barra span { position: absolute; inset-block: 0; left: 0; background: var(--primary); transition: width .35s var(--ease); }
+.progreso__texto {
+  display: flex; justify-content: space-between; gap: var(--space-s);
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft);
+  margin-block-end: var(--space-2xs);
+}
+
+/* <fieldset> trae borde, relleno y márgenes propios del navegador: se anulan. */
+/* ── Las secciones del formulario ─────────────────────────────────────────
+   Eran los cuatro pasos de un asistente y ahora se ven todas a la vez, una
+   detrás de otra. Siguen agrupadas porque agrupar ayuda a leer catorce
+   campos; lo que ya no hacen es esconder lo que viene después.
+
+   El filete de separación es lo que sustituye al «Paso 2 de 4»: marca dónde
+   empieza cada bloque sin obligar a nadie a navegar. */
+/* ── Espaciado del formulario ─────────────────────────────────────────────
+   Apretado a conciencia. Con catorce campos, cada píxel que sobra entre uno
+   y otro se multiplica y acaba sacando el formulario de la pantalla: son los
+   huecos, no los campos, los que obligan a desplazarse.
+
+   El hueco baja de 20 a 13 píxeles. Sigue separando con claridad —los campos
+   no se tocan— pero ahorra unos 50 píxeles por paso. */
+.paso { display: grid; gap: 13px; border: 0; padding: 0; margin: 0; min-width: 0; }
+
+.paso__titulo { font-size: var(--step-1); margin: 0; }
+
+/* Las secciones dentro de un paso: Ubicación dentro del primero, Tu servicio
+   dentro del segundo. El filete las separa sin gastar el espacio que gastaba
+   un paso entero. */
+.paso__seccion {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 13px;
+  margin-block-start: 14px;
+  padding-block-start: 14px;
+  border-block-start: var(--rule) solid var(--line);
+}
+.paso__rejilla { display: grid; gap: var(--space-m); }
+@media (min-width: 700px) { .paso__rejilla--dos { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── La barra de botones no se pierde nunca de vista ──────────────────────
+   El formulario vive dentro de un bloque de altura limitada. Cuando saltaba
+   la validación, el aviso crecía por arriba y empujaba «Continuar» fuera del
+   trozo visible: había que descubrir que ese bloque se desplazaba por dentro
+   para volver a encontrar el botón. Medido en las cuatro resoluciones de
+   portátil más comunes, el botón quedaba oculto en las cuatro.
+
+   Pegada abajo, el botón está siempre donde se le dejó. El fondo es opaco
+   para que el contenido no se transparente al pasar por debajo, y el filete
+   superior marca dónde acaba el formulario y empieza la acción. */
+.form-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-block-start: var(--space-m);
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: var(--surface);
+  padding-block: var(--space-s);
+  border-block-start: var(--rule) solid var(--line);
+}
+
+/* ── El aviso de errores ──────────────────────────────────────────────────
+   Antes listaba todos los campos que faltaban, y ocupaba unos 190 píxeles
+   diciendo lo mismo que ya dice cada campo por su cuenta: el error aparecía
+   dos veces, arriba en la lista y abajo bajo el campo. Esa duplicación era la
+   que empujaba el botón fuera de la vista.
+
+   Ahora es una línea. Dice cuántos faltan y dónde mirar; el detalle está
+   junto a cada campo, que es donde hay que corregirlo. */
+.resumen-errores {
+  /* Pegado arriba, como los botones lo están abajo. Al desplazarse por el
+     formulario buscando qué falta, el aviso sigue ahí en lugar de perderse:
+     entre catorce campos, el recordatorio de cuántos quedan es justamente lo
+     que hay que tener a mano. */
+  position: sticky;
+  top: 0;
+  z-index: 3;
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  border: var(--rule) solid var(--accent-strong);
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-s);
+  background: var(--surface);
+  font-size: var(--step--1);
+  line-height: 1.35;
+  color: var(--ink);
+}
+.resumen-errores strong { color: var(--accent-strong); }
+.resumen-errores a { color: var(--accent-strong); }
+
+/* ── El mismo recuadro, en tono de aviso ──────────────────────────────────
+   Para lo que no es culpa de nadie: «consultando…», «la búsqueda por DNI
+   todavía no está disponible». El rojo de alarma da a entender que se ha
+   hecho algo mal, y aquí no se ha hecho nada mal. */
+.resumen-errores--aviso { border-color: var(--line-strong); }
+.resumen-errores--aviso::before {
+  content: 'i';
+  background: var(--ink-soft);
+  font-style: italic;
+}
+
+/* El icono de aviso, hecho con CSS para no depender de que el sprite cargue. */
+.resumen-errores::before {
+  content: '!';
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  margin-top: 1px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--surface);
+  background: var(--accent-strong);
+  border-radius: 50%;
+}
+
+.borrador-aviso {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+  justify-content: space-between;
+  font-size: var(--step--1); color: var(--ink-soft);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-s);
+  margin-block-end: var(--space-m);
+}
+.borrador-aviso button {
+  background: transparent; border: 0; padding: 3px 0; cursor: pointer;
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  color: var(--accent-strong); text-decoration: underline;
+}
+
+.confirmacion { border-top: 2px solid var(--gold); padding-block-start: var(--space-l); }
+.confirmacion .ornamento { margin-inline: 0; margin-block-end: var(--space-s); }
+.confirmacion h2 { font-size: var(--step-2); }
+.confirmacion p { color: var(--ink-soft); max-width: var(--measure); margin-block-start: var(--space-s); }
+
+/* Botón fijo sobre el teclado en móvil */
+@media (max-width: 699px) {
+  .formulario .form-acciones {
+    position: sticky; bottom: 0;
+    background: var(--surface);
+    padding-block: var(--space-s);
+    padding-bottom: calc(var(--space-s) + env(safe-area-inset-bottom));
+    border-top: var(--rule) solid var(--line);
+    margin-block-start: var(--space-l);
+    z-index: 5;
+  }
+  .formulario .form-acciones .btn { flex: 1 1 auto; }
+}
+
+/* ── El formulario fijo, acompañando toda la página ─────────────────────
+   Petición del cliente: que el formulario esté visible siempre y siga al
+   lector mientras baja, superpuesto a las secciones con fondo pero nunca
+   sobre el texto.
+
+   Las dos condiciones chocan si no se reserva sitio: en #servicios las seis
+   tarjetas son col-d-4 y llenan las 12 columnas, así que un bloque flotando a
+   la derecha caería encima. La solución es abrir un CARRIL:
+
+   · .seccion no se toca, así que los fondos siguen yendo a sangre y el
+     formulario queda efectivamente superpuesto a ellos.
+   · .contenedor se ancla a la izquierda y se estrecha el ancho del carril, de
+     modo que ninguna línea de texto llega nunca por debajo del formulario.
+
+   Sólo desde 1280px: por debajo no queda ancho para dos columnas sin ahogar la
+   lectura, y ahí el formulario vuelve a su sitio en el flujo con la franja
+   inferior de acceso (.ancla-form) haciendo de puente. */
+@media (min-width: 1280px) {
+  body[data-form-fijo] {
+    /* 400 → 500. El carril más ancho deja poner dos campos en la misma línea,
+       y cada línea ahorrada son unos 70 píxeles menos de alto. Es la forma
+       más barata de ganar sitio: se crece a lo ancho, que sobra, para no
+       crecer a lo alto, que es lo que falta. */
+    --carril: 500px;
+  }
+
+  /* El contenido se aparta; el fondo de sección no. */
+  body[data-form-fijo] .pagina .contenedor {
+    max-width: calc(var(--maxw) - var(--carril));
+    margin-inline-start: max(var(--gutter), calc((100vw - var(--maxw)) / 2));
+    margin-inline-end: 0;
+  }
+
+  /* ── El carril del formulario ───────────────────────────────────────────
+     Sigue siendo `fixed`. Se probó pasarlo a `sticky` para que el formulario
+     entero fluyera con la página, y no puede ser: el carril está anclado a la
+     derecha desde fuera del flujo, y en flujo normal caería dentro de la
+     columna de contenido, que aquí está estrechada hacia la izquierda.
+
+     Con el formulario en una sola pieza —unos 2400 píxeles— el bloque se
+     desplaza por dentro. Eso es aceptable porque la rueda del ratón funciona
+     igual al pasar por encima, y sobre todo porque lo que se perdía de vista
+     ya no se pierde: el aviso de errores queda pegado arriba y la barra de
+     botones abajo. Lo que hacía inservible el desplazamiento interno era que
+     el botón desapareciera, no el desplazamiento en sí.
+
+     En móvil nada de esto se aplica: el formulario va en el flujo de la
+     página y se baja como cualquier otra cosa. */
+  body[data-form-fijo] .form-fijo {
+    position: fixed;
+    z-index: 80;                    /* bajo cabecera (100) y menú (110) */
+    /* Los márgenes de arriba y de abajo, ajustados al mínimo razonable: 12
+       píxeles de aire entre la cabecera y la tarjeta, y otros 12 hasta el
+       borde inferior de la ventana.
+
+       Eran 20 y 40. Esos 36 píxeles recuperados no son adorno: son la
+       diferencia entre que el segundo paso quepa entero o le aparezca una
+       barra de desplazamiento justo cuando alguien pulsa «Enviar» y ve todos
+       los errores a la vez, que es el momento en que menos falta hace tener
+       que buscar nada.
+
+       Los dos valores tienen que moverse juntos: el de arriba dice dónde
+       empieza la tarjeta y el de la altura máxima dice dónde acaba. Si sólo
+       se cambia uno, o queda un hueco muerto o la tarjeta se sale por abajo. */
+    inset-block-start: calc(var(--header-h) + var(--space-l));
+    inset-inline-end: max(var(--gutter), calc((100vw - var(--maxw)) / 2));
+    width: calc(var(--carril) - var(--space-xl));
+    max-height: calc(100svh - var(--header-h) - var(--space-l) - 12px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+    overscroll-behavior: contain;   /* al llegar al final no arrastra la página */
+    padding: var(--space-m);
+    background: var(--surface);
+    border: var(--rule) solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--sombra-g);
+  }
+
+  /* Sin el margen de .sep-l, que aquí sólo abre un hueco muerto arriba. */
+  body[data-form-fijo] .form-fijo .formulario { margin-block-start: 0; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     QUE EL PASO QUEPA EN LA PANTALLA, SIN BARRA DE DESPLAZAMIENTO
+
+     Todo lo de aquí abajo existe para un solo objetivo: que cada uno de los
+     dos pasos entre entero en la ventana de un portátil corriente —660
+     píxeles útiles en una pantalla de 768— sin que aparezca la barra.
+
+     Una barra dentro de una tarjeta es de las cosas menos evidentes que hay
+     en una página: no se ve hasta que se pasa el ratón por encima, y quien
+     no la descubre cree que el formulario se acaba ahí. Ya nos costó el
+     botón «Continuar» escondido.
+
+     Sólo se aplica dentro del carril (≥1280px). En móvil el formulario va en
+     el flujo de la página, se baja como cualquier otra cosa, y ahí un campo
+     grande es preferible a uno apretado.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* El titular de la tarjeta se va: el titular de la página, a la izquierda,
+     ya dice de qué va esto, y el rótulo «Fase 01 · Inscripción» de la barra
+     lo confirma. Sigue en el HTML para lectores de pantalla. */
+  body[data-form-fijo] .form-fijo .form-fijo__titulo {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+
+  /* Los textos que describen cada sección. El encabezado —«Ubicación»— ya
+     dice lo esencial; la frase de debajo era cortesía, y aquí la cortesía
+     cuesta una barra de desplazamiento. Se mantienen para quien navegue con
+     lector de pantalla. */
+  body[data-form-fijo] .form-fijo .paso__pie,
+  body[data-form-fijo] .form-fijo .campo__ayuda {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+
+  body[data-form-fijo] .form-fijo .progreso { margin-block-end: 7px; }
+  /* El encabezado de sección baja a 14px: sigue destacando sobre las
+     etiquetas de 12 y ahorra unos píxeles en cada una de las cuatro. */
+  body[data-form-fijo] .form-fijo .paso__titulo { font-size: 14px; line-height: 1.2; }
+
+  /* Los huecos: de 13 a 7. Con siete campos por paso, cada píxel entre uno y
+     otro se paga siete veces. */
+  body[data-form-fijo] .form-fijo .paso,
+  body[data-form-fijo] .form-fijo .paso__seccion,
+  body[data-form-fijo] .form-fijo .paso__rejilla,
+  body[data-form-fijo] .form-fijo .paso__rejilla--tres { gap: 7px; }
+
+  body[data-form-fijo] .form-fijo .paso__seccion {
+    margin-block-start: 8px;
+    padding-block-start: 8px;
+  }
+
+  /* La etiqueta, pegada a su campo: 6 píxeles de separación no aportaban
+     nada que no aporten 2. */
+  body[data-form-fijo] .form-fijo .campo { gap: 2px; padding-block-end: 4px; }
+
+  /* ── El hueco del último mensaje de error ───────────────────────────────
+     Los mensajes de error van colocados en absoluto por debajo de su campo,
+     para que aparecer y desaparecer no mueva el formulario. El del ÚLTIMO
+     campo no tiene nada debajo donde caer: sobresale del bloque y obliga a
+     desplazarse trece píxeles.
+
+     Y era ESA la barra que no había forma de quitar. Se recortó el alto de
+     los campos, los huecos, los títulos y hasta el texto legal, y la
+     diferencia seguía siendo exactamente trece píxeles cada vez —la pista de
+     que no sobraba contenido, sino que algo colgaba por fuera—.
+
+     Con este hueco al final, el mensaje cae dentro. */
+  body[data-form-fijo] .form-fijo .paso { padding-block-end: 16px; }
+  body[data-form-fijo] .form-fijo .campo__etiqueta { font-size: 12px; }
+
+  /* 40 → 36. Sigue siendo cómodo de pulsar: en escritorio se apunta con el
+     ratón, y el área real incluye el hueco de alrededor. */
+  body[data-form-fijo] .form-fijo .campo input,
+  body[data-form-fijo] .form-fijo .campo select {
+    min-height: 35px;
+    padding-block: 5px;
+    font-size: 14px;
+  }
+
+  body[data-form-fijo] .form-fijo .campo__simbolo { width: 15px; height: 15px; }
+
+  body[data-form-fijo] .form-fijo .campo__error {
+    font-size: 11.5px;
+    bottom: -15px;
+  }
+
+  /* El «este dato es obligatorio» repetido: se oye pero no se ve.
+     Con siete campos vacíos eran siete avisos idénticos amontonándose unos
+     sobre otros. El borde rojo del campo y la línea de arriba —«faltan 7
+     datos, empieza por DNI»— cuentan lo mismo sin ese amontonamiento.
+     Sigue leyéndose en móvil, donde hay sitio de sobra. */
+  /* ── Bajo el campo, nada escrito ────────────────────────────────────────
+     Ningún aviso se pinta debajo de su campo dentro del carril. Todos se
+     leen en el recuadro de arriba, que está pegado al borde superior y no se
+     mueve.
+
+     El motivo es de sitio: en una columna de 170 píxeles cualquier frase se
+     parte en dos o tres renglones, cae sobre la etiqueta de abajo y descuadra
+     el bloque entero. Se intentó reservarles hueco y no bastaba —el aviso
+     está colocado en absoluto respecto al fondo del campo, así que al abrir
+     el hueco bajaba con él—.
+
+     Abajo queda el borde rojo, que señala cuál es sin ocupar una sola línea.
+     Y el texto sigue en el documento para los lectores de pantalla, que no
+     ven ni el rojo ni el recuadro: se oculta a la vista, no se elimina. */
+  body[data-form-fijo] .form-fijo .campo__error,
+  body[data-form-fijo] .form-fijo .campo__estado {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+
+  body[data-form-fijo] .form-fijo .form-acciones {
+    margin-block-start: 7px;
+    padding-block: 6px;
+  }
+  body[data-form-fijo] .form-fijo .form-acciones .btn { padding-block: 10px; }
+
+  body[data-form-fijo] .form-fijo .resumen-errores {
+    padding: 5px 9px;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  /* ── DNI y nombre en la misma línea ─────────────────────────────────────
+     Ahorra una línea entera sin tocar el orden que se pidió —DNI, nombre,
+     fecha—: la rejilla los coloca uno al lado del otro y la fecha ocupa la
+     línea siguiente completa. Se lee igual, ocupa una línea menos.
+
+     El DNI necesita poco: ocho dígitos y la lupa. El nombre se queda con
+     todo lo demás. */
+  body[data-form-fijo] .form-fijo .paso__rejilla--par {
+    display: grid;
+    grid-template-columns: 10.5rem 1fr;
+    align-items: start;
+  }
+  body[data-form-fijo] .form-fijo .paso__rejilla--par > :nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  /* ── El texto del consentimiento ────────────────────────────────────────
+     Quinientos caracteres de texto legal: es el bloque más alto del paso 2 y
+     no se puede acortar, porque un consentimiento dice lo que tiene que
+     decir. Lo que sí se puede es componerlo más apretado.
+
+     11.5px con interlineado 1.35 sigue siendo legible —es el tamaño de la
+     letra pequeña de cualquier documento— y ahorra unas dos líneas. No se
+     baja más: este texto es el que ampara el tratamiento de datos personales
+     y tiene que poder leerse de verdad, no figurar. */
+  body[data-form-fijo] .form-fijo .casilla { gap: 7px; }
+  body[data-form-fijo] .form-fijo .casilla__texto {
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+
+  /* Los últimos píxeles: el relleno de la tarjeta y el aire bajo los botones.
+     Sueltos no valdrían la pena; juntos son los que hacen que quepa. */
+  body[data-form-fijo] .form-fijo { padding: 12px; }
+  body[data-form-fijo] .form-fijo .form-acciones .btn { padding-block: 7px; }
+
+  /* El encabezado del formulario viaja con él: pegado dentro del bloque fijo,
+     para que se sepa qué es aunque el titular de la sección quede lejos. */
+  .form-fijo__titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-1b);
+    line-height: 1.15;
+    margin-block-end: var(--space-xs);
+  }
+
+  /* Hueco que deja la sección de la que se ha sacado el formulario: sin esto
+     #inscripcion se queda en un encabezado suelto sobre un vacío. */
+  body[data-form-fijo] #inscripcion .ten-a-mano { margin-block-end: 0; }
+
+  /* Con el formulario permanente en pantalla, la franja inferior de acceso
+     sobra: llevaría a donde el lector ya está mirando. */
+  body[data-form-fijo] .ancla-form { display: none; }
+  body[data-form-fijo] { padding-block-end: 0; }
+}
+
+/* Por debajo del carril el formulario es un bloque normal del documento. */
+.form-fijo__titulo { display: none; }
+@media (min-width: 1280px) { .form-fijo__titulo { display: block; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. 404
+   ════════════════════════════════════════════════════════════════════════ */
+.pagina-404 {
+  min-height: 70svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: calc(var(--header-h) + var(--space-3xl)) var(--space-3xl);
+  --corte-sup: 0;
+}
+.pagina-404__atajos .rotulo { display: block; margin-block-end: var(--space-m); }
+@media (min-width: 1024px) { .pagina-404__atajos { grid-column: 9 / -1; } }
+.pagina-404__cifra {
+  font-family: var(--font-display); font-size: var(--step-4); font-weight: 500;
+  color: var(--gold); line-height: 1; font-variant-numeric: tabular-nums;
+}
+.pagina-404 h1 { margin-block: var(--space-s) var(--space-m); }
+.pagina-404 p { max-width: var(--measure); color: var(--ink-soft); }
+.pagina-404 .fila { margin-block-start: var(--space-l); }

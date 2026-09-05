@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true" focusable="false">
+  <!--
+    Sprite de iconos propio. Sin librería externa.
+    Todos los trazos usan currentColor: el color lo pone el token del contexto.
+    Caja de 24 × 24. Grosor de línea 1.6 salvo los pictogramas macizos.
+
+    ESTE ARCHIVO ES LA FUENTE DE VERDAD. Se incrusta al principio del <body> de
+    cada página porque las referencias <use href="externo.svg#id"> no funcionan
+    ni en Safari ni al abrir el sitio con el protocolo file://. Si añades o
+    corriges un icono aquí, propágalo a las cinco páginas.
+  -->
+  <defs>
+    <g id="i-lirio-formas">
+      <path d="M50 2 C41 25 35 41 35 56 C35 71 42 84 50 96 C58 84 65 71 65 56 C65 41 59 25 50 2 Z"/>
+      <path d="M48 56 C40 45 20 43 8 53 C-1 61 0 75 11 83 C7 72 9 61 17 55 C27 49 41 50 48 56 Z"/>
+      <path d="M52 56 C60 45 80 43 92 53 C101 61 100 75 89 83 C93 72 91 61 83 55 C73 49 59 50 52 56 Z"/>
+      <path d="M20 88 H80 C83.5 88 85 90.5 85 94.5 C85 98.5 83.5 101 80 101 H20 C16.5 101 15 98.5 15 94.5 C15 90.5 16.5 88 20 88 Z"/>
+      <path d="M40 101 C39 115 35 128 26 139 C37 136 45 129 50 121 C55 129 63 136 74 139 C65 128 61 115 60 101 Z"/>
+    </g>
+  </defs>
+
+  <!-- ── Ornamentos del escudo ── -->
+  <symbol id="i-lirio" viewBox="0 0 24 24">
+    <g fill="currentColor" transform="translate(3.45 0.05) scale(0.171)"><use href="#i-lirio-formas"/></g>
+  </symbol>
+  <symbol id="i-corazon" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 21.2C6.4 17.3 2.8 13.9 2.8 10.2 2.8 7 5.2 4.9 7.8 4.9c1.9 0 3.3 1.1 4.2 2.6.9-1.5 2.3-2.6 4.2-2.6 2.6 0 5 2.1 5 5.3 0 3.7-3.6 7.1-9.2 11z"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M20.4 3.4 8.6 15.8"/>
+    <path fill="currentColor" d="M7.2 17.6l.6-3.6 3 1.6z"/>
+  </symbol>
+
+  <!-- ── Navegación e interfaz ── -->
+  <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h18M3 12h18M3 17h18"/></g></symbol>
+  <symbol id="i-cerrar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></g></symbol>
+  <symbol id="i-flecha" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13.5 6.5 20 12l-6.5 5.5"/></g></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9.5 6 6 6-6"/></g></symbol>
+  <symbol id="i-mas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5 5L20 6.5"/></g></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.4v.2"/></g></symbol>
+  <symbol id="i-enlace" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4 11 13M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></g></symbol>
+
+  <!-- ── Contenido ── -->
+  <symbol id="i-calendario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+  <symbol id="i-mapa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s7.2-6.6 7.2-11.4A7.2 7.2 0 0 0 4.8 10.1C4.8 14.9 12 21.5 12 21.5Z"/><circle cx="12" cy="10" r="2.6"/></g></symbol>
+  <symbol id="i-reloj" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.8"/><path d="M12 6.8V12l3.6 2.4"/></g></symbol>
+  <symbol id="i-correo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.6 7 8.4 6 8.4-6"/></g></symbol>
+  <symbol id="i-descarga" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4 19.5h16"/></g></symbol>
+  <symbol id="i-pantalla" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="4.5" width="18.4" height="12.5" rx="2"/><path d="M8.5 20.5h7"/><path d="m10.5 9 4 2.2-4 2.3z"/></g></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8.5 5.6 19 12 8.5 18.4z"/></symbol>
+  <symbol id="i-compartir" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/><path d="m8.3 10.8 7.4-4M8.3 13.2l7.4 4"/></g></symbol>
+  <symbol id="i-etiqueta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9.5 3.5 7 20.5M17 3.5l-2.5 17M4 8.8h16.5M3.5 15.2H20"/></g></symbol>
+
+  <!-- ── Los seis servicios del voluntariado ── -->
+  <symbol id="i-resguardo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 4.5 5.9v6.2c0 4.4 3.1 8.3 7.5 9.6 4.4-1.3 7.5-5.2 7.5-9.6V5.9Z"/><path d="m8.6 12 2.5 2.5 4.3-4.8"/></g></symbol>
+  <symbol id="i-acogida" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.5v-3.2a4 4 0 0 1 1.8-3.3l2.4-1.6"/><path d="M20 20.5v-3.2a4 4 0 0 0-1.8-3.3l-2.4-1.6"/><circle cx="12" cy="6.4" r="3.4"/><path d="M8.2 12.4a5 5 0 0 1 7.6 0"/></g></symbol>
+  <symbol id="i-comunicacion" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="6.5" width="18.4" height="13" rx="2.2"/><circle cx="12" cy="13" r="3.6"/><path d="M8.5 6.5 10 3.8h4l1.5 2.7"/></g></symbol>
+  <symbol id="i-logistica" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.8 12 3.5l8.5 4.3v8.4L12 20.5l-8.5-4.3Z"/><path d="M3.5 7.8 12 12m0 0 8.5-4.2M12 12v8.5"/></g></symbol>
+  <symbol id="i-auxilios" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="7" width="18.4" height="12.5" rx="2.2"/><path d="M8.6 7V5.4a1.6 1.6 0 0 1 1.6-1.6h3.6a1.6 1.6 0 0 1 1.6 1.6V7"/><path d="M12 10.4v5.7M9.2 13.2h5.6"/></g></symbol>
+  <symbol id="i-traduccion" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 12h17.6"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></g></symbol>
+
+  <!-- ── Redes (marcas simplificadas, sin librería) ── -->
+  <symbol id="i-facebook" viewBox="0 0 24 24"><path fill="currentColor" d="M13.6 21v-7.9h2.7l.4-3.1h-3.1V8c0-.9.25-1.5 1.55-1.5H17V3.7c-.3 0-1.3-.13-2.45-.13-2.42 0-4.08 1.48-4.08 4.2V10H7.7v3.1h2.77V21z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="16.9" cy="7.1" r="1.15" fill="currentColor" stroke="none"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M17.2 3h3.1l-6.8 7.8L21.5 21h-6.2l-4.9-6.4L4.8 21H1.7l7.3-8.3L2.2 3h6.4l4.4 5.8ZM16.1 19.2h1.7L7.9 4.7H6.1Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2.4" y="5.3" width="19.2" height="13.4" rx="4"/><path d="m10.3 9.4 5 2.6-5 2.6z" fill="currentColor"/></g></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 2.6c.35 2.35 1.7 3.75 4 3.9v2.65c-1.33.13-2.5-.3-3.86-1.12v4.95c0 6.29-6.86 8.25-9.62 3.75-1.77-2.9-.68-8 5.02-8.2v2.8c-.44.07-.9.18-1.33.33-1.26.42-1.98 1.22-1.78 2.63.38 2.7 5.35 3.5 4.94-1.77V2.6z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.03 2.4A9.5 9.5 0 0 0 3.9 16.85L2.5 21.6l4.88-1.37A9.5 9.5 0 1 0 12.03 2.4m0 1.75a7.75 7.75 0 0 1 0 15.5 7.7 7.7 0 0 1-3.95-1.08l-.28-.17-2.9.81.79-2.83-.19-.3a7.75 7.75 0 0 1 6.53-11.93M8.7 7.2c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34.99 2.5c.12.16 1.7 2.72 4.16 3.7 2.05.81 2.47.65 2.91.61.44-.04 1.43-.58 1.63-1.15.2-.56.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28s-1.43-.71-1.65-.79c-.22-.08-.38-.12-.54.12s-.62.79-.76.95c-.14.16-.28.18-.52.06s-1.02-.38-1.94-1.2c-.72-.64-1.2-1.42-1.34-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42s-.53-1.31-.74-1.79c-.19-.45-.39-.4-.53-.4z"/></symbol>
+</svg>

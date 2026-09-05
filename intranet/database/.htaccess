@@ -1,0 +1,16 @@
+# Esta carpeta NUNCA se sirve por el navegador.
+#
+# El .htaccess de intranet/ permite index.php como atajo hacia public/, y esa
+# excepción se hereda hacia abajo. Aquí se vuelve a cerrar: si algún día
+# aparece un index.php en esta carpeta, seguirá sin ser accesible.
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+Options -Indexes

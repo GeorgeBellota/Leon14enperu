@@ -1,0 +1,182 @@
+# ============================================================================
+# leon14enperu.com — configuración de Apache
+#
+# El sitio es HTML plano y funciona sin esto. Lo de aquí resuelve tres cosas
+# que el servidor tiene que decidir y el HTML no puede:
+#   1. qué página se muestra cuando la dirección no existe,
+#   2. que cada página tenga UNA sola dirección, no tres,
+#   3. que las direcciones antiguas con .html no den 404.
+#
+# Si el hosting es Nginx en lugar de Apache, el equivalente está al final.
+# ============================================================================
+
+# ── 1. Página de error ──────────────────────────────────────────────────────
+ErrorDocument 404 /404.html
+
+# ── 2. Índice de directorio ─────────────────────────────────────────────────
+# Es lo que hace que /agenda/ sirva agenda/index.html.
+#
+# index.php va PRIMERO desde que voluntariado/ es dinámico. Esta directiva
+# sustituye por completo a la de httpd.conf, no se suma a ella: mientras aquí
+# ponía sólo «index.html», /voluntariado/ dejó de encontrar página y Apache
+# respondía con el listado del directorio. Las secciones que se vayan pasando
+# a PHP en la Fase 2 no necesitarán tocar nada más.
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ── 0. Bajo qué prefijo vive el sitio ─────────────────────────────────────
+  #
+  # En producción el sitio es la raíz del dominio y el prefijo está vacío. En
+  # una instalación de trabajo cuelga de una subcarpeta (/leon14peru/), y ahí
+  # las redirecciones escritas como «/agenda/» apuntaban a la raíz del
+  # servidor: /leon14peru/voluntariado acababa en localhost/voluntariado/ y
+  # daba 404. Quitarles la barra tampoco vale: entonces mod_rewrite construye
+  # la dirección con la ruta del disco duro.
+  #
+  # Esto compara la dirección pedida con la ruta física y se queda con lo que
+  # sobra por delante, que es exactamente el prefijo web. Queda en %{ENV:BASE}
+  # y sirve para las dos situaciones sin tocar nada al desplegar.
+  RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+  RewriteRule ^.*$ - [E=BASE:%1]
+
+  # ── 3. Direcciones antiguas → nuevas, con 301 ─────────────────────────────
+  # Hasta hoy cada interna era /agenda.html. Si alguna de esas direcciones se
+  # ha compartido o indexado, este redirección permanente traslada su
+  # autoridad a la nueva en lugar de perderla en un 404.
+  # index.html y 404.html quedan fuera: la home ES la raíz y el 404 se sirve
+  # tal cual desde cualquier ruta.
+  RewriteCond %{REQUEST_URI} !^/404\.html$
+  RewriteRule ^index\.html$ %{ENV:BASE}/ [R=301,L]
+  RewriteCond %{REQUEST_URI} !^/404\.html$
+  RewriteRule ^([a-z0-9-]+)\.html$ %{ENV:BASE}/$1/ [R=301,L]
+
+  # ── 4. Una sola dirección por página ──────────────────────────────────────
+  # /agenda/index.html → /agenda/   (evita que existan dos URLs con el mismo
+  # contenido, que es lo que diluye el posicionamiento)
+  RewriteRule ^(.*/)?index\.html$ %{ENV:BASE}/$1 [R=301,L]
+
+  # Lo mismo para las páginas dinámicas: /voluntariado/index.php → /voluntariado/
+  #
+  # Sólo en peticiones GET. Un 301 convierte el POST en GET y descarta el
+  # cuerpo: sin esta condición, enviar el formulario de voluntariado desde
+  # /voluntariado/index.php perdería la inscripción por el camino.
+  RewriteCond %{REQUEST_METHOD} =GET
+  RewriteRule ^(.*/)?index\.php$ %{ENV:BASE}/$1 [R=301,L]
+
+  # /agenda → /agenda/   (barra final, para no duplicar tampoco por ahí)
+
+  # ── Punto de entrada único ────────────────────────────────────────────
+  # Lo que no sea un archivo o carpeta real lo resuelve index.php, que
+  # consulta el mapa de Publico\Rutas. Sustituye a la carpeta por página.
+  # En producción (Nginx) el equivalente es try_files ... /index.php.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  #
+  # [END] y no [L]: en un .htaccess, [L] termina la ronda pero el motor
+  # vuelve a empezar con la URL ya reescrita. Como ahora es index.php,
+  # la regla que canoniza /x/index.php la redirigía a la raíz y TODAS
+  # las páginas acababan en la portada. [END] detiene de verdad.
+  RewriteRule ^ index.php [END]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^(.*)$ %{ENV:BASE}/$1/ [R=301,L]
+</IfModule>
+
+# ── 5. Compresión y caché ───────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml application/xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # El HTML no se cachea: es lo que cambia cuando se publica una noticia.
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # ── CSS y JS: una hora, MIENTRAS el sitio esté en construcción ────────────
+  #
+  # AVISO: en esta instalación mod_expires está DESACTIVADO en httpd.conf, así
+  # que todo este bloque no llega a aplicarse. Se deja escrito para el
+  # servidor de producción, donde sí suele estar activo.
+  #
+  # Sin cabeceras de caché, el navegador no deja de cachear: aplica su propia
+  # regla, basada en la fecha de modificación del archivo. Eso es lo que pasó
+  # al conectar el formulario de voluntariado a la base: Chrome siguió
+  # ejecutando el form.js viejo —el que simulaba el envío— y mostraba la
+  # confirmación sin guardar nada. El servidor tenía el archivo correcto; el
+  # navegador ni lo pidió.
+  #
+  # Lo que resuelve eso de verdad, con mod_expires encendido o apagado, es el
+  # versionado: voluntariado/index.php añade ?v=<fecha del archivo> a sus CSS
+  # y JS, así que al cambiar el archivo cambia la dirección. Las páginas que
+  # siguen en HTML plano no pueden hacerlo, y son la mayoría.
+  #
+  # CUANDO TODO EL SITIO SEA PHP CON ASSETS VERSIONADOS, subir estos dos a
+  # "access plus 1 year": con la versión en la dirección, cachear para siempre
+  # es correcto y es lo más rápido.
+  ExpiresByType text/css "access plus 1 hour"
+  ExpiresByType application/javascript "access plus 1 hour"
+
+  # Las imágenes sí: no cambian, y si cambian se sube un archivo con otro nombre.
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# ── 6. Cabeceras de seguridad ───────────────────────────────────────────────
+# El formulario de voluntariado recoge datos personales. Esto es el mínimo.
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# ── 7. El HTML no se cachea en el servidor ──────────────────────────────────
+#
+# Muchos cPanel traen LiteSpeed con la caché de página activada por defecto.
+# Sirve una copia guardada del HTML, y eso rompe cualquier página que lleve
+# dentro algo con caducidad.
+#
+# Ocurrió: el servidor estuvo dieciocho horas sirviendo una copia del
+# formulario de voluntariado cuyo testigo había expirado hacía dieciséis, y
+# todas las inscripciones de ese rato se rechazaron con «el formulario
+# caducó». Desde fuera parecía un fallo del formulario.
+#
+# Las páginas .php ya envían «no-store» ellas mismas; esto es el cinturón
+# además del tirante, por si alguna se olvida de hacerlo. Los CSS, JS e
+# imágenes SÍ se siguen cacheando: ahí es donde la caché aporta de verdad.
+<IfModule mod_headers.c>
+  <FilesMatch "\.php$">
+    Header always set X-LiteSpeed-Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule LiteSpeed>
+  CacheDisable public /
+</IfModule>
+
+# ── Los documentos de trabajo no se publican ────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteRule ^temporal-claude/ - [F,L]
+  RewriteRule ^despliegue/ - [F,L]
+  RewriteRule ^anterior-borrar/ - [F,L]
+</IfModule>
+
+# ============================================================================
+# EQUIVALENTE EN NGINX, si el hosting no es Apache:
+#
+#   index index.html;
+#   error_page 404 /404.html;
+#
+#   # direcciones antiguas → nuevas
+#   location ~ ^/index\.html$      { return 301 /; }
+#   location ~ ^/([a-z0-9-]+)\.html$ { return 301 /$1/; }
+#
+#   # una sola dirección por página
+#   location ~ ^(.*/)index\.html$  { return 301 $1; }
+#
+#   location / { try_files $uri $uri/ =404; }
+#   location ^~ /temporal-claude/ { deny all; }
+# ============================================================================

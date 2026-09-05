@@ -1,0 +1,32 @@
+# ============================================================================
+#  Finales de línea
+# ============================================================================
+#
+#  El proyecto se edita en Windows y se despliega en Ubuntu. Sin esto, cada
+#  máquina reescribe los finales de línea de todos los archivos que toca y
+#  git los da por modificados enteros: un cambio de una coma aparece como
+#  «800 líneas cambiadas» y las revisiones dejan de servir para nada.
+#
+#  «text=auto» guarda todo con LF en el repositorio y lo entrega a cada quien
+#  como su sistema espera.
+# ============================================================================
+
+* text=auto
+
+# Los que SIEMPRE van con LF, aunque se editen en Windows: los ejecuta un
+# Linux y un CRLF en la primera línea rompe el intérprete.
+*.sh   text eol=lf
+*.conf text eol=lf
+
+# Binarios: git no los toca ni intenta diferenciarlos línea a línea.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.mp3  binary
+*.woff binary
+*.woff2 binary
+*.zip  binary

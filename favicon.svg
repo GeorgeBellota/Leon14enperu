@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="León XIV en el Perú">
+  <!-- Una cruz latina sobre campo rojo.
+
+       Antes aquí estaba el lirio del escudo pontificio. Se cambió porque el
+       escudo y sus elementos son símbolos heráldicos del Santo Padre y su uso
+       no está aprobado: mientras no lo esté, el sitio no los muestra. Una cruz
+       no pertenece a nadie y dice lo mismo a la primera.
+
+       Proporción latina (el travesaño por encima del centro, el pie más largo
+       que la cabeza), que es la forma que se reconoce incluso a 16 píxeles,
+       que es el tamaño al que se ve esto de verdad en una pestaña.
+
+       Colores literales por tratarse de un archivo de icono independiente del
+       sistema de temas (véase §5.5 y el README). -->
+  <rect width="64" height="64" rx="10" fill="#C1121F"/>
+  <path fill="#FCFAF9" d="M27.5 12 h9 v11 h11 v9 h-11 v20 h-9 v-20 h-11 v-9 h11 z"/>
+</svg>

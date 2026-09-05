@@ -1,0 +1,300 @@
+<title>Arquitectura leon14enperu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ink:#1C1416; --ink-soft:#574A4D; --ink-mute:#8A7A7C;
+  --fondo:#FBF8F7; --tarjeta:#FFFFFF; --linea:#E9DFDD;
+  --granate:#6E0B14; --primario:#C1121F; --tinte:#F8E4E4;
+  --oro:#A8761A; --oro-tinte:#F8EBD2;
+  --verde:#1E6B3A; --verde-tinte:#E3F0E7;
+  --display:"Fraunces",Georgia,serif;
+  --ui:"Instrument Sans","Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F4EEED; --ink-soft:#C3B4B5; --ink-mute:#8E7E80;
+    --fondo:#17100F; --tarjeta:#211817; --linea:#3A2C2B;
+    --granate:#F0C46B; --primario:#E85A61; --tinte:#3A1A1D;
+    --oro:#E8C07A; --oro-tinte:#33260F;
+    --verde:#7BC496; --verde-tinte:#16301F;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F4EEED; --ink-soft:#C3B4B5; --ink-mute:#8E7E80;
+  --fondo:#17100F; --tarjeta:#211817; --linea:#3A2C2B;
+  --granate:#F0C46B; --primario:#E85A61; --tinte:#3A1A1D;
+  --oro:#E8C07A; --oro-tinte:#33260F;
+  --verde:#7BC496; --verde-tinte:#16301F;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--fondo); color:var(--ink);
+  font-family:var(--ui); font-size:16px; line-height:1.6;
+  padding:2.5rem 1.25rem 4rem;
+}
+.envoltura{max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:2.75rem}
+
+header{border-bottom:2px solid var(--primario); padding-bottom:1.1rem}
+.rotulo{
+  font-size:.7rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--primario); margin:0 0 .4rem;
+}
+h1{font-family:var(--display); font-size:clamp(1.9rem,4vw,2.6rem); margin:0; line-height:1.1; text-wrap:balance}
+.bajada{color:var(--ink-soft); margin:.6rem 0 0; max-width:62ch}
+
+section{display:flex; flex-direction:column; gap:.9rem}
+h2{
+  font-family:var(--display); font-size:1.35rem; margin:0;
+  display:flex; align-items:baseline; gap:.6rem; text-wrap:balance;
+}
+h2 .n{
+  font-family:var(--ui); font-size:.72rem; font-weight:700; letter-spacing:.1em;
+  color:var(--primario); border:1.5px solid var(--primario);
+  border-radius:99px; padding:.15rem .5rem; flex:none;
+}
+.nota{color:var(--ink-soft); margin:0; font-size:.94rem; max-width:70ch}
+
+.lienzo{
+  background:var(--tarjeta); border:1px solid var(--linea); border-radius:10px;
+  padding:1.25rem; overflow-x:auto;
+}
+.mermaid{min-width:520px}
+
+.caja{
+  background:var(--tarjeta); border:1px solid var(--linea);
+  border-left:4px solid var(--verde); border-radius:10px; padding:1.4rem 1.5rem;
+}
+.caja h3{font-family:var(--display); font-size:1.15rem; margin:0 0 1rem}
+.rejilla{display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:.9rem}
+.item{display:flex; gap:.65rem; align-items:flex-start}
+.tic{color:var(--verde); font-weight:700; flex:none; line-height:1.5}
+.item b{display:block; font-size:.94rem}
+.item span{display:block; font-size:.85rem; color:var(--ink-soft); line-height:1.45}
+
+.pendiente{border-left-color:var(--oro); margin-top:1rem}
+.pendiente .tic{color:var(--oro)}
+
+footer{
+  border-top:1px solid var(--linea); padding-top:1rem;
+  font-size:.8rem; color:var(--ink-mute);
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem;
+}
+</style>
+
+<div class="envoltura">
+
+<header>
+  <p class="rotulo">leon14enperu.com · arquitectura</p>
+  <h1>Cómo funciona el servicio</h1>
+  <p class="bajada">
+    El recorrido de una petición desde el navegador hasta la base de datos, y los
+    controles que atraviesa por el camino. Cuatro escenarios y el resumen de lo
+    que protege cada capa.
+  </p>
+</header>
+
+<section>
+  <h2><span class="n">1</span> Una visita normal</h2>
+  <p class="nota">
+    Todas las direcciones las resuelve un único <code>index.php</code>. Las páginas
+    ya no son carpetas: son una entrada en el mapa de rutas y un archivo en
+    <code>views/</code>.
+  </p>
+  <div class="lienzo"><pre class="mermaid">
+flowchart TD
+  V([Visitante]) --> CF{{Cloudflare}}
+  CF -->|TLS + cert. de origen| NX[Nginx]
+  NX --> LB{¿Está en la<br/>lista blanca?}
+  LB -->|no| X404[404]
+  LB -->|sí| FC[index.php]
+  FC --> RT[Mapa de rutas]
+  RT -->|no existe| X404
+  RT -->|existe| VW[views/pagina.php]
+  VW --> BD[(MariaDB)]
+  BD -.->|si no responde| RES[Textos de reserva]
+  VW --> PL[Plantilla común]
+  PL --> HD[Cabeceras: CSP, HSTS,<br/>nosniff, frame-options]
+  HD --> V
+
+  style CF fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style NX fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style X404 fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style BD fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  style RES fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  style HD fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  </pre></div>
+</section>
+
+<section>
+  <h2><span class="n">2</span> Una inscripción de voluntario</h2>
+  <p class="nota">
+    Cuatro filtros antes de escribir nada, y cifrado de los datos personales. Si la
+    base falla, la inscripción no se pierde: se guarda cifrada en disco y se
+    recupera después.
+  </p>
+  <div class="lienzo"><pre class="mermaid">
+flowchart TD
+  F([Envía el formulario]) --> T{Testigo firmado<br/>con HMAC y caducidad}
+  T -->|inválido| LOG[Se anota en el registro]
+  T -->|válido| TR{¿Cayó en la trampa<br/>para robots?}
+  TR -->|sí| STOP[Descartado]
+  TR -->|no| TM{¿Menos de 3 s<br/>desde que cargó?}
+  TM -->|sí| STOP
+  TM -->|no| IP{¿Supera el límite<br/>por IP?}
+  IP -->|sí| STOP
+  IP -->|no| VAL[Validación de campos]
+  VAL --> CIF[Cifrado AES-256-GCM<br/>DNI, teléfono, dirección]
+  CIF --> INS[(Insertar en MariaDB)]
+  INS -->|error| CONT[Sobre cifrado en disco]
+  INS -->|ok| OK([Código de inscripción])
+  CONT --> OK2([Mensaje distinto:<br/>«la guardamos»])
+  LOG --> TR
+
+  style T fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style TR fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style TM fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style IP fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style CIF fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  style STOP fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style CONT fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  </pre></div>
+</section>
+
+<section>
+  <h2><span class="n">3</span> La sesión del panel</h2>
+  <p class="nota">
+    La cookie solo lleva un identificador; el contenido vive en el servidor. Cada
+    ruta declara el permiso que exige, y lo sensible queda en auditoría.
+  </p>
+  <div class="lienzo"><pre class="mermaid">
+flowchart TD
+  U([Usuario del panel]) --> L[Formulario de acceso]
+  L --> BF{¿5 fallos en 15 min<br/>por correo o por IP?}
+  BF -->|sí| BLQ[Bloqueado 15 min]
+  BF -->|no| PW{Contraseña correcta}
+  PW -->|no| REG[Se registra el intento] --> BF
+  PW -->|sí| SES[Sesión nueva<br/>id rotado, 48 caracteres]
+  SES --> CK[Cookie: HttpOnly · Secure · SameSite]
+  CK --> NAV([Navega el panel])
+  NAV --> HU{¿Cambió la huella<br/>del navegador?}
+  HU -->|sí| FIN[Sesión destruida]
+  HU -->|no| IN{¿45 min sin actividad?}
+  IN -->|sí| FIN
+  IN -->|no| PER{¿Tiene el permiso<br/>de esta ruta?}
+  PER -->|no| X403[Sin acceso]
+  PER -->|sí| ACC[Acción permitida]
+  ACC --> AUD[(Auditoría:<br/>quién, qué y cuándo)]
+
+  style BF fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style HU fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style IN fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style PER fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style BLQ fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style X403 fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style FIN fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style AUD fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  </pre></div>
+</section>
+
+<section>
+  <h2><span class="n">4</span> Las capas, de fuera hacia dentro</h2>
+  <p class="nota">
+    Nadie llega al servidor directamente: Cloudflare presenta un certificado de
+    cliente que Nginx exige, y el cortafuegos solo abre lo indispensable.
+  </p>
+  <div class="lienzo"><pre class="mermaid">
+flowchart TD
+  subgraph BORDE["Cloudflare · borde"]
+    A1[HTTPS forzado] --> A2[Protección DDoS]
+    A2 --> A3[Caché de estáticos]
+    A3 --> A4[Certificado de origen]
+  end
+
+  subgraph VPS["VPS · Hetzner"]
+    B1[Cortafuegos UFW<br/>solo 22, 80 y 443] --> B2[fail2ban<br/>vigila SSH]
+    B2 --> B3[Nginx<br/>lista blanca de PHP]
+    B3 --> B4[PHP-FPM 8.3]
+    B4 --> B5[(MariaDB<br/>solo local)]
+  end
+
+  NAV([Navegador]) --> BORDE
+  BORDE --> VPS
+  B4 --> DAT[Datos personales<br/>cifrados en reposo]
+
+  style BORDE fill:#F8EBD2,stroke:#A8761A,color:#1C1416
+  style VPS fill:#F8E4E4,stroke:#C1121F,color:#1C1416
+  style B5 fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  style DAT fill:#E3F0E7,stroke:#1E6B3A,color:#1C1416
+  </pre></div>
+</section>
+
+<section>
+  <div class="caja">
+    <h3>Medidas de seguridad aplicadas</h3>
+    <div class="rejilla">
+      <div class="item"><span class="tic">✓</span><div><b>XSS almacenado, cerrado</b><span>El filtro de contenido dejaba pasar manejadores de eventos y enlaces <code>javascript:</code>. Reescrito para reconstruir el HTML atributo por atributo.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Sin JavaScript de terceros</b><span>Las librerías se servían desde un CDN externo con versión flotante. Ahora salen del propio dominio, con versión fija.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Política de contenido con nonce</b><span>Cambia en cada petición. Un script inyectado no puede adivinarlo y el navegador se niega a ejecutarlo.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>HSTS</b><span>Obliga al navegador a usar HTTPS durante un año.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Cookie de sesión con Secure</b><span>Se detecta sola tras Cloudflare, en vez de depender de un ajuste que se queda sin activar.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Fijación de sesión, cerrada</b><span>Solo se aceptan identificadores creados por el servidor, de 48 caracteres.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Lista blanca de PHP</b><span>Solo se ejecutan cuatro puntos de entrada. Un archivo subido al servidor no corre, esté donde esté.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Subidas que no se ejecutan</b><span>La carpeta donde escribe el panel sirve archivos, pero nunca los interpreta.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Datos personales cifrados</b><span>DNI, teléfono y dirección con AES-256-GCM. En la base no hay ni un dato sensible en claro.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Consultas parametrizadas</b><span>Sin vía de inyección SQL. Donde no se puede parametrizar, listas blancas cerradas.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Exportación protegida</b><span>Permiso propio, datos sensibles aparte, registro en auditoría y neutralización de fórmulas de Excel.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Formulario con cuatro filtros</b><span>Testigo firmado, trampa para robots, tiempo mínimo y límite por IP.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Login con bloqueo por intentos</b><span>Cinco fallos en quince minutos, contando por correo y por IP.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>fail2ban sobre SSH</b><span>Vigila el diario del sistema y bloquea por reincidencia. Lleva más de trescientas direcciones bloqueadas.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Certificado de origen</b><span>Nginx exige el certificado de cliente de Cloudflare: nadie llega al servidor por la puerta de atrás.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Versión de PHP oculta</b><span>Sin <code>X-Powered-By</code> en las respuestas.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Contingencia de inscripciones</b><span>Si la base falla, la inscripción se guarda cifrada en disco y se recupera después.</span></div></div>
+      <div class="item"><span class="tic">✓</span><div><b>Auditoría</b><span>Quién exportó, cuándo y con qué filtros. Un listado con miles de documentos deja rastro.</span></div></div>
+    </div>
+
+    <div class="caja pendiente">
+      <h3>Pendiente antes de noviembre</h3>
+      <div class="rejilla">
+        <div class="item"><span class="tic">→</span><div><b>IP real del visitante</b><span>Hoy el límite por IP cuenta la del borde, no la de la persona. Con volumen alto puede rechazar inscripciones legítimas.</span></div></div>
+        <div class="item"><span class="tic">→</span><div><b>Caché de HTML en el borde</b><span>Cada visita llega hoy al servidor. Es la mayor ganancia pendiente de capacidad.</span></div></div>
+        <div class="item"><span class="tic">→</span><div><b>Acceso SSH solo con clave</b><span>Con contraseña desactivada, los miles de intentos diarios se quedan sin nada que probar.</span></div></div>
+        <div class="item"><span class="tic">→</span><div><b>Secretos fuera del archivo versionado</b><span>La clave de cifrado debe vivir en el archivo local, no en el que se sube en cada despliegue.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>leon14enperu.com · Visita apostólica del 11 al 16 de noviembre de 2026</span>
+  <span>Actualizado el 3 de septiembre de 2026</span>
+</footer>
+
+</div>
+
+<!-- Mermaid en local: este documento no debe depender de internet ni de un
+     CDN externo. Se abre con doble clic y funciona igual sin conexión. -->
+<script src="mermaid.min.js"></script>
+<script>
+(function () {
+  var oscuro = window.matchMedia("(prefers-color-scheme: dark)").matches
+            && document.documentElement.dataset.theme !== "light";
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "strict",
+    theme: oscuro ? "dark" : "base",
+    themeVariables: {
+      fontFamily: "\"Instrument Sans\", system-ui, sans-serif",
+      primaryColor:       oscuro ? "#211817" : "#FFFFFF",
+      primaryTextColor:   oscuro ? "#F4EEED" : "#1C1416",
+      primaryBorderColor: oscuro ? "#3A2C2B" : "#E9DFDD",
+      lineColor:          oscuro ? "#8E7E80" : "#8A7A7C",
+      secondaryColor:     oscuro ? "#33260F" : "#F8EBD2",
+      tertiaryColor:      oscuro ? "#16301F" : "#E3F0E7"
+    }
+  });
+})();
+</script>

@@ -1,0 +1,106 @@
+# ============================================================================
+#  Qué NO entra en el repositorio
+# ============================================================================
+#
+#  Tres clases de cosas: secretos, datos de personas y lo que genera el
+#  sistema al funcionar. Ninguna de las tres es código, y las dos primeras no
+#  se pueden sacar del historial una vez entran: git guarda todo lo que ha
+#  visto, así que un archivo con datos personales sigue estando ahí aunque se
+#  borre en un commit posterior.
+# ============================================================================
+
+
+# ── SECRETOS ────────────────────────────────────────────────────────────────
+#
+# Aquí viven la clave maestra que descifra los DNI y los teléfonos de los
+# voluntarios, las credenciales de la base y las de correo. Si esto entra al
+# repositorio, quien lo clone puede leer los datos de 35 000 personas.
+#
+# El archivo de ejemplo SÍ se versiona: es el que dice qué claves hay que
+# rellenar. El real, nunca.
+intranet/config/config.local.php
+intranet/config/config.*.local.php
+.env
+*.pem
+*.key
+
+
+# ── DATOS DE PERSONAS ───────────────────────────────────────────────────────
+#
+# Cualquier volcado de la base lleva dentro los nombres y los correos de los
+# voluntarios en claro. No hay ninguno que se pueda versionar.
+#
+# Las excepciones son intencionadas y hay que mirarlas una por una antes de
+# añadir ninguna más: son estructura y datos de referencia, no personas.
+#
+#   migrations/   los cambios de esquema, uno por archivo
+#   instalacion/  la base de partida para una máquina de trabajo. Trae el
+#                 contenido del sitio y diez fichas de voluntario INVENTADAS;
+#                 las 35 000 reales no salen de producción.
+#   ubigeo.sql    departamentos, provincias y distritos del Perú
+*.sql
+!intranet/database/migrations/*.sql
+!intranet/database/instalacion/*.sql
+!ubigeo.sql
+
+# Inscripciones que el formulario guardó cifradas cuando la base no respondía.
+# Están cifradas, pero siguen siendo datos de gente.
+intranet/almacen/contingencia/recuperados/
+
+
+# ── LO QUE GENERA EL SISTEMA ────────────────────────────────────────────────
+#
+# Se crea solo al funcionar. Versionarlo hace que dos máquinas se peleen por
+# archivos que ninguna de las dos escribió a mano.
+#
+# Con UNA excepción importante: los .htaccess que hay dentro. No son basura
+# generada, son la barrera que impide que un archivo subido desde el panel se
+# ejecute como código. Si no se versionan, un despliegue limpio deja esas
+# carpetas abiertas y nadie se entera hasta que alguien sube un .php.
+#
+# El patrón necesita las tres líneas: sin «!.../**/» git ni siquiera entra en
+# la carpeta a mirar, y la excepción del .htaccess no llega a evaluarse.
+intranet/storage/**
+!intranet/storage/**/
+!intranet/storage/**/.htaccess
+
+assets/subidos/**
+!assets/subidos/**/
+!assets/subidos/**/.htaccess
+!assets/subidos/**/index.html
+
+
+# ── PAQUETES DE DESPLIEGUE ──────────────────────────────────────────────────
+#
+# Son copias de archivos que ya están en el repositorio, agrupadas para
+# subirlas por FTP. Versionarlas duplica todo y garantiza que las dos copias
+# acaben diciendo cosas distintas.
+despliegue/
+despliegue-*/
+
+
+# ── ARCHIVOS PESADOS Y COPIAS ───────────────────────────────────────────────
+*.zip
+*.tar.gz
+*.7z
+*.anterior
+*.bak
+*.old
+
+
+# ── HERRAMIENTAS DE DESARROLLO ──────────────────────────────────────────────
+#
+# settings.json sí se versiona —son los permisos del proyecto, y conviene que
+# todo el equipo trabaje con los mismos—. El .local es de cada máquina.
+.claude/settings.local.json
+.claude/*.local.json
+
+
+# ── SOBRAS DEL SISTEMA OPERATIVO Y DEL EDITOR ───────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

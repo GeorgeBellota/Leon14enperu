@@ -1,0 +1,5 @@
+# Datos personales cifrados. Nada de aquí se sirve por web.
+Require all denied
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>

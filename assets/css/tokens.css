@@ -1,0 +1,153 @@
+/* ============================================================================
+   leon14enperu.com — TOKENS
+   ÚNICO archivo del sitio con valores hexadecimales.
+   Excepciones documentadas fuera de aquí: assets/img/escudo-leon-xiv.svg y
+   favicon.svg (§5.5: el escudo pontificio conserva sus esmaltes heráldicos).
+
+   REGLAS DE USO (§5.4). De ellas depende que el contraste se sostenga:
+   · Texto en color → siempre la variante -strong. --primary y --accent nunca
+     son color de texto de lectura.
+   · --accent y --primary NUNCA sobre --surface-invert. Sobre banda oscura se
+     usa --on-primary o --gold-invert.
+   · Bordes de campos, casillas y controles → --line-strong (WCAG 2.2 SC 1.4.11).
+   · --gold solo en filetes, viñetas y ornamento. Nunca como texto.
+   · --ink-mute solo a partir de 16px.
+   · Foco sobre banda oscura → --focus-invert.
+   ========================================================================== */
+
+/* ══════════════ PALETA BANDERA (única) ══════════════
+   El sitio tuvo tres paletas conmutables (bandera, escudo, sereno) con un
+   selector en la cabecera. Se retiró por decisión de diseño: queda solo ésta. */
+:root {
+  --ink:            #1C1416;
+  --ink-soft:       #574A4D;
+  --ink-mute:       #827275;   /* solo ≥16px */
+  --surface:        #FCFAF9;
+  --surface-alt:    #F3E7E5;
+  --surface-invert: #6E0B14;
+  --line:           #E7DEDC;   /* filetes decorativos */
+  --line-strong:    #8A7C7A;   /* bordes de campos y controles */
+  --primary:        #C1121F;
+  --primary-strong: #97101A;   /* texto en color */
+  --primary-tint:   #F6D9D9;
+  --accent:         #8F6414;   /* botón secundario */
+  --accent-strong:  #74510F;
+  --accent-tint:    #F8E7C7;
+  --gold:           #A8761A;   /* filetes y viñetas, nunca texto */
+  --gold-invert:    #F0C46B;
+  --thread:         #C1121F;
+  --thread-invert:  #F0C46B;
+  --on-primary:     #FFFFFF;
+  --on-accent:      #FFFFFF;
+  --focus:          #97101A;
+  --focus-invert:   #FFFFFF;
+  --duo-dark:       #6E0B14;
+  --duo-light:      #F5D9B0;
+}
+
+/* ══════════════ INVARIANTES ══════════════ */
+:root {
+  /* ── Escala tipográfica ──────────────────────────────────────────────
+     En píxeles, por decisión del cliente: el primer valor es el tamaño a
+     390 px de ancho y el segundo el tamaño a 1440. Entre ambos interpola.
+
+     Aviso técnico, para que conste: en píxeles el texto deja de responder al
+     tamaño de fuente que el usuario haya configurado en su navegador. Quien
+     lee con el cuerpo aumentado —vista cansada, baja visión— ya no puede
+     agrandarlo desde los ajustes; solo con el zoom de página, que sigue
+     funcionando. Si algún día se quiere recuperar ese comportamiento, basta
+     con dividir cada valor entre 16 y escribirlo en rem: nada más del sitio
+     depende de la unidad.
+
+     La escala además se ha achicado: los titulares mayores bajan de 88 a 52
+     px y el cartel del hero de 116 a 66. */
+  --step--2: clamp(11px, 10.629px + 0.0952vw, 12px);   /* 11 → 12 px · versalitas */
+  --step--1: clamp(12px, 11.629px + 0.0952vw, 13px);   /* 12 → 13 px · interfaz y metadatos */
+  --step-0:  clamp(15px, 14.629px + 0.0952vw, 16px);   /* 15 → 16 px · cuerpo */
+  --step-1:  clamp(17px, 16.257px + 0.1905vw, 19px);   /* 17 → 19 px · lectura larga */
+  --step-1b: clamp(21px, 19.143px + 0.4762vw, 26px);   /* 21 → 26 px · subtitulares */
+  /* Los dos escalones de TITULAR DE SECCIÓN se subieron después de la primera
+     poda: a 38 y 51 px no mandaban sobre la página y no se veía de un vistazo
+     qué sección estabas mirando. Siguen muy por debajo de los 58 y 88 px que
+     tenían antes de achicar la escala; lo que se achicó fue el cuerpo. */
+  --step-2:  clamp(30px, 24.057px + 1.5238vw, 46px);   /* 30 → 46 px · titulares de sección */
+  --step-3:  clamp(36px, 27.086px + 2.2857vw, 60px);   /* 36 → 60 px · titulares mayores */
+  --step-4:  clamp(37px, 25.857px + 2.8571vw, 67px);   /* 37 → 67 px · hero, uso único */
+  --step-5:  clamp(62px, 41.943px + 5.1429vw, 116px);  /* 62 → 116 px · cifra, uso único */
+
+  /* Tracking. Un valor por función, no un número suelto en cada regla. */
+  --track-rotulo: .22em;
+  --track-meta:   .12em;
+  --track-accion: .06em;
+
+  /* Espaciado. También en píxeles, y encogido en la misma proporción que la
+     tipografía: si solo se achica el texto, la página se queda con los mismos
+     huecos enormes y sigue pareciendo vacía. */
+  --space-2xs:6px;  --space-xs:10px;  --space-s:14px;
+  --space-m:20px;   --space-l:28px;   --space-xl:42px;
+  --space-2xl:60px;
+  /* --space-3xl es el aire ENTRE secciones: la mitad arriba y la mitad abajo,
+     así que el hueco resultante entre dos bloques es este valor entero. Estaba
+     en 108 px a 1440 y dejaba franjas de color vacías de más de 130 px con el
+     relleno de los encabezados. Bajado a 68. */
+  --space-3xl:clamp(44px, 4.7vw, 68px);
+
+  /* Retícula y geometría */
+  --measure:68ch; --gutter:clamp(18px, 3.2vw, 52px); --maxw:1240px;
+  --radius:4px; --rule:1px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-wipe:cubic-bezier(.65,0,.35,1);
+
+  /* ── Sombras ─────────────────────────────────────────────────────────
+     Sustituyen a las manchas ovaladas de fondo. Una mancha de color detrás
+     de una sección es un adorno que no dice nada; una sombra levanta el
+     elemento del papel y ordena qué está delante de qué.
+     Se construyen con color-mix sobre --ink, así que cada paleta proyecta
+     su propia sombra en lugar de un gris genérico. */
+  --sombra-s: 0 1px 2px color-mix(in srgb, var(--ink) 8%, transparent),
+              0 2px 6px color-mix(in srgb, var(--ink) 6%, transparent);
+  --sombra-m: 0 2px 4px color-mix(in srgb, var(--ink) 7%, transparent),
+              0 8px 20px color-mix(in srgb, var(--ink) 10%, transparent);
+  --sombra-g: 0 4px 10px color-mix(in srgb, var(--ink) 8%, transparent),
+              0 18px 44px color-mix(in srgb, var(--ink) 16%, transparent);
+
+  /* Familias tipográficas */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-read: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Instrument Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* Alturas de referencia */
+  --header-h: 64px;
+}
+
+/* ══════════════ PALETA DE IMPRESIÓN ══════════════
+   En papel no hay color de marca: hay tinta. Se redefine aquí, y no en
+   print.css, para que este archivo siga siendo el único con hexadecimales. */
+@media print {
+  :root {
+    --ink:            #000000;
+    --ink-soft:       #333333;
+    --ink-mute:       #575757;
+    --surface:        #FFFFFF;
+    --surface-alt:    #FFFFFF;
+    --surface-invert: #FFFFFF;
+    --line:           #BBBBBB;
+    --line-strong:    #666666;
+    --primary:        #000000;
+    --primary-strong: #000000;
+    --primary-tint:   #FFFFFF;
+    --accent:         #000000;
+    --accent-strong:  #000000;
+    --accent-tint:    #FFFFFF;
+    --gold:           #999999;
+    --gold-invert:    #000000;
+    --thread:         #999999;
+    --thread-invert:  #999999;
+    --on-primary:     #000000;
+    --on-accent:      #000000;
+    --focus:          #000000;
+    --focus-invert:   #000000;
+    --duo-dark:       #FFFFFF;
+    --duo-light:      #FFFFFF;
+  }
+}

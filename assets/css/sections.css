@@ -1,0 +1,1404 @@
+/* ============================================================================
+   SECCIONES DE LA HOME
+
+   Reescrito para sacar la pieza del registro «folleto». Los tres cambios de
+   fondo son: escala tipográfica de cartel, composición asimétrica sobre la
+   retícula de 12, y desaparición de los recuadros. Nada vive ya dentro de una
+   cajita con borde.
+   ========================================================================== */
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. SLIDER A PANTALLA COMPLETA
+   ════════════════════════════════════════════════════════════════════════ */
+/* Altura FIJA, no 100svh. A pantalla completa el slider se comía la primera
+   impresión entera y no dejaba ver que había página debajo; en un monitor
+   grande además estiraba la fotografía sin ganar nada. 620 px en escritorio
+   dejan asomar la sección siguiente, que es lo que invita a bajar. */
+.hero {
+  position: relative;
+  /* Los 480px de antes no daban para la diapositiva 1 apilada. Con 64px de
+     cabecera quedaban 416 de área útil, el panel se llevaba el 54% (225) y de
+     ahí salían 28 de relleno superior y 144 de reserva para la paginación: 53px
+     de caja para 194px de contenido. Con overflow:hidden, el titular y el botón
+     se cortaban. Ese era el «slider roto» de la primera diapositiva.
+
+     La altura crece con el ancho, y eso tampoco es estético. Con la foto a
+     sangre, la barbilla del Santo Padre cae a 0.40 × la altura escalada del
+     retrato, y el panel mide unos 370px (28 de relleno + 26 de rótulo + 53 de
+     titular + 73 de barandilla + 46 de botón + 144 de reserva para la
+     paginación). Para que el panel quede SIEMPRE por debajo de la barbilla la
+     altura tiene que crecer con el ancho: de ahí la fórmula.
+     Comprobado de 320 a 899px: el margen entre barbilla y panel va de 36 a
+     103px, nunca negativo.
+     Primera declaración de respaldo para navegadores sin calc dentro de clamp. */
+  height: 740px;
+  height: clamp(740px, calc(58vw + 470px), 980px);
+  padding-block-start: var(--header-h);   /* la cabecera es sólida y ocupa su sitio */
+  color: var(--on-primary);
+  background: var(--surface-invert);
+}
+@media (min-width: 900px)  { .hero { height: 560px; } }
+@media (min-width: 1024px) { .hero { height: 620px; } }
+.hero .swiper, .hero .swiper-wrapper, .hero .swiper-slide { height: 100%; }
+.hero .swiper-slide { position: relative; overflow: hidden; }
+
+/* El titular es el ancla visual de la página.
+   Declara familia y peso porque en las diapositivas 2 y 3 no es un <h1> sino
+   un <p role="heading">: sin esto perdía la Fraunces y caía al sans de interfaz. */
+.hero__titulo {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-4);
+  line-height: .92;
+  letter-spacing: -0.042em;
+  text-wrap: balance;
+  margin-block: var(--space-s) var(--space-l);
+  max-width: 13ch;
+}
+
+/* ── Fotografía a sangre + texto encima (diapositivas 2 y 3) ───────────
+   La fotografía ocupa toda la diapositiva y el texto va sobre ella. */
+.hero__media { position: absolute; inset: 0; overflow: hidden; }
+.hero__media picture { display: block; width: 100%; height: 100%; }
+.hero__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  filter: none;
+}
+
+/* El relleno inferior deja de depender de vh: con altura fija, 12vh sobraba
+   en pantallas altas y aplastaba el texto en las bajas. Ahora es sitio para
+   la paginación y nada más. */
+.hero__contenido {
+  position: relative; z-index: 5;
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-block-end: 76px;
+}
+
+/* ── El bloque del texto ───────────────────────────────────────────────
+   Medido sobre la fotografía real: el titular blanco sobre la casulla del
+   Santo Padre daba 1,00:1 — blanco sobre blanco. Ningún velo lo arregla sin
+   invadir el rostro, así que el texto se apoya en su propia superficie.
+   La fotografía sigue a sangre detrás; es el mismo recurso que ya usan las
+   cabeceras de las páginas internas. */
+.hero__bloque {
+  background: color-mix(in srgb, var(--surface-invert) 94%, transparent);
+  padding: var(--space-l) var(--space-l) var(--space-m);
+  max-width: 672px;
+}
+@media (min-width: 900px) {
+  .hero__bloque { padding: var(--space-xl) var(--space-xl) var(--space-l); }
+}
+/* Un peldaño por debajo del titular de la portada: el bloque queda más bajo
+   y más corto, y deja el rostro del Santo Padre despejado por encima.
+   La diapositiva del retrato conserva --step-4; es el ancla y solo hay una. */
+.hero__bloque .hero__titulo {
+  font-size: var(--step-3);
+  max-width: 13ch;
+  margin-block: var(--space-xs) var(--space-m);
+}
+.hero__bloque .hero__dato { max-width: none; }
+
+/* Texto suelto sobre la fotografía: sin caja. Se mantiene estrecho para no
+   salirse de la zona que cubre el degradado lateral. */
+.hero__contenido--suelto .hero__titulo { max-width: 8ch; }
+.hero__contenido--suelto .hero__dato { max-width: 480px; }
+.hero__contenido--suelto .hero__acciones { max-width: 544px; }
+
+/* Velo del hero.
+   Se detiene en el 52 % de la altura: por debajo del rostro del Santo Padre
+   en las dos fotografías que lo llevan. Un degradado sobre su cara está
+   descartado, pero sin nada el texto blanco no se sostiene sobre una
+   multitud a pleno sol. */
+/* Velo lateral: para la diapositiva cuyo texto va suelto sobre la fotografía,
+   sin caja. Carga la mitad izquierda y se apaga en el 58 % del ancho — el
+   rostro del Santo Padre queda al 70 %, fuera del degradado. */
+.velo--lateral {
+  background:
+    /* Meseta alta hasta el 32 % y caída a cero en el 58 %. Con el peor fondo
+       posible —la casulla blanca a pleno sol— el texto se sostiene por encima
+       de 5:1, y el rostro, que está al 68 %, no recibe nada. */
+    linear-gradient(to right,
+      color-mix(in srgb, var(--surface-invert) 93%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 88%, transparent) 32%,
+      color-mix(in srgb, var(--surface-invert) 62%, transparent) 44%,
+      transparent 58%),
+    linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 48%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 26%, transparent) 26%,
+      transparent 46%);
+}
+@media (max-width: 899px) {
+  /* En vertical no hay «mitad izquierda» que valga: el degradado sube desde
+     el borde inferior y el encuadre deja al Santo Padre en la parte alta. */
+  .velo--lateral {
+    background: linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 92%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 82%, transparent) 34%,
+      color-mix(in srgb, var(--surface-invert) 40%, transparent) 52%,
+      transparent 66%);
+  }
+}
+
+.velo--hero {
+  background:
+    /* Foco elíptico anclado fuera del encuadre, en la esquina inferior
+       izquierda: cubre la zona del texto con densidad suficiente y se apaga
+       antes de llegar al rostro del Santo Padre, que queda intacto. */
+    radial-gradient(80% 95% at 2% 112%,
+      color-mix(in srgb, var(--surface-invert) 92%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 80%, transparent) 55%,
+      color-mix(in srgb, var(--surface-invert) 35%, transparent) 80%,
+      transparent 100%),
+    /* Base tenue en el borde inferior, para asentar la paginación */
+    linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 45%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 14%, transparent) 20%,
+      transparent 38%);
+}
+
+/* ── Diapositiva del retrato: composición partida ─────────────────────
+   Es la excepción, y solo esta. El retrato del Santo Padre no admite velo
+   ni degradado por encima, así que el texto vive en un panel de color a su
+   lado en vez de sobre la fotografía. */
+/* EN MÓVIL LA DIAPOSITIVA 1 ES FOTO A SANGRE, como las otras dos.
+
+   Por qué se cambió: el retrato ocupaba una banda apaisada encima del panel, y
+   una foto VERTICAL (1131×1600, proporción 0.707) dentro de una caja APAISADA
+   obliga a cover a recortar en vertical. Y recortar en vertical un retrato es
+   perder cara: con la banda a proporción 2.46 sólo quedaba visible el 28% de
+   la altura de la imagen, y la barbilla está al 40%. Se cortaba bajo los ojos.
+   Daba igual dónde se anclara el encuadre: en 28% no cabe una cara.
+
+   Ahora el retrato ocupa la diapositiva ENTERA —alta y estrecha, como él
+   mismo—, así que cover escala por altura y lo que se recorta son los lados:
+   fondo y hombros. La cara no se toca nunca, en ningún ancho.
+
+   El panel va encima, apoyado en el borde inferior. No incumple la regla de no
+   poner velos sobre el rostro: es un bloque opaco sobre el pecho, no un
+   degradado sobre la cara, y la altura del hero garantiza que quede por debajo
+   de la barbilla. */
+.hero__doble { position: relative; height: 100%; }
+.hero__doble > .hero__retrato { position: absolute; inset: 0; }
+.hero__doble > .hero__panel {
+  position: absolute; inset-inline: 0; inset-block-end: 0;
+  z-index: 3;
+}
+@media (min-width: 900px) {
+  .hero__doble { display: grid; grid-template-columns: 5fr 7fr; }
+  .hero__doble > .hero__retrato,
+  .hero__doble > .hero__panel { position: relative; inset: auto; }
+}
+
+.hero__retrato { position: relative; overflow: hidden; background: var(--surface-alt); }
+.hero__retrato picture { display: block; width: 100%; height: 100%; }
+/* El encuadre se ancla arriba: en marcos apaisados o casi cuadrados —y en
+   móvil este retrato es la fila que absorbe el sobrante, así que puede quedar
+   muy apaisado— un object-position centrado le cortaba la frente al Santo
+   Padre. El transform-origin hace, además, que el zoom de abajo crezca hacia
+   el pecho y no hacia la cabeza. */
+.hero__retrato img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;
+  transform-origin: 50% 0%;
+  filter: none;
+}
+
+/* Ken Burns muy contenido sobre la diapositiva activa */
+.hero .swiper-slide-active .hero__media img,
+.hero .swiper-slide-active .hero__retrato img { animation: ken-burns 11s var(--ease) forwards; }
+@keyframes ken-burns { from { transform: scale(1); } to { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero .swiper-slide-active .hero__media img,
+  .hero .swiper-slide-active .hero__retrato img { animation: none; }
+}
+
+.hero__panel {
+  background: var(--surface-invert);
+  display: flex; align-items: flex-end;
+  padding: var(--space-l) var(--gutter) 44px;
+  overflow: hidden;
+}
+@media (min-width: 900px) {
+  .hero__panel { padding: var(--space-xl) clamp(32px, 4vw, 64px) 76px; }
+}
+.hero__panel-interior { width: 100%; max-width: 672px; }
+@media (max-width: 899px) {
+  .hero__panel {
+    /* deja sitio a la paginación (≈78 px) y a la barra fija (≈56 px) */
+    padding-block-end: 144px;
+  }
+  .hero__panel .hero__titulo { margin-block: var(--space-2xs) var(--space-s); }
+  .hero__panel .hero__dato { margin-block-end: var(--space-m); }
+}
+
+/* Barandilla de datos: hilera bajo un filete, con separadores reales.
+   Sustituye a la línea de texto con puntos medios, que era pura etiqueta. */
+.hero__dato {
+  display: flex; flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  border-top: 1px solid color-mix(in srgb, var(--on-primary) 40%, transparent);
+  padding-block-start: var(--space-s);
+  margin-block-end: var(--space-l);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  max-width: 992px;
+}
+.hero__dato > span { padding-inline: 18px; }
+.hero__dato > span:first-child { padding-inline-start: 0; }
+.hero__dato > span + span { border-left: 1px solid color-mix(in srgb, var(--on-primary) 34%, transparent); }
+
+.hero__acciones { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+
+/* Paginación numerada con filete */
+.hero__controles {
+  position: absolute; z-index: 6;
+  right: max(var(--gutter), calc(50% - var(--maxw) / 2 + var(--gutter)));
+  bottom: clamp(26px, 4vh, 44px);
+  display: flex; align-items: center; gap: var(--space-s);
+}
+.hero__paginacion { display: flex; align-items: center; gap: 9px; }
+.hero__punto {
+  display: inline-flex; align-items: center; gap: 9px;
+  min-height: 44px; padding-inline: 3px;
+  background: transparent; border: 0; cursor: pointer;
+  color: var(--on-primary);
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  opacity: .55;
+  transition: opacity .25s var(--ease);
+}
+.hero__punto[aria-current="true"] { opacity: 1; }
+.hero__barra {
+  display: block; width: 18px; height: 1px;
+  background: color-mix(in srgb, var(--on-primary) 45%, transparent);
+  position: relative; overflow: hidden;
+  transition: width .35s var(--ease);
+}
+.hero__punto[aria-current="true"] .hero__barra { width: 51px; }
+.hero__barra i { position: absolute; inset: 0; background: var(--gold-invert); transform: scaleX(0); transform-origin: left center; }
+.hero__punto[aria-current="true"] .hero__barra i { animation: barra-progreso var(--hero-autoplay, 7s) linear forwards; }
+.hero.esta-en-pausa .hero__barra i { animation-play-state: paused; }
+@keyframes barra-progreso { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero__punto[aria-current="true"] .hero__barra i { animation: none; transform: scaleX(1); }
+}
+
+.hero__pausa {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px;
+  background: transparent; border: var(--rule) solid transparent; border-radius: var(--radius);
+  color: var(--on-primary); cursor: pointer;
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  opacity: 0;
+}
+.hero__pausa:focus-visible, .hero:hover .hero__pausa { opacity: 1; border-color: color-mix(in srgb, var(--on-primary) 55%, transparent); }
+
+.hero__scroll {
+  position: absolute; z-index: 5;
+  left: max(var(--gutter), calc(50% - var(--maxw) / 2 + var(--gutter)));
+  bottom: clamp(26px, 4vh, 44px);
+  display: flex; align-items: center; gap: 9px;
+  color: var(--on-primary);
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; opacity: .75;
+}
+.hero__scroll svg { width: 16px; height: 16px; animation: baja-suave 2.6s var(--ease) infinite; }
+@keyframes baja-suave { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+@media (max-width: 899px) {
+  .hero__titulo { font-size: var(--step-3); max-width: 11ch; margin-block-end: var(--space-m); }
+  .hero__dato { font-size: var(--step--2); letter-spacing: .13em; margin-block-end: var(--space-m); }
+  .hero__dato > span { padding-inline: 11px; }
+  .hero__acciones .btn { width: 100%; }
+  .hero__acciones .btn:nth-child(n+2) { display: none; }
+  /* Sobre fotografía a sangre el texto también debe librar la barra fija */
+  .hero__contenido { padding-block-end: 144px; }
+  .hero__controles {
+    left: var(--gutter); right: auto;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+  }
+  .hero__punto > span:first-child { display: none; }
+  .hero__barra { width: 8px; height: 8px; border-radius: 50%; }
+  .hero__punto[aria-current="true"] .hero__barra { width: 8px; background: var(--gold-invert); }
+  .hero__barra i { display: none; }
+  .hero__scroll { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. DESTACADOS
+   Retrato en vez de apaisado y titular grande: tres piezas editoriales,
+   no tres fichas de catálogo.
+   ════════════════════════════════════════════════════════════════════════ */
+.destacado .figura { margin-block-end: var(--space-m); }
+.destacado .rotulo { margin-block-end: 6px; }
+.destacado .tarjeta__titulo { font-size: var(--step-1); max-width: 16ch; }
+
+@media (min-width: 1024px) {
+  /* La primera arranca arriba; las otras dos bajan. Rompe la fila plana. */
+  .destacado:nth-child(2) { margin-block-start: var(--space-xl); }
+  .destacado:nth-child(3) { margin-block-start: calc(var(--space-xl) * 2); }
+}
+
+@media (max-width: 767px) {
+  .destacados__pista {
+    display: flex; gap: var(--space-m);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-block-end: var(--space-2xs);
+    scrollbar-width: none;
+  }
+  .destacados__pista::-webkit-scrollbar { display: none; }
+  .destacados__pista > * { flex: 0 0 76%; scroll-snap-align: start; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. CONTADOR — el ancla visual de la home
+   Antes: cifra granate sobre rosa muy claro, entre dos filetes y sin titular.
+   Se leía como un pie de página, no como el dato más urgente de la portada.
+   Ahora es una banda a sangre sobre fotografía nocturna, con la cifra en oro.
+   La foto va con alt vacío y sin pie: es textura, y nombrarla insinuaría que
+   la llegada es en Lima, cosa que no consta en ninguna fuente.
+   ════════════════════════════════════════════════════════════════════════ */
+.seccion--contador {
+  position: relative; isolation: isolate; overflow: clip;
+  padding-block: var(--space-2xl);
+}
+.contador__media { position: absolute; inset: 0; z-index: -1; }
+.contador__media img {     transform: scaleX(-1); width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; display: block; }
+.contador__media::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(to right,
+      color-mix(in srgb, var(--surface-invert) 94%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 86%, transparent) 55%,
+      color-mix(in srgb, var(--surface-invert) 72%, transparent) 100%);
+}
+.contador__contenido { position: relative; }
+.contador__encabezado { margin-block-end: var(--space-l); }
+
+.contador { padding-block: 0; }
+.contador__principal { margin: 0; }
+
+.contador__marca {
+  display: grid;
+  gap: var(--space-l);
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .contador__marca {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    column-gap: var(--space-2xl);
+    align-items: end;
+  }
+}
+
+.contador__numero {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--step-5);
+  font-weight: 500;
+  line-height: .86;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1;
+  /* Sobre banda oscura --primary está prohibido (§5.4): va en el oro invertido. */
+  color: var(--gold-invert);
+}
+.contador__dias {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-primary) 78%, transparent);
+  margin-block-start: var(--space-2xs);
+}
+
+.contador__resto { display: flex; gap: var(--space-l); margin: 0; padding: 0; }
+.contador__resto > div { display: flex; flex-direction: column-reverse; gap: 4px; }
+.contador__resto dt {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-rotulo); text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-primary) 72%, transparent);
+}
+.contador__resto dd {
+  margin: 0;
+  font-family: var(--font-display); font-size: var(--step-2); font-weight: 500;
+  line-height: 1; font-variant-numeric: tabular-nums lining-nums;
+  color: var(--on-primary);
+}
+.contador__leyenda {
+  color: color-mix(in srgb, var(--on-primary) 82%, transparent);
+  font-size: var(--step--1);
+  max-width: 28ch;
+}
+@media (min-width: 900px) {
+  .contador__leyenda { justify-self: end; text-align: right; }
+}
+.contador__aviso {
+  font-family: var(--font-display); font-size: var(--step-3); font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+@media (max-width: 899px) {
+  .contador { padding-block: var(--space-l); }
+  .contador__marca { gap: var(--space-m); }
+  .contador__resto { gap: var(--space-l); }
+}
+
+body[data-phase="pre"]  .fase-live, body[data-phase="pre"]  .fase-post { display: none; }
+body[data-phase="live"] .fase-pre,  body[data-phase="live"] .fase-post { display: none; }
+body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display: none; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. CRÓNICAS DEL CAMINO — carrusel a sangre
+   Antes era una lista vertical: tres bloques enormes de texto sobre blanco,
+   planos y vacíos. Ahora cada hito es una diapositiva con la fotografía de
+   fondo y el texto dentro, y la siguiente se asoma por el borde derecho.
+   ════════════════════════════════════════════════════════════════════════ */
+.hitos-carril__encabezado { position: relative; }
+.hitos-carril__mandos { display: flex; gap: 8px; margin-block-start: 20px; }
+@media (min-width: 768px) {
+  .hitos-carril__mandos { position: absolute; right: 0; bottom: 0; margin-block-start: 0; }
+}
+
+.mando {
+  inline-size: 44px; block-size: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: var(--sombra-s);
+  transition: background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+.mando svg { inline-size: 20px; block-size: 20px; }
+.mando[data-hitos-prev] svg { transform: rotate(180deg); }
+.mando:hover { background: var(--surface-alt); box-shadow: var(--sombra-m); transform: translateY(-1px); }
+.mando.swiper-button-disabled { opacity: .35; pointer-events: none; box-shadow: none; }
+
+/* El carril sale del contenedor: sangra por la derecha para que se vea que
+   hay más diapositivas, y se alinea a la izquierda con el texto de arriba. */
+.hitos-carril {
+  margin-block-start: 32px;
+  padding-inline-start: max(var(--gutter), calc(50% - var(--maxw) / 2 + var(--gutter)));
+  /* clip, no hidden: las diapositivas asoman a propósito por la derecha y sin
+     esto empujaban la barra de scroll horizontal de toda la página. */
+  overflow-x: clip;
+}
+.hitos-carril .swiper { overflow: visible; }
+.hitos-carril .swiper-wrapper { list-style: none; padding: 0; margin: 0; }
+
+/* Sin Swiper el carril sigue siendo un carrusel: desplazamiento nativo con
+   ajuste por diapositiva. Nunca se queda en una columna rota. */
+.hitos-carril.sin-slider .swiper-wrapper,
+.sin-slider .hitos-carril .swiper-wrapper {
+  display: flex; gap: 16px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-block-end: 12px;
+}
+.hitos-carril.sin-slider .swiper-slide { scroll-snap-align: start; }
+
+.hito-tarjeta {
+  position: relative; isolation: isolate;
+  inline-size: 460px; max-inline-size: 460px;
+  /* Cuadrada en móvil: con 4:3 el bloque de texto ocupaba el 44 % de la
+     tarjeta y su primera línea caía por encima del velo, sobre la casulla
+     clara. Al ganar altura el texto baja entero a la zona oscura. */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: var(--sombra-g);
+  display: flex; align-items: flex-end;
+  color: var(--on-primary);
+}
+@media (min-width: 768px)  { .hito-tarjeta { inline-size: 400px; max-inline-size: 400px; } }
+@media (min-width: 1024px) { .hito-tarjeta { inline-size: 460px; max-inline-size: 460px; } }
+
+.hito-tarjeta picture { position: absolute; inset: 0; z-index: -2; }
+.hito-tarjeta img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+
+/* EL VELO. Nace al 58 % y muere ahí: por encima la fotografía va limpia.
+   Las cinco fotos están recortadas para que ningún rostro baje de esa línea,
+   porque la regla dura del encargo prohíbe degradados sobre el rostro del
+   Santo Padre. Si se cambia una foto hay que rehacer el recorte. */
+.hito-tarjeta::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  /* Casi negro con un punto del color de la paleta: en --surface-invert puro
+     el velo teñía de rojo media fotografía en vez de oscurecerla.
+
+     Los porcentajes NO son de gusto. Salen de medir el píxel más claro bajo
+     cada línea de texto sobre las cinco fotografías (legibilidad-hitos.js):
+     con el velo naciendo al 58 % y suave, la fecha se leía a 1,23:1 sobre la
+     casulla. Ahora nace al 56 % y sube deprisa. Por arriba muere del todo,
+     que es lo que mantiene los rostros limpios. */
+  --velo: color-mix(in srgb, var(--ink) 78%, var(--surface-invert));
+  background: linear-gradient(to top,
+    color-mix(in srgb, var(--velo) 94%, transparent) 0%,
+    color-mix(in srgb, var(--velo) 90%, transparent) 26%,
+    color-mix(in srgb, var(--velo) 72%, transparent) 40%,
+    color-mix(in srgb, var(--velo) 34%, transparent) 50%,
+    transparent 56%);
+}
+
+.hito-tarjeta__cuerpo { padding: 24px; inline-size: 100%; }
+.hito-tarjeta__fecha {
+  font-family: var(--font-ui);
+  font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase;
+  color: var(--gold-invert);
+  margin-block-end: 6px;
+}
+.hito-tarjeta__titulo {
+  font-size: var(--step-1b); line-height: 1.1;
+  max-width: 16ch; margin-block-end: 8px;
+  text-wrap: balance;
+}
+/* En el móvil la tarjeta mide 335 px: el párrafo se comía la mitad y empujaba
+   la fecha y el titular por encima del velo, sobre la fotografía clara. Aquí
+   la tarjeta lleva fecha, titular y estado, que es lo que hay que leer de un
+   vistazo; el desarrollo está en la página, no en el carrusel. Móvil no es el
+   «responsive» del escritorio. */
+.hito-tarjeta__texto { display: none; }
+@media (min-width: 768px) {
+  .hito-tarjeta__texto {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+    font-size: var(--step--1); line-height: 1.5;
+    max-width: 46ch;
+    color: color-mix(in srgb, var(--on-primary) 88%, transparent);
+  }
+}
+.hito-tarjeta .estado { margin-block-start: 12px; color: var(--on-primary); }
+.hito-tarjeta .estado::before { border-color: currentColor; }
+.hito-tarjeta .estado--cumplido::before { background: currentColor; }
+
+@media (min-width: 1024px) { .hito-tarjeta__cuerpo { padding: 28px; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. LOS DÍAS DEL ENCUENTRO
+   Cuatro filas a todo lo ancho, como un cuadro de servicio. Antes eran
+   cuatro recuadros de borde discontinuo: parecían huecos sin resolver.
+   ════════════════════════════════════════════════════════════════════════ */
+.dias__estado {
+  font-family: var(--font-read);
+  font-size: var(--step-1b);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  max-width: 24ch;
+  margin-block-end: var(--space-xl);
+}
+
+.dias { list-style: none; padding: 0; margin: 0; }
+.dia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-2xs);
+  padding-block: var(--space-m);
+  border-top: 1px solid var(--line);
+}
+.dia:last-child { border-bottom: 1px solid var(--line); }
+.dia__sede { font-size: var(--step-2); line-height: 1; }
+.dia__ventana {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 900px) {
+  .dia {
+    grid-template-columns: minmax(0, 1fr) 224px 256px;
+    column-gap: var(--gutter);
+    align-items: baseline;
+    padding-block: var(--space-l);
+  }
+  .dia__sede    { grid-column: 1; }
+  .dia__ventana { grid-column: 2; }
+  .dia .estado  { grid-column: 3; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   6. CUATRO CIUDADES, UN SOLO PUEBLO
+   ════════════════════════════════════════════════════════════════════════ */
+.sedes__intro {
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  line-height: 1.45;
+  max-width: 38ch;
+}
+
+/* ── Índice de sedes ────────────────────────────────────────────────────
+   Sustituye al diagrama de ruta. Además de resolver mejor la información,
+   retira la última curva roja que quedaba en el sitio. Mismo componente en
+   escritorio y en móvil: no hay una versión de repuesto para pantalla chica. */
+.indice-sedes { list-style: none; padding: 0; margin: 0; }
+.sede-fila {
+  display: grid;
+  column-gap: var(--space-s);
+  row-gap: var(--space-2xs);
+  padding-block: var(--space-l);
+  border-top: 1px solid var(--line-strong);
+}
+.sede-fila:last-child { border-bottom: 1px solid var(--line-strong); }
+.sede-fila__nombre { font-size: var(--step-2); line-height: 1; }
+
+/* Móvil: numeral colgado a la izquierda, todo lo demás en la columna ancha.
+   La colocación va dentro de la consulta de medios: si se deja suelta, gana
+   por especificidad a la de escritorio y apila las cinco piezas en la misma
+   celda. */
+@media (max-width: 1023px) {
+  .sede-fila { grid-template-columns: 51px minmax(0, 1fr); }
+  .sede-fila__num { grid-column: 1; grid-row: 1; font-size: var(--step-1b); padding-block-start: .22em; }
+  .sede-fila > :not(.sede-fila__num) { grid-column: 2; }
+}
+.sede-fila__meta {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase; color: var(--ink-soft);
+}
+.sede-fila__linea { font-family: var(--font-read); font-size: var(--step-1); line-height: 1.4; max-width: 46ch; margin-block-start: var(--space-2xs); }
+.sede-fila__ventana {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase; color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.sede-fila__ventana br { display: none; }
+.sede-fila__ir { margin-block-start: var(--space-2xs); }
+
+@media (min-width: 1024px) {
+  .sede-fila {
+    grid-template-columns: 72px 352px minmax(0, 1fr) 176px;
+    column-gap: var(--gutter);
+    align-items: start;
+    padding-block: var(--space-xl);
+  }
+  .sede-fila__num     { grid-column: 1; grid-row: 1 / span 2; font-size: var(--step-1b); padding-block-start: .45em; }
+  .sede-fila__nombre  { grid-column: 2; grid-row: 1; font-size: var(--step-3); }
+  .sede-fila__meta    { grid-column: 2; grid-row: 2; margin-block-start: var(--space-s); }
+  .sede-fila__linea   { grid-column: 3; grid-row: 1; margin-block-start: .35em; }
+  .sede-fila__ventana { grid-column: 4; grid-row: 1; text-align: right; margin-block-start: .5em; }
+  .sede-fila__ventana br { display: inline; }
+  .sede-fila__ir      { grid-column: 3 / span 2; grid-row: 2; margin-block-start: var(--space-s); }
+}
+
+.nota { font-size: var(--step--1); color: var(--ink-soft); }
+
+/* ── Ficha lateral del diagrama ─────────────────────────────────────────
+   Se enciende al pasar el cursor o el foco por cada nodo. */
+.ficha-sede { border-top: 2px solid var(--ink); padding-block-start: var(--space-m); }
+.ficha-sede__num { font-size: var(--step-1b); margin-block-end: var(--space-s); }
+.ficha-sede__nombre { font-size: var(--step-3); line-height: .95; }
+.ficha-sede__meta {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase; color: var(--ink-soft);
+  margin-block: var(--space-s) var(--space-m);
+  max-width: 34ch;
+}
+.ficha-sede__linea { font-family: var(--font-read); font-size: var(--step-1); line-height: 1.4; max-width: 30ch; }
+.ficha-sede__enlace { margin-block-start: var(--space-l); }
+
+/* ── Diagrama ───────────────────────────────────────────────────────────
+   El «juego de líneas por orden de salto»: las cuatro sedes situadas por su
+   posición relativa de norte a sur y unidas por el trazo del recorrido.
+   Vive dentro de su caja: no es la línea que recorría el margen de la página. */
+.diagrama { position: relative; }
+.diagrama svg { width: 100%; height: auto; overflow: visible; }
+.diagrama__eje { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 6; }
+.diagrama__ruta { stroke: var(--primary); stroke-width: 1.5; fill: none; vector-effect: non-scaling-stroke; }
+.diagrama__cardinal { fill: var(--ink-mute); font-family: var(--font-ui); font-size: 12px; font-weight: 600; letter-spacing: 3px; }
+
+.nodo { cursor: pointer; }
+.nodo__punto { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; transition: fill .22s var(--ease), stroke .22s var(--ease); }
+.nodo__aro { fill: none; stroke: var(--primary); stroke-width: 1.2; opacity: 0; transition: opacity .22s var(--ease); }
+.nodo__texto { fill: var(--ink-soft); font-family: var(--font-ui); font-size: 15px; font-weight: 600; letter-spacing: .04em; transition: fill .22s var(--ease); }
+.nodo:hover .nodo__punto, .nodo[aria-current="true"] .nodo__punto { fill: var(--primary); stroke: var(--primary); }
+.nodo:hover .nodo__aro,   .nodo[aria-current="true"] .nodo__aro { opacity: 1; }
+.nodo:hover .nodo__texto, .nodo[aria-current="true"] .nodo__texto { fill: var(--ink); }
+.nodo:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   7. LO ÚLTIMO DE LA VISITA
+   Pieza destacada con la imagen saliéndose por el borde y lista con filetes.
+   ════════════════════════════════════════════════════════════════════════ */
+.noticia-destacada .figura { margin-block-end: var(--space-l); }
+.noticia-destacada h3 { font-size: var(--step-2); max-width: 20ch; margin-block: var(--space-2xs) var(--space-s); }
+.noticia-destacada .tarjeta__texto { font-size: var(--step-1); line-height: 1.45; max-width: 46ch; color: var(--ink-soft); }
+.noticia-fecha {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft);
+}
+.noticias-lista { list-style: none; padding: 0; margin: 0; }
+.noticias-lista li { padding-block: var(--space-l); border-top: 1px solid var(--line); }
+.noticias-lista li:first-child { border-top: 0; padding-block-start: 0; }
+.noticias-lista li:last-child { border-bottom: 1px solid var(--line); }
+.noticias-lista h4 { font-size: var(--step-1); margin-block: 6px 8px; max-width: 24ch; }
+.noticias-lista .tarjeta__texto { color: var(--ink-soft); max-width: 42ch; }
+.noticias-lista a { text-decoration: none; }
+.noticias-lista a:hover { text-decoration: underline; text-decoration-color: var(--gold); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   8. PREPARA TU CORAZÓN — la única banda oscura de la home
+   ════════════════════════════════════════════════════════════════════════ */
+.preparate { display: grid; grid-template-columns: 1fr; position: relative; overflow: hidden; }
+@media (min-width: 900px) { .preparate { grid-template-columns: 5fr 7fr; } }
+
+.preparate__media { position: relative; min-height: 320px; background: var(--surface-invert); overflow: hidden; }
+@media (min-width: 900px) { .preparate__media { min-height: 660px; } }
+.preparate__media picture { position: absolute; inset: 0; display: block; }
+/* Encuadre anclado arriba, misma regla que las cabeceras de página: cover
+   recorta siempre, y anclándolo al borde superior el recorte cae abajo y la
+   cabeza no se toca. Con el 30% anterior, en escritorio se perdían unos 29 px
+   por arriba y la mitra quedaba cortada. */
+.preparate__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; filter: none; }
+
+.preparate__panel {
+  position: relative;
+  background: var(--surface-invert);
+  color: var(--on-primary);
+  padding: var(--space-xl) var(--gutter);
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden;
+}
+/* Halo ovalado dentro de la banda oscura: le quita el aspecto de rectángulo
+   de color plano sin tocar el contraste de nada de lo que hay encima. */
+.preparate__panel::before {
+  content: "";
+  position: absolute; z-index: 0;
+  width: 130%; aspect-ratio: 1;
+  right: -50%; top: -42%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--on-primary) 9%, transparent) 0%,
+    transparent 100%);
+  pointer-events: none;
+}
+@media (min-width: 900px) { .preparate__panel { padding: var(--space-2xl) clamp(48px, 6vw, 96px); } }
+
+/* El escudo, a tamaño real y con sus esmaltes intactos.
+   Estaba al 7 % de opacidad detrás de un formulario: era desperdiciar el único
+   material del sitio que nadie más puede publicar, y además el único elemento
+   que NO cambia al conmutar la paleta. Esa constancia es justo lo que convierte
+   tres temas de color en tres identidades. */
+.preparate__escudo {
+  width: 128px;
+  height: auto;
+  margin-block-end: var(--space-l);
+}
+@media (min-width: 900px) { .preparate__escudo { width: 176px; } }
+.preparate__contenido { position: relative; z-index: 1; max-width: 608px; }
+.preparate__titulo { font-size: var(--step-3); line-height: .95; margin-block: var(--space-s) var(--space-l); }
+.preparate__lema {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 500;
+  font-style: italic;
+  hanging-punctuation: first;
+  color: var(--gold-invert);
+}
+.preparate__glosa { color: color-mix(in srgb, var(--on-primary) 82%, transparent); font-size: var(--step--1); margin-block-start: 8px; max-width: 40ch; }
+.preparate__invitacion { color: color-mix(in srgb, var(--on-primary) 88%, transparent); margin-block: var(--space-l); max-width: 42ch; font-size: var(--step-0); }
+.preparate__form { display: flex; flex-direction: column; gap: var(--space-s); max-width: 448px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   9. PON TUS DONES AL SERVICIO
+   ════════════════════════════════════════════════════════════════════════ */
+.ayuda { border-top: 2px solid var(--ink); padding-block-start: var(--space-m); }
+.ayuda .figura { margin-block-end: var(--space-m); }
+.ayuda__titulo { font-size: var(--step-2); line-height: 1; max-width: 12ch; }
+.ayuda__lema { font-family: var(--font-read); font-style: italic; color: var(--ink-soft); font-size: var(--step-0); }
+.ayuda .tarjeta__texto { max-width: 34ch; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   10. VIVE LA VISITA
+   Cuatro columnas separadas por filetes, sin baldosas de color.
+   ════════════════════════════════════════════════════════════════════════ */
+.accesos {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--ink);
+}
+@media (min-width: 600px) { .accesos { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .accesos { grid-template-columns: repeat(4, 1fr); } }
+
+.acceso {
+  padding: var(--space-l) var(--space-m) var(--space-l) 0;
+  display: flex; flex-direction: column; gap: var(--space-xs);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: background-color .22s var(--ease), box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.acceso:hover { box-shadow: var(--sombra-m); transform: translateY(-2px); }
+@media (min-width: 600px) {
+  .acceso { padding-inline: var(--space-m); border-left: 1px solid var(--line); }
+  .acceso:nth-child(odd) { padding-inline-start: 0; border-left: 0; }
+}
+@media (min-width: 1100px) {
+  .acceso { padding-inline: var(--space-m); border-left: 1px solid var(--line); }
+  .acceso:nth-child(odd) { padding-inline-start: var(--space-m); border-left: 1px solid var(--line); }
+  .acceso:first-child { padding-inline-start: 0; border-left: 0; }
+}
+.acceso__icono { width: 26px; height: 26px; color: var(--gold); }
+.acceso__titulo { font-size: var(--step-1); margin-block-start: var(--space-s); }
+.acceso__texto { color: var(--ink-soft); font-size: var(--step--1); max-width: 30ch; }
+.acceso__pie { margin-block-start: auto; padding-block-start: var(--space-m); }
+
+/* Fachada de vídeo: el iframe solo se carga al pulsar */
+.fachada-video { position: relative; cursor: pointer; border: 0; padding: 0; background: transparent; width: 100%; }
+.fachada-video__boton { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; }
+.fachada-video__boton span {
+  display: grid; place-content: center;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--surface); color: var(--ink);
+}
+.fachada-video__boton svg { width: 24px; height: 24px; margin-inline-start: 3px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   11. CARTA DE LA CONFERENCIA EPISCOPAL
+   ════════════════════════════════════════════════════════════════════════ */
+/* ── Fondo a sangre con desenfoque ─────────────────────────────────────
+   LEVANTAMIENTO EXPRESO DE LA REGLA DURA Nº 6, decidido por el cliente.
+   El encargo prohibía duotono, filtro y degradado sobre el rostro del Santo
+   Padre, y lo llamaba no negociable. Aquí su fotografía va desenfocada y bajo
+   un velo. Se planteó la contradicción antes de hacerlo; queda documentado
+   aquí y en el README §5.
+
+   El desenfoque tiene además una razón técnica: el original mide 447 px de
+   lado y estirarlo a 1440 lo dejaría irreconocible. Desenfocado a propósito
+   deja de ser una fotografía de baja resolución y pasa a ser una textura. */
+.seccion--carta { position: relative; isolation: isolate; overflow: clip; }
+.carta-fondo__media {
+  position: absolute; inset: 0; z-index: -1;
+  /* Escala 1.1: el blur difumina los bordes y dejaría un halo del fondo. */
+  transform: scale(1.1);
+}
+.carta-fondo__media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: blur(18px) saturate(.85);
+}
+.carta-fondo__media::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--surface-invert) 88%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 82%, transparent) 45%,
+      color-mix(in srgb, var(--surface-invert) 92%, transparent) 100%);
+}
+.carta-fondo__contenido { position: relative; }
+.seccion--carta { padding-block: var(--space-3xl); }
+
+.carta__foto { margin: 0 0 var(--space-l); }
+@media (max-width: 767px) { .carta__foto { max-width: 68%; } }
+@media (min-width: 1024px) { .carta__foto { margin-block-end: 0; padding-block-start: var(--space-2xl); } }
+
+/* El escudo va DESPUÉS de la carta en el marcado —para que un lector de
+   pantalla llegue antes al texto— y a la derecha en la pantalla. */
+.carta__escudo {
+  width: 100%; max-width: 240px; height: auto;
+  justify-self: center; align-self: center;
+}
+@media (min-width: 1024px) { .carta__escudo { grid-column: 10 / -1; grid-row: 1; max-width: 100%; } }
+
+.carta { padding-block-start: var(--space-l); }
+.banda-oscura .carta__cuerpo { color: var(--on-primary); }
+.banda-oscura .carta__cuerpo .capitular::first-letter { color: var(--gold-invert); }
+.banda-oscura .carta__firma { color: var(--gold-invert); }
+.carta__cuerpo {
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+.carta__cuerpo p + p { margin-block-start: var(--space-m); }
+.carta__cuerpo .capitular::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 4.4em;
+  line-height: .78;
+  font-weight: 600;
+  padding-inline-end: .08em;
+  padding-block-start: .05em;
+  color: var(--primary-strong);
+}
+.carta__resto { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s var(--ease); }
+.carta__resto > div { overflow: hidden; }
+.carta.esta-desplegada .carta__resto { grid-template-rows: 1fr; }
+.carta__firma {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft);
+  margin-block-start: var(--space-l);
+}
+.carta__mas { margin-block-start: var(--space-l); }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   PORTADA · SECCIONES DEL INFORME DEL CLIENTE
+
+   Todo lo que sigue nació de la revisión de septiembre de 2026: el contador
+   pegado al carrusel, el lema explicado, la llegada, el itinerario, los
+   santos, las noticias reales y el bloque de la Conferencia Episcopal.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Lámina con el texto a la izquierda ─────────────────────────────────
+   El «hero__doble» de siempre pone el retrato a la izquierda. Para el
+   carrusel nuevo el cliente pidió la composición contraria: la frase manda y
+   el retrato acompaña. Es una rejilla, así que basta invertir las columnas y
+   escribir el panel primero en el documento —el orden del código ES el orden
+   en pantalla, y así el lector de pantalla también oye antes el texto—. */
+@media (min-width: 900px) {
+  .hero__doble--texto-izq { grid-template-columns: 7fr 5fr; }
+}
+
+/* La bajada de cada lámina. Va entre el titular y la barandilla de datos, y
+   se corta a dos líneas: el hero tiene altura fija y un texto largo escrito
+   desde el panel empujaría los botones fuera de la caja. */
+.hero__bajada {
+  font-family: var(--font-read);
+  font-size: var(--step-0);
+  line-height: 1.45;
+  max-width: 46ch;
+  /* El titular ya trae --space-l de margen inferior; se le resta parte
+     para que la bajada quede cerca pero no pegada. */
+  margin-block: calc(var(--space-s) * -1) var(--space-l);
+  color: color-mix(in srgb, var(--on-primary) 88%, transparent);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 899px) {
+  .hero__bajada { display: none; }   /* en móvil no cabe sin comerse los botones */
+}
+
+/* ── La cuenta atrás, pegada al carrusel ────────────────────────────────
+   Una tira sólida bajo el hero, sin separación: leídos de arriba abajo son
+   una sola pieza —la promesa y el plazo—, que es lo que pidió el cliente. */
+.tira-contador {
+  background: var(--surface-invert);
+  color: var(--on-primary);
+  padding-block: clamp(var(--space-m), 3vw, var(--space-xl));
+}
+.tira-contador__interior { display: grid; gap: var(--space-s); }
+
+.tira-contador__marcas {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap;
+  gap: clamp(var(--space-m), 4vw, var(--space-2xl));
+  align-items: baseline;
+}
+.tira-contador__marcas > li { display: grid; gap: 2px; }
+
+.tira-contador__num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  /* Sin esto los dígitos bailan de ancho y la fila entera se mueve cada
+     segundo, que es justo el efecto que no se quiere en un contador. */
+  font-variant-numeric: tabular-nums;
+}
+.tira-contador__uni {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-primary) 66%, transparent);
+}
+.tira-contador__leyenda {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  color: color-mix(in srgb, var(--on-primary) 78%, transparent);
+}
+.tira-contador__aviso {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* ── El lema, explicado ─────────────────────────────────────────────────
+   Un bloque corto y centrado. Es un respiro entre el contador y el cuerpo de
+   la página, y la única sección de la portada sin fotografía: el lema tiene
+   que poder leerse sin nada que compita con él. */
+.lema-bloque { text-align: center; }
+.lema-bloque__interior {
+  max-width: 62ch;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--space-s);
+  justify-items: center;
+}
+.lema-bloque__titulo {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-4);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin: 0;
+  text-wrap: balance;
+}
+.lema-bloque__texto {
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.lema-bloque__texto p { margin: 0; }
+.lema-bloque__pie { margin: 0; }
+
+/* ── La llegada, y la tira de ciudades ──────────────────────────────────── */
+.llegada__accion { margin-block: var(--space-l) 0; }
+
+/* Las cuatro ciudades como índice del recorrido. Cada una es un enlace a su
+   sede: quien sólo quiere saber si el Papa pasa por la suya no tiene que
+   bajar hasta las tarjetas. */
+.tira-ciudades {
+  list-style: none; margin: var(--space-xl) 0 0; padding: 0;
+  display: flex; flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  border-block: var(--rule) solid var(--line);
+  padding-block: var(--space-m);
+}
+.tira-ciudades > li { padding-inline: clamp(var(--space-s), 2.4vw, var(--space-xl)); }
+.tira-ciudades > li:first-child { padding-inline-start: 0; }
+.tira-ciudades > li + li { border-left: var(--rule) solid var(--line); }
+.tira-ciudades a, .tira-ciudades span {
+  font-family: var(--font-ui);
+  font-size: clamp(var(--step--1), 1.6vw, var(--step-1));
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+.tira-ciudades a {
+  border-bottom: 2px solid transparent;
+  padding-block-end: 2px;
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+}
+.tira-ciudades a:hover, .tira-ciudades a:focus-visible {
+  color: var(--accent-strong); border-bottom-color: var(--accent);
+}
+
+/* ── El itinerario ──────────────────────────────────────────────────────
+   Una jornada por fila: la fecha en una columna estrecha y el día en la
+   ancha, con un filete que hace de línea de tiempo. */
+.aviso-referencial {
+  margin-block: var(--space-l) var(--space-xl);
+  padding: var(--space-s) var(--space-m);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-tint);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.jornadas { list-style: none; margin: 0; padding: 0; }
+.jornada {
+  display: grid;
+  gap: var(--space-xs) var(--space-xl);
+  padding-block: var(--space-l);
+  border-top: var(--rule) solid var(--line);
+}
+.jornada:last-child { border-bottom: var(--rule) solid var(--line); }
+@media (min-width: 800px) {
+  .jornada { grid-template-columns: minmax(9rem, 18ch) minmax(0, 1fr); }
+}
+.jornada__fecha {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+.jornada__cuerpo { display: grid; gap: var(--space-xs); }
+.jornada__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-2);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.jornada__texto { margin: 0; color: var(--ink-soft); max-width: var(--measure); }
+.jornada__actos {
+  margin: var(--space-2xs) 0 0; padding: 0;
+  list-style: none;
+  display: grid; gap: var(--space-2xs);
+  max-width: var(--measure);
+}
+.jornada__actos > li {
+  position: relative;
+  padding-inline-start: var(--space-m);
+  font-family: var(--font-read);
+  color: var(--ink-soft);
+}
+.jornada__actos > li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0; inset-block-start: .62em;
+  width: 6px; height: 6px;
+  background: var(--gold);
+}
+.jornada__pie { margin: var(--space-2xs) 0 0; }
+
+/* ── Tierra de santos ───────────────────────────────────────────────────
+   Cinco medallones en fila. En móvil se desplazan de lado en lugar de
+   apilarse: cinco tarjetas apiladas son cinco pantallas de scroll para lo
+   que aquí es sólo un índice. */
+.santos__intro { max-width: var(--measure); }
+
+.santos-tira {
+  list-style: none; margin: var(--space-xl) 0 0; padding: 0 0 var(--space-s);
+  display: grid;
+  grid-auto-flow: column;
+  /* Ancho FIJO, no 1fr. Dentro de un contenedor con overflow, «1fr» se
+     resuelve contra el ancho visible y cada medallón ocupaba media
+     pantalla: sólo cabían dos y no se veía que hubiera más. */
+  grid-auto-columns: clamp(7.5rem, 34vw, 11rem);
+  gap: var(--space-m);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+@media (min-width: 900px) {
+  .santos-tira { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); overflow: visible; }
+}
+.santo { scroll-snap-align: start; }
+.santo__enlace {
+  display: grid; gap: var(--space-2xs);
+  justify-items: center; text-align: center;
+  text-decoration: none; color: inherit;
+}
+.santo__medallon {
+  display: grid; place-items: center;
+  width: 100%; max-width: 9.5rem; aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--accent-tint);
+  border: var(--rule) solid var(--line);
+  margin-block-end: var(--space-2xs);
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.santo__medallon picture, .santo__medallon img { width: 100%; height: 100%; }
+.santo__medallon img { object-fit: cover; }
+.santo__inicial {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  color: var(--accent-strong);
+  line-height: 1;
+}
+.santo__enlace:hover .santo__medallon,
+.santo__enlace:focus-visible .santo__medallon {
+  border-color: var(--accent); transform: translateY(-3px);
+}
+.santo__nombre {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-0);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.santo__clave {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .santo__enlace:hover .santo__medallon { transform: none; }
+}
+
+/* ── Noticias ───────────────────────────────────────────────────────────
+   Tres tarjetas. La primera manda: ocupa el doble y lleva la foto grande. */
+.noticias-tira {
+  list-style: none; margin: var(--space-xl) 0 0; padding: 0;
+  display: grid; gap: var(--space-l);
+}
+@media (min-width: 900px) {
+  .noticias-tira { grid-template-columns: repeat(3, 1fr); }
+  .noticia-t--destacada { grid-column: span 2; grid-row: span 2; }
+}
+.noticia-t__enlace {
+  display: grid; gap: var(--space-s);
+  height: 100%;
+  text-decoration: none; color: inherit;
+}
+.noticia-t__media {
+  display: block; overflow: hidden;
+  background: var(--surface-alt);
+  /* Sin esto la caja se estira con la fila de la rejilla y, como la
+     imagen está atada a su proporción, queda una franja gris debajo. */
+  align-self: start;
+}
+.noticia-t__media picture { display: block; }
+.noticia-t__media img {
+  width: 100%; height: auto; display: block;
+  object-fit: cover; aspect-ratio: 3 / 2;
+  transition: transform .5s var(--ease);
+}
+.noticia-t--destacada .noticia-t__media img { aspect-ratio: 16 / 10; }
+.noticia-t__enlace:hover .noticia-t__media img { transform: scale(1.03); }
+.noticia-t__cuerpo { display: grid; gap: var(--space-2xs); align-content: start; }
+.noticia-t__meta { display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: baseline; }
+.noticia-t__fecha {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  color: var(--ink-mute);
+}
+.noticia-t__titulo {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.noticia-t--destacada .noticia-t__titulo { font-size: var(--step-3); }
+.noticia-t__texto {
+  font-family: var(--font-read);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+.noticia-t__mas {
+  display: inline-flex; align-items: center; gap: var(--space-2xs);
+  margin-block-start: var(--space-2xs);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+.noticia-t__mas svg { width: 14px; height: 14px; fill: currentColor; }
+.noticia-t__enlace:hover .noticia-t__mas svg { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .noticia-t__enlace:hover .noticia-t__media img,
+  .noticia-t__enlace:hover .noticia-t__mas svg { transform: none; }
+}
+
+/* ── Conferencia Episcopal Peruana ──────────────────────────────────────
+   La presidencia arriba y, debajo, los tres accesos al detalle: obispos,
+   comisiones y el mapa de jurisdicciones. */
+.cep-bloque__intro { max-width: var(--measure); }
+
+.presidencia {
+  list-style: none; margin: var(--space-xl) 0 0; padding: 0;
+  display: grid; gap: var(--space-l);
+}
+@media (min-width: 700px) { .presidencia { grid-template-columns: repeat(3, 1fr); } }
+.presidencia__ficha { display: grid; gap: var(--space-2xs); justify-items: center; text-align: center; }
+.presidencia__retrato {
+  display: grid; place-items: center;
+  width: 100%; max-width: 11rem; aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--primary-tint);
+  border: var(--rule) solid var(--line);
+  margin-block-end: var(--space-2xs);
+}
+.presidencia__retrato picture, .presidencia__retrato img { width: 100%; height: 100%; }
+.presidencia__retrato img { object-fit: cover; }
+.presidencia__inicial {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  color: var(--primary-strong);
+  line-height: 1;
+}
+.presidencia__cargo {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+.presidencia__nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.presidencia__nombre a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.presidencia__nombre a:hover { border-bottom-color: var(--accent); }
+.presidencia__sede { margin: 0; font-family: var(--font-ui); font-size: var(--step--1); color: var(--ink-soft); }
+
+.cep-accesos {
+  margin-block-start: var(--space-2xl);
+  display: grid; gap: var(--space-m);
+}
+@media (min-width: 800px) { .cep-accesos { grid-template-columns: repeat(3, 1fr); } }
+.cep-acceso {
+  display: grid; gap: var(--space-2xs); align-content: start;
+  padding: var(--space-l);
+  border: var(--rule) solid var(--line);
+  text-decoration: none; color: inherit;
+  background: var(--surface);
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.cep-acceso:hover, .cep-acceso:focus-visible {
+  border-color: var(--accent); transform: translateY(-2px);
+}
+.cep-acceso__num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--step-3);
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.cep-acceso__titulo {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.15;
+}
+.cep-acceso__texto { font-family: var(--font-read); color: var(--ink-soft); line-height: 1.5; }
+.cep-acceso__ir {
+  display: inline-flex; align-items: center; gap: var(--space-2xs);
+  margin-block-start: var(--space-2xs);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+.cep-acceso__ir svg { width: 14px; height: 14px; fill: currentColor; }
+@media (prefers-reduced-motion: reduce) {
+  .cep-acceso:hover { transform: none; }
+}
+
+/* La capitular de la carta. Antes iba como clase en el HTML; ahora el texto
+   sale del panel y el saneador no deja pasar atributos class, así que se
+   apunta al primer párrafo desde aquí. */
+.carta__cuerpo > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.4em;
+  line-height: .82;
+  padding-inline-end: .08em;
+  margin-block-start: .04em;
+}

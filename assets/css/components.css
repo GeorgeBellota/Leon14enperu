@@ -1,0 +1,1517 @@
+/* ============================================================================
+   COMPONENTES — botones, tarjetas, campos, filetes, duotono, cabecera, pie
+   Casi nada lleva sombra: la jerarquía se hace con filetes, fondo y aire.
+   ========================================================================== */
+
+/* ════════════════════════════════════════════════════════════════════════
+   1. DUOTONO (§4.3)
+   La fotografía de ciudades, multitudes y recintos se retiñe con el tema.
+   El retrato del Santo Padre y el escudo NUNCA pasan por aquí (§4.4, §5.5).
+   ════════════════════════════════════════════════════════════════════════ */
+.duotono { position: relative; isolation: isolate; overflow: hidden; }
+.duotono picture { display: block; width: 100%; height: 100%; }
+.duotono img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: grayscale(1) contrast(1.08) brightness(1.02);
+}
+.duotono::before {            /* levanta las sombras al tono oscuro */
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: var(--duo-dark); mix-blend-mode: lighten;
+}
+.duotono::after {             /* tiñe las luces con el tono claro */
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  background: var(--duo-light); mix-blend-mode: multiply;
+}
+.duotono > .duotono__contenido { position: relative; z-index: 3; }
+
+/* Respaldo si el navegador no soporta mix-blend-mode */
+@supports not (mix-blend-mode: multiply) {
+  .duotono::before { background: var(--surface-invert); opacity: .55; mix-blend-mode: normal; }
+  .duotono::after  { display: none; }
+  .duotono img     { filter: none; }
+}
+
+/* Capa que rellena a su contenedor: permite apilar duotono, velo y rótulo
+   sin que tres componentes se peleen por los mismos pseudoelementos. */
+.capa { position: absolute; inset: 0; }
+
+/* Velo vertical bajo el texto: sin él, ningún duotono garantiza contraste.
+   Es un elemento real, no un ::before, precisamente para poder convivir
+   con el duotono sobre la misma fotografía. */
+.velo {
+  z-index: 4;
+  pointer-events: none;
+  /* Dos gradientes: el de abajo protege el texto de la pieza; el de arriba
+     garantiza que la cabecera fija se lea aunque la foto sea clara ahí. */
+  background:
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--surface-invert) 58%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 20%, transparent) 12%,
+      transparent 26%),
+    linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 65%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 40%, transparent) 34%,
+      transparent 62%);
+}
+.velo--suave {
+  background:
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--surface-invert) 55%, transparent) 0%,
+      transparent 22%),
+    linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 62%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 24%, transparent) 45%,
+      transparent 75%);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2. FIGURAS E IMÁGENES
+   ════════════════════════════════════════════════════════════════════════ */
+/* La sombra es lo que separa la fotografía del papel. Sin ella, sobre un
+   fondo claro, la imagen parece pegada y la página se lee plana. */
+.figura { position: relative; overflow: hidden; background: var(--surface-alt); box-shadow: var(--sombra-m); }
+.banda-oscura .figura, .figura--sin-sombra { box-shadow: none; }
+.figura img { width: 100%; height: 100%; object-fit: cover; }
+.figura > .duotono, .figura > picture { position: absolute; inset: 0; }
+.ar-1-1  { aspect-ratio: 1 / 1; }
+.ar-16-9 { aspect-ratio: 16 / 9; }
+.ar-3-2  { aspect-ratio: 3 / 2; }
+.ar-4-3  { aspect-ratio: 4 / 3; }
+.ar-4-5  { aspect-ratio: 4 / 5; }
+.ar-21-9 { aspect-ratio: 21 / 9; }
+
+/* Rótulo de relleno. Se quita el atributo y desaparece: nada más que tocar. */
+.figura[data-placeholder]::after {
+  content: attr(data-placeholder);
+  position: absolute; z-index: 4;
+  left: var(--space-2xs); bottom: var(--space-2xs);
+  padding: 4px 8px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+/* El retrato del Santo Padre: limpio, sin filtro ni capa encima (§4.4) */
+.retrato { display: block; background: transparent; }
+.retrato img { filter: none; width: 100%; height: auto; }
+
+.escudo { display: block; }
+.escudo img { width: 100%; height: auto; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   3. BOTONES Y ENLACES DE ACCIÓN
+   ════════════════════════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 11px 22px;
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: var(--rule) solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.btn svg { width: 1.05em; height: 1.05em; flex: none; }
+
+.btn--primario { background: var(--primary); color: var(--on-primary); }
+.btn--primario:hover { background: var(--primary-strong); }
+
+.btn--secundario { background: var(--accent); color: var(--on-accent); }
+.btn--secundario:hover { background: var(--accent-strong); }
+
+.btn--linea { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn--linea:hover { background: var(--surface-alt); border-color: var(--ink); }
+
+/* Sobre banda oscura: ni --primary ni --accent (§5.4) */
+.btn--claro { background: var(--gold-invert); color: var(--ink); }
+.btn--claro:hover { background: var(--on-primary); }
+.btn--contorno-claro { background: transparent; color: var(--on-primary); border-color: var(--on-primary); }
+.btn--contorno-claro:hover { background: var(--on-primary); color: var(--ink); }
+
+.btn--bloque { width: 100%; }
+
+/* Enlace terciario.
+   Antes: versalitas + peso 600 + filete inferior, veinte veces en la home. Un
+   enlace secundario con peso de botón, repetido, produce una rejilla de cupones
+   donde ninguna acción destaca. Ahora es lo que es: texto enlazado. */
+.enlace-flecha {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  border-bottom: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  width: fit-content;
+}
+.enlace-flecha svg { width: 1.05em; height: 1.05em; color: var(--primary-strong); transition: transform .25s var(--ease); }
+.enlace-flecha:hover { text-decoration-color: var(--primary-strong); }
+.enlace-flecha:hover svg { transform: translateX(4px); }
+.enlace-flecha--claro { color: var(--on-primary); text-decoration-color: var(--gold-invert); }
+.enlace-flecha--claro svg { color: var(--gold-invert); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   4. ENLACES PENDIENTES (§9)
+   No pueden parecer rotos: tienen que leerse como reservados a propósito.
+   ════════════════════════════════════════════════════════════════════════ */
+[data-pending="true"] {
+  color: var(--ink-mute);
+  cursor: default;
+  text-decoration: none;
+  position: relative;
+}
+[data-pending="true"]::after {
+  content: "Próximamente";
+  position: absolute;
+  left: 0; top: calc(100% + 6px);
+  z-index: 30;
+  padding: 3px 8px;
+  background: var(--ink);
+  color: var(--surface);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 2px;
+  opacity: 0; visibility: hidden;
+  transition: opacity .18s var(--ease), visibility .18s;
+}
+[data-pending="true"]:hover::after,
+[data-pending="true"]:focus-visible::after { opacity: 1; visibility: visible; }
+.banda-oscura [data-pending="true"] { color: color-mix(in srgb, var(--on-primary) 62%, transparent); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   5. TARJETAS
+   ════════════════════════════════════════════════════════════════════════ */
+/* Nada de rectángulos con borde. El contenido se separa por un filete
+   superior y por aire: así se lee como una pieza editorial y no como una
+   cuadrícula de recuadros de tríptico. */
+.tarjeta { display: flex; flex-direction: column; gap: var(--space-s); }
+.tarjeta__cuerpo { display: flex; flex-direction: column; gap: var(--space-2xs); }
+.tarjeta__titulo { font-size: var(--step-1); }
+.tarjeta__titulo a { text-decoration: none; }
+.tarjeta__titulo a:hover { text-decoration: underline; text-decoration-color: var(--gold); }
+.tarjeta__texto { color: var(--ink-soft); font-size: var(--step-0); }
+.tarjeta__pie { margin-block-start: auto; padding-block-start: var(--space-s); }
+
+.tarjeta--filete { border-top: var(--rule) solid var(--line); padding-block-start: var(--space-s); }
+
+/* Estado pendiente: una fila abierta bajo un filete, con el rótulo de estado
+   como única señal. El recuadro discontinuo anterior parecía un hueco sin
+   resolver; esto parece una decisión. */
+.tarjeta--pendiente {
+  border: 0;
+  border-top: 2px solid var(--ink);
+  border-radius: 0;
+  padding: var(--space-s) 0 0;
+  background: transparent;
+}
+
+.recorte-2 {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  line-clamp: 2; overflow: hidden;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   6. ESTADOS Y AVISOS
+   ════════════════════════════════════════════════════════════════════════ */
+.estado {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-ui);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.estado::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid var(--line-strong); background: transparent;
+}
+.estado--cumplido { color: var(--primary-strong); }
+.estado--cumplido::before { background: var(--primary); border-color: var(--primary); }
+.estado--previsto::before { border-color: var(--gold); }
+
+/* Aviso: sin fondo tintado ni caja. Un filete grueso a la izquierda y aire.
+   El bloque relleno de color parecía un recuadro de folleto. */
+.aviso {
+  border-left: 2px solid var(--gold);
+  background: transparent;
+  padding: 2px 0 2px var(--space-m);
+  border-radius: 0;
+  max-width: 52ch;
+}
+.aviso p { color: var(--ink-soft); }
+.aviso p + p { margin-block-start: var(--space-2xs); }
+.aviso__titulo {
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-block-end: 8px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   7. CAMPOS DE FORMULARIO
+   Etiqueta siempre visible. Bordes en --line-strong (WCAG 2.2 SC 1.4.11).
+   ════════════════════════════════════════════════════════════════════════ */
+.campo { display: flex; flex-direction: column; gap: 6px; position: relative;}
+.campo__etiqueta {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.campo__ayuda { font-size: var(--step--1); color: var(--ink-soft); }
+
+.campo textarea { resize: vertical; min-height: 128px; line-height: 1.5; }
+.campo input[type="text"], .campo input[type="email"], .campo input[type="tel"],
+.campo input[type="date"], .campo input[type="number"], .campo select, .campo textarea {
+  width: 100%;
+  /* 46 → 40. Catorce campos a 46 píxeles no caben en la ventana de un
+     portátil, y lo que sobra por abajo es lo que obliga a desplazarse. 40 con
+     tipografía de 15px sigue siendo cómodo de pulsar con el dedo: la
+     recomendación táctil son 44 y el área real de toque incluye el hueco
+     entre campos. */
+  min-height: 40px;
+  padding: 8px 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  transition: border-color .2s var(--ease);
+}
+.campo input:hover, .campo select:hover, .campo textarea:hover { border-color: var(--ink-soft); }
+.campo input::placeholder, .campo textarea::placeholder { color: var(--ink-mute); }
+.campo select { appearance: none; padding-right: 38px; background-image: none; }
+.campo__selector { position: relative; }
+.campo__selector svg {
+  position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; pointer-events: none; color: var(--ink-soft);
+}
+
+/* ── Botón mientras se guarda ─────────────────────────────────────────────
+   El servidor puede tardar diez segundos en responder. Un botón que no
+   cambia deja la página con aspecto de colgada: la gente vuelve a pulsar o
+   se marcha creyendo que está caída.
+
+   El punto que gira dice «esto sigue trabajando». Es lo único que se mueve
+   en la pantalla, así que basta con que sea pequeño. */
+.btn--ocupado { cursor: progress; opacity: .85; }
+
+.btn--ocupado::before {
+  content: '';
+  display: inline-block;
+  width: 14px; height: 14px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: gira .7s linear infinite;
+}
+
+@keyframes gira { to { transform: rotate(360deg); } }
+
+/* Quien ha pedido que el sistema no anime nada no debe ver un punto girando
+   sin parar. Se queda quieto: sigue diciendo que algo está en marcha, sin
+   movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .btn--ocupado::before { animation: none; border-top-color: currentColor; opacity: .5; }
+}
+
+/* ── Aviso dentro de la confirmación ──────────────────────────────────────
+   Para cuando la inscripción se guardó por la vía de contingencia. Va
+   destacado pero no en rojo: no es un error y la persona no tiene que hacer
+   nada. Alarmarla la llevaría a reenviar el formulario, que es justo lo que
+   no queremos. */
+.confirmacion__nota {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--surface-alt);
+  border-left: 3px solid var(--focus);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+
+/* ── Campo de texto con sugerencias (provincia y distrito) ────────────────
+   Un campo escribible con una lista de ayuda debajo. No es un desplegable:
+   se puede escribir cualquier cosa y seguir adelante, que es justamente el
+   motivo de que exista —un desplegable que no carga deja a la persona sin
+   salida, y eso costó inscripciones el primer día de la convocatoria—.
+
+   La lista se coloca por encima del resto (position: absolute) para que no
+   empuje el formulario hacia abajo al abrirse. */
+.sugiere { position: relative; }
+
+.sugiere__lista {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--surface);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgb(28 20 22 / .16);
+}
+
+.sugiere__item {
+  padding: 9px 13px;
+  cursor: pointer;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+/* El resaltado del teclado y el del ratón son el mismo, para que moverse con
+   las flechas y moverse con el ratón se vean igual. */
+.sugiere__item:hover,
+.sugiere__item.es-activo {
+  background: var(--surface-alt);
+}
+
+.sugiere__item.es-activo { box-shadow: inset 3px 0 0 var(--focus); }
+
+/* En pantallas táctiles la lista se hace más alta: hay sitio de sobra y así
+   se ven más opciones sin arrastrar. */
+@media (pointer: coarse) {
+  .sugiere__item { padding: 12px 13px; }
+}
+
+/* El grosor del borde no cambia: se refuerza con una sombra interior para que
+   marcar el error no altere la altura del campo. */
+.campo--error input, .campo--error select, .campo--error textarea {
+  border-color: var(--accent-strong);
+  box-shadow: inset 0 0 0 1px var(--accent-strong);
+}
+/* El mensaje de error de un campo.
+   Estaba a 9px: ilegible. Un aviso que no se lee no es un aviso, y quien no
+   entiende qué le piden abandona el formulario. 13px es lo mínimo razonable
+   para un texto que hay que leer de verdad, y el punto rojo delante lo hace
+   encontrable de un vistazo entre catorce campos.
+
+   Sigue con `position: absolute` y el hueco reservado abajo para que aparecer
+   y desaparecer no mueva ni un píxel del formulario: si el mensaje empujara el
+   contenido, el botón se desplazaría justo cuando alguien va a pulsarlo. */
+.campo__error {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--accent-strong);
+  position: absolute;
+  bottom: -19px;
+  min-height: 1.25em;
+}
+
+/* ── El icono de cada campo ───────────────────────────────────────────────
+   Un símbolo dentro del recuadro, a la izquierda, que dice qué se espera ahí
+   sin necesidad de leer la etiqueta: un sobre para el correo, un teléfono
+   para el número, un mapa para el sitio donde se vive.
+
+   Ayuda sobre todo a quien va deprisa o se maneja con dificultad en una
+   pantalla, que es buena parte de quien se está inscribiendo. Salen del
+   sprite del propio sitio, así que no dependen de que cargue nada de fuera.
+
+   `pointer-events: none` para que pulsar sobre el icono escriba en el campo
+   en lugar de no hacer nada. */
+.campo__simbolo {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 11px;
+  transform: translateY(-50%);
+  width: 17px;
+  height: 17px;
+  color: var(--ink-mute);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── El hueco para el icono ───────────────────────────────────────────────
+   Sin esto el texto empieza donde está el icono y se escriben encima: el DNI
+   se leía «47684254» con el dibujo del carné pisando el primer dígito.
+
+   Los selectores llevan `[type]` a propósito. La regla que fija el relleno de
+   los campos es `.campo input[type="text"] { padding: 8px 12px }`, y en CSS
+   gana la más específica, no la última: un `.campo__simbolo + input` a secas
+   pesa menos y no llegaba a aplicarse nunca. Añadiendo `[type]` iguala la
+   cuenta y, al ir después, se impone.
+
+   Se aplica sólo a los campos que llevan icono; los demás no se mueven. */
+.campo .campo__simbolo + input[type],
+.campo .campo__simbolo ~ input[type],
+.sugiere .campo__simbolo + input[type],
+.sugiere .campo__simbolo ~ input[type],
+.campo__grupo .campo__simbolo + input[type],
+.campo__grupo .campo__simbolo ~ input[type] {
+  padding-inline-start: 38px;
+}
+
+/* El icono se coloca respecto del recuadro del campo, no de la etiqueta que
+   hay encima: sin esto quedaría centrado sobre el conjunto y aparecería
+   flotando entre el rótulo y el recuadro. */
+.campo__grupo, .sugiere { position: relative; }
+.campo > .campo__simbolo { inset-block-start: calc(50% + 11px); }
+
+/* Cuando el campo está en foco, el icono se enciende con el color de marca:
+   confirma dónde se está escribiendo. */
+.campo input:focus ~ .campo__simbolo,
+.campo__simbolo:has(+ input:focus) { color: var(--focus); }
+
+/* Sitio reservado bajo cada campo para que quepa su mensaje.
+   El mensaje está posicionado en absoluto —así aparece y desaparece sin mover
+   nada— pero eso significa que no ocupa lugar, y a 13px se metía debajo de la
+   etiqueta del campo siguiente. Este hueco se lo reserva de antemano. */
+.formulario .campo { padding-block-end: 8px; }
+
+.campo__error:not(:empty)::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin-right: 6px;
+  vertical-align: 1px;
+  background: currentColor;
+  border-radius: 50%;
+}
+.casilla .campo__error { grid-column: 2; }
+.banda-oscura .campo__error { color: var(--gold-invert); }
+
+/* Campos sobre banda oscura */
+.banda-oscura .campo input { background: transparent; color: var(--on-primary); border-color: var(--on-primary); }
+.banda-oscura .campo input::placeholder { color: color-mix(in srgb, var(--on-primary) 62%, transparent); }
+.banda-oscura .campo input:hover { border-color: var(--gold-invert); }
+
+/* Casilla de consentimiento: nunca premarcada */
+/* `position: relative` no es decoración: es lo que ancla el mensaje de error.
+   Los mensajes van colocados en absoluto respecto a su campo, y una casilla
+   sin posicionar no sirve de ancla, así que el navegador sube al siguiente
+   antecesor posicionado —la tarjeta entera del formulario— y coloca el aviso
+   quince píxeles por debajo de ELLA.
+   Efecto: el «Necesitamos tu consentimiento para continuar» aparecía suelto
+   al final del formulario, lejos de la casilla a la que se refiere, y encima
+   sobresalía del bloque y sacaba una barra de desplazamiento que no había
+   forma de quitar recortando contenido. */
+.casilla { display: grid; grid-template-columns: auto 1fr; gap: 11px; align-items: start; cursor: pointer; position: relative; }
+.casilla input[type="checkbox"], .casilla input[type="radio"] {
+  appearance: none;
+  width: 20px; height: 20px;
+  margin-top: 3px;
+  flex: none;
+  border: 2px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  display: grid; place-content: center;
+  cursor: pointer;
+  transition: background-color .18s var(--ease), border-color .18s var(--ease);
+}
+.casilla input[type="radio"] { border-radius: 50%; }
+.casilla input[type="checkbox"]::after {
+  content: ""; width: 11px; height: 11px;
+  clip-path: polygon(14% 44%, 0 60%, 40% 100%, 100% 22%, 84% 8%, 38% 68%);
+  background: var(--on-primary);
+  transform: scale(0); transition: transform .16s var(--ease);
+}
+.casilla input[type="radio"]::after {
+  content: ""; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--on-primary); transform: scale(0); transition: transform .16s var(--ease);
+}
+.casilla input:checked { background: var(--primary); border-color: var(--primary); }
+.casilla input:checked::after { transform: scale(1); }
+.casilla__texto { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.5; }
+.casilla__texto a { color: var(--primary-strong); }
+.banda-oscura .casilla input { background: transparent; border-color: var(--on-primary); }
+.banda-oscura .casilla input:checked { background: var(--gold-invert); border-color: var(--gold-invert); }
+.banda-oscura .casilla input::after { background: var(--ink); }
+.banda-oscura .casilla__texto { color: color-mix(in srgb, var(--on-primary) 86%, transparent); }
+.banda-oscura .casilla__texto a { color: var(--gold-invert); }
+
+.trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.mensaje-form { font-family: var(--font-ui); font-size: var(--step-0); font-weight: 600; }
+.mensaje-form--ok { color: var(--primary-strong); }
+.mensaje-form--error { color: var(--accent-strong); }
+.banda-oscura .mensaje-form--ok { color: var(--gold-invert); }
+.banda-oscura .mensaje-form--error { color: var(--gold-invert); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   8. CABECERA Y NAVEGACIÓN
+   ════════════════════════════════════════════════════════════════════════ */
+/* La cabecera nace sólida.
+   Antes arrancaba transparente sobre el hero y el lockup blanco desaparecía
+   en cuanto la fotografía era clara — y con el retrato del Papa a media
+   pantalla, es clara siempre. Al bajar solo aparece el filete inferior. */
+.cabecera {
+  position: fixed; inset-block-start: 0; inset-inline: 0;
+  z-index: 100;
+  color: var(--ink);
+}
+.cabecera__fondo {
+  position: absolute; inset: 0;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: var(--rule) solid transparent;
+  transition: border-color .3s var(--ease);
+}
+@supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .cabecera__fondo { background: var(--surface); }
+}
+.cabecera.es-solida .cabecera__fondo { border-bottom-color: var(--line); }
+
+.cabecera__interior {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-m);
+  min-height: var(--header-h);
+}
+
+/* Lockup tipográfico */
+.marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+
+/* El símbolo que acompañaba al nombre. Ya no se pinta —era el lirio del
+   escudo pontificio y su uso no está aprobado— pero la regla se queda: el
+   sprite sigue existiendo y alguna página guardada en un navegador puede
+   traerlo todavía. Borrarla dejaría ese icono suelto y a tamaño natural. */
+.marca__signo { width: 26px; height: 26px; flex: none; color: currentColor; }
+
+/* El logotipo que se sube desde el panel.
+   Se ata la ALTURA y se deja el ancho libre: así una imagen apaisada y otra
+   más cuadrada ocupan lo mismo de alto y la cabecera no cambia de tamaño
+   según lo que suba cada quien. El tope de ancho evita que un archivo muy
+   alargado empuje al menú fuera de la pantalla. */
+.marca__logo {
+  height: 48px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .marca__logo { height: 38px; max-width: 170px; }
+}
+.marca__texto { display: flex; flex-direction: column; line-height: 1; }
+.marca__nombre { font-family: var(--font-display); font-weight: 600; font-size: 21px; letter-spacing: -.02em; }
+.marca__lugar {
+  font-family: var(--font-ui); font-weight: 600;
+  font-size: 9px; letter-spacing: .28em; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Navegación de escritorio */
+.nav { display: none; }
+@media (min-width: 1100px) {
+  .nav { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 30px); }
+}
+.nav__enlace {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding-block: 6px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: border-color .2s var(--ease);
+}
+.nav__enlace:hover:not([data-pending]) { border-bottom-color: currentColor; }
+.nav__enlace[aria-current="page"] { border-bottom-color: currentColor; }
+
+.nav__grupo { position: relative; }
+.nav__despliegue {
+  position: absolute; top: calc(100% + 9px); left: -16px;
+  min-width: 208px;
+  padding: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s;
+}
+.nav__grupo:hover .nav__despliegue,
+.nav__grupo:focus-within .nav__despliegue { opacity: 1; visibility: visible; transform: none; }
+.nav__despliegue a {
+  padding: 9px 11px;
+  font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .04em; text-decoration: none;
+  border-radius: 2px;
+}
+.nav__despliegue a:hover:not([data-pending]) { background: var(--surface-alt); }
+
+.cabecera__acciones { display: flex; align-items: center; gap: var(--space-s); }
+
+/* El botón «Sé voluntario» de la barra queda RETIRADO, no borrado: con los
+   ocho botones que fijó el cliente, la barra medía 1187 px de contenido para
+   1148 px de hueco a 1440, y desbordaba en todos los anchos de escritorio.
+   Voluntariado es ahora la quinta entrada del menú, así que el botón repetía
+   un destino que ya está a la vista. La llamada a la acción sigue en la barra
+   fija inferior en móvil y en el cuerpo de cada página.
+   Para recuperarlo: cambiar `none` por `inline-flex` en la línea de 1100 px y
+   revisar el desbordamiento con imgtool/menu.js. */
+.cabecera .btn--primario { display: none; }
+@media (min-width: 1100px) { .cabecera .btn--primario { display: none; } }
+
+/* Botón de menú */
+.boton-menu {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  background: transparent; border: 0; cursor: pointer; color: inherit;
+}
+.boton-menu svg { width: 26px; height: 26px; }
+@media (min-width: 1100px) { .boton-menu { display: none; } }
+
+/* Panel móvil a pantalla completa */
+.menu-movil {
+  position: fixed; inset: 0; z-index: 110;
+  background: var(--surface);
+  color: var(--ink);
+  display: flex; flex-direction: column;
+  padding: var(--space-s) 0 var(--space-l);
+  overflow-y: auto;
+  visibility: hidden; opacity: 0;
+  transition: opacity .28s var(--ease), visibility .28s;
+}
+.menu-movil.esta-abierto { visibility: visible; opacity: 1; }
+.menu-movil__cabecera { display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); }
+.menu-movil__lista { display: flex; flex-direction: column; padding-block: var(--space-m); }
+.menu-movil__lista a {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  padding-block: 8px;
+  border-bottom: var(--rule) solid var(--line);
+  opacity: 0; transform: translateY(14px);
+}
+.menu-movil.esta-abierto .menu-movil__lista a { animation: entrada-menu .42s var(--ease) forwards; }
+@keyframes entrada-menu { to { opacity: 1; transform: none; } }
+.menu-movil__sub { padding-inline-start: var(--space-m); }
+.menu-movil__sub a { font-size: var(--step-1); }
+.menu-movil .btn { margin-block-start: var(--space-m); }
+body.sin-scroll { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-movil__lista a { opacity: 1; transform: none; animation: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   9. MIGAS DE PAN
+   ════════════════════════════════════════════════════════════════════════ */
+.migas { font-family: var(--font-ui); font-size: var(--step--1); }
+.migas ol { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 7px; }
+.migas li::after { content: "·"; margin-inline-start: 7px; opacity: .6; }
+.migas li:last-child::after { content: none; }
+.migas a { text-decoration: none; }
+.migas a:hover { text-decoration: underline; }
+.migas [aria-current="page"] { opacity: .75; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   10. ACORDEÓN
+   ════════════════════════════════════════════════════════════════════════ */
+.acordeon { border-top: var(--rule) solid var(--line); }
+.acordeon__item { border-bottom: var(--rule) solid var(--line); }
+.acordeon__boton {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-s);
+  padding: var(--space-s) 0;
+  background: transparent; border: 0; cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 500;
+  color: inherit;
+}
+.acordeon__boton svg { width: 18px; height: 18px; flex: none; color: var(--ink-soft); transition: transform .28s var(--ease); }
+.acordeon__boton[aria-expanded="true"] svg { transform: rotate(45deg); }
+.acordeon__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s var(--ease); }
+.acordeon__panel > div { overflow: hidden; }
+.acordeon__item.esta-abierto .acordeon__panel { grid-template-rows: 1fr; }
+.acordeon__panel p { padding-block-end: var(--space-s); color: var(--ink-soft); max-width: var(--measure); }
+.acordeon__panel p:first-child { padding-block-start: 0; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   11. PIE
+   ════════════════════════════════════════════════════════════════════════ */
+.pie { z-index: 0; background: var(--surface-alt); padding-block: var(--space-2xl) var(--space-l); position: relative; }
+.pie__columnas { display: grid; gap: var(--space-l) var(--gutter); }
+@media (min-width: 768px) { .pie__columnas { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .pie__columnas { grid-template-columns: repeat(4, 1fr); } }
+.pie__titulo {
+  font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .17em; text-transform: uppercase; color: var(--ink-soft);
+  margin-block-end: var(--space-xs);
+  /* En escritorio es un rótulo, no un control: se le quita la cara de botón */
+  display: block; width: 100%; text-align: left;
+  background: transparent; border: 0; padding: 0; cursor: default;
+}
+.pie__titulo svg { display: none; }
+.pie__lista { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pie__lista a { text-decoration: none; font-size: var(--step-0); }
+.pie__lista a:hover:not([data-pending]) { text-decoration: underline; text-decoration-color: var(--gold); }
+.pie__redes { display: flex; gap: 13px; margin-block-start: var(--space-l); align-items: center; }
+
+/* Sin cuentas oficiales todavía: los iconos se muestran, pero no son enlaces.
+   Cinco iconos apuntando a «#» son cinco enlaces rotos. */
+.pie__redes--pendiente { flex-wrap: wrap; gap: var(--space-s); }
+.pie__redes-iconos { display: flex; gap: 13px; color: var(--ink-mute); }
+.pie__redes-iconos svg { width: 22px; height: 22px; }
+.pie__redes a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: 50%;
+  transition: background-color .2s var(--ease);
+}
+.pie__redes a:hover { background: var(--surface); }
+.pie__redes svg { width: 20px; height: 20px; }
+.pie__base {
+  margin-block-start: var(--space-l);
+  padding-block-start: var(--space-m);
+  border-top: var(--rule) solid var(--line);
+  display: flex; flex-wrap: wrap; gap: var(--space-s) var(--space-m);
+  justify-content: space-between;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+/* Acordeones del pie en móvil */
+@media (max-width: 767px) {
+  /* Hueco para que la barra fija no tape el bloque legal */
+  .pie { padding-block-end: calc(var(--space-l) + 72px); }
+
+  .pie__grupo .pie__titulo {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding-block: var(--space-xs);
+    background: transparent; border: 0; border-bottom: var(--rule) solid var(--line);
+    cursor: pointer; color: var(--ink-soft); font-family: var(--font-ui);
+  }
+  .pie__grupo .pie__titulo svg { display: block; width: 16px; height: 16px; transition: transform .28s var(--ease); }
+  .pie__grupo .pie__titulo[aria-expanded="true"] svg { transform: rotate(45deg); }
+  .pie__grupo .pie__lista { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s var(--ease); }
+  .pie__grupo .pie__lista > * { overflow: hidden; }
+  .pie__grupo.esta-abierto .pie__lista { grid-template-rows: 1fr; padding-block: var(--space-xs); }
+}
+
+/* Barra fija de móvil */
+.barra-fija {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 90;
+  padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: var(--rule) solid var(--line);
+}
+@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+  .barra-fija { background: var(--surface); }
+}
+
+/* ── Contenido de la barra ─────────────────────────────────────────────────
+   Un solo enlace que sirve para las dos formas. En móvil se comporta como el
+   botón de siempre: sólo el titular, a todo lo ancho. */
+.barra-fija__enlace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  text-decoration: none;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-m);
+  transition: background .18s var(--ease);
+}
+.barra-fija__enlace:hover,
+.barra-fija__enlace:focus-visible { background: var(--primary-strong); color: var(--on-primary); }
+
+.barra-fija__titulo {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: var(--step--1);
+  letter-spacing: var(--track-accion);
+  text-transform: uppercase;
+}
+
+/* En la franja estrecha sobran el disco, el rótulo, el apoyo y la flecha: el
+   titular ya dice lo que hay que saber y cada línea de más come alto de
+   pantalla en el sitio donde menos sobra. */
+.barra-fija__disco,
+.barra-fija__rotulo,
+.barra-fija__dato,
+.barra-fija__flecha { display: none; }
+
+/* ── En escritorio: tarjeta, no pastilla ───────────────────────────────────
+   Hasta ahora la llamada al voluntariado no existía por encima de 1100px:
+   se ocultaba, y el botón de la cabecera también está oculto, así que en
+   pantalla grande no quedaba ninguna.
+
+   La primera versión de escritorio era una pastilla con el texto suelto y no
+   se entendía: sin icono ni contexto, un botón flotando en una esquina no
+   dice de qué va. Esta forma es la misma que ya funciona en la página de
+   voluntariado (.ancla-form): disco con icono, rótulo, titular y una línea de
+   apoyo. Se reconoce de un vistazo y pertenece al sitio.
+
+   No se usa la franja de ancho completo en escritorio porque ahí sí estorba:
+   ocupa una banda de lectura durante toda la página y tapa el pie. */
+@media (min-width: 1100px) {
+  .barra-fija {
+    inset-inline: var(--gutter) auto;   /* a la izquierda: en voluntariado la
+                                           derecha es de .ancla-form */
+    bottom: var(--space-m);
+    width: auto;
+    max-width: 23rem;
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-top: 0;
+  }
+
+  .barra-fija__enlace {
+    justify-content: flex-start;
+    text-align: start;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius);
+    /* Fondo claro y no rojo: sobre el rojo, el rótulo y el texto de apoyo
+       pierden contraste, y son justo lo que da contexto. Lo que aporta el
+       color de marca es el filete lateral, que es además el recurso con el
+       que el resto del sitio marca sus secciones. */
+    background: var(--surface);
+    color: var(--ink);
+    border: var(--rule) solid var(--line);
+    border-inline-start: 4px solid var(--primary);
+    box-shadow: var(--sombra-g);
+  }
+  .barra-fija__enlace:hover,
+  .barra-fija__enlace:focus-visible {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+    border-inline-start-color: var(--gold);
+  }
+
+  /* Disco en rojo sólido, no en tinte claro: con --primary-tint de fondo y el
+     icono en --primary-strong, a 44 px el dibujo se perdía y la tarjeta
+     parecía tener una mancha rosa en vez de un icono. */
+  .barra-fija__disco {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--on-primary);
+  }
+  .barra-fija__disco svg { width: 26px; height: 26px; }
+
+  .barra-fija__texto { display: grid; gap: 1px; min-width: 0; }
+
+  .barra-fija__rotulo {
+    display: block;
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--track-rotulo);
+    text-transform: uppercase;
+    color: var(--primary-strong);
+  }
+
+  .barra-fija__titulo {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--step-1b);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  .barra-fija__dato {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+
+  .barra-fija__flecha {
+    display: block;
+    flex: none;
+    width: 20px; height: 20px;
+    margin-inline-start: auto;
+    color: var(--primary-strong);
+    transition: transform .18s var(--ease);
+  }
+  .barra-fija__enlace:hover .barra-fija__flecha { transform: translateX(3px); }
+}
+
+/* Sin animación de entrada, y es deliberado.
+   La primera versión aparecía con un desvanecido retardado (fill-mode both).
+   Eso significa que ANTES de que la animación arranque el elemento está a
+   opacidad 0: si el motor de animación no avanza —una captura automática, un
+   navegador con las animaciones desactivadas, una pestaña en segundo plano—,
+   la llamada a la acción no llega a verse nunca. Un elemento cuya única razón
+   de existir es que se vea no puede depender de que una animación se ejecute. */
+
+@media (prefers-reduced-motion: reduce) {
+  .barra-fija__flecha,
+  .barra-fija__enlace { transition: none; }
+  .barra-fija__enlace:hover .barra-fija__flecha { transform: none; }
+}
+
+/* ── Franja de acceso al formulario (voluntariado, por debajo de 1280px) ──
+   A partir de 1280px el formulario entero acompaña el scroll en su propio
+   carril (ver pages.css, «El formulario fijo») y esta franja se oculta: ahí
+   sobra. Por debajo de ese ancho no hay sitio para dos columnas sin ahogar la
+   lectura, el formulario se queda al final de una página larga, y esta franja
+   es el puente: acompaña todo el recorrido y se retira sola en cuanto el
+   formulario ya está en pantalla (clase .esta-oculto, la pone ancla-form.js).
+
+   Es una franja de alto fijo y ancho completo, con el mismo hueco reservado
+   abajo en el <body>: así no tapa ni una línea de texto ni se come el pie. */
+.ancla-form {
+  position: fixed;
+  z-index: 85;                      /* bajo la cabecera (100) y el menú (110) */
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  box-shadow: var(--sombra-g);
+  transition: opacity .28s var(--ease), transform .28s var(--ease);
+}
+.ancla-form[hidden] { display: none; }
+
+.ancla-form__rotulo {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: var(--track-rotulo);
+  text-transform: uppercase;
+  color: var(--primary-strong);
+}
+.ancla-form__titulo { font-family: var(--font-display); font-size: var(--step-1b); line-height: 1.15; }
+.ancla-form__dato { font-size: var(--step--1); color: var(--ink-soft); }
+
+/* ── Forma A · franja inferior (por defecto, hasta 1680px) ─────────────── */
+.ancla-form {
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex; align-items: center; gap: var(--space-s);
+  flex-wrap: nowrap;
+  padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  border-inline: 0;
+  border-block-end: 0;
+}
+.ancla-form .btn { margin-inline-start: auto; flex: none; }
+.ancla-form__titulo { font-size: var(--step-1); }
+/* En franja estrecha sobran las dos líneas de apoyo: el titular y el botón
+   dicen lo mismo en la mitad de alto. */
+.ancla-form__rotulo, .ancla-form__dato { display: none; }
+@media (min-width: 768px) {
+  .ancla-form__rotulo, .ancla-form__dato { display: block; }
+}
+.ancla-form.esta-oculto { opacity: 0; transform: translateY(100%); pointer-events: none; }
+
+/* El hueco que reserva la página para no quedar tapada por la franja. */
+body[data-ancla] { padding-block-end: 76px; }
+@media (min-width: 768px) { body[data-ancla] { padding-block-end: 96px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ancla-form { transition: none; }
+  .ancla-form.esta-oculto { transform: none; }
+}
+
+/* ── Modal de llamada a la acción (solo portada) ────────────────────────
+   Es un <dialog> abierto con showModal(), no un div con overlay: el atrapado
+   de foco, el fondo inerte y el Escape los pone el navegador.
+
+   La animación se dispara con la clase .esta-abierto, que cta-modal.js añade
+   un fotograma después de abrir y quita antes de cerrar. Se anima el diálogo y
+   su ::backdrop por separado porque son dos cajas distintas.
+
+   Si se cambia la duración aquí, hay que cambiar CONFIG.animacionMs en
+   cta-modal.js: el cierre real espera ese tiempo antes de llamar a close(). */
+.cta-modal {
+  /* Centrado en los dos ejes, declarado y no heredado del navegador.
+     La receta necesita las tres cosas juntas: inset:0 abre la caja a toda la
+     ventana, height:fit-content impide que se estire para llenarla, y margin
+     auto reparte el sobrante por igual arriba, abajo y a los lados. Si falta
+     el fit-content el diálogo ocupa el alto completo y el centrado no se ve.
+
+     El navegador ya hace esto por su cuenta con dialog:modal, pero depende de
+     su hoja de estilos por defecto: basta que algo toque el margin para que se
+     pierda. Escrito aquí no depende de nadie. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(460px, calc(100vw - var(--space-l) * 2));
+  height: fit-content;
+  /* Si el contenido crece o la ventana es baja, scroll dentro y no desbordado. */
+  max-height: calc(100svh - var(--space-l) * 2);
+  overflow: auto;
+  padding: 0;
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--sombra-g);
+  opacity: 0;
+  /* Entra subiendo un punto desde el centro; no desplaza el centrado, porque
+     transform se aplica después del reparto de márgenes. */
+  transform: translateY(14px) scale(.97);
+  transition: opacity .32s var(--ease), transform .32s var(--ease);
+}
+.cta-modal.esta-abierto { opacity: 1; transform: none; }
+
+.cta-modal::backdrop {
+  background: color-mix(in srgb, #000 62%, transparent);
+  opacity: 0;
+  transition: opacity .32s var(--ease);
+}
+.cta-modal.esta-abierto::backdrop { opacity: 1; }
+
+/* ── La imagen del comunicado, entera ─────────────────────────────────────
+   Antes llevaba `aspect-ratio: 16/9` con `object-fit: cover`, y eso RECORTA:
+   el navegador escala la imagen hasta llenar un marco apaisado y se come lo
+   que sobra por arriba y por abajo. Con una fotografía de encuadre vertical
+   —la del Santo Padre saludando— desaparecían la cabeza y los pies.
+
+   El marco tenía sentido cuando la imagen era una sola, elegida a mano para
+   ese hueco. Ahora la sube quien publica el aviso y puede tener cualquier
+   proporción, así que el marco lo pone la imagen: se muestra a su tamaño, sin
+   recortar nada.
+
+   Queda un límite de altura para que una imagen muy vertical no deje el botón
+   fuera de la pantalla; ahí sí se reduce, pero entera —`contain`, no `cover`—,
+   así que se sigue viendo toda. */
+.cta-modal__media {
+  display: flex;
+  justify-content: center;
+  background: var(--surface-alt);
+  line-height: 0;   /* sin esto queda una franja bajo la imagen */
+}
+
+/* `max-width` y `max-height`, nunca `width: 100%`.
+   Con `width: 100%` la imagen se estira al ancho del aviso y luego el tope de
+   altura la aplasta: una foto vertical acababa deformada o recortada. Con dos
+   máximos y las medidas en `auto`, la imagen se reduce si hace falta pero
+   conserva SU proporción, que es lo que significa «verse entera». */
+.cta-modal__media img {
+  max-width: 100%;
+  max-height: 52vh;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.cta-modal__cuerpo { padding: var(--space-l); }
+.cta-modal__titulo { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.05; margin-block: var(--space-2xs) var(--space-s); }
+.cta-modal__texto { color: var(--ink-soft); max-width: 46ch; }
+.cta-modal__acciones { display: flex; flex-wrap: wrap; gap: var(--space-s); margin-block-start: var(--space-l); }
+.cta-modal__acciones .btn { flex: 1 1 auto; }
+
+/* Aspa de cierre. Va sobre la imagen, así que lleva su propio fondo: sin él
+   desaparece en cuanto la fotografía es clara en esa esquina. */
+.cta-modal__aspa {
+  position: absolute; inset-block-start: var(--space-s); inset-inline-end: var(--space-s);
+  z-index: 2;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: var(--sombra-s);
+}
+.cta-modal__aspa:hover { background: var(--surface); }
+.cta-modal__aspa svg { width: 20px; height: 20px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-modal, .cta-modal::backdrop { transition: none; }
+  .cta-modal { transform: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   12. ESTADOS INICIALES DE LAS ANIMACIONES DE BARRIDO (§8)
+   Sin JS no se aplican: el contenido nace visible.
+   ════════════════════════════════════════════════════════════════════════ */
+.js [data-reveal="wipe-up"]   { clip-path: inset(100% 0 0 0); }
+.js [data-reveal="fade-rise"] { opacity: 0; }
+.js [data-reveal="line-draw"] { transform: scaleX(0); transform-origin: left center; }
+/* max-width:100% es la red de seguridad: sin ella el inline-block no parte, y
+   como .linea recorta lo que sobresale, un titular largo se cortaría a medias
+   en lugar de pasar a la línea siguiente. */
+.js [data-reveal="mask-lines"] .linea > span { display: inline-block; max-width: 100%; transform: translateY(105%); }
+
+.linea { display: block; overflow: hidden; }
+
+.is-revealed[data-reveal="wipe-up"]   { clip-path: inset(0% 0 0 0); }
+.is-revealed[data-reveal="fade-rise"] { opacity: 1; }
+.is-revealed[data-reveal="line-draw"] { transform: none; }
+.is-revealed[data-reveal="mask-lines"] .linea > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { clip-path: none !important; opacity: 1 !important; transform: none !important; }
+  .js [data-reveal="mask-lines"] .linea > span { transform: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CAMPOS DEL FORMULARIO DE INSCRIPCIÓN
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Campo con botón pegado (el DNI y su lupa) ───────────────────────── */
+.campo__grupo { display: flex; align-items: stretch; gap: 0; }
+
+.campo__grupo input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-inline-end: 0;
+}
+
+.campo__lupa {
+  flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  /* 46px: el mismo alto que un campo y que un botón. Por debajo de 44px un
+     objetivo táctil es difícil de acertar con el pulgar (WCAG 2.5.8). */
+  width: 50px; min-height: 46px;
+  padding: 0;
+  background: var(--primary);
+  color: var(--on-primary);
+  border: var(--rule) solid var(--primary);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--radius);
+  border-end-end-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color .2s var(--ease);
+}
+.campo__lupa:hover:not(:disabled) { background: var(--primary-strong); border-color: var(--primary-strong); }
+.campo__lupa:disabled { opacity: .55; cursor: progress; }
+.campo__lupa svg { width: 20px; height: 20px; }
+
+.campo--error .campo__grupo input { border-color: var(--primary-strong); }
+
+/* Respuesta de la búsqueda. No es un error: es información de estado, y por
+   eso no usa el rojo de los errores salvo cuando algo va mal. */
+.campo__estado { margin: var(--space-2xs) 0 0; font-size: var(--step--1); color: var(--ink-soft); }
+.campo__estado:empty { display: none; }
+.campo__estado--ok    { color: var(--accent-strong); }
+.campo__estado--aviso { color: var(--primary-strong); }
+
+/* ── Agrupación de campos relacionados ───────────────────────────────── */
+.campo-grupo {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+.campo-grupo > .campo__etiqueta { margin-bottom: 2px; }
+
+.campo__etiqueta--menor {
+  font-size: var(--step--2);
+  font-weight: 400;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* «opcional» junto a la etiqueta: un campo que no es obligatorio tiene que
+   parecerlo, y la ausencia de asterisco sola no se percibe. */
+.campo__opcional {
+  display: inline-block;
+  margin-inline-start: var(--space-2xs);
+  padding: 1px 8px;
+  border: var(--rule) solid var(--line-strong);
+  border-radius: 999px;
+  font-size: var(--step--2);
+  font-weight: 400;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  vertical-align: middle;
+}
+
+/* ── Las tres columnas del ubigeo ────────────────────────────────────────
+   auto-fit y no una media query con tres columnas fijas.
+   El motivo: a partir de 1280px el formulario vive en su propio carril
+   estrecho, y una media query mide la VENTANA, no ese carril. Con la ventana
+   ancha se aplicaban tres columnas de unos 110 px, donde la palabra
+   DEPARTAMENTO en versalitas no cabe: las etiquetas se montaban unas sobre
+   otras y se leía «DEPARTAMENTOPROVINCIA».
+   Con auto-fit, la rejilla se adapta al espacio que hay de verdad: tres
+   columnas si caben, dos si no, una en móvil. */
+.paso__rejilla--tres {
+  display: grid;
+  gap: 13px;
+  /* De 9rem a 7.5rem. En el carril del formulario, 9rem sólo dejaba entrar una
+     columna y los tres campos del ubigeo se apilaban: 300 píxeles de alto para
+     tres desplegables cortos. Con 7.5rem entran dos por línea y el bloque baja
+     a la mitad. Un desplegable de departamento no necesita más ancho: los
+     nombres más largos —«MADRE DE DIOS»— caben de sobra. */
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+}
+
+/* Una etiqueta que aun así no quepa se corta con puntos suspensivos en lugar
+   de desbordar sobre la de al lado. */
+.paso__rejilla--tres .campo__etiqueta--menor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Un desplegable deshabilitado debe leerse como «todavía no», no como
+   «roto»: mantiene el borde y sólo baja el texto. */
+.campo__selector select:disabled {
+  background: var(--surface-alt);
+  color: var(--ink-mute);
+  cursor: not-allowed;
+}
+
+/* El nombre en sólo lectura tras encontrarlo por DNI: se distingue de un campo
+   editable sin parecer desactivado. readOnly, no disabled: un campo
+   deshabilitado no se envía con el formulario.
+
+   Se excluye el campo del calendario, que también es readonly —flatpickr lo
+   pone así para que sólo se elija con el calendario— pero no está «bloqueado»:
+   con la regla general se pintaba de rosa y con borde punteado, como si
+   estuviera inutilizado. */
+.campo input[readonly]:not(.flatpickr-input):not(.form-control) {
+  background: var(--surface-alt);
+  border-style: dashed;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CALENDARIO (flatpickr)
+   La librería trae su propio azul y su propia tipografía. Aquí se reviste con
+   los tokens del sitio para que no parezca un injerto: mismas familias, misma
+   paleta, mismos radios. Ni un hexadecimal.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* El campo visible que crea altInput hereda el estilo de los demás. */
+.flatpickr-input.form-control,
+input.flatpickr-input[readonly] {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: var(--rule) solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  min-height: 46px;
+  width: 100%;
+  cursor: pointer;
+}
+.campo--error .flatpickr-input.form-control { border-color: var(--primary-strong); }
+
+.flatpickr-calendar {
+  font-family: var(--font-ui);
+  border-radius: var(--radius);
+  border: var(--rule) solid var(--line-strong);
+  box-shadow: var(--sombra-g);
+  background: var(--surface);
+}
+.flatpickr-calendar.arrowTop::before,
+.flatpickr-calendar.arrowTop::after,
+.flatpickr-calendar.arrowBottom::before,
+.flatpickr-calendar.arrowBottom::after { display: none; }
+
+/* Cabecera: la banda de la marca. */
+.flatpickr-months {
+  background: var(--surface-invert);
+  border-start-start-radius: var(--radius);
+  border-start-end-radius: var(--radius);
+  padding-block: 6px;
+}
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+  color: var(--on-primary);
+  fill: var(--on-primary);
+  font-family: var(--font-ui);
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  background: transparent;
+  font-weight: 600;
+  border-radius: var(--radius);
+}
+/* Las opciones del desplegable se pintan sobre fondo del sistema: ahí el
+   blanco heredado no se vería. */
+.flatpickr-current-month .flatpickr-monthDropdown-months option { color: var(--ink); background: var(--surface); }
+
+.flatpickr-current-month input.cur-year {
+  font-weight: 600;
+  background: transparent;
+  border-bottom: var(--rule) solid color-mix(in srgb, var(--on-primary) 45%, transparent);
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg { fill: var(--gold-invert); }
+
+.flatpickr-weekdays { background: var(--surface-invert); }
+span.flatpickr-weekday {
+  background: var(--surface-invert);
+  color: var(--gold-invert);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+}
+
+.flatpickr-day {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  border-radius: var(--radius);
+  border-color: transparent;
+}
+.flatpickr-day:hover { background: var(--surface-alt); border-color: var(--surface-alt); }
+.flatpickr-day.today { border-color: var(--gold); font-weight: 600; }
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+}
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay { color: var(--ink-mute); }
+.flatpickr-day.flatpickr-disabled { text-decoration: line-through; }
+
+/* El calendario se abre sobre la franja fija de móvil y el panel de
+   inscripción: tiene que quedar por encima de los dos. */
+.flatpickr-calendar { z-index: 120; }
+
+/* Pie reducido a su copyright: sin las cuatro columnas de enlaces, la línea
+   legal se quedaba pegada al borde superior. */
+.pie--simple .pie__base {
+  border-top: 0;
+  padding-block: var(--space-l);
+  margin-block-start: 0;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FICHAS DE COLECCIÓN
+   --------------------------------------------------------------------------
+   Las tarjetas de las listas que tienen página propia por pieza: las sedes,
+   los santos, los obispos, las comisiones y las noticias. Una sola forma
+   para las seis, porque son la misma idea: una foto, un titular y el camino
+   a su página.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rejilla-fichas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--gutter, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ficha {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+/* La proporción se fija aquí y no en la imagen: así una foto vertical y una
+   apaisada ocupan lo mismo y la rejilla no queda dentada. */
+.ficha__media {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+
+.ficha__media img,
+.ficha__media picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ficha__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.2rem 1.3rem;
+  flex: 1;
+}
+
+.ficha__rotulo {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.ficha__titulo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.ficha__titulo a { color: inherit; text-decoration: none; }
+.ficha__titulo a:hover { text-decoration: underline; }
+
+.ficha__texto {
+  margin: 0;
+  font-size: .92rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* El enlace se pega al fondo para que todas las tarjetas de una fila lo
+   tengan a la misma altura, aunque sus textos midan distinto. */
+.ficha__cuerpo .enlace-flecha { margin-top: auto; padding-top: .4rem; }
+
+
+/* ── Página de detalle ──────────────────────────────────────────────────── */
+.cabecera-pagina__dato {
+  margin: .3rem 0 0;
+  font-size: .95rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.figura__pie {
+  margin: .6rem 0 0;
+  font-size: .85rem;
+  color: var(--ink-mute);
+  line-height: 1.45;
+}

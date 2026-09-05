@@ -1,0 +1,772 @@
+{
+    "agenda": {
+        "vista": "agenda",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Agenda",
+                "titulo": "Los días del encuentro",
+                "texto": "El Papa León XIV estará en el Perú del 11 al 16 de noviembre de 2026. El programa detallado todavía no es público: aquí está todo lo que sí se sabe, y nada de lo que no."
+            },
+            {
+                "clave": "sabe-hoy",
+                "nombre": "Qué se sabe hoy",
+                "plantilla": "texto_lectura",
+                "rotulo": "Actualizado el 13 de agosto de 2026",
+                "titulo": "Qué se sabe hoy",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "cuatro-ventanas",
+                "nombre": "Las cuatro ventanas",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cuatro jurisdicciones",
+                "titulo": "Las cuatro ventanas",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "suele-incluir-viaje",
+                "nombre": "¿Qué suele incluir un viaje apostólico?",
+                "plantilla": "texto_apartados",
+                "rotulo": "No es el programa peruano",
+                "titulo": "¿Qué suele incluir un viaje apostólico?",
+                "texto": "",
+                "piezas": 8
+            },
+            {
+                "clave": "como-cuando-anunciara",
+                "nombre": "Cómo y cuándo se anunciará el programa",
+                "plantilla": "texto_lectura",
+                "rotulo": "Oficina de Prensa de la Santa Sede",
+                "titulo": "Cómo y cuándo se anunciará el programa",
+                "texto": "El programa detallado de un viaje apostólico lo publica la Oficina de Prensa de la Santa Sede. Es la fuente primaria: hasta que un acto aparece ahí, no existe oficialmente. Suele difundirse algunas semanas antes del viaje, en un documento con cada acto, su hora local y su sede. En el Perú, la Conferencia Episcopal Peruana difunde y adapta esa información: condiciones de acceso, transporte, puntos de encuentro y las indicaciones de cada diócesis. Las cuatro jurisdicciones implicadas —Lima, Chiclayo, Cusco y Pucallpa— publicarán además sus propias instrucciones. Cuando eso ocurra, esta página ca",
+                "piezas": 0
+            },
+            {
+                "clave": "avisame-cuando-publique",
+                "nombre": "Avísame cuando se publique la agenda",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Avísame cuando se publique la agenda",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "mas-pregunta",
+                "nombre": "Lo que más se pregunta",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cinco dudas",
+                "titulo": "Lo que más se pregunta",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "aviso-legal": {
+        "vista": "aviso-legal",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Legal",
+                "titulo": "Aviso legal",
+                "texto": "Titularidad del sitio, condiciones de uso y propiedad intelectual de los contenidos."
+            },
+            {
+                "clave": "titular-sitio",
+                "nombre": "Titular del sitio",
+                "plantilla": "texto_lectura",
+                "rotulo": "",
+                "titulo": "Titular del sitio",
+                "texto": "Los datos de titularidad de este apartado los debe completar la organización antes de la publicación del sitio. Aparecen entre corchetes. Titular del sitio Denominación: [RAZÓN SOCIAL POR CONFIRMAR]. Domicilio: [DOMICILIO POR CONFIRMAR]. Registro: [DATOS REGISTRALES POR CONFIRMAR]. Correo de contacto: [CORREO POR CONFIRMAR]. Objeto Este sitio tiene una finalidad exclusivamente informativa y pastoral: dar a conocer el viaje apostólico de Su Santidad el Papa León XIV al Perú, previsto del 11 al 16 de noviembre de 2026, y canalizar la participación de los fieles como voluntarios o colaboradores. ",
+                "piezas": 0
+            }
+        ]
+    },
+    "cep": {
+        "vista": "cep",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Quién recibe la visita",
+                "titulo": "La Iglesia en el Perú",
+                "texto": "La Conferencia Episcopal Peruana y las cuatro jurisdicciones eclesiásticas que acogen el viaje apostólico."
+            },
+            {
+                "clave": "quien-organiza-visita",
+                "nombre": "Quién organiza la visita",
+                "plantilla": "texto_lectura",
+                "rotulo": "La Conferencia",
+                "titulo": "Quién organiza la visita",
+                "texto": "La Conferencia Episcopal Peruana reúne a los obispos de las diócesis, arquidiócesis, prelaturas y vicariatos apostólicos del país. Es el organismo que coordina la preparación del viaje en el Perú, difunde y adapta lo que publica la Santa Sede, y articula el trabajo de las cuatro jurisdicciones que reciben al Santo Padre. León XIV la conoce por dentro. Fue su segundo vicepresidente desde marzo de 2018, miembro de su Consejo Económico y presidente de la Comisión Episcopal de Cultura y Educación. En 2023 la propia Conferencia le concedió la Medalla de Oro de Santo Toribio de Mogrovejo. Los datos ",
+                "piezas": 0
+            },
+            {
+                "clave": "quien-acoge-cada",
+                "nombre": "Quién acoge cada sede",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cuatro jurisdicciones",
+                "titulo": "Quién acoge cada sede",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "contacto": {
+        "vista": "contacto",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Organización del viaje",
+                "titulo": "Contacto",
+                "texto": "Cuéntanos qué necesitas y te respondemos. Si tu consulta es sobre el programa, quizá ya esté resuelta en las preguntas frecuentes."
+            },
+            {
+                "clave": "escribenos",
+                "nombre": "Escríbenos",
+                "plantilla": "texto_lectura",
+                "rotulo": "Formulario",
+                "titulo": "Escríbenos",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "cookies": {
+        "vista": "cookies",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Legal",
+                "titulo": "Cookies",
+                "texto": "La respuesta corta: este sitio no usa cookies. La larga explica qué guarda tu navegador y por qué."
+            },
+            {
+                "clave": "este-sitio-instala",
+                "nombre": "Este sitio no instala cookies",
+                "plantilla": "texto_lectura",
+                "rotulo": "",
+                "titulo": "Este sitio no instala cookies",
+                "texto": "Este sitio no instala cookies Ni propias ni de terceros. No hay analítica, no hay píxeles de seguimiento, no hay publicidad y no hay perfilado. Por eso no verás un banner de consentimiento: no habría nada que consentir. Lo que sí guarda tu navegador El sitio usa el almacenamiento del navegador para dos cosas, ambas técnicas y ambas dentro de tu propio equipo. Este almacenamiento no se envía al servidor en cada petición, a diferencia de una cookie. 1. El borrador del formulario de voluntariado. Clave l14-inscripcion-borrador, en localStorage. Guarda lo que hayas escrito en el formulario para qu",
+                "piezas": 0
+            }
+        ]
+    },
+    "donativo": {
+        "vista": "donativo",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Cómo ayudar",
+                "titulo": "Con un donativo",
+                "texto": "Los donativos se destinan a los trabajos organizativos y pastorales de la visita, y se gestionan con responsabilidad y transparencia."
+            },
+            {
+                "clave": "todavia-canal-donativos",
+                "nombre": "Todavía no hay canal de donativos abierto",
+                "plantilla": "texto_lectura",
+                "rotulo": "Estado",
+                "titulo": "Todavía no hay canal de donativos abierto",
+                "texto": "Este sitio no tiene pasarela de pago y no la tendrá hasta que la organización defina la titularidad de la cuenta y el tratamiento fiscal de los aportes. Habilitar cobros antes de eso sería irresponsable. Cuando el canal esté abierto, aparecerá aquí con la cuenta oficial, el nombre exacto del titular y el procedimiento para pedir constancia del aporte. Desconfía de cualquier cuenta que circule antes de ese anuncio, aunque venga con el escudo y con fotos del Santo Padre. Si no está publicada en esta página o por la Conferencia Episcopal Peruana, no es oficial.",
+                "piezas": 0
+            },
+            {
+                "clave": "destinan",
+                "nombre": "A qué se destinan",
+                "plantilla": "texto_lectura",
+                "rotulo": "Destino",
+                "titulo": "A qué se destinan",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "avisame-cuando-abra",
+                "nombre": "Avísame cuando se abra el canal",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Avísame cuando se abra el canal",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "el-papa": {
+        "vista": "el-papa",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "267.º sucesor de Pedro",
+                "titulo": "Cuarenta años de Perú",
+                "texto": "Robert Francis Prevost llegó a Chulucanas en 1985 con treinta años. Salió del Perú en 2023 siendo ciudadano peruano y obispo de Chiclayo."
+            },
+            {
+                "clave": "quien-leon-xiv",
+                "nombre": "Quién es León XIV",
+                "plantilla": "texto_lectura",
+                "rotulo": "En breve",
+                "titulo": "Quién es León XIV",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "raices-vocacion-agustiniana",
+                "nombre": "Raíces y vocación agustiniana",
+                "plantilla": "texto_lectura",
+                "rotulo": "1955 – 1984",
+                "titulo": "Raíces y vocación agustiniana",
+                "texto": "Nació en Chicago el 14 de septiembre de 1955, hijo de Louis Marius Prevost, de ascendencia francesa e italiana, y de Mildred Martínez, de ascendencia española. Tiene dos hermanos, Louis Martín y John Joseph. Estudió primero en el Seminario Menor de los Padres Agustinos y después en la Universidad de Villanova, en Pensilvania, donde se licenció en Matemáticas y cursó Filosofía en 1977. El 1 de septiembre de ese mismo año ingresó en el noviciado de la Orden de San Agustín en St. Louis, en la provincia de Nuestra Señora del Buen Consejo de Chicago. Hizo su primera profesión el 2 de septiembre de ",
+                "piezas": 0
+            },
+            {
+                "clave": "misionero-formador-peru",
+                "nombre": "Misionero y formador en el Perú",
+                "plantilla": "texto_lectura",
+                "rotulo": "1985 – 1999",
+                "titulo": "Misionero y formador en el Perú",
+                "texto": "Se licenció en 1984 y al año siguiente, mientras preparaba su tesis doctoral, fue enviado a la misión agustiniana de Chulucanas, en Piura. Allí empezaron sus cuarenta años de Perú. En 1987 defendió su tesis sobre el papel del prior local en la Orden de San Agustín y fue nombrado director de Vocaciones y director de Misiones de su provincia agustiniana en Illinois. Al año siguiente volvió, esta vez a Trujillo, como director del proyecto de formación común para los aspirantes agustinos de los vicariatos de Chulucanas, Iquitos y Apurímac: el desierto, la selva y los Andes en una misma casa de for",
+                "piezas": 0
+            },
+            {
+                "clave": "prior-general-obispo",
+                "nombre": "De prior general a obispo de Chiclayo",
+                "plantilla": "texto_lectura",
+                "rotulo": "1999 – 2023",
+                "titulo": "De prior general a obispo de Chiclayo",
+                "texto": "En 1999 fue elegido prior provincial de la provincia agustiniana de Chicago y, dos años y medio después, sus hermanos lo eligieron prior general de la Orden. Fue confirmado en 2007 para un segundo mandato. El 3 de noviembre de 2014 el Papa Francisco lo nombró administrador apostólico de la diócesis de Chiclayo y lo elevó a la dignidad episcopal como obispo titular de Sufar. Entró en la diócesis el 7 de noviembre y fue ordenado obispo el 12 de diciembre, festividad de Nuestra Señora de Guadalupe, en la catedral de Santa María. El 26 de septiembre de 2015 fue nombrado obispo de Chiclayo. En marz",
+                "piezas": 0
+            },
+            {
+                "clave": "chiclayo-pontificado",
+                "nombre": "De Chiclayo al pontificado",
+                "plantilla": "texto_lectura",
+                "rotulo": "2023 – hoy",
+                "titulo": "De Chiclayo al pontificado",
+                "texto": "El 30 de enero de 2023 el Papa Francisco lo llamó a Roma como prefecto del Dicasterio para los Obispos y presidente de la Pontificia Comisión para América Latina, elevándolo al rango de arzobispo. En el consistorio del 30 de septiembre de ese año fue creado cardenal, con la diaconía de Santa Mónica, de la que tomó posesión en enero de 2024. El 6 de febrero de 2025 fue promovido al orden de los cardenales obispos, con el título suburbicario de Albano. Durante la última hospitalización del Papa Francisco presidió, el 3 de marzo, el rosario por la salud del Pontífice en la plaza de San Pedro. El ",
+                "piezas": 0
+            },
+            {
+                "clave": "escudo-lema",
+                "nombre": "El escudo y el lema",
+                "plantilla": "texto_lectura",
+                "rotulo": "Heráldica",
+                "titulo": "El escudo y el lema",
+                "texto": "El escudo está dividido diagonalmente en dos sectores. La parte superior tiene fondo azul y presenta un lirio blanco. La inferior, sobre fondo claro, lleva la imagen que recuerda a la Orden de San Agustín: un libro cerrado sobre el que descansa un corazón traspasado por una flecha. Esa imagen evoca la conversión de san Agustín, que él mismo explicó con las palabras «Vulnerasti cor meum verbo tuo»: has traspasado mi corazón con tu Palabra. El lema, «In Illo uno unum», procede de un sermón de san Agustín, la Exposición del Salmo 127, y significa que aunque los cristianos seamos muchos, en el úni",
+                "piezas": 0
+            },
+            {
+                "clave": "magisterio-hasta-hoy",
+                "nombre": "Su magisterio hasta hoy",
+                "plantilla": "texto_lectura",
+                "rotulo": "Documentos",
+                "titulo": "Su magisterio hasta hoy",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "en-directo": {
+        "vista": "en-directo",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Del 11 al 16 de noviembre",
+                "titulo": "En directo",
+                "texto": "No hace falta estar en la explanada. Aquí estarán los enlaces de cada transmisión en cuanto existan."
+            },
+            {
+                "clave": "todavia-enlaces",
+                "nombre": "Todavía no hay enlaces",
+                "plantilla": "texto_lectura",
+                "rotulo": "Estado",
+                "titulo": "Todavía no hay enlaces",
+                "texto": "Los viajes apostólicos se transmiten habitualmente por los medios de comunicación de la Santa Sede y por las emisoras y los canales de la Iglesia en el país que recibe la visita. Es razonable esperar que así sea también aquí, pero ningún enlace concreto está confirmado. En cuanto se publique el programa, esta página tendrá una fila por acto, con su hora en horario de Lima y el enlace directo a la transmisión. Mientras tanto, no publicamos nada que no podamos sostener.",
+                "piezas": 0
+            },
+            {
+                "clave": "tres-maneras-seguirlo",
+                "nombre": "Tres maneras de seguirlo",
+                "plantilla": "texto_lectura",
+                "rotulo": "Mientras tanto",
+                "titulo": "Tres maneras de seguirlo",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "avisame-cuando-haya",
+                "nombre": "Avísame cuando haya transmisión",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Avísame cuando haya transmisión",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "guia-del-peregrino": {
+        "vista": "guia-del-peregrino",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Para quien va a ir",
+                "titulo": "Guía del peregrino",
+                "texto": "Lo que sí puedes preparar desde ya, y lo que habrá que esperar. Ninguna de estas indicaciones sustituye a las de tu diócesis."
+            },
+            {
+                "clave": "esta-confirmado",
+                "nombre": "Qué está confirmado y qué no",
+                "plantilla": "texto_lectura",
+                "rotulo": "Antes de nada",
+                "titulo": "Qué está confirmado y qué no",
+                "texto": "Esta guía no inventa logística. Lo que encontrarás aquí son las cosas que puedes preparar sin saber todavía dónde ni a qué hora será cada acto: el equipaje, la salud, los niños, la accesibilidad y, sobre todo, la preparación interior. En cuanto la Oficina de Prensa de la Santa Sede publique el programa y la Conferencia Episcopal Peruana difunda las indicaciones de acceso, esta página se completará con los recintos, los accesos por puerta, los horarios de apertura y el transporte.",
+                "piezas": 0
+            },
+            {
+                "clave": "llevar",
+                "nombre": "Qué llevar",
+                "plantilla": "texto_apartados",
+                "rotulo": "Equipaje",
+                "titulo": "Qué llevar",
+                "texto": "",
+                "piezas": 8
+            },
+            {
+                "clave": "preparar-corazon",
+                "nombre": "Preparar el corazón",
+                "plantilla": "texto_lectura",
+                "rotulo": "Lo importante",
+                "titulo": "Preparar el corazón",
+                "texto": "No se peregrina solo con los pies. Las semanas previas son parte de la visita, y lo que ocurra en ellas se nota el día del encuentro. Vuelve a la oración en familia. Un rato corto y a la misma hora vale más que un propósito largo que no se sostiene. Acércate al sacramento de la reconciliación. Tu parroquia tendrá horarios reforzados conforme se acerquen las fechas. Reconcíliate con quien tengas pendiente. Es lo más difícil de la lista y lo único que no se puede improvisar el día antes. Visita a quien está solo. Un enfermo, un vecino mayor, alguien de la comunidad que ya no puede salir. Muchos ",
+                "piezas": 0
+            },
+            {
+                "clave": "mayores-ninos-accesibilidad",
+                "nombre": "Mayores, niños y accesibilidad",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cuidados",
+                "titulo": "Mayores, niños y accesibilidad",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "como-llegar-tu",
+                "nombre": "Cómo llegar a tu sede",
+                "plantilla": "texto_lectura",
+                "rotulo": "Transporte",
+                "titulo": "Cómo llegar a tu sede",
+                "texto": "Las indicaciones de acceso, transporte y puntos de encuentro dependen de los recintos, y los recintos todavía no se han anunciado. En cuanto se publiquen, aquí encontrarás para cada sede el punto de acceso, los cortes de tránsito previstos y las rutas recomendadas. Mientras tanto, lo más útil que puedes hacer es preguntar en tu parroquia. Muchas organizan traslado en grupo, y ese suele ser el modo más ordenado de llegar y de volver.",
+                "piezas": 0
+            },
+            {
+                "clave": "te-avisamos-cuando",
+                "nombre": "Te avisamos cuando esté la guía completa",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Te avisamos cuando esté la guía completa",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "materiales": {
+        "vista": "materiales",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Para parroquias y colegios",
+                "titulo": "Materiales de pastoral",
+                "texto": "Lo que necesitas para preparar la visita en comunidad. Se irá publicando conforme la Conferencia Episcopal lo apruebe."
+            },
+            {
+                "clave": "habra-disponible",
+                "nombre": "Qué habrá disponible",
+                "plantilla": "texto_lectura",
+                "rotulo": "En preparación",
+                "titulo": "Qué habrá disponible",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "corre-voz",
+                "nombre": "Corre la voz",
+                "plantilla": "texto_lectura",
+                "rotulo": "Comparte",
+                "titulo": "Corre la voz",
+                "texto": "La mejor difusión de esta visita no la va a hacer una campaña: la van a hacer las parroquias, los colegios y los movimientos contándolo a la gente que tienen al lado. Cuando estén listos, aquí encontrarás un kit sencillo —piezas para redes, un cartel imprimible y un texto breve para leer en las misas dominicales— pensado para que cualquier comunidad pueda usarlo sin saber de diseño. La etiqueta oficial del viaje se anunciará junto con los materiales. Hasta entonces, lo más útil es enlazar directamente a este sitio.",
+                "piezas": 0
+            },
+            {
+                "clave": "avisame-cuando-esten",
+                "nombre": "Avísame cuando estén publicados",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Avísame cuando estén publicados",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "noticias": {
+        "vista": "noticias",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Actualizado el 13 de agosto de 2026",
+                "titulo": "Noticias",
+                "texto": "Lo que se ha hecho público sobre el viaje, en orden. Aquí no se publica nada que no proceda de una fuente oficial."
+            },
+            {
+                "clave": "santa-sede-anuncia",
+                "nombre": "La Santa Sede anuncia el viaje apostólico de León XIV al Perú",
+                "plantilla": "texto_apartados",
+                "rotulo": "",
+                "titulo": "La Santa Sede anuncia el viaje apostólico de León XIV al Perú",
+                "texto": "",
+                "piezas": 1
+            },
+            {
+                "clave": "enterate-cuanto-haya",
+                "nombre": "Entérate en cuanto haya novedades",
+                "plantilla": "texto_lectura",
+                "rotulo": "Aviso",
+                "titulo": "Entérate en cuanto haya novedades",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "patrocinios": {
+        "vista": "patrocinios",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Empresas e instituciones",
+                "titulo": "Patrocinios",
+                "texto": "Organizar seis días en cuatro ciudades tiene un coste. Estas son las necesidades reales y cómo se puede ayudar a cubrirlas."
+            },
+            {
+                "clave": "hace-falta",
+                "nombre": "Qué hace falta",
+                "plantilla": "texto_apartados",
+                "rotulo": "Necesidades",
+                "titulo": "Qué hace falta",
+                "texto": "",
+                "piezas": 6
+            },
+            {
+                "clave": "como-proponer-patrocinio",
+                "nombre": "Cómo proponer un patrocinio",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cómo se hace",
+                "titulo": "Cómo proponer un patrocinio",
+                "texto": "Escribe a la organización contando qué puedes aportar —producto, servicio, horas de trabajo o aporte económico—, en qué sede y en qué fechas. No hace falta un dosier: hace falta una descripción clara. La organización responderá indicando si la necesidad sigue abierta y con qué condiciones. Cada aporte se acredita y se refleja en la rendición de cuentas del viaje. Canal de contacto para patrocinios: [CORREO POR CONFIRMAR].",
+                "piezas": 0
+            }
+        ]
+    },
+    "portada": {
+        "vista": "portada",
+        "secciones": [
+            {
+                "clave": "todo-necesitas-antes",
+                "nombre": "Todo lo que necesitas antes del viaje",
+                "plantilla": "texto_apartados",
+                "rotulo": "Por dónde empezar",
+                "titulo": "Todo lo que necesitas antes del viaje",
+                "texto": "",
+                "piezas": 3
+            },
+            {
+                "clave": "falta-poco-encuentro",
+                "nombre": "Falta poco para el encuentro",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cuenta atrás",
+                "titulo": "Falta poco para el encuentro",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "cronicas-visita",
+                "nombre": "Crónicas de la visita",
+                "plantilla": "texto_apartados",
+                "rotulo": "Hitos verificables",
+                "titulo": "Crónicas de la visita",
+                "texto": "",
+                "piezas": 1
+            },
+            {
+                "clave": "dias-encuentro",
+                "nombre": "Los días del encuentro",
+                "plantilla": "texto_lectura",
+                "rotulo": "11–16 de noviembre de 2026",
+                "titulo": "Los días del encuentro",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "cuatro-ciudades-solo",
+                "nombre": "Cuatro ciudades, un solo pueblo",
+                "plantilla": "texto_lectura",
+                "rotulo": "Costa, sierra y selva",
+                "titulo": "Cuatro ciudades, un solo pueblo",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "mas-destacado",
+                "nombre": "Lo más destacado",
+                "plantilla": "texto_lectura",
+                "rotulo": "Actualizado el 5 de agosto de 2026",
+                "titulo": "Lo más destacado",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "prepara-tu-corazon",
+                "nombre": "Prepara tu corazón",
+                "plantilla": "texto_lectura",
+                "rotulo": "Prepárate",
+                "titulo": "Prepara tu corazón",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "pon-tus-dones",
+                "nombre": "Pon tus dones al servicio",
+                "plantilla": "texto_lectura",
+                "rotulo": "Tres formas",
+                "titulo": "Pon tus dones al servicio",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "acompana-cada-momento",
+                "nombre": "Acompaña cada momento de la visita",
+                "plantilla": "texto_lectura",
+                "rotulo": "Cuatro accesos",
+                "titulo": "Acompaña cada momento de la visita",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "iglesia-peru-te",
+                "nombre": "La Iglesia en el Perú te espera",
+                "plantilla": "texto_lectura",
+                "rotulo": "Conferencia Episcopal Peruana",
+                "titulo": "La Iglesia en el Perú te espera",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "preguntas-frecuentes": {
+        "vista": "preguntas-frecuentes",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Diecinueve respuestas",
+                "titulo": "Preguntas frecuentes",
+                "texto": "Lo que más se pregunta, respondido con lo que hay. Cuando algo no está confirmado, aquí lo dice."
+            },
+            {
+                "clave": "visita",
+                "nombre": "La visita",
+                "plantilla": "texto_lectura",
+                "rotulo": "Preguntas",
+                "titulo": "La visita",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "asistir-actos",
+                "nombre": "Asistir a los actos",
+                "plantilla": "texto_lectura",
+                "rotulo": "Preguntas",
+                "titulo": "Asistir a los actos",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "voluntariado",
+                "nombre": "Voluntariado",
+                "plantilla": "texto_lectura",
+                "rotulo": "Preguntas",
+                "titulo": "Voluntariado",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "seguir-visita",
+                "nombre": "Seguir la visita",
+                "plantilla": "texto_lectura",
+                "rotulo": "Preguntas",
+                "titulo": "Seguir la visita",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "este-sitio",
+                "nombre": "Este sitio",
+                "plantilla": "texto_lectura",
+                "rotulo": "Preguntas",
+                "titulo": "Este sitio",
+                "texto": "",
+                "piezas": 0
+            }
+        ]
+    },
+    "prensa": {
+        "vista": "prensa",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Para medios",
+                "titulo": "Prensa",
+                "texto": "Acreditación, contacto y condiciones de uso del material gráfico."
+            },
+            {
+                "clave": "como-acreditarse",
+                "nombre": "Cómo acreditarse",
+                "plantilla": "texto_lectura",
+                "rotulo": "Acreditación",
+                "titulo": "Cómo acreditarse",
+                "texto": "En los viajes apostólicos la acreditación de medios la gestiona la Oficina de Prensa de la Santa Sede para el vuelo papal y los actos internacionales, y la conferencia episcopal del país para los actos locales. Los plazos y los formularios se publican con algunas semanas de antelación. En cuanto se abra el proceso, aquí encontrarás el formulario, el plazo de solicitud, los requisitos y los puntos de recogida de credenciales en cada sede.",
+                "piezas": 0
+            },
+            {
+                "clave": "uso-imagenes-escudo",
+                "nombre": "Uso de imágenes y del escudo",
+                "plantilla": "texto_apartados",
+                "rotulo": "Material",
+                "titulo": "Uso de imágenes y del escudo",
+                "texto": "",
+                "piezas": 4
+            }
+        ]
+    },
+    "privacidad": {
+        "vista": "privacidad",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Legal",
+                "titulo": "Política de privacidad",
+                "texto": "Qué datos pedimos, para qué, cuánto tiempo los guardamos y cómo ejercer tus derechos."
+            },
+            {
+                "clave": "responsable-tratamiento",
+                "nombre": "Responsable del tratamiento",
+                "plantilla": "texto_lectura",
+                "rotulo": "",
+                "titulo": "Responsable del tratamiento",
+                "texto": "Este sitio recoge datos personales en tres puntos y en ninguno más: el aviso por correo, el formulario de contacto y la inscripción de voluntariado. No hay analítica, ni píxeles de seguimiento, ni scripts de terceros que recojan datos. Responsable del tratamiento [RAZÓN SOCIAL POR CONFIRMAR], con domicilio en [DOMICILIO POR CONFIRMAR]. Correo para ejercicio de derechos: [CORREO POR CONFIRMAR]. Qué datos y para qué Aviso por correo. Solo tu dirección de correo electrónico, para escribirte cuando se publique aquello de lo que pediste aviso. No se usa para ningún otro envío. Formulario de contact",
+                "piezas": 0
+            }
+        ]
+    },
+    "sedes": {
+        "vista": "sedes",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Sedes",
+                "titulo": "Cuatro ciudades, un solo pueblo",
+                "texto": "Lima, Chiclayo, Cusco y Pucallpa. La costa, el norte, los Andes y la Amazonía. Cuatro maneras de ser Iglesia en el mismo país."
+            },
+            {
+                "clave": "estas-cuatro",
+                "nombre": "Por qué estas cuatro",
+                "plantilla": "texto_lectura",
+                "rotulo": "Costa, sierra y selva",
+                "titulo": "Por qué estas cuatro",
+                "texto": "La Santa Sede anunció el 5 de agosto de 2026 que el Papa León XIV visitará Lima, Chiclayo, Cusco y Pucallpa entre el 11 y el 16 de noviembre. Es la única información de itinerario que hay: no se ha publicado ni el orden del viaje ni los días que corresponden a cada ciudad. Aun así, la elección dice bastante. Están la capital y su arquidiócesis primada; la diócesis que el Santo Padre pastoreó durante ocho años; la Iglesia andina más antigua del país; y un vicariato apostólico amazónico. Costa, sierra y selva. Una arquidiócesis, una diócesis y un territorio de misión. En esta página encontrarás,",
+                "piezas": 0
+            },
+            {
+                "clave": "lima",
+                "nombre": "Lima",
+                "plantilla": "texto_lectura",
+                "rotulo": "",
+                "titulo": "Lima",
+                "texto": "",
+                "piezas": 0
+            },
+            {
+                "clave": "cuatro-sedes-mapa",
+                "nombre": "Las cuatro sedes en el mapa del país",
+                "plantilla": "texto_lectura",
+                "rotulo": "Diagrama esquemático",
+                "titulo": "Las cuatro sedes en el mapa del país",
+                "texto": "Del norte costero a los Andes del sur, pasando por la Amazonía central: las cuatro sedes recorren de un extremo a otro las tres regiones del país. Es una geografía que obliga a volar y que explica por qué el viaje ocupa seis días completos.",
+                "piezas": 0
+            }
+        ]
+    },
+    "transparencia": {
+        "vista": "transparencia",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "Rendición de cuentas",
+                "titulo": "Transparencia",
+                "texto": "Quien da algo tiene derecho a saber en qué se usó. Este es el compromiso, escrito antes de recibir el primer aporte."
+            },
+            {
+                "clave": "publicara-cuando",
+                "nombre": "Qué se publicará y cuándo",
+                "plantilla": "texto_apartados",
+                "rotulo": "Compromiso",
+                "titulo": "Qué se publicará y cuándo",
+                "texto": "Todavía no hay nada que rendir: el canal de donativos no está abierto y no se ha recibido ningún aporte a través de este sitio. Lo que sí puede escribirse desde ya es el compromiso.",
+                "piezas": 4
+            }
+        ]
+    },
+    "voluntariado": {
+        "vista": "voluntariado",
+        "secciones": [
+            {
+                "clave": "cabecera",
+                "nombre": "Cabecera de página",
+                "plantilla": "cabecera_pagina",
+                "rotulo": "",
+                "titulo": "",
+                "texto": ""
+            }
+        ]
+    }
+}

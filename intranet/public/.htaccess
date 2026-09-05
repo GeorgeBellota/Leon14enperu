@@ -1,0 +1,62 @@
+# ============================================================================
+#  Reescritura del panel. Todo lo que no sea un archivo real (CSS, JS, imagen)
+#  va al controlador frontal.
+# ============================================================================
+
+# El .htaccess de intranet/ deniega archivo por archivo y esa regla se hereda
+# hacia abajo. Esta carpeta —y sólo ésta— vuelve a abrirse.
+#
+# La reapertura tiene que ir dentro de un <FilesMatch>, igual que la
+# denegación del padre. Un «Require all granted» suelto no basta: Apache aplica
+# primero las directivas por directorio y DESPUÉS las secciones <Files>, así
+# que el <FilesMatch> heredado ganaba y el panel entero respondía 403.
+# Compitiendo en el mismo nivel, manda el .htaccess más cercano, que es éste.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.">
+        Require all granted
+    </FilesMatch>
+    Require all granted
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.">
+        Order allow,deny
+        Allow from all
+    </FilesMatch>
+    Order allow,deny
+    Allow from all
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Sin esto, Apache se come la cabecera Authorization y cualquier API futura
+    # con token dejaría de funcionar sin dar explicaciones.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Barra final: /voluntarios/ y /voluntarios deben ser la misma URL.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    # Sin mod_rewrite el panel no funciona. Mejor decirlo que dar 404 sueltos.
+    <IfModule mod_headers.c>
+        Header set Content-Type "text/plain; charset=utf-8"
+    </IfModule>
+    Redirect 503 /
+</IfModule>
+
+# Listar el contenido de una carpeta nunca es útil aquí.
+Options -Indexes
+
+# Que no se sirva un .php suelto que alguien deje caer en esta carpeta.
+<FilesMatch "^(?!index\.php$).*\.php$">
+    Require all denied
+</FilesMatch>

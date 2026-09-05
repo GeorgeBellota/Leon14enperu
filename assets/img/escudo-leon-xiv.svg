@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 545" width="440" height="545" role="img" aria-labelledby="escudoTitulo escudoDesc">
+  <title id="escudoTitulo">Escudo de Su Santidad el Papa León XIV</title>
+  <desc id="escudoDesc">Escudo partido en diagonal. En la parte superior, campo azur con un lirio de plata. En la parte inferior, campo claro con un libro cerrado sobre el que descansa un corazón llameante traspasado por una flecha, emblema de la Orden de San Agustín. Timbrado con la mitra y sus ínfulas, y las llaves de san Pedro en aspa con cordones y borlas. Al pie, filacteria con el lema «In Illo uno unum».</desc>
+
+  <!--
+    EXCEPCIÓN DOCUMENTADA (§5.5 del encargo).
+    Éste es el ÚNICO archivo del sitio con colores literales fuera de tokens.css:
+    el escudo pontificio conserva siempre sus esmaltes heráldicos propios y no se
+    retiñe con el sistema de temas. No se recorta, no se deforma, no se somete a
+    duotono y no se usa como viñeta repetida.
+    Redibujado a partir de la blasonía descrita en «1. Papa León XIV.docx».
+  -->
+
+  <defs>
+    <clipPath id="ex-campo">
+      <path d="M128 176 H312 V300 C312 356 274 400 220 424 C166 400 128 356 128 300 Z"/>
+    </clipPath>
+    <clipPath id="ex-mitra">
+      <path d="M178 126 C168 88 184 46 220 16 C256 46 272 88 262 126 Z"/>
+    </clipPath>
+
+    <!-- Lirio (flor de lis) en caja local de 100 × 140 -->
+    <g id="ex-lirio">
+      <path d="M50 2 C41 25 35 41 35 56 C35 71 42 84 50 96 C58 84 65 71 65 56 C65 41 59 25 50 2 Z"/>
+      <path d="M48 56 C40 45 20 43 8 53 C-1 61 0 75 11 83 C7 72 9 61 17 55 C27 49 41 50 48 56 Z"/>
+      <path d="M52 56 C60 45 80 43 92 53 C101 61 100 75 89 83 C93 72 91 61 83 55 C73 49 59 50 52 56 Z"/>
+      <path d="M20 88 H80 C83.5 88 85 90.5 85 94.5 C85 98.5 83.5 101 80 101 H20 C16.5 101 15 98.5 15 94.5 C15 90.5 16.5 88 20 88 Z"/>
+      <path d="M40 101 C39 115 35 128 26 139 C37 136 45 129 50 121 C55 129 63 136 74 139 C65 128 61 115 60 101 Z"/>
+    </g>
+
+    <!-- Llave canónica: bocallave cuadrada en el origen, guardas al final del asta -->
+    <g id="ex-llave">
+      <path d="M-38 -23 h46 v46 h-46 z M-27 -12 h24 v24 h-24 z" fill-rule="evenodd"/>
+      <rect x="-46" y="-9" width="10" height="18" rx="2"/>
+      <rect x="-29" y="-32" width="18" height="10" rx="2"/>
+      <rect x="-29" y="22" width="18" height="10" rx="2"/>
+      <rect x="6" y="-6" width="286" height="12" rx="3"/>
+      <rect x="288" y="-7" width="54" height="14" rx="2"/>
+      <rect x="294" y="-34" width="13" height="29" rx="2"/>
+      <rect x="286" y="-25" width="29" height="10" rx="2"/>
+      <rect x="319" y="-28" width="13" height="23" rx="2"/>
+      <rect x="311" y="-20" width="29" height="10" rx="2"/>
+    </g>
+
+    <!-- Ínfula: banda roja con cruz de oro y fleco de oro, apuntando a siniestra -->
+    <g id="ex-infula">
+      <path d="M-40 258 C-56 254 -74 252 -88 251 L-94 300 C-78 302 -58 306 -42 312 Z" fill="#EFA820" stroke="#B07A12" stroke-width="2.6" stroke-linejoin="round"/>
+      <g stroke="#B07A12" stroke-width="2.2" fill="none">
+        <path d="M-52 256 L-57 314"/><path d="M-64 254 L-69 310"/><path d="M-76 252 L-81 307"/>
+      </g>
+      <path d="M2 330 L0 272 C-14 269 -28 265 -42 262 L-48 314 C-32 318 -16 323 2 330 Z" fill="#C7302A" stroke="#8A1616" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M-18 279 l10 2 2 -11 11 2 -2 11 10 2 -2 11 -10 -2 -2 11 -11 -2 2 -11 -10 -2 Z" fill="#EFA820" stroke="#B07A12" stroke-width="1.8"/>
+    </g>
+  </defs>
+
+  <!-- ══ ÍNFULAS DE LA MITRA, detrás del escudo ══ -->
+  <g transform="translate(130 0)"><use href="#ex-infula"/></g>
+  <g transform="translate(310 0) scale(-1 1)"><use href="#ex-infula"/></g>
+
+  <!-- cinta roja y blanca que baja de la mitra -->
+  <g>
+    <rect x="198" y="122" width="44" height="60" fill="#C7302A" stroke="#454B52" stroke-width="2.5"/>
+    <rect x="211" y="124" width="8" height="56" fill="#FBFAF7"/>
+    <rect x="230" y="124" width="8" height="56" fill="#FBFAF7"/>
+  </g>
+
+  <!-- ══ LLAVES DE SAN PEDRO, en aspa detrás del escudo ══ -->
+  <!-- de oro: bocallave a siniestra baja, guardas a diestra alta -->
+  <g transform="translate(352 372) rotate(-138.6)" fill="#EFA820" stroke="#A9720F" stroke-width="3.5" stroke-linejoin="round">
+    <use href="#ex-llave"/>
+  </g>
+  <!-- de plata -->
+  <g transform="translate(88 372) rotate(-41.4)" fill="#D4D8DC" stroke="#8B939B" stroke-width="3.5" stroke-linejoin="round">
+    <use href="#ex-llave"/>
+  </g>
+
+  <!-- ══ MITRA ══ -->
+  <g>
+    <path d="M178 126 C168 88 184 46 220 16 C256 46 272 88 262 126 Z" fill="#F7F5F0"/>
+    <g clip-path="url(#ex-mitra)" fill="#EFA820">
+      <rect x="166" y="52" width="108" height="14"/>
+      <rect x="166" y="79" width="108" height="14"/>
+      <rect x="166" y="106" width="108" height="14"/>
+      <rect x="212" y="34" width="16" height="92"/>
+    </g>
+    <path d="M178 126 C168 88 184 46 220 16 C256 46 272 88 262 126 Z" fill="none" stroke="#454B52" stroke-width="3"/>
+    <rect x="174" y="118" width="92" height="17" rx="4" fill="#F7F5F0" stroke="#454B52" stroke-width="3"/>
+  </g>
+
+  <!-- ══ CORDONES ══ -->
+  <path d="M88 392 C92 444 150 470 220 472 C290 470 348 444 352 392" fill="none" stroke="#C7302A" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- ══ ESCUDO ══ -->
+  <g clip-path="url(#ex-campo)">
+    <path d="M118 168 H322 L118 396 Z" fill="#5C9BD6"/>
+    <path d="M322 168 L118 396 V436 H322 Z" fill="#F7E7BD"/>
+
+    <!-- lirio de plata -->
+    <g transform="translate(172 242) scale(0.786) translate(-50 -70)">
+      <use href="#ex-lirio" fill="#F1F4F7" stroke="#98A3AD" stroke-width="3.4" stroke-linejoin="round"/>
+    </g>
+
+    <!-- libro cerrado, en escorzo -->
+    <g>
+      <path d="M178 334 L274 328 L280 340 L184 346 Z" fill="#BE2A25" stroke="#7E1414" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M184 346 L280 340 L280 358 L184 364 Z" fill="#F2E7CE" stroke="#7E1414" stroke-width="2.6" stroke-linejoin="round"/>
+      <g stroke="#BE2A25" stroke-width="1.7" opacity=".7">
+        <path d="M186 351 L278 345"/><path d="M186 356 L278 350"/><path d="M186 361 L278 355"/>
+      </g>
+      <path d="M184 364 L280 358 L280 367 L184 373 Z" fill="#BE2A25" stroke="#7E1414" stroke-width="2.6" stroke-linejoin="round"/>
+    </g>
+
+    <!-- corazón llameante -->
+    <g transform="translate(246 306) scale(0.55)">
+      <g fill="#EFA820" stroke="#C7302A" stroke-width="3.4" stroke-linejoin="round">
+        <path d="M-2 -60 c-16 -18 -7 -42 8 -52 -7 20 10 25 10 39 0 10 -8 16 -18 13 Z"/>
+        <path d="M-36 -50 c-13 -14 -8 -33 4 -42 -6 17 9 21 9 33 0 8 -7 13 -13 9 Z"/>
+        <path d="M30 -50 c13 -14 8 -33 -4 -42 6 17 -9 21 -9 33 0 8 7 13 13 9 Z"/>
+      </g>
+      <path d="M0 62 C-42 32 -68 6 -68 -22 C-68 -46 -50 -62 -30 -62 C-15 -62 -5 -53 0 -42 C5 -53 15 -62 30 -62 C50 -62 68 -46 68 -22 C68 6 42 32 0 62 Z"
+            fill="#D0362F" stroke="#8A1616" stroke-width="4.6" stroke-linejoin="round"/>
+    </g>
+
+    <!-- flecha: entra por lo alto a diestra y sale sobre el libro -->
+    <g stroke="#8A1616" stroke-width="4.6" stroke-linecap="round">
+      <path d="M298 260 L216 340" fill="none"/>
+      <path d="M211 346 L213 326 L230 336 Z" fill="#8A1616" stroke-width="2.6" stroke-linejoin="round"/>
+      <g fill="none" stroke-width="4">
+        <path d="M298 260 L281 264"/><path d="M298 260 L293 277"/>
+      </g>
+    </g>
+  </g>
+  <path d="M128 176 H312 V300 C312 356 274 400 220 424 C166 400 128 356 128 300 Z" fill="none" stroke="#454B52" stroke-width="3.6" stroke-linejoin="round"/>
+
+  <!-- ══ BORLAS ══ -->
+  <g>
+    <g fill="#C7302A" stroke="#8A1616" stroke-width="2">
+      <circle cx="108" cy="392" r="7"/>
+      <path d="M108 399 c-14 0 -22 9 -22 20 0 11 10 19 22 19 s22 -8 22 -19 c0 -11 -8 -20 -22 -20 Z"/>
+      <circle cx="332" cy="392" r="7"/>
+      <path d="M332 399 c-14 0 -22 9 -22 20 0 11 10 19 22 19 s22 -8 22 -19 c0 -11 -8 -20 -22 -20 Z"/>
+    </g>
+    <g stroke="#C7302A" stroke-width="4" stroke-linecap="round">
+      <path d="M92 436 L88 464"/><path d="M100 438 L98 468"/><path d="M108 438 L108 470"/><path d="M116 438 L118 468"/><path d="M124 436 L128 464"/>
+      <path d="M316 436 L312 464"/><path d="M324 438 L322 468"/><path d="M332 438 L332 470"/><path d="M340 438 L342 468"/><path d="M348 436 L352 464"/>
+    </g>
+  </g>
+
+  <!-- ══ FILACTERIA CON EL LEMA ══ -->
+  <g>
+    <path d="M84 484 C150 471 290 471 356 484 L356 521 C290 508 150 508 84 521 Z" fill="#FBFAF7" stroke="#454B52" stroke-width="2.6"/>
+    <path d="M84 484 C66 480 50 484 44 496 C38 508 48 523 64 525 C74 526 79 523 84 521 C74 517 70 508 72 501 C74 493 79 487 84 484 Z" fill="#C7302A" stroke="#8A1616" stroke-width="2.6"/>
+    <path d="M356 484 C374 480 390 484 396 496 C402 508 392 523 376 525 C366 526 361 523 356 521 C366 517 370 508 368 501 C366 493 361 487 356 484 Z" fill="#C7302A" stroke="#8A1616" stroke-width="2.6"/>
+    <text x="220" y="509" text-anchor="middle" font-family="Georgia, 'Times New Roman', 'Liberation Serif', serif" font-size="26" letter-spacing="1.5" fill="#231F20">IN ILLO UNO UNUM</text>
+  </g>
+</svg>

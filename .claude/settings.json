@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/c/xampp/php/php.exe -l intranet/app/Publico/Espejo.php)",
+      "Bash(curl -s -o /dev/null -w \" HTTP %{http_code}\\\\n\" \"http://localhost/leon14peru/voluntariado/\")",
+      "Read(//tmp/**)",
+      "Bash(ls -la /c/xampp/apache/logs/*.log 2>/dev/null | head *)",
+      "Read(//c/xampp/apache/logs/**)",
+      "Read(//c/xampp/php/**)",
+      "Bash(/c/xampp/php/php.exe -l intranet/app/Models/Voluntario.php)",
+      "Bash(/c/xampp/php/php.exe probar-reintento.php)",
+      "Bash(node --experimental-websocket ver-errores.js \"http://localhost/leon14peru/voluntariado/\" fix2-1366.png 1366 768)",
+      "Bash(node --experimental-websocket ver-errores.js \"http://localhost/leon14peru/voluntariado/\" fix2-movil.png 390 844)",
+      "Bash(xargs echo \"  quedan menciones a «Paso N de 4»:\")",
+      "Bash(node --experimental-websocket probar-sugerencias.js)",
+      "Bash(xargs echo \"  pasos que quedan:\")",
+      "Bash(xargs echo \"  presentes en el archivo:\")",
+      "Bash(node --experimental-websocket ver-errores.js \"http://localhost/leon14peru/voluntariado/\" base-limpio.png 1366 768 limpio)",
+      "Bash(node --experimental-websocket ver-errores.js \"http://localhost/leon14peru/voluntariado/\" base-err.png 1366 768)",
+      "Bash(node --experimental-websocket medir-alturas.js)",
+      "Bash(sed -i 's|const m=await ev\\(`\\(function\\(\\){|const errs=await ev\\(`\\(function\\(\\){var o=[];Array.prototype.forEach.call\\(document.querySelectorAll\\(\"[aria-invalid=\\\\\\\\\"true\\\\\\\\\"]\"\\),function\\(e\\){var c=document.getElementById\\(e.id+\"-error\"\\);o.push\\(e.id+\": \"+\\(c?c.textContent:\"?\"\\)\\);}\\);return o.join\\(\" ~ \"\\);}\\)\\(\\)`\\);\\\\nconsole.log\\(\"  invalidos → \"+errs\\);\\\\nconst m=await ev\\(`\\(function\\(\\){|' paso2.js)",
+      "Bash(node --experimental-websocket paso2.js 1366 768 diag.png)"
+    ]
+  }
+}

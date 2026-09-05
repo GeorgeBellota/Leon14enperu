@@ -1,0 +1,65 @@
+/* ============================================================================
+   IMPRESIÓN — pensada para que una parroquia pueda imprimir la agenda,
+   las sedes o la ficha de voluntariado y siga siendo legible en papel.
+
+   Aquí no hay ni un solo hexadecimal: la paleta de papel vive en tokens.css,
+   dentro de su propio bloque @media print.
+   ========================================================================== */
+@media print {
+  @page { margin: 18mm 16mm; }
+
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  /* Fuera todo lo que no aporta en papel */
+  .cabecera, .menu-movil, .barra-fija, .ancla-form, .cta-modal,
+  .hero__controles, .hero__scroll, .hero__pausa,
+  .pie__redes, .salto-contenido, .fachada-video, .diagrama,
+  .form-acciones, .progreso, .borrador-aviso { display: none !important; }
+
+  .hero, .cabecera-pagina {
+    min-height: 0; height: auto; max-height: none;
+    color: var(--ink); background: var(--surface);
+  }
+  .hero__media, .cabecera-pagina__media, .preparate__media, .preparate__escudo { display: none; }
+  .hero__contenido, .cabecera-pagina__contenido { padding-block: 0 12pt; }
+  .cabecera-pagina__bajada { color: var(--ink-soft); }
+
+  .duotono::before, .duotono::after, .velo { display: none; }
+  .duotono img { filter: none; }
+
+  .banda-oscura, .preparate__panel {
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+  }
+  .banda-oscura .rotulo, .preparate__glosa, .preparate__invitacion,
+  .banda-oscura .casilla__texto { color: var(--ink-soft) !important; }
+
+  .seccion { padding-block: 10pt; break-inside: avoid; }
+  .figura { display: none; }
+
+  h1, h2, h3 { break-after: avoid; }
+  h1 { font-size: 20pt; } h2 { font-size: 16pt; } h3 { font-size: 13pt; }
+  p, li { orphans: 3; widows: 3; }
+
+  /* Los bloques plegables se imprimen abiertos */
+  .acordeon__panel, .carta__resto, .pie__grupo .pie__lista { grid-template-rows: 1fr !important; }
+  .acordeon__panel > div, .carta__resto > div { overflow: visible !important; }
+  .carta__mas, .acordeon__boton svg { display: none; }
+
+  /* La URL de destino, útil cuando el papel circula por una parroquia */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: var(--ink-mute);
+    word-break: break-all;
+  }
+  main a[href^="#"]::after, main a[data-pending]::after { content: ""; }
+
+  [data-pending="true"] { color: var(--ink-mute); }
+  [data-pending="true"]::after { display: none; }
+}

@@ -1,0 +1,74 @@
+# ============================================================================
+#  BARRERA. Todo intranet/ queda cerrado al navegador EXCEPTO public/.
+#
+#  Sin esto, en XAMPP cualquiera podría pedir
+#     /leon14peru/intranet/config/config.local.php
+#  y, si PHP fallara o el archivo se sirviera como texto, leer la clave de
+#  cifrado y las credenciales de la base.
+#
+#  Esta es la segunda línea de defensa, no la primera: en producción el
+#  DocumentRoot debe apuntar directamente a intranet/public/.
+# ============================================================================
+
+# Corta la herencia de las reglas de reescritura del sitio público.
+#
+# Sin esta línea, la regla que limpia las direcciones («/x/index.php → /x/»)
+# se aplicaba también aquí y mandaba /intranet/index.php a /intranet/, que a su
+# vez respondía 403: un tropiezo con dos escalones. Un RewriteEngine propio
+# hace que este directorio no herede ninguna regla del padre.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Al cortar la herencia se pierde también la regla de barra final del
+    # sitio, así que se repone aquí: /intranet → /intranet/
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^$ %{REQUEST_URI}/ [R=301,L]
+</IfModule>
+
+# ── La denegación va por ARCHIVO, no por directorio ─────────────────────────
+#
+# La primera versión ponía «Require all denied» suelto, aplicado al directorio
+# entero. Funcionaba para cerrar, pero también bloqueaba la petición de
+# /intranet/ ANTES de que Apache llegara a mirar si había un índice que
+# servir: la autorización se resuelve contra el directorio, no contra el
+# index.php que habría dentro. Resultado: «Forbidden» al teclear la dirección
+# natural del panel.
+#
+# Denegando archivo por archivo, el directorio sigue siendo alcanzable, el
+# índice se resuelve, y todo lo que hay dentro continúa cerrado.
+# El patrón busca un PUNTO, no «cualquier carácter». Con «.» a secas la
+# sección casaba también con el nombre del propio directorio y /intranet
+# —sin barra final— respondía 403 en lugar de redirigir. Buscando el punto se
+# cierran todos los archivos reales (.php, .sql, .md, .log) sin tocar los
+# nombres de carpeta, que no lo llevan.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.">
+        Require all denied
+    </FilesMatch>
+
+    # Única excepción. index.php no contiene nada: sólo redirige a public/,
+    # que es donde vive el panel. Está ahí porque /intranet/ es lo que la
+    # gente teclea, y responder «Forbidden» a mano derecha no ayuda a nadie.
+    <Files "index.php">
+        Require all granted
+    </Files>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.">
+        Order deny,allow
+        Deny from all
+    </FilesMatch>
+    <Files "index.php">
+        Order allow,deny
+        Allow from all
+    </Files>
+</IfModule>
+
+# La excepción de index.php se hereda hacia abajo, así que config/, app/,
+# database/ y storage/ llevan además su propio .htaccess de denegación: si
+# algún día aparece un index.php dentro de cualquiera de ellas, seguirá sin
+# servirse. public/ tiene el suyo, que vuelve a abrir sólo esa carpeta.
+
+# Sin índice que servir, un directorio no enseña su contenido.
+Options -Indexes

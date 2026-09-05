@@ -1,0 +1,13 @@
+# leon14enperu.com
+# Viaje apostólico de Su Santidad el Papa León XIV al Perú, 11–17 de noviembre de 2026.
+
+User-agent: *
+Allow: /
+Disallow: /assets/js/dev/
+Disallow: /temporal-claude/
+
+# La intranet. Sus páginas ya llevan noindex y el servidor cierra la carpeta,
+# pero un buscador tampoco tiene por qué llamar a esa puerta.
+Disallow: /intranet/
+
+Sitemap: https://leon14enperu.com/sitemap.xml

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" width="420" height="96" role="img" aria-label="León XIV en el Perú">
+  <!--
+    MARCA TIPOGRÁFICA PROVISIONAL — punto único de sustitución.
+
+    El cliente todavía no tiene logotipo. Cuando lo tenga, se reemplaza SOLO este
+    archivo (mismo viewBox y misma proporción) y la cabecera lo recoge sin tocar
+    nada más: en el header, .marca--imagen sustituye a .marca--texto.
+
+    Ojo: un SVG cargado con <img> no hereda las fuentes web de la página, por eso
+    aquí se compone con una pila serif del sistema. La cabecera del sitio usa la
+    versión en HTML (Fraunces) para que el lockup sea tipográficamente exacto.
+
+    Colores: currentColor. La marca se retiñe con el tema activo.
+  -->
+  <g fill="currentColor">
+    <g transform="translate(4 12) scale(0.5)">
+      <path d="M50 2 C41 25 35 41 35 56 C35 71 42 84 50 96 C58 84 65 71 65 56 C65 41 59 25 50 2 Z"/>
+      <path d="M48 56 C40 45 20 43 8 53 C-1 61 0 75 11 83 C7 72 9 61 17 55 C27 49 41 50 48 56 Z"/>
+      <path d="M52 56 C60 45 80 43 92 53 C101 61 100 75 89 83 C93 72 91 61 83 55 C73 49 59 50 52 56 Z"/>
+      <path d="M20 88 H80 C83.5 88 85 90.5 85 94.5 C85 98.5 83.5 101 80 101 H20 C16.5 101 15 98.5 15 94.5 C15 90.5 16.5 88 20 88 Z"/>
+      <path d="M40 101 C39 115 35 128 26 139 C37 136 45 129 50 121 C55 129 63 136 74 139 C65 128 61 115 60 101 Z"/>
+    </g>
+    <text x="72" y="47" font-family="Fraunces, Georgia, 'Times New Roman', serif" font-size="38" font-weight="600" letter-spacing="-0.4">León XIV</text>
+    <text x="74" y="74" font-family="'Instrument Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="4.6">EN EL PERÚ</text>
+  </g>
+</svg>
