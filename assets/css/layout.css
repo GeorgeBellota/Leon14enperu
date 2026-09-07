@@ -210,6 +210,26 @@
 .figura--arco { border-radius: 50% 50% 0 0 / 26% 26% 0 0; }
 @media (max-width: 767px) { .figura--arco { border-radius: 50% 50% 0 0 / 18% 18% 0 0; } }
 
+/* Portal: el mismo arco, pero rebajado y para imagen APAISADA.
+   El cliente pidió «una imagen no cuadrada ni circular» en la sección de la
+   llegada, y la fotografía que envió es una fila de sesenta obispos: en un
+   marco vertical, `cover` se queda con el tercio central y borra a dos
+   tercios de la Conferencia Episcopal.
+
+   Así que la forma se adapta a la fotografía y no al revés. El arco de medio
+   punto de .figura--arco, sobre una caja tres veces más ancha que alta, se
+   estira hasta parecer un óvalo; rebajado —el canto superior curvo, los
+   flancos y la base rectos— se lee como el dintel de un pórtico y sólo
+   redondea las esquinas altas, donde no hay más que cielo.
+
+   Y no lleva sombra: la curva superior y la sombra rectangular de .figura no
+   coinciden, y se veía el pico de la sombra asomando por las esquinas. */
+.figura--portal {
+  border-radius: 34% 34% 0 0 / 22% 22% 0 0;
+  box-shadow: none;
+}
+@media (max-width: 767px) { .figura--portal { border-radius: 30% 30% 0 0 / 12% 12% 0 0; } }
+
 /* ── Visibilidad por dispositivo ───────────────────────────────────────
    Móvil no es el «responsive» del escritorio: hay bloques que existen solo
    en uno de los dos. */

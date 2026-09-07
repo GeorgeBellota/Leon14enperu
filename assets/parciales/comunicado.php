@@ -61,20 +61,47 @@ $destino = $esDescarga
 if (!$esDescarga && !preg_match('#^https?://#i', $destino)) {
     $destino = $sitio->url($destino);
 }
+
+/* ── El texto ya no se pinta debajo de la imagen ───────────────────────────
+   Lo pidió el cliente: el cartel ocupa el área principal y abajo quedan sólo
+   los botones. La pieza que se sube al panel ya trae el mensaje escrito
+   dentro, así que repetirlo en un párrafo era decirlo dos veces y robarle
+   alto a la imagen.
+
+   PERO NO SE BORRA. Un cartel es una imagen y una imagen no la lee nadie con
+   un lector de pantalla: si el texto desapareciera del documento, el aviso
+   dejaría de existir para quien navega a ciegas. Sigue ahí, fuera de la
+   vista, y es el NOMBRE ACCESIBLE del diálogo —que es como se anunciaba
+   antes—. El campo «descripción» del panel conserva su sentido y su sitio.
+
+   Cuando no hay descripción, el nombre del comunicado hace de respaldo. Sin
+   esto el diálogo se quedaba con un `aria-labelledby` apuntando a un elemento
+   que no existía, y un diálogo sin nombre se anuncia como «diálogo».
+
+   ── Y SÓLO CUANDO HAY CARTEL ─────────────────────────────────────────────
+
+   El texto se retira porque la imagen ya lo dice. Un aviso SIN imagen no dice
+   nada: se quedaría en dos botones flotando y nadie sabría a qué está diciendo
+   que sí. Así que la regla es condicional —sin pieza gráfica, el párrafo se
+   pinta como toda la vida— y no hace falta acordarse de nada al publicar. */
+$descripcion = trim((string) $comunicado['descripcion']);
+$conCartel   = !empty($comunicado['imagen']);
 ?>
-<dialog class="cta-modal" data-comunicado
+<dialog class="cta-modal<?= $conCartel ? ' cta-modal--cartel' : '' ?>" data-comunicado
         data-id="<?= $idComunicado ?>"
         data-aviso="<?= $esc($sitio->url('comunicado.php')) ?>"
         data-veces="<?= (int) $comunicado['veces_max'] ?>"
         data-retraso="<?= (int) $comunicado['retraso_ms'] ?>"
         data-autocierre="<?= (int) $comunicado['autocierre_ms'] ?>"
-        aria-labelledby="comunicado-texto">
+        <?= $descripcion !== ''
+              ? 'aria-labelledby="comunicado-texto"'
+              : 'aria-label="' . $esc($comunicado['nombre']) . '"' ?>>
 
   <button class="cta-modal__aspa" type="button" data-cta-cerrar aria-label="Cerrar el aviso">
     <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
   </button>
 
-  <?php if (!empty($comunicado['imagen'])): ?>
+  <?php if ($conCartel): ?>
     <span class="cta-modal__media">
       <img src="<?= $esc($sitio->url((string) $comunicado['imagen'])) ?>"
            alt="" loading="lazy" decoding="async">
@@ -82,8 +109,8 @@ if (!$esDescarga && !preg_match('#^https?://#i', $destino)) {
   <?php endif; ?>
 
   <div class="cta-modal__cuerpo">
-    <?php if (trim((string) $comunicado['descripcion']) !== ''): ?>
-      <p class="cta-modal__texto" id="comunicado-texto"><?= nl2br($esc($comunicado['descripcion'])) ?></p>
+    <?php if ($descripcion !== ''): ?>
+      <p class="<?= $conCartel ? 'solo-lectores' : 'cta-modal__texto' ?>" id="comunicado-texto"><?= nl2br($esc($descripcion)) ?></p>
     <?php endif; ?>
 
     <div class="cta-modal__acciones">

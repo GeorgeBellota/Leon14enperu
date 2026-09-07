@@ -111,71 +111,140 @@ $foto = static function (string $base, int $ancho, int $alto, string $alt, array
      antes de ser administrable.
      ══════════════════════════════════════════════════════════════════════ -->
 <?php
+/* ── Las fotografías de reserva, POR NOMBRE Y NO POR POSICIÓN ──────────────
+   Antes esto era una lista y se leía con $fotosHero[$i]: la primera foto para
+   la primera lámina, y así. Funcionaba mientras hubiera exactamente cinco
+   láminas y siempre las mismas.
+
+   Dejó de funcionar en cuanto el cliente pidió ocultar dos. Al apagarlas, el
+   panel devuelve tres bloques, los índices se recolocan y cada lámina heredaba
+   la foto de otra: la Colecta salía con la toma aérea de la multitud y los
+   cinco santos con la catedral de Lima. Apagar una lámina no puede cambiar la
+   fotografía de las demás.
+
+   Se emparejan por RÓTULO, que es el mismo criterio que ya usan los retratos
+   de los cinco santos más abajo y por la misma razón. Reordenar o apagar
+   láminas desde el panel ya no mueve ninguna imagen de sitio.
+
+   Y sigue siendo la RESERVA: en cuanto alguien elija una fotografía para la
+   lámina desde la biblioteca, Sitio::imagen() sirve la suya con sus variantes
+   y esto deja de pintarse. */
 $fotosHero = [
-    $foto('pontifice/retrato-oficial', 1131, 1600, 'Su Santidad el Papa León XIV', [640, 1024, 1131], '(min-width:900px) 42vw, 100vw', true),
-    $foto('fotos/hero-multitud', 1600, 851, 'Vista aérea de una explanada llena de fieles durante una celebración papal', [640, 1024, 1600], '(min-width:900px) 42vw, 100vw'),
-    $foto('ciudades/lima-g', 720, 540, 'Catedral de Lima iluminada en la plaza Mayor', [480, 720], '(min-width:900px) 42vw, 100vw'),
-    /* ── Cuarta y quinta lámina: por qué esta fotografía y no la otra ───────
-       La cuarta es la de la Colecta y va A SANGRE, con el bloque de texto
-       encima. Eso obliga a elegir una fotografía donde el Santo Padre NO esté
-       en la mitad izquierda, porque ahí es donde se apoya el bloque y un panel
-       opaco sobre su cara es tan inaceptable como un velo.
+    /* PRIMERA · a sangre. Antes llevaba el retrato oficial del Santo Padre, y
+       ese retrato sólo cabía en la composición partida: es un vertical donde
+       la cara llena el encuadre, así que recortarlo a la franja del carrusel
+       —y ponerle encima el bloque y el velo— chocaba con la regla dura nº 2 del
+       encargo. Al pasar la lámina a sangre, la fotografía tenía que cambiar.
 
-       Se probó con «hito-anuncio», que es la del cartel de la Conferencia
-       Episcopal: el Santo Padre está centrado y la imagen es 4:3, así que al
-       recortarla a la franja del hero se recorta por arriba y por abajo, nunca
-       por los lados. La cara se quedaba justo debajo del bloque. Con
-       «papamovil» está a la derecha, que además es la composición del propio
-       cartel: texto a la izquierda, Santo Padre a la derecha.
+       La toma aérea de la explanada es la única del repertorio que aguanta el
+       tratamiento sin discusión: no hay ningún rostro en primer plano que el
+       velo pueda invadir. Era la de la lámina «Los amigos de León», que queda
+       apagada, así que tampoco se repite con ninguna otra. */
+    'abramos'  => $foto('fotos/hero-multitud', 1600, 851, 'Vista aérea de una explanada llena de fieles durante una celebración papal', [640, 1024, 1600], '100vw', true),
 
-       Y «hito-anuncio» se va a la quinta, que es partida: allí la imagen tiene
-       su columna entera y nada se le pone encima. */
-    $foto('fotos/hero-papamovil', 1080, 720, 'El Santo Padre saluda desde el papamóvil a los fieles congregados', [640, 1024, 1080], '100vw'),
-    $foto('hitos/hito-anuncio', 1440, 1080, 'El Santo Padre saluda con los brazos en alto desde la logia', [640, 960, 1440], '(min-width:900px) 42vw, 100vw'),
+    /* SEGUNDA · la Colecta, con la FOTO 1 que envió el cliente: el Santo Padre
+       bendice desde la logia y está en el TERCIO IZQUIERDO. Ahí es justo donde
+       se apoyaban el bloque y el velo, y un panel opaco sobre su figura es tan
+       inaceptable como un degradado sobre su cara. La imagen es 3:2 y el hero
+       una franja mucho más apaisada, así que «cover» recorta por arriba y por
+       abajo y NUNCA por los lados: no hay encuadre que lo mueva a la derecha.
+
+       Por eso esta lámina —y sólo ésta— lleva el diseño «fondo-derecha»: el
+       mismo bloque a sangre, pero apoyado en el lado contrario. El Santo Padre
+       se queda limpio a la izquierda y no se levanta ninguna regla. */
+    'colecta'  => $foto('fotos/hero-colecta', 2457, 1638, 'El Santo Padre bendice a los fieles congregados en la plaza', [640, 1024, 1600, 2200], '100vw'),
+
+    /* TERCERA · los cinco santos, con la FOTO 2: un montaje de cinco retratos
+       en tiras verticales. Los rostros viven en la franja ALTA de cada tira, y
+       el bloque de texto se apoya abajo a la izquierda, así que no los pisa. El
+       encuadre baja al 26 % para que «cover» no se coma la fila de caras al
+       recortar la altura; se escribe en el panel, lámina a lámina. */
+    'santos'   => $foto('fotos/hero-santos', 2844, 1575, 'Retratos de Santo Toribio de Mogrovejo, Santa Rosa de Lima, San Martín de Porres, San Juan Macías y San Francisco Solano', [640, 1024, 1600, 2200], '100vw'),
+
+    /* Las dos láminas que quedan apagadas conservan aquí su fotografía: si
+       algún día se vuelven a encender desde el panel, vuelven con la suya y no
+       con la de la vecina. */
+    'amigos'   => $foto('fotos/hero-papamovil', 1080, 720, 'El Santo Padre saluda desde el papamóvil a los fieles congregados', [640, 1024, 1080], '100vw'),
+    'ciudades' => $foto('ciudades/lima-g', 720, 540, 'Catedral de Lima iluminada en la plaza Mayor', [480, 720], '(min-width:900px) 42vw, 100vw'),
 ];
 
+/* Del rótulo de la lámina a la clave de su fotografía. Se compara en
+   minúsculas y sin tildes, para que una corrección de acento en el panel no
+   deje la lámina sin imagen. Un rótulo que no esté aquí —una lámina nueva—
+   simplemente no tiene reserva: se le elige la foto desde el panel, que es lo
+   que habrá que hacer de todos modos. */
+$claveFoto = static function (string $rotulo): string {
+    $r = mb_strtolower(trim($rotulo));
+    $r = strtr($r, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n']);
+
+    return match (true) {
+        str_contains($r, 'colecta')          => 'colecta',
+        str_contains($r, 'santidad'),
+        str_contains($r, 'santos')           => 'santos',
+        str_contains($r, 'amigos de leon')   => 'amigos',
+        str_contains($r, 'ciudades')         => 'ciudades',
+        default                              => 'abramos',
+    };
+};
+
+/* ── La reserva: TRES láminas ──────────────────────────────────────────────
+   Las cinco pasaron a tres por decisión del cliente: se queda «Abramos el
+   corazón» y se quedan las dos que pidió rehacer —la Colecta y los cinco
+   santos—. «Los amigos de León» y «Cuatro ciudades» se apagan.
+
+   Apagadas, no borradas: en la base siguen ahí con su interruptor a cero, y
+   volver a encenderlas es un clic en el panel. Un DELETE se lleva por delante
+   los textos y no se deshace.
+
+   Lo que hay aquí es lo que se pinta si la base no responde, así que tiene que
+   decir lo mismo que dirá el panel. El orden y el diseño reales los manda la
+   base, lámina a lámina. */
 $laminas = $bloques('hero', [
-    ['rotulo' => 'Viaje apostólico', 'titulo' => 'Abramos el corazón',
+    /* PRIMERA · a sangre, como las otras dos. Sobre la toma aérea de la
+       explanada el velo es libre: no hay ningún rostro en primer plano. */
+    ['rotulo' => '11 – 16 de noviembre de 2026', 'titulo' => 'Abramos el corazón',
      'texto'  => 'Visita Apostólica del Papa León XIV al Perú.',
-     'enlace_texto' => 'Conoce la visita', 'enlace_url' => 'el-papa/'],
-    /* A sangre: la fotografía es una toma aérea de una explanada llena de
-       fieles, sin ningún rostro en primer plano que el velo pudiera invadir. */
-    ['rotulo' => 'Los amigos de León', 'titulo' => 'Sirve en la visita',
-     'texto'  => 'Hay un lugar para cada talento y cada corazón.',
-     'enlace_texto' => 'Quiero ser voluntario', 'enlace_url' => 'voluntariado/',
+     'enlace_texto' => 'Conoce la visita', 'enlace_url' => 'el-papa/',
      'datos'  => ['diseno' => 'fondo']],
-    ['rotulo' => 'Cuatro ciudades', 'titulo' => 'Lima · Chiclayo · Cusco · Pucallpa',
-     'texto'  => 'El recorrido del Santo Padre por la costa, la sierra y la selva.',
-     'enlace_texto' => 'Ver las sedes', 'enlace_url' => 'sedes/'],
-    /* La Colecta Nacional. Los textos son los del cartel de la Conferencia
-       Episcopal, palabra por palabra; aquí no se ha redactado nada.
+    /* SEGUNDA · la Colecta Nacional. Los textos son los del cartel de la
+       Conferencia Episcopal, palabra por palabra; aquí no se ha redactado nada.
 
        Los números de cuenta NO van en la lámina: no se leen de un vistazo en un
        carrusel que pasa cada siete segundos, y un dígito mal copiado en una
-       cuenta bancaria es un error caro. Viven en /donativo/, que es donde
-       alguien los puede leer con calma, copiar y comprobar. */
+       cuenta bancaria es un error caro. Viven en el bloque de la colecta, más
+       abajo, que es donde alguien los puede leer con calma y copiar. */
     ['rotulo' => 'Colecta Nacional', 'titulo' => 'Súmate con tu donación',
      'texto'  => 'Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.',
      'enlace_texto' => 'Cómo donar', 'enlace_url' => '#colecta',
-     'datos'  => ['diseno' => 'fondo']],
-    /* Quinta lámina, a sangre. Los textos son los de la sección «Tierra de
+     'datos'  => ['diseno' => 'fondo-derecha']],
+    /* TERCERA · los cinco santos. Los textos son los de la sección «Tierra de
        santos» que ya está publicada, y la frase de la bajada es la del
-       documento de la Conferencia Episcopal. Nada redactado aquí. */
+       documento de la Conferencia Episcopal. Nada redactado aquí.
+
+       La barandilla de datos NO es aquí la de fechas y ciudades: son los cinco
+       nombres, en dos renglones, tal como los escribió el cliente. Y el botón
+       va solo: en esta lámina no se añade el de voluntariado. */
     ['rotulo' => 'Cinco caminos de santidad', 'titulo' => 'Cinco santos, un mismo corazón',
      'texto'  => 'Cinco santos nos muestran distintos caminos para vivir la fe y servir a los demás.',
-     'enlace_texto' => 'Conoce sus historias', 'enlace_url' => 'tierra-de-santos/'],
+     'enlace_texto' => 'Conoce sus historias', 'enlace_url' => 'tierra-de-santos/',
+     'datos'  => ['diseno' => 'fondo',
+                  'encuadre' => '50% 26%',
+                  'segundo_boton' => 'no',
+                  'dato' => "Santo Toribio de Mogrovejo | Santa Rosa de Lima | San Martín de Porres\nSan Juan Macías y San Francisco Solano"]],
 ]);
 
 /* ── El orden de los diseños ──────────────────────────────────────────────
-   Las láminas alternan: partida, a sangre, partida, a sangre, partida. Es lo
-   que da variedad al carrusel sin que dos composiciones iguales se sigan.
+   Las tres van a sangre: fotografía a pantalla completa con el texto sobre
+   ella. Lo pidió el cliente, y con tres láminas la alternancia que había antes
+   —partida, fondo, partida…— ya no tenía a qué alternar.
 
-   La primera es SIEMPRE partida, y eso no es alternancia sino regla: lleva el
-   retrato oficial del Santo Padre, y sobre ese retrato no va ningún velo ni
-   degradado. Por eso su texto vive en el panel de color de al lado.
+   La primera dejó de ser la excepción porque dejó de llevar el retrato oficial
+   del Santo Padre. Mientras lo llevaba, era partida por REGLA y no por turno:
+   sobre ese retrato no va ningún velo ni degradado, y la composición partida
+   es la única que lo respeta. Si algún día vuelve el retrato a esta lámina,
+   vuelve también la composición partida.
 
-   Lo que hay aquí es la reserva. El orden real lo manda el panel, lámina a
-   lámina, en el campo «Diseño de la lámina». */
+   El diseño real lo manda el panel, lámina a lámina, en «Diseño de la lámina». */
 
 $laminas = array_values($laminas);
 $total   = count($laminas);
@@ -190,23 +259,51 @@ $total   = count($laminas);
         $enlaceU = $destino($l['enlace_url'] ?? '');
 
         /* ── El diseño de cada lámina se elige en el panel ─────────────────
-           Dos composiciones, y la decide quien edita, lámina a lámina, desde
+           Tres composiciones, y la decide quien edita, lámina a lámina, desde
            «Diseño de la lámina» (viaja en la columna JSON `datos`, así que no
            hizo falta ni una columna nueva):
 
-             · vacío   → composición PARTIDA: el texto en el panel de color y la
-                         imagen en su propia columna al lado. Es la de siempre,
-                         y la única que admite el retrato del Santo Padre, que
-                         no puede llevar velo ni degradado encima.
-             · «fondo» → fotografía A SANGRE con el texto sobre ella, dentro de
-                         un bloque opaco. Para fotos de multitud o de ambiente,
-                         donde no hay un rostro que proteger en primer plano.
+             · vacío            → composición PARTIDA: el texto en el panel de
+                                  color y la imagen en su propia columna al
+                                  lado. Es la de siempre, y la única que admite
+                                  el retrato del Santo Padre, que no puede
+                                  llevar velo ni degradado encima.
+             · «fondo»          → fotografía A SANGRE con el texto sobre ella,
+                                  dentro de un bloque opaco apoyado a la
+                                  IZQUIERDA. Para fotos de multitud o de
+                                  ambiente, donde no hay un rostro que proteger
+                                  en primer plano.
+             · «fondo-derecha»  → lo mismo, pero con el bloque y el velo en el
+                                  lado contrario. Existe por una razón concreta
+                                  y no por variedad: cuando la fotografía trae
+                                  al Santo Padre en el tercio izquierdo, «cover»
+                                  no puede moverlo —recorta en vertical, no en
+                                  horizontal— y la única forma de no ponerle
+                                  nada encima es apartar el bloque.
 
            Se normaliza a minúsculas y sin espacios: cualquier otra cosa cae en
            la partida. Una errata en el panel no rompe la portada. */
-        $aSangre = mb_strtolower(trim((string) ($l['datos']['diseno'] ?? ''))) === 'fondo';
+        $diseno  = mb_strtolower(trim((string) ($l['datos']['diseno'] ?? '')));
+        $aSangre = $diseno === 'fondo' || $diseno === 'fondo-derecha';
+        $aLaDerecha = $diseno === 'fondo-derecha';
 
-        /* El contenido es EL MISMO en los dos diseños. Va en un cierre para no
+        /* El encuadre de la fotografía, también por lámina. Es el
+           `object-position` de la imagen a sangre: sin él, «cover» recorta
+           siempre por el centro y en un montaje con las caras arriba —los cinco
+           santos— se las come. Vacío = el que trae el CSS. Se valida antes de
+           escribirlo: aquí entra texto del panel y va a parar a un atributo
+           style, así que sólo pasan cifras, %, px y las palabras del lenguaje. */
+        $encuadre = trim((string) ($l['datos']['encuadre'] ?? ''));
+        if ($encuadre !== '' && preg_match('~^[a-z0-9%. \-]{1,40}$~i', $encuadre) !== 1) {
+            $encuadre = '';
+        }
+
+        /* La fotografía de reserva de ESTA lámina, buscada por su rótulo y no
+           por su posición: apagar o reordenar láminas desde el panel no puede
+           cambiarle la imagen a las demás. */
+        $reservaFoto = $fotosHero[$claveFoto((string) ($l['rotulo'] ?? ''))] ?? '';
+
+        /* El contenido es EL MISMO en los tres diseños. Va en un cierre para no
            tenerlo escrito dos veces: dos copias del mismo bloque acaban
            descuadrándose en cuanto alguien toca una y olvida la otra. */
         $pintarLamina = static function () use ($l, $i, $titular, $enlaceT, $enlaceU, $esc, $sitio): void {
@@ -228,20 +325,67 @@ $total   = count($laminas);
               <p class="hero__bajada"><?= $esc(strip_tags((string) $l['texto'])) ?></p>
             <?php endif; ?>
 
-            <p class="hero__dato">
-              <span>11–16 noviembre 2026</span><span>Lima</span><span>Chiclayo</span><span>Cusco</span><span>Pucallpa</span>
-            </p>
+            <?php
+            /* ── La barandilla de datos ────────────────────────────────────
+               Era la misma hilera en las cinco láminas —las fechas y las cuatro
+               sedes— y estaba escrita aquí. Ahora se puede cambiar lámina a
+               lámina desde el panel, porque los cinco santos necesitan decir
+               otra cosa: sus nombres.
+
+               El formato es el que ya se pinta: una barra vertical separa los
+               elementos de un renglón, y un salto de línea abre otro renglón.
+               Vacío = la hilera de siempre, que sigue siendo la de las otras
+               cuatro láminas y no ha cambiado ni una coma.
+
+               El salto se hace con un elemento vacío que ocupa todo el ancho:
+               es la forma de romper un renglón dentro de un flex sin sacar los
+               elementos de su contenedor ni convertirlos en dos listas. */
+            $datoCrudo = trim((string) ($l['datos']['dato'] ?? ''));
+
+            if ($datoCrudo === '') {
+                $datoCrudo = '11–16 noviembre 2026 | Lima | Chiclayo | Cusco | Pucallpa';
+            }
+
+            $renglones = [];
+            foreach (preg_split('~\R~u', $datoCrudo) ?: [] as $renglon) {
+                $partes = array_values(array_filter(array_map('trim', explode('|', $renglon)), static fn ($p) => $p !== ''));
+                if ($partes !== []) { $renglones[] = $partes; }
+            }
+            ?>
+            <?php /* Con más de un renglón la barandilla deja de ser la hilera
+                     corta de fechas y sedes para la que se midió el tipo, y pasa
+                     a ser una lista de nombres largos. Se marca con su propia
+                     clase para que el CSS pueda apretarla y devolverle los
+                     filetes separadores: cinco nombres seguidos, sin más
+                     separación que un hueco, se leen como uno solo. */ ?>
+            <?php if ($renglones !== []): ?>
+              <p class="hero__dato<?= count($renglones) > 1 ? ' hero__dato--lista' : '' ?>">
+                <?php foreach ($renglones as $r => $partes): ?>
+                  <?php if ($r > 0): ?><span class="hero__dato__salto" aria-hidden="true"></span><?php endif; ?>
+                  <?php foreach ($partes as $parte): ?><span><?= $esc($parte) ?></span><?php endforeach; ?>
+                <?php endforeach; ?>
+              </p>
+            <?php endif; ?>
 
             <?php /* El segundo botón lleva SIEMPRE al voluntariado: es la única
                      acción abierta hoy y no puede depender de qué lámina esté a
-                     la vista. Salvo cuando la lámina ya va allí —entonces
-                     saldrían dos veces el mismo botón—. */ ?>
-            <?php $voluntariado = $sitio->enlace('voluntariado/'); ?>
+                     la vista. Dos excepciones:
+                       · la lámina que ya va allí —saldrían dos veces el mismo
+                         botón—;
+                       · la que lo apaga a mano desde el panel, escribiendo «no»
+                         en «Segundo botón». Es lo que pidió el cliente para la
+                         lámina de los santos, que debe quedarse sólo con
+                         «Conoce sus historias». */ ?>
+            <?php
+            $voluntariado = $sitio->enlace('voluntariado/');
+            $conSegundo   = mb_strtolower(trim((string) ($l['datos']['segundo_boton'] ?? ''))) !== 'no'
+                         && $enlaceU !== $voluntariado;
+            ?>
             <div class="hero__acciones">
               <?php if ($enlaceT !== '' && $enlaceU !== ''): ?>
                 <a class="btn btn--claro" href="<?= $esc($enlaceU) ?>"><?= $esc($enlaceT) ?></a>
               <?php endif; ?>
-              <?php if ($enlaceU !== $voluntariado): ?>
+              <?php if ($conSegundo): ?>
                 <a class="btn btn--contorno-claro" href="<?= $esc($voluntariado) ?>">Sé voluntario</a>
               <?php endif; ?>
             </div>
@@ -256,15 +400,20 @@ $total   = count($laminas);
                      El velo es --hero: un foco elíptico anclado fuera del
                      encuadre, por la esquina inferior izquierda, que cubre la
                      zona del texto y se apaga antes de llegar a ningún rostro.
-                     Sus porcentajes están medidos; no se tocan al reutilizarlo. */ ?>
-            <div class="hero__media">
-              <?= $sitio->imagen($l, $fotosHero[$i % count($fotosHero)], [
+                     Sus porcentajes están medidos; no se tocan al reutilizarlo.
+
+                     En «fondo-derecha» el mismo velo se refleja al otro lado
+                     con un scaleX(-1) del CSS: así los porcentajes medidos
+                     siguen siendo los mismos y no hay un segundo degradado que
+                     mantener en paralelo. */ ?>
+            <div class="hero__media"<?= $encuadre !== '' ? ' style="--encuadre: ' . $esc($encuadre) . '"' : '' ?>>
+              <?= $sitio->imagen($l, $reservaFoto, [
                   'sizes'     => '100vw',
                   'prioridad' => $i === 0,
               ]) ?>
             </div>
-            <div class="capa velo velo--hero" aria-hidden="true"></div>
-            <div class="contenedor hero__contenido">
+            <div class="capa velo velo--hero<?= $aLaDerecha ? ' velo--hero-der' : '' ?>" aria-hidden="true"></div>
+            <div class="contenedor hero__contenido<?= $aLaDerecha ? ' hero__contenido--der' : '' ?>">
               <div class="hero__bloque"><?php $pintarLamina(); ?></div>
             </div>
 
@@ -279,7 +428,7 @@ $total   = count($laminas);
               </div>
 
               <div class="hero__retrato retrato">
-                <?= $sitio->imagen($l, $fotosHero[$i % count($fotosHero)], [
+                <?= $sitio->imagen($l, $reservaFoto, [
                     'sizes'     => '(min-width:900px) 42vw, 100vw',
                     'prioridad' => $i === 0,
                 ]) ?>
@@ -369,7 +518,7 @@ $total   = count($laminas);
 <section class="seccion seccion--tinte llegada" id="la-visita" aria-labelledby="t-llegada">
   <div class="contenedor">
     <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-8">
+      <div class="col-m-4 col-t-6 col-d-7">
 
         <header class="seccion__encabezado seccion__encabezado--mayor">
           <hr class="seccion__filete" data-reveal="line-draw">
@@ -391,6 +540,28 @@ $total   = count($laminas);
         </p>
 
       </div>
+
+      <?php /* ── La fotografía de la sección ──────────────────────────────
+               Pedida por el cliente: «una imagen no cuadrada ni circular».
+               La forma es un ARCO REBAJADO —esquinas superiores abiertas y
+               base recta—, que es la del pórtico de una iglesia y ya está en
+               el vocabulario del sitio (.figura--arco, en los destacados).
+
+               Va apaisada y no en vertical por lo que ES la fotografía: unos
+               sesenta obispos en fila con el Santo Padre en el centro. En un
+               marco vertical, «cover» se queda con el tercio central y borra a
+               dos tercios de la Conferencia Episcopal. Apaisada entran todos, y
+               el arco sólo redondea las esquinas altas, donde hay cielo.
+
+               El respaldo es la FOTO 3 que envió el cliente. En cuanto alguien
+               elija una imagen desde el panel, ésta deja de pintarse. */ ?>
+      <figure class="figura ar-3-2 figura--portal llegada__figura col-m-4 col-t-6 col-d-5" data-reveal="fade-rise" data-reveal-delay="0.1">
+        <?= $sitio->imagen($secciones['llega-al-peru'] ?? [],
+            $foto('fotos/llegada-obispos', 1440, 960,
+                  'El Santo Padre con los obispos de la Conferencia Episcopal Peruana',
+                  [640, 1024, 1440], '(min-width:1024px) 40vw, 92vw'),
+            ['sizes' => '(min-width:1024px) 40vw, 92vw']) ?>
+      </figure>
     </div>
 
     <?php $ciudades = $bloques('el-recorrido'); ?>
@@ -498,6 +669,34 @@ $sedes = array_values($bloques('el-recorrido'));
 <section class="seccion itinerario seccion--tinte" id="itinerario" aria-labelledby="t-itinerario">
   <div class="contenedor">
 
+    <?php /* ── El aviso, ARRIBA DEL TODO ───────────────────────────────────
+             Estaba debajo del encabezado, en cuerpo de nota al pie, y se leía
+             después del titular y del texto de entrada —o no se leía—. El
+             cliente pidió resaltarlo, y tiene razón por algo más que estética:
+             lo que hay debajo es un programa que la Santa Sede todavía no ha
+             publicado. Quien llegue a las tarjetas sin haber visto esta línea
+             se lleva unas fechas por ciertas.
+
+             Ahora abre la sección: es lo primero que se lee, va en bloque con
+             fondo propio, ícono y cuerpo de texto de lectura, no de pie de
+             página. En móvil queda igualmente por encima de la primera
+             jornada, porque va antes en el documento.
+
+             EL TEXTO NO SE EDITA DESDE EL PANEL, Y ES A PROPÓSITO. La regla nº3
+             del encargo dice que lo que no es oficial se dice que no lo es, y
+             que este aviso no se quita hasta que la Santa Sede publique el
+             programa. Un campo en el panel es un campo que alguien puede vaciar
+             sin querer un martes por la tarde. Cuando llegue el programa
+             oficial se retira desde aquí, con un despliegue y a conciencia. */ ?>
+    <div class="aviso-referencial" role="note">
+      <svg class="aviso-referencial__icono" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+      <p class="aviso-referencial__texto">
+        <strong class="aviso-referencial__rotulo">Programa referencial</strong>
+        Las fechas, los lugares y las actividades se sustituirán por el programa
+        oficial cuando la Santa Sede lo publique.
+      </p>
+    </div>
+
     <header class="seccion__encabezado seccion__encabezado--mayor">
       <hr class="seccion__filete" data-reveal="line-draw">
       <span class="rotulo"><?= $esc($campo('itinerario', 'rotulo', 'Del 11 al 16 de noviembre de 2026')) ?></span>
@@ -506,11 +705,6 @@ $sedes = array_values($bloques('el-recorrido'));
       </h2>
       <div class="texto-lectura"><?= $rico($campo('itinerario', 'texto')) ?></div>
     </header>
-
-    <p class="aviso-referencial" role="note">
-      <strong>Programa referencial.</strong> Las fechas, los lugares y las actividades
-      se sustituirán por el programa oficial cuando la Santa Sede lo publique.
-    </p>
 
     <?php /* ── El formato ─────────────────────────────────────────────────────
              Antes: seis filas a todo el ancho, la fecha en una columna estrecha

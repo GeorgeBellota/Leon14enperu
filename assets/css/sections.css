@@ -63,7 +63,16 @@
 .hero__media img {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: 50% 42%;
+  /* El encuadre se puede fijar lámina a lámina desde el panel: la vista
+     escribe --encuadre en el .hero__media y aquí se recoge. El 50% 42% de
+     siempre sigue siendo el valor por defecto, así que las láminas que no lo
+     usen se recortan exactamente como antes.
+
+     Hace falta porque el hero es una franja mucho más apaisada que cualquier
+     fotografía: `cover` conserva el ancho y se come la altura por el centro.
+     En el montaje de los cinco santos las caras están en la franja alta y con
+     el 42% se quedaban fuera; con 26% entran enteras. */
+  object-position: var(--encuadre, 50% 42%);
   filter: none;
 }
 
@@ -100,6 +109,24 @@
   margin-block: var(--space-xs) var(--space-m);
 }
 .hero__bloque .hero__dato { max-width: none; }
+
+/* ── El bloque, al otro lado ──────────────────────────────────────────────
+   Diseño «fondo-derecha». Existe por la FOTO 1 de la Colecta: el Santo Padre
+   está en el tercio izquierdo y la fotografía es 3:2 dentro de una franja
+   mucho más apaisada, así que `cover` recorta por arriba y por abajo y NUNCA
+   por los lados. No hay encuadre que lo mueva. La única forma de no ponerle
+   encima ni el bloque opaco ni el velo —regla dura nº 2 del encargo— es
+   apartar el bloque.
+
+   El `width:100%` no sobra: sin él la caja deja de estirarse —un margen
+   automático en el eje transversal gana a `align-items: stretch`— y se encoge
+   al ancho de su contenido, con lo que el titular partiría antes y la caja
+   mediría distinto en cada lámina. Con ancho definido y tope de 672 px, el
+   margen automático se limita a empujarla. */
+.hero__contenido--der > .hero__bloque {
+  width: 100%;
+  margin-inline-start: auto;
+}
 
 /* Texto suelto sobre la fotografía: sin caja. Se mantiene estrecho para no
    salirse de la zona que cubre el degradado lateral. */
@@ -158,6 +185,18 @@
       color-mix(in srgb, var(--surface-invert) 14%, transparent) 20%,
       transparent 38%);
 }
+
+/* ── El mismo velo, del revés ─────────────────────────────────────────────
+   Para la lámina de diseño «fondo-derecha». Se refleja en lugar de escribir
+   un segundo degradado: los porcentajes de arriba están MEDIDOS contra la
+   fotografía y el texto, y dos copias de una medición acaban divergiendo en
+   cuanto alguien ajusta una y olvida la otra.
+
+   El foco elíptico pasa a la esquina inferior derecha, que es donde va el
+   bloque de texto en esta lámina. La franja tenue del borde inferior es
+   simétrica, así que el reflejo no la mueve: sigue asentando la paginación,
+   que vive abajo a la izquierda en las cinco láminas. */
+.velo--hero-der { transform: scaleX(-1); }
 
 /* ── Diapositiva del retrato: composición partida ─────────────────────
    Es la excepción, y solo esta. El retrato del Santo Padre no admite velo
@@ -261,6 +300,29 @@
 .hero__dato > span:first-child { padding-inline-start: 0; }
 .hero__dato > span + span { border-left: 1px solid color-mix(in srgb, var(--on-primary) 34%, transparent); }
 
+/* ── El salto de renglón dentro de la barandilla ──────────────────────────
+   La lámina de los cinco santos lleva los nombres en DOS renglones, y dónde
+   se parte no puede decidirlo el ancho de la ventana: «San Juan Macías y San
+   Francisco Solano» van juntos porque van unidos por una «y».
+
+   Un flex no tiene salto de línea, así que el salto es un elemento vacío que
+   ocupa el ancho entero y empuja al resto al renglón siguiente. Va con
+   aria-hidden y sin alto: no es contenido, es una marca de composición.
+
+   Los dos selectores llevan dos clases —0-2-0 y 0-2-1— para ganarle a las
+   reglas de arriba, que valen 0-1-1. Sin eso el salto heredaría el relleno
+   lateral y el filete, y aparecería un palito suelto colgando del renglón. */
+.hero__dato > .hero__dato__salto {
+  flex: 0 0 100%;
+  height: 0;
+  padding: 0;
+  border: 0;
+}
+.hero__dato > .hero__dato__salto + span {
+  padding-inline-start: 0;
+  border-left: 0;
+}
+
 /* Por debajo de 1240 px la fila ya no cabe en un renglón y envuelve. Al
    envolver, el filete separador quedaba al PRINCIPIO del segundo renglón —un
    palito suelto delante de «Pucallpa», con el hueco a su izquierda—, que es lo
@@ -277,6 +339,42 @@
 .hero__bloque .hero__dato { gap: 4px clamp(14px, 2.4vw, 26px); }
 .hero__bloque .hero__dato > span { padding-inline: 0; }
 .hero__bloque .hero__dato > span + span { border-left: 0; }
+
+/* ── La barandilla cuando es una lista de nombres ─────────────────────────
+   La hilera de siempre son cinco piezas cortas —una fecha y cuatro ciudades—
+   y el tipo está medido para eso. Los cinco santos son otra cosa: sólo «Santo
+   Toribio de Mogrovejo» tiene tantos caracteres como «Lima», «Chiclayo» y
+   «Cusco» juntos, y a cuerpo y tracking de barandilla el primer renglón no
+   entraba en los 588 px útiles del bloque. Se partía solo, y el corte que
+   pidió el cliente —tres nombres arriba y dos abajo— dejaba de cumplirse.
+
+   Se aprieta un peldaño el cuerpo y se recorta el tracking a la mitad. Y se
+   recuperan los filetes verticales, que dentro del bloque estaban apagados:
+   ahí el apagón tenía sentido porque la hilera envolvía sola y aparecía un
+   filete huérfano al principio del segundo renglón, pero aquí los renglones
+   los decide el panel y el huérfano ya lo desactiva la regla de arriba. Sin
+   filetes, «SANTO TORIBIO DE MOGROVEJO SANTA ROSA DE LIMA» se lee del tirón. */
+.hero__bloque .hero__dato--lista,
+.hero__dato--lista {
+  font-size: var(--step--2);
+  letter-spacing: .08em;
+  column-gap: 0;
+}
+/* 8 px y no los 18 de la barandilla ancha: el hueco entre nombres deja de ser
+   aire y pasa a ser un filete, que separa con la mitad de sitio. Es lo que hace
+   que los tres nombres del primer renglón quepan en 588 px con los filetes
+   puestos. El caso peor es 1440 y por encima —ahí el cuerpo llega a su tope de
+   12 px y el bloque al suyo de 672—; por debajo el texto encoge y la caja no,
+   así que sobra más sitio, no menos. */
+.hero__bloque .hero__dato--lista > span { padding-inline: 8px; }
+.hero__bloque .hero__dato--lista > span:first-child,
+.hero__bloque .hero__dato--lista > .hero__dato__salto + span { padding-inline-start: 0; }
+.hero__bloque .hero__dato--lista > span + span {
+  border-left: 1px solid color-mix(in srgb, var(--on-primary) 34%, transparent);
+}
+.hero__bloque .hero__dato--lista > .hero__dato__salto,
+.hero__bloque .hero__dato--lista > .hero__dato__salto + span { border-left: 0; }
+
 
 .hero__acciones { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 
@@ -1094,16 +1192,42 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 /* Ojo con el «margin-inline: auto» aquí: en una rejilla, un margen automático
    deja de estirar el elemento y lo encoge a su contenido para centrarlo. La
    lista se quedaba en 590 px en medio de una banda de 1.148. Como la columna ya
-   es única, estirar es el comportamiento por defecto y no hace falta nada.
+   es única, estirar es el comportamiento por defecto y no hace falta nada. */
 
-   Con las dos tarjetas ocupando el contenedor entero, cada una mide 566 px y
-   los dos datos caben uno al lado del otro en vez de uno debajo del otro. Así
-   el ancho se usa para algo y no queda medio metro de tarjeta vacía. */
-@media (min-width: 900px) {
-  .colecta__interior--cuentas .cuenta__datos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-m);
-  }
+/* ── Aquí estaban los dos datos en paralelo, y se han deshecho ────────────
+   La regla ponía «Cuenta» y «CCI» uno al lado del otro cuando la tarjeta medía
+   566 px. Funcionaba con los dígitos a 19 px. Ya no.
+
+   El cliente pidió agrandar los números y que dejaran de cortarse, y las dos
+   cosas tiran en direcciones contrarias: un CCI son VEINTE dígitos seguidos,
+   así que a 26 px pide unos 317 px de renglón y en media tarjeta sólo hay 250.
+   El resultado era justo el corte que había que arreglar.
+
+   Un dato por renglón, y el renglón entero para él. La tarjeta crece unos 40
+   px de alto y a cambio ni el número de cuenta ni el CCI se parten nunca.
+   Medido en los tres sitios donde se pinta: 592 px útiles en la portada, 522
+   en /donativo/ y 314 en un móvil de 390. */
+
+/* ── El cartel de la Colecta ──────────────────────────────────────────────
+   A todo el ancho y por delante de las dos columnas. Es la pieza oficial de la
+   Conferencia Episcopal, en su versión SIN las cuentas impresas: los dígitos
+   viven sólo en la lista editable de abajo. El porqué está en
+   assets/parciales/colecta.php. */
+.colecta__cartel {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-l);
+  line-height: 0;          /* sin esto queda una franja bajo la imagen */
+}
+/* El redondeo y la sombra van en la IMAGEN, no en un contenedor con
+   overflow:hidden recortándola. Da el mismo resultado con una caja menos, y
+   evita el recorte redondeado sobre una imagen grande, que es justo el tipo de
+   composición que algunos motores rasterizan tarde o directamente se saltan. */
+.colecta__cartel img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-m);
 }
 
 /* El encabezado hereda de layout.css el contrafilete de 44 px que se pinta con
@@ -1164,6 +1288,24 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 @media (min-width: 620px) {
   .colecta__cuentas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* En la portada las dos tarjetas dejan de repartirse la columna derecha y
+   pasan a ocuparla entera, una encima de otra.
+
+   Entre 620 y 900 px el bloque todavía es de una sola columna y las tarjetas
+   tienen el contenedor entero para repartirse: ahí sí caben a la par. El
+   problema aparece a partir de 900, cuando la rejilla 5fr/7fr deja la lista en
+   632 px y, partida en dos, cada tarjeta se queda en 304. Un CCI de veinte
+   dígitos a cuerpo legible no cabe en 304 px: eso es el corte del que se
+   quejaba el cliente.
+
+   A columna única cada tarjeta mide los 632 px enteros. No es un capricho de
+   composición: es el ancho que hace falta para que veinte dígitos quepan en un
+   renglón. */
+@media (min-width: 900px) {
+  .colecta__interior:not(.colecta__interior--cuentas) .colecta__cuentas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 .cuenta {
   background: var(--surface);
@@ -1201,20 +1343,52 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 }
 .cuenta__linea dd {
   margin: 0;
+  /* Flex y no bloque: dentro del <dd> viven los dígitos y —si hay JavaScript y
+     portapapeles— el botón de copiar que monta colecta.js, uno detrás de otro.
+     Como texto corrido quedaban pegados sin un solo píxel de aire, y con los
+     números ya agrandados eso se leía «…917503754COPIAR».
+
+     Antes no se notaba porque la tarjeta era estrecha y el botón caía siempre
+     al renglón siguiente por falta de sitio. Ahora cabe al lado, así que el
+     hueco hay que ponerlo a mano en vez de heredarlo de un desbordamiento.
+     Con flex-wrap sigue bajando solo cuando no quepa. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-s);
+  row-gap: 4px;
   font-family: var(--font-ui);
-  font-size: var(--step-1);
+  /* Escalón propio, y no --step-1 ni --step-1b.
+
+     Estos dígitos hay que copiarlos a mano en una app del banco sin
+     equivocarse, así que se leen distinto que un texto: el cliente pidió
+     agrandarlos y tiene razón. Pero el tope no lo pone el gusto, lo pone la
+     aritmética: son VEINTE dígitos seguidos que no pueden partirse, y el sitio
+     más estrecho donde se pintan es una tarjeta de móvil con 314 px útiles.
+
+     A 0,6 em por dígito en Instrument Sans con cifras tabulares, 20 dígitos
+     piden 12 em. De ahí salen los dos extremos: 20 px en un móvil de 320
+     (240 px de renglón sobre 244 disponibles) y 26 px a 1440, donde sobra
+     sitio. --step-1b llegaba a los mismos 26 arriba pero a 21 abajo, y a 21 px
+     un móvil pequeño ya no da. */
+  font-size: clamp(20px, 17.4px + 0.67vw, 26px);
   font-weight: 600;
   font-variant-numeric: tabular-nums lining-nums;
   letter-spacing: .01em;
-  /* Un CCI son veinte dígitos seguidos: en pantallas estrechas tiene que poder
-     partir, o desborda la caja. */
+  line-height: 1.15;
+  /* Red de seguridad, no comportamiento esperado: con los anchos de arriba no
+     debería partir nunca. Si alguien estrecha una tarjeta o alarga un número,
+     que parta antes que desbordar la caja. */
   overflow-wrap: anywhere;
 }
 /* El botón de copiar lo añade colecta.js y sólo existe si hay JavaScript y
    portapapeles. Sin él los dígitos siguen siendo texto seleccionable, que es
    como se copian desde siempre. */
 .cuenta__copiar {
-  margin-block-start: 4px;
+  /* El <dd> que lo contiene es flex y ya reparte el aire con column-gap y
+     row-gap: el margen de antes se sumaba a ese hueco y descolgaba el botón
+     medio renglón por debajo de los dígitos. */
+  margin-block-start: 0;
   justify-self: start;
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 32px;
@@ -1315,6 +1489,20 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 /* ── La llegada, y la tira de ciudades ──────────────────────────────────── */
 .llegada__accion { margin-block: var(--space-l) 0; }
 
+/* La fotografía de la sección, en su arco rebajado.
+   En escritorio se alinea con el cuerpo del texto y no con el filete del
+   encabezado: pegada arriba del todo, el arco quedaba a la altura del rótulo
+   en versalitas y parecía que sobresalía de la sección. El filete de oro
+   remata la base recta, que sin él se queda a medio camino entre forma y
+   recorte. */
+.llegada__figura {
+  align-self: center;
+  border-block-end: 3px solid var(--gold);
+}
+@media (max-width: 1023px) {
+  .llegada__figura { margin-block-start: var(--space-xl); }
+}
+
 /* Las cuatro ciudades como índice del recorrido. Cada una es un enlace a su
    sede: quien sólo quiere saber si el Papa pasa por la suya no tiene que
    bajar hasta las tarjetas. */
@@ -1362,15 +1550,66 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 
    Sin JavaScript se ve todo: es una rejilla, no un desplegable ni un carrusel.
    Nada queda detrás de un gesto ni de un clic. */
+/* ── El aviso de programa referencial ─────────────────────────────────────
+   Era una nota al pie: 12 px, gris de texto secundario, debajo del encabezado
+   y con el mismo peso visual que el «El reparto de actos lo fijará el programa
+   oficial» de dos secciones más arriba. Debajo hay seis jornadas con fechas,
+   lugares y horas que la Santa Sede todavía no ha publicado, así que ese aviso
+   no es un pie de página: es la condición para leer bien lo que viene.
+
+   Ahora abre la sección y se lee como bloque:
+    · cuerpo de texto de lectura —de --step--1 a --step-0—, y el rótulo en
+      versalitas con el color de acento fuerte, que sí es color de texto;
+    · fondo propio sobre el tinte de la sección. El aviso va en crema
+      (--accent-tint) y la banda es rosa pálido (--surface-alt): dos tonos que
+      ya conviven en el sitio y que se distinguen sin meter un color nuevo;
+    · filete grueso a la izquierda y ícono, para que se identifique como aviso
+      antes de leerlo;
+    · sombra corta, porque sobre una banda tintada un bloque sin relieve se
+      confunde con un cambio de fondo.
+
+   Ancho de lectura acotado: a 1.148 px una sola línea de 16 px cruzaría la
+   pantalla entera y se leería peor, no mejor. */
 .aviso-referencial {
-  margin-block: var(--space-l) var(--space-xl);
-  padding: var(--space-s) var(--space-m);
-  border-left: 3px solid var(--accent);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  margin-block: 0 var(--space-xl);
+  padding: var(--space-m) var(--space-l);
+  border-inline-start: 5px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
   background: var(--accent-tint);
+  box-shadow: var(--sombra-s);
+  max-width: 72ch;
+}
+.aviso-referencial__icono {
+  flex: none;
+  width: 26px; height: 26px;
+  margin-block-start: 1px;
+  color: var(--accent-strong);
+}
+.aviso-referencial__texto {
+  margin: 0;
   font-family: var(--font-ui);
-  font-size: var(--step--1);
+  font-size: var(--step-0);
   line-height: 1.5;
-  color: var(--ink-soft);
+  color: var(--ink);
+}
+/* El rótulo va en su propia línea: «Programa referencial» es la etiqueta del
+   aviso, no el principio de la frase, y en la misma línea se leía como un
+   arranque de párrafo en negrita. */
+.aviso-referencial__rotulo {
+  display: block;
+  margin-block-end: 2px;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+@media (max-width: 599px) {
+  .aviso-referencial { padding: var(--space-s) var(--space-m); gap: var(--space-xs); }
+  .aviso-referencial__icono { width: 22px; height: 22px; }
 }
 
 .ruta {

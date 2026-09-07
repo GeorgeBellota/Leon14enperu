@@ -62,7 +62,12 @@ window.L14 = window.L14 || {};
     } else if (tipo === 'mask-lines') {
       var lineas = el.querySelectorAll('.linea > span');
       if (!lineas.length) { revelar(el); return; }
-      gsap.fromTo(lineas, { yPercent: 105 },
+      /* 118 y no 105: .linea lleva 0,14 em de aire por abajo para que no
+         recorte los descendentes —la «g» de «llega»—, y con esa caja más alta
+         el 105 % dejaba asomar la punta de la cola antes de entrar. El gemelo
+         de este número está en components.css (.js …mask-lines .linea > span);
+         si se cambia uno, se cambia el otro. */
+      gsap.fromTo(lineas, { yPercent: 118 },
         Object.assign({ yPercent: 0, duration: 0.9 * k, stagger: 0.07 }, base));
     } else {
       revelar(el);
