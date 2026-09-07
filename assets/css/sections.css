@@ -1841,6 +1841,13 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
   .hero__acciones { width: 100%; }
   .hero__acciones .btn { width: 100%; min-height: 44px; }
 
+  /* Sin zoom. El Ken Burns de escritorio, en una pantalla pequeña y con la
+     fotografía recortada al 70 %, no se lee como movimiento: se lee como que
+     la imagen no está quieta. Mismo selector que la regla que lo enciende
+     —0-3-2 de especificidad—, o no la gana. */
+  .hero .swiper-slide-active .hero__media img,
+  .hero .swiper-slide-active .hero__retrato img { animation: none; }
+
   /* ── Los mandos ───────────────────────────────────────────────────────
      Suben a la esquina inferior de la FOTOGRAFÍA, justo encima de la banda.
      Antes iban anclados al fondo del carrusel y quedaban sobre el texto. */

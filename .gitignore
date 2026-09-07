@@ -105,3 +105,13 @@ desktop.ini
 *.swp
 *~
 README.local-claude.md
+
+
+# ── EL DOCUMENTO DE SEGURIDAD ───────────────────────────────────────────────
+# Se queda en el disco, no en el repositorio. Enumera cada control, dónde vive
+# y —lo más delicado— qué falta todavía por cerrar. Eso es un mapa para quien
+# quiera atacar el sitio, y no mejora por estar en una carpeta privada: basta
+# con que alguien deje de estar en el equipo.
+#
+# Se entrega a mano, al responsable, junto con el servidor.
+documentacion/SEGURIDAD.md
