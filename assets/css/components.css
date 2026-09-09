@@ -1193,6 +1193,9 @@ body[data-ancla] { padding-block-end: 76px; }
      esos dígitos no se distinguen. */
   width: min(560px, calc(100vw - var(--space-l) * 2));
   height: fit-content;
+  /* El ancho de arriba es el del aviso CON TEXTO, donde 560 px son la medida de
+     lectura. El modo cartel lo sustituye por un ancho que sigue a la imagen:
+     ver .cta-modal--cartel, más abajo. */
   /* Si el contenido crece o la ventana es baja, scroll dentro y no desbordado. */
   max-height: calc(100svh - var(--space-l) * 2);
   overflow: auto;
@@ -1209,6 +1212,34 @@ body[data-ancla] { padding-block-end: 76px; }
   transition: opacity .32s var(--ease), transform .32s var(--ease);
 }
 .cta-modal.esta-abierto { opacity: 1; transform: none; }
+
+/* ── El aviso-cartel se ajusta a la pieza, no al revés ────────────────────
+   El problema que resuelve, medido:
+
+   La imagen se muestra ENTERA, nunca recortada, así que cuando la ventana es
+   baja el tope de altura la encoge. Pero el diálogo seguía midiendo 560 px
+   fijos, así que la diferencia salía como dos franjas de fondo a los lados del
+   cartel. En un portátil de 768 px eran 38 px por lado; en un móvil apaisado,
+   177. El cartel dejaba de estar encuadrado y pasaba a flotar en una caja
+   blanca que no es parte de su diseño.
+
+   Con `fit-content` el diálogo mide lo que mida la imagen una vez aplicados
+   sus dos topes, y las franjas desaparecen. El `max-width` es el mismo valor
+   que antes era el ancho: en pantallas holgadas nada cambia.
+
+   El tope del ancho se repite en la imagen y NO se escribe como porcentaje: un
+   `max-width: 100%` dentro de una caja que se está midiendo por su contenido
+   es una referencia circular, y cada motor la resuelve a su manera. Con el
+   valor escrito dos veces, los dos lados miden lo mismo siempre.
+
+   Suelo: cuando la imagen queda más estrecha que la fila de botones, manda la
+   fila y vuelve a haber franjas —mucho más pequeñas—. Es el caso del móvil
+   apaisado, donde un cartel vertical no tiene forma de ser grande: ahí lo que
+   toca es que quepa y se pueda cerrar, no que llene. */
+.cta-modal--cartel {
+  width: fit-content;
+  max-width: min(560px, calc(100vw - var(--space-l) * 2));
+}
 
 .cta-modal::backdrop {
   background: color-mix(in srgb, #000 62%, transparent);
@@ -1260,6 +1291,22 @@ body[data-ancla] { padding-block-end: 76px; }
   width: auto;
   height: auto;
   display: block;
+}
+
+/* En el modo cartel los dos topes se recalculan.
+
+   ANCHO. El mismo valor que el `max-width` del diálogo, escrito y no en
+   porcentaje, por lo dicho arriba: dentro de una caja `fit-content` un
+   porcentaje se muerde la cola.
+
+   ALTO. La reserva baja de 190 px a 150. Está medida, no estimada: el diálogo
+   admite `100svh - 56` (sus dos márgenes) y por debajo de la imagen quedan el
+   relleno del cuerpo (20 + 20) y la fila de botones (46), que son 86. Con 150
+   sobran 64 px de holgura y la imagen gana 40 px de alto en toda ventana baja
+   —que es justo donde hacía falta—, sin que aparezca scroll. */
+.cta-modal--cartel .cta-modal__media img {
+  max-width: min(560px, calc(100vw - var(--space-l) * 2));
+  max-height: min(70vh, calc(100svh - 150px));
 }
 
 /* Con el cartel a todo lo alto, el relleno del cuerpo se recorta: lo que queda
