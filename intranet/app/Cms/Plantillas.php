@@ -140,7 +140,14 @@ final class Plantillas
                                         . '«fondo» = fotografía a sangre con el texto encima, apoyado a '
                                         . 'la izquierda. · «fondo-derecha» = igual, pero con el texto a '
                                         . 'la derecha; se usa cuando el motivo principal de la '
-                                        . 'fotografía cae en el lado izquierdo y el bloque lo taparía.',
+                                        . 'fotografía cae en el lado izquierdo y el bloque lo taparía. · '
+                                        . '«sin-texto» = sólo la imagen, sin rótulo, titular, bajada ni '
+                                        . 'botones. Para banners ya diseñados que traen su propio texto '
+                                        . 'dentro. La imagen se muestra ENTERA, sin recortar, así que '
+                                        . 'conviene subir además una versión vertical en «imagen para '
+                                        . 'móvil»: un banner muy apaisado se ve diminuto en un teléfono. '
+                                        . 'El campo «Titular» no se pinta pero se usa como texto '
+                                        . 'alternativo de la imagen; escríbelo igualmente.',
                         ],
                         // El encuadre y la barandilla salieron de los cambios que
                         // pidió el cliente en septiembre de 2026: la lámina de los

@@ -209,12 +209,17 @@ $claveFoto = static function (array $lamina): string {
    decir lo mismo que dirá el panel. El orden y el diseño reales los manda la
    base, lámina a lámina. */
 $laminas = $bloques('hero', [
-    /* PRIMERA · a sangre, como las otras dos. Sobre la toma aérea de la
-       explanada el velo es libre: no hay ningún rostro en primer plano. */
-    ['rotulo' => '11 – 16 de noviembre de 2026', 'titulo' => 'Abramos el corazón',
-     'texto'  => 'Visita Apostólica del Papa León XIV al Perú.',
-     'enlace_texto' => 'Conoce la visita', 'enlace_url' => 'el-papa/',
-     'datos'  => ['diseno' => 'fondo']],
+    /* PRIMERA · el banner de la Conferencia Episcopal, sin nada encima.
+       Trae dentro su propio titular —«¡El Papa León XIV vuelve al Perú!»— y sus
+       fechas, así que el titular de aquí no se pinta: sirve de texto
+       alternativo para quien no ve la imagen.
+
+       La lámina «Abramos el corazón» que ocupaba este sitio no se ha borrado,
+       sólo se ha apagado desde el panel; sigue ahí con sus textos por si la
+       quieren de vuelta. */
+    ['rotulo' => '', 'titulo' => '¡El Papa León XIV vuelve al Perú! Del 11 al 16 de noviembre de 2026',
+     'texto'  => '', 'enlace_texto' => '', 'enlace_url' => '',
+     'datos'  => ['diseno' => 'sin-texto']],
     /* SEGUNDA · la Colecta Nacional. Los textos son los del cartel de la
        Conferencia Episcopal, palabra por palabra; aquí no se ha redactado nada.
 
@@ -294,12 +299,25 @@ $total   = count($laminas);
                                   no puede moverlo —recorta en vertical, no en
                                   horizontal— y la única forma de no ponerle
                                   nada encima es apartar el bloque.
+             · «sin-texto»      → sólo la pieza. Ni rótulo, ni titular, ni
+                                  bajada, ni barandilla, ni botones. Es para
+                                  banners ya diseñados, que traen dentro su
+                                  propio titular y su fecha: escribirles algo
+                                  encima sería decirlo dos veces y taparles la
+                                  composición.
+
+                                  Y por eso esta lámina NO recorta la imagen.
+                                  Las otras usan «cover», que llena la franja
+                                  comiéndose lo que sobra; una pieza cerrada no
+                                  admite eso —se perdería el sello o la mitad
+                                  del titular—, así que se muestra entera.
 
            Se normaliza a minúsculas y sin espacios: cualquier otra cosa cae en
            la partida. Una errata en el panel no rompe la portada. */
         $diseno  = mb_strtolower(trim((string) ($l['datos']['diseno'] ?? '')));
-        $aSangre = $diseno === 'fondo' || $diseno === 'fondo-derecha';
+        $aSangre    = $diseno === 'fondo' || $diseno === 'fondo-derecha';
         $aLaDerecha = $diseno === 'fondo-derecha';
+        $soloPieza  = $diseno === 'sin-texto';
 
         /* El encuadre de la fotografía, también por lámina. Es el
            `object-position` de la imagen a sangre: sin él, «cover» recorta
@@ -409,7 +427,38 @@ $total   = count($laminas);
         <div class="swiper-slide" role="group" aria-roledescription="diapositiva"
              aria-label="<?= $i + 1 ?> de <?= $total ?>">
 
-          <?php if ($aSangre): ?>
+          <?php if ($soloPieza): ?>
+            <?php /* Sólo la pieza, y entera. Ni velo ni bloque: no hay texto
+                     del sitio que proteger, y un degradado sobre un banner ya
+                     compuesto sólo lo ensucia.
+
+                     El titular de la lámina no se pinta, pero NO se desperdicia:
+                     es el texto alternativo de la imagen. Un banner lleva su
+                     mensaje dibujado, y dibujado no lo lee nadie con un lector
+                     de pantalla; escribiéndolo en «Titular» desde el panel, sí.
+                     Si se deja vacío, la pieza se marca como decorativa, que es
+                     preferible a que se anuncie «imagen» y nada más.
+
+                     Y si la lámina trae enlace, la pieza entera es el enlace:
+                     es lo que espera quien ve un banner. Sin enlace se queda en
+                     imagen, sin envolverla en un <a> que no lleva a ningún
+                     sitio. */ ?>
+            <?php
+            $altPieza = trim((string) ($l['titulo'] ?? ''));
+            $piezaImg = $sitio->imagen($l,
+                $foto('banners/pieza-1', 1950, 624, $altPieza,
+                      [640, 1024, 1600, 1950], '100vw', $i === 0),
+                ['sizes' => '100vw', 'prioridad' => $i === 0]);
+            ?>
+            <div class="hero__media hero__media--pieza"<?= $encuadre !== '' ? ' style="--encuadre: ' . $esc($encuadre) . '"' : '' ?>>
+              <?php if ($enlaceU !== ''): ?>
+                <a class="hero__pieza-enlace" href="<?= $esc($enlaceU) ?>"><?= $piezaImg ?></a>
+              <?php else: ?>
+                <?= $piezaImg ?>
+              <?php endif; ?>
+            </div>
+
+          <?php elseif ($aSangre): ?>
             <?php /* La fotografía llena la diapositiva y el texto va encima.
                      El velo es --hero: un foco elíptico anclado fuera del
                      encuadre, por la esquina inferior izquierda, que cubre la

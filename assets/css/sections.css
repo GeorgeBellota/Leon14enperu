@@ -76,6 +76,51 @@
   filter: none;
 }
 
+/* ── La lámina «sin-texto»: la pieza, entera ──────────────────────────────
+   Las demás láminas usan `cover`: la fotografía llena la franja y lo que sobra
+   se recorta, que es lo correcto cuando encima va a ir un titular. Aquí no va
+   nada encima, y lo que hay debajo no es una fotografía sino una PIEZA
+   CERRADA: un banner con su titular, su fecha y el sello de la Conferencia
+   Episcopal dibujados dentro.
+
+   Medido con el banner que envió el cliente —1950 × 624, casi tres veces más
+   ancho que alto— dentro de la franja de escritorio: `cover` se comía 248 px
+   por cada lado, y ahí es donde están el sello a la derecha y la orla a la
+   izquierda. En móvil, donde la franja es más alta que ancha, se habría visto
+   una cuarta parte del banner.
+
+   Así que `contain`: la pieza se ve completa siempre, y lo que sobra de franja
+   se rellena con el mismo crema de sus bordes (--surface, a dos o tres puntos
+   del color del propio archivo), de modo que no se lee como un marco sino como
+   aire. La regla lleva dos clases para ganar al `inset` que el bloque de móvil
+   le pone a .hero__media, que va más abajo en el archivo. */
+.hero .hero__media--pieza {
+  inset: 0;
+  background: var(--surface);
+}
+.hero .hero__media--pieza img {
+  object-fit: contain;
+  object-position: var(--encuadre, 50% 50%);
+}
+.hero__pieza-enlace { display: block; width: 100%; height: 100%; }
+
+/* Los mandos del carrusel son blancos porque las otras láminas son oscuras. En
+   ésta el fondo es crema y desaparecerían, así que sobre la pieza se pintan en
+   tinta. Es la única forma de hacerlo con un solo juego de mandos para todo el
+   carrusel: `:has()` mira qué lámina está activa en cada momento.
+
+   Si un navegador no entendiera `:has()`, los mandos se quedan blancos —que es
+   exactamente lo que hacen hoy— y no se rompe nada más. */
+.hero:has(.swiper-slide-active .hero__media--pieza) .hero__punto,
+.hero:has(.swiper-slide-active .hero__media--pieza) .hero__pausa { color: var(--ink); }
+.hero:has(.swiper-slide-active .hero__media--pieza) .hero__pausa {
+  border-color: color-mix(in srgb, var(--ink) 26%, transparent);
+}
+.hero:has(.swiper-slide-active .hero__media--pieza) .hero__barra {
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.hero:has(.swiper-slide-active .hero__media--pieza) .hero__barra i { background: var(--gold); }
+
 /* El relleno inferior deja de depender de vh: con altura fija, 12vh sobraba
    en pantallas altas y aplastaba el texto en las bajas. Ahora es sitio para
    la paginación y nada más. */
@@ -246,10 +291,30 @@
   filter: none;
 }
 
-/* Ken Burns muy contenido sobre la diapositiva activa */
+/* ── El Ken Burns está APAGADO, por decisión del cliente ──────────────────
+   Era un zoom muy contenido —del 100 % al 106 % en once segundos— sobre la
+   fotografía de la diapositiva activa. En móvil ya se había retirado antes
+   («fix(hero): sin zoom en el carrusel de móvil»); ahora se retira también en
+   escritorio y no queda en ninguna parte.
+
+   Y hay una razón técnica además de la estética: las láminas de diseño
+   «sin-texto» llevan piezas cerradas —un banner con su propio titular, su
+   fecha y el sello de la Conferencia Episcopal— que se muestran ENTERAS. Un
+   zoom sobre una pieza así la recorta por los cuatro lados mientras crece, que
+   es justo lo que ese diseño existe para evitar.
+
+   Se deja comentado y no borrado: volver a encenderlo es quitar los dos
+   asteriscos. Los fotogramas se quedan porque no cuestan nada y son la mitad
+   de la receta.
+
 .hero .swiper-slide-active .hero__media img,
 .hero .swiper-slide-active .hero__retrato img { animation: ken-burns 11s var(--ease) forwards; }
+*/
 @keyframes ken-burns { from { transform: scale(1); } to { transform: scale(1.06); } }
+/* Esta regla y la gemela del bloque de móvil quedan sin efecto mientras el
+   zoom siga apagado. No estorban, y si algún día se reactiva ya están puestas:
+   quien lo encienda no tiene que acordarse de volver a excluir el movimiento
+   reducido ni las pantallas pequeñas. */
 @media (prefers-reduced-motion: reduce) {
   .hero .swiper-slide-active .hero__media img,
   .hero .swiper-slide-active .hero__retrato img { animation: none; }
