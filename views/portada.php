@@ -173,12 +173,21 @@ $fotosHero = [
    deje la lámina sin imagen. Un rótulo que no esté aquí —una lámina nueva—
    simplemente no tiene reserva: se le elige la foto desde el panel, que es lo
    que habrá que hacer de todos modos. */
-$claveFoto = static function (string $rotulo): string {
-    $r = mb_strtolower(trim($rotulo));
+/* Se miran el rótulo Y el titular juntos, no sólo el rótulo.
+
+   Porque cuál de los dos lleva la palabra reconocible depende de la lámina, y
+   puede cambiarse desde el panel: en la Colecta el cliente pidió invertir la
+   jerarquía —«Súmate con tu donación» arriba en pequeño y «Colecta Nacional»
+   de titular—, y mirando sólo el rótulo la lámina se quedaba sin su clave y
+   heredaba la fotografía de la primera. Con los dos campos, mover una palabra
+   de un campo al otro deja de tener efectos colaterales. */
+$claveFoto = static function (array $lamina): string {
+    $r = mb_strtolower(trim(($lamina['rotulo'] ?? '') . ' ' . ($lamina['titulo'] ?? '')));
     $r = strtr($r, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n']);
 
     return match (true) {
-        str_contains($r, 'colecta')          => 'colecta',
+        str_contains($r, 'colecta'),
+        str_contains($r, 'donacion')         => 'colecta',
         str_contains($r, 'santidad'),
         str_contains($r, 'santos')           => 'santos',
         str_contains($r, 'amigos de leon')   => 'amigos',
@@ -213,7 +222,12 @@ $laminas = $bloques('hero', [
        carrusel que pasa cada siete segundos, y un dígito mal copiado en una
        cuenta bancaria es un error caro. Viven en el bloque de la colecta, más
        abajo, que es donde alguien los puede leer con calma y copiar. */
-    ['rotulo' => 'Colecta Nacional', 'titulo' => 'Súmate con tu donación',
+    /* La jerarquía va al revés de lo que parece: el titular es «Colecta
+       Nacional» y «Súmate con tu donación» es el rótulo pequeño de encima. Lo
+       marcó el cliente en su documento, donde «Colecta Nacional» va a 24 pt y
+       la otra frase al cuerpo normal. Es al contrario que en el bloque de
+       donaciones de más abajo, que conserva la suya. */
+    ['rotulo' => 'Súmate con tu donación', 'titulo' => 'Colecta Nacional',
      'texto'  => 'Con tu aporte ayudamos a preparar este gran encuentro de fe, unidad y esperanza.',
      'enlace_texto' => 'Cómo donar', 'enlace_url' => '#colecta',
      'datos'  => ['diseno' => 'fondo-derecha']],
@@ -301,7 +315,7 @@ $total   = count($laminas);
         /* La fotografía de reserva de ESTA lámina, buscada por su rótulo y no
            por su posición: apagar o reordenar láminas desde el panel no puede
            cambiarle la imagen a las demás. */
-        $reservaFoto = $fotosHero[$claveFoto((string) ($l['rotulo'] ?? ''))] ?? '';
+        $reservaFoto = $fotosHero[$claveFoto($l)] ?? '';
 
         /* El contenido es EL MISMO en los tres diseños. Va en un cierre para no
            tenerlo escrito dos veces: dos copias del mismo bloque acaban
