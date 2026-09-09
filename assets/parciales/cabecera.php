@@ -27,7 +27,11 @@ $menu = [
     'participa'            => 'Participa',
     'multimedia'           => 'Multimedia',
     'prensa'               => 'Prensa',
-    'materiales'           => 'Materiales',
+    /* «Subsidios» y no «Materiales»: es la palabra que usa el cliente y la que
+       busca una parroquia. La página sigue siendo /materiales/ —una dirección
+       ya compartida no se cambia— y su titular sigue diciendo «Materiales de
+       pastoral», que se edita desde el panel si algún día quieren igualarlo. */
+    'materiales'           => 'Subsidios',
     'guia-del-peregrino'   => 'Guía del peregrino',
     'preguntas-frecuentes' => 'Preguntas frecuentes',
     'patrocinios'          => 'Patrocinios',

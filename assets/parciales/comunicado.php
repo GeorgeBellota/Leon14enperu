@@ -61,29 +61,98 @@ $destino = $esDescarga
 if (!$esDescarga && !preg_match('#^https?://#i', $destino)) {
     $destino = $sitio->url($destino);
 }
+
+/* ── El texto ya no se pinta debajo de la imagen ───────────────────────────
+   Lo pidió el cliente: el cartel ocupa el área principal y abajo quedan sólo
+   los botones. La pieza que se sube al panel ya trae el mensaje escrito
+   dentro, así que repetirlo en un párrafo era decirlo dos veces y robarle
+   alto a la imagen.
+
+   PERO NO SE BORRA. Un cartel es una imagen y una imagen no la lee nadie con
+   un lector de pantalla: si el texto desapareciera del documento, el aviso
+   dejaría de existir para quien navega a ciegas. Sigue ahí, fuera de la
+   vista, y es el NOMBRE ACCESIBLE del diálogo —que es como se anunciaba
+   antes—. El campo «descripción» del panel conserva su sentido y su sitio.
+
+   Cuando no hay descripción, el nombre del comunicado hace de respaldo. Sin
+   esto el diálogo se quedaba con un `aria-labelledby` apuntando a un elemento
+   que no existía, y un diálogo sin nombre se anuncia como «diálogo».
+
+   ── Y SÓLO CUANDO HAY CARTEL ─────────────────────────────────────────────
+
+   El texto se retira porque la imagen ya lo dice. Un aviso SIN imagen no dice
+   nada: se quedaría en dos botones flotando y nadie sabría a qué está diciendo
+   que sí. Así que la regla es condicional —sin pieza gráfica, el párrafo se
+   pinta como toda la vida— y no hace falta acordarse de nada al publicar. */
+$descripcion = trim((string) $comunicado['descripcion']);
+
+/* ── El cartel de reserva ──────────────────────────────────────────────────
+   Mismo trato que el resto del sitio: la pieza vive escrita aquí y, en cuanto
+   alguien suba una desde el panel, la suya manda. Así el aviso no depende de
+   que nadie se acuerde de subir nada —sin imagen se quedaba en dos botones
+   flotando, sin decir a qué estabas diciendo que sí— y sigue siendo el panel
+   quien lo cambia el día que cambie la campaña.
+
+   Se comprueba el ARCHIVO y no un ajuste, como hace la cabecera con el
+   logotipo: si alguien lo borra por FTP, el aviso vuelve a enseñar su texto en
+   lugar de dejar una imagen rota.
+
+   ⚠ ES UNA SOLA PIEZA PARA TODOS LOS AVISOS, y hoy es la de la Colecta. Un
+   comunicado FUTURO que se publique sin imagen propia saldría con este cartel,
+   que no le corresponde. Mientras la Colecta sea la campaña viva no hay
+   problema; cuando deje de serlo, lo correcto es subir la pieza de cada aviso
+   desde el panel —que es lo que sustituye a esto— o cambiar este archivo. */
+$imagenPropia = trim((string) ($comunicado['imagen'] ?? ''));
+$reservaBase  = 'assets/img/banners/modal';
+$hayReserva   = is_file(dirname(__DIR__, 2) . '/' . $reservaBase . '-1120.jpg');
+$conCartel    = $imagenPropia !== '' || $hayReserva;
 ?>
-<dialog class="cta-modal" data-comunicado
+<dialog class="cta-modal<?= $conCartel ? ' cta-modal--cartel' : '' ?>" data-comunicado
         data-id="<?= $idComunicado ?>"
         data-aviso="<?= $esc($sitio->url('comunicado.php')) ?>"
         data-veces="<?= (int) $comunicado['veces_max'] ?>"
         data-retraso="<?= (int) $comunicado['retraso_ms'] ?>"
         data-autocierre="<?= (int) $comunicado['autocierre_ms'] ?>"
-        aria-labelledby="comunicado-texto">
+        <?= $descripcion !== ''
+              ? 'aria-labelledby="comunicado-texto"'
+              : 'aria-label="' . $esc($comunicado['nombre']) . '"' ?>>
 
   <button class="cta-modal__aspa" type="button" data-cta-cerrar aria-label="Cerrar el aviso">
     <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
   </button>
 
-  <?php if (!empty($comunicado['imagen'])): ?>
+  <?php if ($conCartel): ?>
     <span class="cta-modal__media">
-      <img src="<?= $esc($sitio->url((string) $comunicado['imagen'])) ?>"
-           alt="" loading="lazy" decoding="async">
+      <?php if ($imagenPropia !== ''): ?>
+        <?php /* La que subieron al panel, tal cual: llega con la proporción y
+                 el peso que tenga y no hay familia de anchos que servir. */ ?>
+        <img src="<?= $esc($sitio->url($imagenPropia)) ?>"
+             alt="" loading="lazy" decoding="async">
+      <?php else: ?>
+        <?php /* La de reserva sí va con sus tres anchos: el cartel no se pinta
+                 nunca a más de 560 px, así que 1120 cubre las pantallas 2x y
+                 un móvil no se descarga la pieza de escritorio. */ ?>
+        <picture>
+          <source type="image/webp"
+                  sizes="(min-width: 616px) 560px, calc(100vw - 56px)"
+                  srcset="<?= $esc($sitio->asset($reservaBase . '-560.webp'))  ?> 560w,
+                          <?= $esc($sitio->asset($reservaBase . '-840.webp'))  ?> 840w,
+                          <?= $esc($sitio->asset($reservaBase . '-1120.webp')) ?> 1120w">
+          <img src="<?= $esc($sitio->asset($reservaBase . '-560.jpg')) ?>"
+               sizes="(min-width: 616px) 560px, calc(100vw - 56px)"
+               srcset="<?= $esc($sitio->asset($reservaBase . '-560.jpg'))  ?> 560w,
+                       <?= $esc($sitio->asset($reservaBase . '-840.jpg'))  ?> 840w,
+                       <?= $esc($sitio->asset($reservaBase . '-1120.jpg')) ?> 1120w"
+               width="1428" height="1588"
+               alt="" loading="lazy" decoding="async">
+        </picture>
+      <?php endif; ?>
     </span>
   <?php endif; ?>
 
   <div class="cta-modal__cuerpo">
-    <?php if (trim((string) $comunicado['descripcion']) !== ''): ?>
-      <p class="cta-modal__texto" id="comunicado-texto"><?= nl2br($esc($comunicado['descripcion'])) ?></p>
+    <?php if ($descripcion !== ''): ?>
+      <p class="<?= $conCartel ? 'solo-lectores' : 'cta-modal__texto' ?>" id="comunicado-texto"><?= nl2br($esc($descripcion)) ?></p>
     <?php endif; ?>
 
     <div class="cta-modal__acciones">

@@ -1186,8 +1186,16 @@ body[data-ancla] { padding-block-end: 76px; }
   position: fixed;
   inset: 0;
   margin: auto;
-  width: min(460px, calc(100vw - var(--space-l) * 2));
+  /* 560 y no 460. El aviso dejó de ser «una imagen pequeña y un párrafo» para
+     ser el CARTEL: el cliente pidió que la pieza mande y que abajo queden sólo
+     los botones. Con 460 px el cartel de la Colecta —donde hay que leer dos
+     números de cuenta y un CCI de veinte dígitos— salía a un tamaño en el que
+     esos dígitos no se distinguen. */
+  width: min(560px, calc(100vw - var(--space-l) * 2));
   height: fit-content;
+  /* El ancho de arriba es el del aviso CON TEXTO, donde 560 px son la medida de
+     lectura. El modo cartel lo sustituye por un ancho que sigue a la imagen:
+     ver .cta-modal--cartel, más abajo. */
   /* Si el contenido crece o la ventana es baja, scroll dentro y no desbordado. */
   max-height: calc(100svh - var(--space-l) * 2);
   overflow: auto;
@@ -1204,6 +1212,34 @@ body[data-ancla] { padding-block-end: 76px; }
   transition: opacity .32s var(--ease), transform .32s var(--ease);
 }
 .cta-modal.esta-abierto { opacity: 1; transform: none; }
+
+/* ── El aviso-cartel se ajusta a la pieza, no al revés ────────────────────
+   El problema que resuelve, medido:
+
+   La imagen se muestra ENTERA, nunca recortada, así que cuando la ventana es
+   baja el tope de altura la encoge. Pero el diálogo seguía midiendo 560 px
+   fijos, así que la diferencia salía como dos franjas de fondo a los lados del
+   cartel. En un portátil de 768 px eran 38 px por lado; en un móvil apaisado,
+   177. El cartel dejaba de estar encuadrado y pasaba a flotar en una caja
+   blanca que no es parte de su diseño.
+
+   Con `fit-content` el diálogo mide lo que mida la imagen una vez aplicados
+   sus dos topes, y las franjas desaparecen. El `max-width` es el mismo valor
+   que antes era el ancho: en pantallas holgadas nada cambia.
+
+   El tope del ancho se repite en la imagen y NO se escribe como porcentaje: un
+   `max-width: 100%` dentro de una caja que se está midiendo por su contenido
+   es una referencia circular, y cada motor la resuelve a su manera. Con el
+   valor escrito dos veces, los dos lados miden lo mismo siempre.
+
+   Suelo: cuando la imagen queda más estrecha que la fila de botones, manda la
+   fila y vuelve a haber franjas —mucho más pequeñas—. Es el caso del móvil
+   apaisado, donde un cartel vertical no tiene forma de ser grande: ahí lo que
+   toca es que quepa y se pueda cerrar, no que llene. */
+.cta-modal--cartel {
+  width: fit-content;
+  max-width: min(560px, calc(100vw - var(--space-l) * 2));
+}
 
 .cta-modal::backdrop {
   background: color-mix(in srgb, #000 62%, transparent);
@@ -1232,6 +1268,12 @@ body[data-ancla] { padding-block-end: 76px; }
   background: var(--surface-alt);
   line-height: 0;   /* sin esto queda una franja bajo la imagen */
 }
+/* En el modo cartel el fondo se iguala al del aviso. La imagen se sigue
+   mostrando entera —nunca recortada—, así que una pieza vertical deja aire a
+   los lados; con el tono alterno esas dos franjas se leían como parte del
+   diseño del cartel, y ahora que la imagen ocupa casi todo el modal se notaban
+   el doble. Igualadas, el cartel flota y el aire desaparece. */
+.cta-modal--cartel .cta-modal__media { background: var(--surface); }
 
 /* `max-width` y `max-height`, nunca `width: 100%`.
    Con `width: 100%` la imagen se estira al ancho del aviso y luego el tope de
@@ -1240,16 +1282,44 @@ body[data-ancla] { padding-block-end: 76px; }
    conserva SU proporción, que es lo que significa «verse entera». */
 .cta-modal__media img {
   max-width: 100%;
-  max-height: 52vh;
+  /* El tope sube de 52vh a 70vh: el cartel es ahora el contenido del aviso y
+     no su ilustración. El segundo término es el que impide que crezca de más
+     en una ventana baja —un portátil de 768 px o un móvil apaisado—: 190 px
+     son la fila de botones (46) más los rellenos de arriba y de abajo, así que
+     los botones caben SIEMPRE sin que el diálogo tenga que hacer scroll. */
+  max-height: min(70vh, calc(100svh - 190px));
   width: auto;
   height: auto;
   display: block;
 }
 
+/* En el modo cartel los dos topes se recalculan.
+
+   ANCHO. El mismo valor que el `max-width` del diálogo, escrito y no en
+   porcentaje, por lo dicho arriba: dentro de una caja `fit-content` un
+   porcentaje se muerde la cola.
+
+   ALTO. La reserva baja de 190 px a 150. Está medida, no estimada: el diálogo
+   admite `100svh - 56` (sus dos márgenes) y por debajo de la imagen quedan el
+   relleno del cuerpo (20 + 20) y la fila de botones (46), que son 86. Con 150
+   sobran 64 px de holgura y la imagen gana 40 px de alto en toda ventana baja
+   —que es justo donde hacía falta—, sin que aparezca scroll. */
+.cta-modal--cartel .cta-modal__media img {
+  max-width: min(560px, calc(100vw - var(--space-l) * 2));
+  max-height: min(70vh, calc(100svh - 150px));
+}
+
+/* Con el cartel a todo lo alto, el relleno del cuerpo se recorta: lo que queda
+   debajo es una fila de botones, no un texto que necesite márgenes de lectura. */
 .cta-modal__cuerpo { padding: var(--space-l); }
+.cta-modal--cartel .cta-modal__cuerpo { padding: var(--space-m); }
 .cta-modal__titulo { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.05; margin-block: var(--space-2xs) var(--space-s); }
 .cta-modal__texto { color: var(--ink-soft); max-width: 46ch; }
 .cta-modal__acciones { display: flex; flex-wrap: wrap; gap: var(--space-s); margin-block-start: var(--space-l); }
+/* En el modo cartel no hay párrafo encima —el texto sigue en el documento,
+   pero fuera de la vista, como nombre accesible del diálogo—, así que ese
+   margen superior sería un hueco sin nada que separar. */
+.cta-modal--cartel .cta-modal__acciones { margin-block-start: 0; }
 .cta-modal__acciones .btn { flex: 1 1 auto; }
 
 /* Aspa de cierre. Va sobre la imagen, así que lleva su propio fondo: sin él
@@ -1287,9 +1357,36 @@ body[data-ancla] { padding-block-end: 76px; }
 /* max-width:100% es la red de seguridad: sin ella el inline-block no parte, y
    como .linea recorta lo que sobresale, un titular largo se cortaría a medias
    en lugar de pasar a la línea siguiente. */
-.js [data-reveal="mask-lines"] .linea > span { display: inline-block; max-width: 100%; transform: translateY(105%); }
+.js [data-reveal="mask-lines"] .linea > span { display: inline-block; max-width: 100%; transform: translateY(118%); }
 
-.linea { display: block; overflow: hidden; }
+/* ── El recorte de .linea ya no se come los descendentes ──────────────────
+   El síntoma: la «g» de «El Papa León XIV llega al Perú» salía cortada por
+   abajo. Y no era esa sección: era toda la casa. Cualquier titular cuya
+   ÚLTIMA línea acabara en g, j, p, q o y perdía la cola.
+
+   La causa, en dos piezas que por separado están bien:
+     · los titulares van a interlineado de cartel —h2 a 1.0—, y con eso la
+       caja de línea es MÁS BAJA que el alto real de la fuente: Fraunces pide
+       1,26 em entre ascendente y descendente, así que la cola de una «g»
+       asoma unos 0,07 em por debajo del renglón;
+     · .linea lleva overflow:hidden porque es la máscara de la animación de
+       entrada, y lo que asoma, lo corta.
+
+   La cura es dar a la máscara ese aire por abajo y devolvérselo al hueco con
+   un margen negativo del mismo tamaño: la caja recortada crece, la maqueta no
+   se mueve ni un píxel y ninguna línea de debajo se separa.
+
+   Los 0,14 em son con holgura —el doble de lo que asoma— y por eso el
+   desplazamiento inicial de la máscara subió de 105 % a 118 %: con la caja
+   más alta, el 105 % dejaba asomar la punta de la cola durante la animación.
+   Si se toca uno de los dos números hay que tocar el otro, y el gemelo de
+   este 118 vive en assets/js/reveal.js (yPercent). */
+.linea {
+  display: block;
+  overflow: hidden;
+  padding-block-end: 0.14em;
+  margin-block-end: -0.14em;
+}
 
 .is-revealed[data-reveal="wipe-up"]   { clip-path: inset(0% 0 0 0); }
 .is-revealed[data-reveal="fade-rise"] { opacity: 1; }

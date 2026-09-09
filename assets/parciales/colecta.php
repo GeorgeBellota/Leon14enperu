@@ -89,6 +89,43 @@ $colectaConTitulo = $colectaSoloCuentas && trim($colectaTitulo) !== '';
   <div class="contenedor">
     <div class="colecta__interior<?= $colectaSoloCuentas ? ' colecta__interior--cuentas' : '' ?>">
 
+      <?php /* ── El cartel de la Colecta ───────────────────────────────────
+               La pieza oficial de la Conferencia Episcopal. Va a todo el ancho
+               y por delante de las dos columnas: es el cartel, y un cartel se
+               lee antes que su letra pequeña.
+
+               Es la versión SIN las cuentas impresas, y eso importa. La primera
+               que llegó las traía dentro del JPEG, junto a las mismas que la
+               lista de abajo publica como texto editable: dos fuentes para el
+               mismo dato, una de ellas imposible de corregir desde el panel. El
+               día que cambiara una cuenta, la página habría publicado dos
+               números distintos para lo mismo. Con este cartel los dígitos
+               viven en un solo sitio, que es justo lo que este parcial existe
+               para garantizar. Si alguien lo sustituye desde el panel, que sea
+               por otro que tampoco los lleve.
+
+               No se pinta en /donativo/: esa página abre con su propia
+               cabecera ilustrada y serían dos carteles seguidos. */ ?>
+      <?php if (!$colectaSoloCuentas): ?>
+        <figure class="colecta__cartel" data-reveal="fade-rise">
+          <?= $sitio->imagen($colectaSecciones['colecta'] ?? [],
+              '<picture>'
+            . '<source type="image/webp" sizes="(min-width:1024px) 1148px, 92vw" srcset="'
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-640.webp')) . ' 640w, '
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-1024.webp')) . ' 1024w, '
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-1592.webp')) . ' 1592w">'
+            . '<img src="' . $e($sitio->asset('assets/img/fotos/colecta-banner-1024.jpg')) . '"'
+            . ' sizes="(min-width:1024px) 1148px, 92vw" srcset="'
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-640.jpg')) . ' 640w, '
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-1024.jpg')) . ' 1024w, '
+            . $e($sitio->asset('assets/img/fotos/colecta-banner-1592.jpg')) . ' 1592w"'
+            . ' width="1592" height="425"'
+            . ' alt="Colecta Nacional para la visita del Papa León XIV al Perú"'
+            . ' loading="lazy" decoding="async"></picture>',
+              ['sizes' => '(min-width:1024px) 1148px, 92vw']) ?>
+        </figure>
+      <?php endif; ?>
+
       <?php if ($colectaConTitulo): ?>
         <header class="seccion__encabezado colecta__encabezado">
           <span class="rotulo"><?= $e($colectaCampo('rotulo', 'Colecta Nacional')) ?></span>

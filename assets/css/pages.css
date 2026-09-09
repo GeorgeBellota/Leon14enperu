@@ -170,6 +170,36 @@
 .sede-caja__media { display: block; position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
 .sede-caja__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
 .sede-caja__enlace:hover .sede-caja__media img { transform: scale(1.05); }
+
+/* ── El tinte de rojo vino al pasar por encima ────────────────────────────
+   Lo pidió el cliente: «al pasar el cursor sobre la imagen, esta debería
+   cambiar a un tono rojo vino». El vino es --surface-invert (#6E0B14), el
+   mismo de las bandas oscuras del sitio; no entra ningún color nuevo.
+
+   Va en ::before y no en ::after porque ::after ya es el degradado que sostiene
+   el texto de la ficha, y ese tiene que quedar POR ENCIMA del tinte o el nombre
+   de la ciudad pierde contraste justo cuando el ratón está encima. Sin z-index
+   en ninguno de los dos: el orden de pintado es el del documento y ya es el
+   correcto.
+
+   EL EQUIVALENTE TÁCTIL. En un teléfono no hay cursor, así que el efecto se
+   engancha además a :active —mientras el dedo está sobre la tarjeta— y a
+   :focus-visible, que es el turno del teclado. Los tres estados comparten
+   declaración: el efecto es uno solo y se dispara de tres maneras.
+
+   Ojo si algún día se cambian estas fotografías desde el panel: hoy son
+   catedrales y plazas, y por eso el velo es libre. Sobre un rostro del Santo
+   Padre no puede ir, como no puede ir el degradado de abajo. */
+.sede-caja__media::before {
+  content: ""; position: absolute; inset: 0;
+  background: var(--surface-invert);
+  opacity: 0;
+  transition: opacity .35s var(--ease);
+}
+.sede-caja__enlace:hover .sede-caja__media::before,
+.sede-caja__enlace:focus-visible .sede-caja__media::before,
+.sede-caja__enlace:active .sede-caja__media::before { opacity: .58; }
+
 /* Velo inferior: la ficha se apoya en él y la foto no choca con el texto.
    Aquí no hay rostros —son catedrales y plazas—, así que el degradado es
    libre; es justo el caso para el que se escribió el componente. */
@@ -178,6 +208,49 @@
   background: linear-gradient(to top,
     color-mix(in srgb, var(--ink) 42%, transparent) 0%,
     transparent 46%);
+}
+
+/* ── La entrada, en tres tiempos ──────────────────────────────────────────
+   El cliente pidió que «primero aparezca la ciudad, luego el nombre y
+   finalmente el botón CONOCE LIMA».
+
+   El primer tiempo ya existía: la tarjeta entera entra con `fade-rise`, y lo
+   que se ve entrar es la fotografía, que ocupa la mitad de la ficha. Lo que
+   falta son los otros dos, y se hacen aquí, con transiciones y retardos
+   colgando de la clase `is-revealed` que reveal.js ya pone.
+
+   Por qué así y no con otra animación en reveal.js: el vocabulario de
+   animaciones de la casa es CERRADO —cuatro movimientos y no hay más— y esto
+   no es un movimiento nuevo, es un escalonado del que ya hay. Además así no
+   depende de GSAP: la clase la pone igual la red de seguridad de los tres
+   segundos, el barrido de lo que quedó por encima y el camino sin GSAP.
+
+   REGLA DE LA CASA, que aquí también manda: una animación de entrada nunca
+   puede dejar texto invisible. El estado escondido vive detrás de `.js`, así
+   que sin JavaScript la ficha nace entera; y como el disparador es la misma
+   clase que revela la tarjeta, no hay forma de que la tarjeta se vea y su
+   nombre no. */
+.js .sede-caja__cuerpo > * {
+  opacity: 0;
+  transform: translateY(9px);
+}
+.js .sede-caja.is-revealed .sede-caja__cuerpo > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+/* Segundo tiempo: el numeral, el nombre y su epígrafe, juntos. */
+.js .sede-caja.is-revealed .sede-caja__num,
+.js .sede-caja.is-revealed .sede-caja__nombre,
+.js .sede-caja.is-revealed .sede-caja__meta   { transition-delay: .20s; }
+.js .sede-caja.is-revealed .sede-caja__linea  { transition-delay: .30s; }
+/* Tercer tiempo: la llamada a la acción, la última. */
+.js .sede-caja.is-revealed .sede-caja__ir     { transition-delay: .42s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .sede-caja__cuerpo > * { opacity: 1; transform: none; }
+  .js .sede-caja.is-revealed .sede-caja__cuerpo > * { transition: none; transition-delay: 0s; }
+  .sede-caja__media::before { transition: none; }
 }
 
 .sede-caja__cuerpo {

@@ -119,24 +119,67 @@ final class Plantillas
                     'nombre' => 'Lámina',
                     'plural' => 'Láminas',
                     'campos' => ['rotulo', 'titulo', 'texto', 'imagen', 'imagen_movil', 'enlace_texto', 'enlace_url'],
-                    // El diseño viaja en `datos`, que es una columna JSON que la
+                    // Todo esto viaja en `datos`, que es una columna JSON que la
                     // tabla `bloques` ya tiene. Así no hace falta ni una columna
-                    // nueva ni un ALTER: una lámina sin este valor se pinta
+                    // nueva ni un ALTER: una lámina sin estos valores se pinta
                     // exactamente como se pintaba antes.
                     //
-                    // Es un campo de texto porque el editor del panel sabe pintar
-                    // tres cosas —imagen, área y texto— y añadir un desplegable
+                    // Son campos de texto porque el editor del panel sabe pintar
+                    // tres cosas —imagen, área y texto— y añadir desplegables
                     // obligaría a tocar la vista del panel. La vista pública
-                    // normaliza lo que llegue: cualquier cosa que no sea «fondo»
-                    // cae en el diseño partido, que es el de siempre. Una errata
-                    // no rompe la portada, sólo no cambia el diseño.
+                    // normaliza lo que llegue: cualquier cosa que no reconozca
+                    // cae en el comportamiento de siempre. Una errata no rompe la
+                    // portada, sólo no cambia nada.
                     'datos'  => [
                         'diseno' => [
-                            'etiqueta' => 'Diseño de la lámina — escribe «fondo» para la '
-                                        . 'fotografía a sangre con el texto encima; déjalo '
-                                        . 'vacío para el diseño partido, con el texto en el '
-                                        . 'panel de color al lado de la imagen',
+                            'etiqueta' => 'Diseño de la lámina',
                             'tipo'     => 'texto',
+                            'ayuda'    => 'Vacío = diseño partido, con el texto en el panel de color '
+                                        . 'al lado de la imagen. Es el único que admite el retrato del '
+                                        . 'Santo Padre, que no puede llevar velo ni degradado encima. · '
+                                        . '«fondo» = fotografía a sangre con el texto encima, apoyado a '
+                                        . 'la izquierda. · «fondo-derecha» = igual, pero con el texto a '
+                                        . 'la derecha; se usa cuando el motivo principal de la '
+                                        . 'fotografía cae en el lado izquierdo y el bloque lo taparía. · '
+                                        . '«sin-texto» = sólo la imagen, sin rótulo, titular, bajada ni '
+                                        . 'botones. Para banners ya diseñados que traen su propio texto '
+                                        . 'dentro. La imagen se muestra ENTERA, sin recortar, así que '
+                                        . 'conviene subir además una versión vertical en «imagen para '
+                                        . 'móvil»: un banner muy apaisado se ve diminuto en un teléfono. '
+                                        . 'El campo «Titular» no se pinta pero se usa como texto '
+                                        . 'alternativo de la imagen; escríbelo igualmente.',
+                        ],
+                        // El encuadre y la barandilla salieron de los cambios que
+                        // pidió el cliente en septiembre de 2026: la lámina de los
+                        // cinco santos necesitaba subir el recorte para no perder
+                        // las caras, y decir otra cosa que las fechas y las sedes.
+                        'encuadre' => [
+                            'etiqueta' => 'Encuadre de la fotografía',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Sólo para las láminas «fondo». Qué parte de la fotografía se '
+                                        . 'conserva al recortarla a la franja del carrusel. Se escribe '
+                                        . 'como dos porcentajes, horizontal y vertical: «50% 42%» es el '
+                                        . 'centro y es lo que se usa si lo dejas vacío. Bajar el segundo '
+                                        . 'número sube el recorte —«50% 26%» conserva la franja alta, '
+                                        . 'donde suelen estar las caras—.',
+                        ],
+                        'dato' => [
+                            'etiqueta' => 'Barandilla de datos',
+                            'tipo'     => 'area',
+                            'ayuda'    => 'La hilera pequeña que va bajo el texto, sobre los botones. '
+                                        . 'Vacío = «11–16 noviembre 2026 · Lima · Chiclayo · Cusco · '
+                                        . 'Pucallpa», que es lo que dicen las demás láminas. Para poner '
+                                        . 'otra cosa, separa los elementos con una barra vertical (|) y '
+                                        . 'usa un salto de línea para abrir un segundo renglón. '
+                                        . 'En móvil esta hilera no se muestra: la banda de texto sólo da '
+                                        . 'para el rótulo, el titular y un botón.',
+                        ],
+                        'segundo_boton' => [
+                            'etiqueta' => 'Segundo botón',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Vacío = detrás del botón de la lámina se añade solo «Sé '
+                                        . 'voluntario», que es la única acción abierta hoy. Escribe «no» '
+                                        . 'para dejar únicamente el botón de la lámina.',
                         ],
                     ],
                     'maximo' => 8,
@@ -296,8 +339,16 @@ final class Plantillas
                 'ayuda'   => 'La llamada a colaborar con la visita, con las cuentas para el '
                            . 'depósito. Los números se copian tal cual del comunicado oficial '
                            . 'de la Conferencia Episcopal: un dígito cambiado manda el dinero '
-                           . 'de alguien a otra cuenta. Revísalos dos veces antes de guardar.',
-                'campos'  => ['rotulo', 'titulo', 'subtitulo', 'texto_html', 'cta_texto', 'cta_url'],
+                           . 'de alguien a otra cuenta. Revísalos dos veces antes de guardar. '
+                           . '⚠ El cartel de esta sección NO debe llevar los números impresos '
+                           . 'dentro: si los lleva, el día que cambie una cuenta la página '
+                           . 'publicaría dos números distintos para lo mismo y corregir el de '
+                           . 'aquí abajo no arreglaría el de la imagen.',
+                // `imagen` es el cartel de la Colecta, a todo el ancho y por
+                // delante de las dos columnas. `imagen_movil` permite subir una
+                // versión recortada para pantallas estrechas: el cartel es muy
+                // apaisado y en un móvil los números quedan diminutos.
+                'campos'  => ['rotulo', 'titulo', 'subtitulo', 'texto_html', 'imagen', 'imagen_movil', 'cta_texto', 'cta_url'],
                 'bloques' => [
                     'nombre' => 'Cuenta',
                     'plural' => 'Cuentas',
