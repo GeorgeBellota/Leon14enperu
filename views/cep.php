@@ -36,22 +36,35 @@ $hay = static fn (string $s): bool
 
 <main id="contenido">
 
+<?php /* La cabecera va como la del resto de páginas: la fotografía a sangre y
+         el bloque de título flotando encima. Se probó con la caja adaptada a la
+         proporción del banner —la pieza entera, el título debajo—, y el cliente
+         prefirió la coherencia con las demás internas aunque el encuadre se
+         coma los extremos de la fila de obispos. */ ?>
 <header class="cabecera-pagina">
   <div class="cabecera-pagina__media">
     <?php /* ── La portada de esta página ──────────────────────────────
          Sale del panel: Páginas → esta página → Cabecera. Se puede
          elegir una foto para escritorio y otra para móvil.
 
-         Lo que va aquí abajo es el RESPALDO: la fotografía que la
-         página traía escrita a mano. Mientras nadie elija otra en el
-         panel se sigue viendo ésta, así que pasar la portada al
-         gestor no cambió el aspecto de nada el día del despliegue. */ ?>
-      <?php ob_start(); ?>
-      <picture>
-      <source type="image/webp" sizes="100vw" srcset="../assets/img/apostolico.webp 640w, ../assets/img/apostolico.webp 1024w, ../assets/img/apostolico.webp 1600w, ../assets/img/apostolico.webp 2200w">
-      <img src="../assets/img/apostolico.webp" sizes="100vw" srcset="../assets/img/apostolico.webp 640w, ../assets/img/apostolico.webp 1024w, ../assets/img/apostolico.webp 1600w, ../assets/img/apostolico.webp 2200w" width="2200" height="943" alt="" fetchpriority="high" decoding="async">
-    </picture>
-      <?php $respaldoPortada = (string) ob_get_clean(); ?>
+         Lo que va aquí abajo es el RESPALDO: la pieza que la página trae
+         escrita. Mientras nadie elija otra en el panel se sigue viendo
+         ésta. */ ?>
+      <?php
+      $anchosPortada = [640, 1024, 1600, 1950];
+      $webp = $jpg = [];
+      foreach ($anchosPortada as $w) {
+          $webp[] = $esc($sitio->asset("assets/img/banners/cabecera-cep-{$w}.webp")) . " {$w}w";
+          $jpg[]  = $esc($sitio->asset("assets/img/banners/cabecera-cep-{$w}.jpg"))  . " {$w}w";
+      }
+      $respaldoPortada = '<picture>'
+        . '<source type="image/webp" sizes="100vw" srcset="' . implode(', ', $webp) . '">'
+        . '<img src="' . $esc($sitio->asset('assets/img/banners/cabecera-cep-1600.jpg')) . '"'
+        . ' sizes="100vw" srcset="' . implode(', ', $jpg) . '"'
+        . ' width="1950" height="624"'
+        . ' alt="Los obispos del Perú con el Papa León XIV en el Vaticano"'
+        . ' fetchpriority="high" decoding="async"></picture>';
+      ?>
       <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoPortada, ['sizes' => '100vw', 'prioridad' => true]) ?>
   </div>
   <div class="cabecera-pagina__contenido contenedor">

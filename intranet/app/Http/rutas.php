@@ -18,6 +18,7 @@ use Intranet\Controllers\AuthController;
 use Intranet\Controllers\ComunicadoController;
 use Intranet\Controllers\ConfiguracionController;
 use Intranet\Controllers\MantenimientoController;
+use Intranet\Controllers\DocumentoController;
 use Intranet\Controllers\MedioController;
 use Intranet\Controllers\PaginaController;
 use Intranet\Controllers\PanelController;
@@ -71,6 +72,17 @@ return static function (Router $r): void {
         $r->post('',                 [MedioController::class, 'subir'])->permiso('medios.subir');
         $r->post('/{id:\d+}',        [MedioController::class, 'actualizar'])->permiso('medios.subir');
         $r->post('/{id:\d+}/borrar', [MedioController::class, 'borrar'])->permiso('medios.subir');
+    });
+
+    // ── Biblioteca de documentos ─────────────────────────────────────────
+    // Los PDF que enlazan las páginas. Sin tabla: la biblioteca es la carpeta,
+    // y se lee del disco. Reutiliza los permisos de la de imágenes en vez de
+    // inventar unos nuevos, que costarían filas en `permisos` y `rol_permiso`
+    // y una migración para repartirlos.
+    $r->grupo('/documentos', ['auth' => true, 'permiso' => 'medios.ver'], function (Router $r): void {
+        $r->get('',        [DocumentoController::class, 'listar'])->nombre('documentos');
+        $r->post('',       [DocumentoController::class, 'subir'])->permiso('medios.subir');
+        $r->post('/borrar', [DocumentoController::class, 'borrar'])->permiso('medios.subir');
     });
 
     // ── Comunicados ──────────────────────────────────────────────────────

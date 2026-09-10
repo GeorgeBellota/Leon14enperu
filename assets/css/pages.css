@@ -143,6 +143,120 @@
 .cabecera-pagina__bajada { max-width: 42ch; font-size: var(--step-1); line-height: 1.4; color: color-mix(in srgb, var(--on-primary) 88%, transparent); }
 .cabecera-pagina .migas { margin-block-start: var(--space-l); color: color-mix(in srgb, var(--on-primary) 82%, transparent); }
 
+/* ── Cabecera de PIEZA: el banner entero, y el texto debajo ───────────────
+   Para las páginas cuya portada no es una fotografía sino una pieza ya
+   compuesta —el banner de la CEP—, que no se puede recortar sin perder parte
+   de lo que la hace esa pieza.
+
+   La cabecera normal es una caja de alto fijo con la imagen a sangre detrás y
+   el título encima. Con un banner de 1950 × 624 eso se llevaba 217 px por cada
+   lado en escritorio —obispos de los dos extremos— y dos tercios del ancho en
+   móvil.
+
+   Aquí la caja toma la proporción del banner en lugar de imponerle la suya:
+   `aspect-ratio` con las medidas del archivo, la imagen en flujo y no absoluta,
+   y el bloque de título DEBAJO, sobre el rojo de la cabecera, en vez de encima.
+   La pieza se ve entera, al 100 % de ancho y de alto de su caja, sin recorte y
+   sin franjas, y en móvil queda arriba con el texto debajo.
+
+   No lleva media queries: la proporción vale igual a 390 que a 1920. Lo único
+   que cambia con el ancho es el alto, y lo cambia sola. */
+.cabecera-pagina--pieza {
+  display: block;
+  min-height: 0;
+}
+.cabecera-pagina--pieza .cabecera-pagina__media {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 1950 / 624;
+}
+/* La caja ya tiene la proporción del archivo, así que `cover` no recorta nada:
+   se queda porque es lo que hace que una imagen de otra proporción —el día que
+   suban otra desde el panel— llene la caja en vez de deformarse. */
+.cabecera-pagina--pieza .cabecera-pagina__media img { object-position: 50% 50%; }
+
+.cabecera-pagina--pieza .cabecera-pagina__contenido { padding-block: var(--space-xl) 0; }
+/* El bloque deja de ser tarjeta: ya no se apoya sobre la fotografía, sino
+   sobre el rojo de la cabecera, y una tarjeta roja sobre fondo rojo sólo añade
+   un borde que no separa nada. */
+.cabecera-pagina--pieza .cabecera-pagina__bloque {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+  margin-block-end: 0;
+}
+.cabecera-pagina--pieza .cabecera-pagina__titulo { max-width: 18ch; }
+
+/* ── Cabecera de SANTO: la pieza como fondo, con velo y texto centrado ────
+   Aquí la imagen sí es un fondo y no una pieza que preservar, así que
+   conserva la geometría de siempre —alto fijo y recorte— y lo que cambia es
+   el tratamiento: un velo tenue para que el texto se lea sobre cualquier zona
+   de la fotografía, y la composición centrada.
+
+   El velo es doble a propósito. El degradado vertical solo no basta: la pieza
+   tiene un mosaico muy claro a la izquierda y follaje oscuro a la derecha, y
+   un velo uniforme que funcione sobre el mosaico ensucia el resto. Con una
+   base plana suave más el degradado, el texto se sostiene por encima de 4,5:1
+   en las dos mitades sin apagar la imagen. */
+.cabecera-pagina--santo .cabecera-pagina__media::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to top,
+      color-mix(in srgb, var(--surface-invert) 78%, transparent) 0%,
+      color-mix(in srgb, var(--surface-invert) 42%, transparent) 46%,
+      color-mix(in srgb, var(--surface-invert) 24%, transparent) 100%),
+    color-mix(in srgb, var(--surface-invert) 22%, transparent);
+}
+.cabecera-pagina--santo .cabecera-pagina__contenido {
+  display: flex;
+  justify-content: center;
+  /* Sin tarjeta que sobresalga, el relleno de abajo tiene que ser real: es lo
+     que separa las migas del borde de la cabecera. */
+  padding-block-end: var(--space-xl);
+}
+.cabecera-pagina--santo .cabecera-pagina__bloque {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-align: center;
+  max-width: 46rem;
+  /* El bloque normal ASOMA por debajo de la cabecera: es una tarjeta opaca que
+     monta sobre la sección siguiente. Aquí no hay tarjeta, así que lo que
+     asomaba era texto blanco sobre el papel blanco de la página —las migas
+     desaparecían—. Se queda dentro. */
+  margin-block-end: 0;
+}
+.cabecera-pagina--santo .cabecera-pagina__titulo {
+  max-width: none;
+  margin-inline: auto;
+}
+.cabecera-pagina--santo .cabecera-pagina__bajada {
+  max-width: 52ch;
+  margin-inline: auto;
+}
+/* Las migas son una lista horizontal: centrarlas es centrar la lista, no el
+   texto de cada elemento. */
+.cabecera-pagina--santo .migas ol { justify-content: center; }
+
+@media (max-width: 767px) {
+  /* Sin el fondo sólido de la tarjeta, el velo es lo único que sostiene el
+     texto, así que en móvil se cierra un punto: la caja es más estrecha y el
+     titular cae sobre más superficie de imagen. */
+  .cabecera-pagina--santo .cabecera-pagina__media::after {
+    background:
+      linear-gradient(to top,
+        color-mix(in srgb, var(--surface-invert) 86%, transparent) 0%,
+        color-mix(in srgb, var(--surface-invert) 58%, transparent) 52%,
+        color-mix(in srgb, var(--surface-invert) 34%, transparent) 100%),
+      color-mix(in srgb, var(--surface-invert) 30%, transparent);
+  }
+}
+
 /* ════════════════════════════════════════════════════════════════════════
    GRILLA DE SEDES (home)
    Sustituye al diagrama de nodos y al índice móvil: una sola pieza para los
@@ -1100,3 +1214,68 @@
 .pagina-404 h1 { margin-block: var(--space-s) var(--space-m); }
 .pagina-404 p { max-width: var(--measure); color: var(--ink-soft); }
 .pagina-404 .fila { margin-block-start: var(--space-l); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   SUBSIDIOS · las descargas de /materiales/
+   Cada pieza es una portada de PDF con su título y su botón. La portada NO se
+   recorta: un A4 y una lámina apaisada conviven en la misma página y las dos
+   tienen que verse enteras, así que la caja se adapta a la imagen —height
+   auto— en vez de imponerle una proporción.
+   ════════════════════════════════════════════════════════════════════════ */
+.subsidios-rejilla {
+  display: grid;
+  gap: var(--space-xl) var(--space-l);
+  grid-template-columns: minmax(0, 1fr);
+  margin-block-start: var(--space-2xl);
+}
+@media (min-width: 600px)  { .subsidios-rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Tres y no cuatro: los subsidios aprobados son cinco, y en cuatro columnas
+   el quinto se queda solo en una fila con tres huecos al lado. En tres van
+   3 + 2, que se lee como un bloque, y de paso las portadas ganan tamaño. */
+@media (min-width: 1024px) { .subsidios-rejilla { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.subsidio { display: flex; flex-direction: column; gap: var(--space-s); }
+.subsidio__portada {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--sombra-m);
+  background: var(--surface-alt);
+  line-height: 0;   /* sin esto queda una franja bajo la imagen */
+}
+.subsidio__portada img { width: 100%; height: auto; display: block; }
+.subsidio__cuerpo { display: flex; flex-direction: column; gap: var(--space-2xs); flex: 1; }
+.subsidio__titulo {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: var(--step-1b); line-height: 1.15; letter-spacing: -0.02em;
+  margin: 0;
+}
+.subsidio__texto { margin: 0; color: var(--ink-soft); font-size: var(--step--1); line-height: 1.5; }
+/* El botón se pega abajo para que, en una hilera de cuatro piezas con títulos
+   de distinto largo, todos queden a la misma altura. */
+.subsidio__pie {
+  margin: auto 0 0;
+  padding-block-start: var(--space-s);
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs) var(--space-s);
+}
+.subsidio__peso {
+  font-family: var(--font-ui); font-size: var(--step--2); font-weight: 600;
+  letter-spacing: var(--track-meta); text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── La pieza destacada ────────────────────────────────────────────────────
+   El documento que presenta el conjunto. Su portada es apaisada y las otras
+   cinco son A4, así que no puede ir en la misma rejilla: aquí va a lo ancho,
+   con la portada a un lado y el texto al otro. */
+@media (min-width: 900px) {
+  .subsidio--ancha {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2xl);
+  }
+  .subsidio--ancha .subsidio__portada { flex: 0 0 46%; }
+  .subsidio--ancha .subsidio__cuerpo  { flex: 1; }
+  .subsidio--ancha .subsidio__titulo  { font-size: var(--step-2); }
+  .subsidio--ancha .subsidio__texto   { font-size: var(--step-0); max-width: 46ch; }
+  .subsidio--ancha .subsidio__pie     { margin-block-start: var(--space-m); }
+}

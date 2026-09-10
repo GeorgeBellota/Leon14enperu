@@ -66,6 +66,7 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
         <?php endif; ?>
         <?php if ($auth->puede('medios.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/medios') ?>"<?= $activo('/medios') ?>>Imágenes</a>
+          <a class="menu__enlace" href="<?= $url('/documentos') ?>"<?= $activo('/documentos') ?>>Documentos</a>
         <?php endif; ?>
         <?php if ($auth->puede('comunicados.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/comunicados') ?>"<?= $activo('/comunicados') ?>>Comunicados</a>

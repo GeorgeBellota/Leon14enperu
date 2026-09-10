@@ -98,8 +98,15 @@
   inset: 0;
   background: var(--surface);
 }
+/* LLENA la franja, y por decisión del cliente después de verlo montado: con
+   `contain` la pieza se veía entera pero dejaba franjas de crema arriba y
+   abajo, y prefiere que no quede fondo sin cubrir. Vuelve a ser `cover`, que
+   recorta por los lados lo que sobre.
+
+   El `background` de la caja se queda: es lo que se ve si algún día suben una
+   pieza más apaisada todavía, mientras carga. */
 .hero .hero__media--pieza img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: var(--encuadre, 50% 50%);
 }
 .hero__pieza-enlace { display: block; width: 100%; height: 100%; }
@@ -1567,6 +1574,17 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 @media (max-width: 1023px) {
   .llegada__figura { margin-block-start: var(--space-xl); }
 }
+
+/* ── El tamaño de la fotografía ───────────────────────────────────────────
+   Ocupaba cinco de las doce columnas y se quedaba corta para lo que es: unos
+   sesenta obispos en fila con el Santo Padre en medio. A ese tamaño no se
+   distingue a nadie, así que pasa a SEIS columnas.
+
+   Y hasta ahí. Se probó a sangre, rompiendo el contenedor hasta el borde de la
+   ventana, y el cliente lo descartó: la fotografía pegada al canto de la
+   pantalla se come el aire que ordena la página, y esta sección no es una
+   banda a sangre como la carta o el bloque de «Prepara tu corazón», es una
+   retícula de texto y foto. Se queda dentro del contenedor, con su margen. */
 
 /* Las cuatro ciudades como índice del recorrido. Cada una es un enlace a su
    sede: quien sólo quiere saber si el Papa pasa por la suya no tiene que

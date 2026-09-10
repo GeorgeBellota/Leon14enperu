@@ -32,6 +32,40 @@ $campo = static fn (string $s, string $c, string $r = ''): string
     => \Intranet\Publico\Sitio::campo($secciones, $s, $c, $r);
 $hay = static fn (string $s): bool
     => \Intranet\Publico\Sitio::activa($secciones, $s);
+$bloques = static fn (string $s, array $r = []): array
+    => \Intranet\Publico\Sitio::bloques($secciones, $s, $r);
+$rico = static fn (?string $v): string
+    => \Intranet\Core\HtmlSeguro::limpiar((string) ($v ?? ''));
+
+/* ── El peso de un archivo, medido y no escrito ────────────────────────────
+   Se lee del archivo real en cada visita. Un campo de peso en el panel es un
+   dato que envejece en cuanto alguien sustituye el PDF, y decir «3,7 MB» de
+   uno que ahora pesa nueve es peor que no decir nada: quien lo abre con datos
+   móviles decide por esa cifra.
+
+   Devuelve cadena vacía si el archivo no está, y entonces la vista no pinta el
+   botón. Es deliberado: un botón de descarga que lleva a un 404 es peor que la
+   ausencia del botón, sobre todo en una página cuyo trabajo es repartir
+   documentos. */
+$peso = static function (string $relativa): string {
+    $relativa = ltrim(trim($relativa), '/');
+    if ($relativa === '' || str_contains($relativa, '..')) {
+        return '';
+    }
+
+    $fisica = realpath(dirname(__DIR__) . '/' . $relativa);
+    $raiz   = realpath(dirname(__DIR__) . '/assets');
+
+    if ($fisica === false || $raiz === false || !str_starts_with($fisica, $raiz) || !is_file($fisica)) {
+        return '';
+    }
+
+    $mb = filesize($fisica) / (1024 * 1024);
+
+    return $mb >= 1
+        ? number_format($mb, 1, ',', '.') . ' MB'
+        : max(1, (int) round($mb * 1024)) . ' KB';
+};
 ?>
 
 <main id="contenido">
@@ -69,14 +103,177 @@ $hay = static fn (string $s): bool
   </div>
 </header>
 
-<section class="seccion" aria-labelledby="t-mat">
+<?php
+/* ══════════════════════════════════════════════════════════════════════════
+   LOS SUBSIDIOS · lo que ya se puede descargar
+
+   Es el punto 07.a de la solicitud del cliente. Hasta hoy esta página decía
+   que no había nada publicado; ahora abre con las seis piezas aprobadas.
+
+   Cada una es un bloque del panel: portada de la biblioteca de imágenes y PDF
+   por su ruta. Lo que va escrito aquí abajo es la RESERVA, con las mismas seis
+   piezas, para que la página no se quede muda si la base no responde.
+
+   La primera va DESTACADA —a lo ancho y con la portada al lado— porque no es
+   un subsidio más: es el documento que presenta el conjunto, y su portada es
+   apaisada mientras que las otras cinco son A4. Meterla en la misma rejilla
+   dejaba una tarjeta con una forma distinta a las demás sin explicar por qué.
+   Se marca con «destacada» en el panel, no por su posición: reordenar las
+   piezas no puede cambiar cuál manda.
+   ══════════════════════════════════════════════════════════════════════════ */
+$piezas = $bloques('subsidios', [
+    ['titulo' => 'Subsidios para la visita del Papa León XIV al Perú',
+     'texto'  => 'El documento que presenta los cinco subsidios y cómo usarlos en la parroquia, el colegio y la familia.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/subsidios-papa-leon-xiv.pdf', 'destacado' => 'sí']],
+    ['titulo' => 'Papa León: cercano y peruano',
+     'texto'  => 'Quién es León XIV y qué lo une al Perú, para conocerlo antes de recibirlo.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/1-papa-leon-cercano-peruano.pdf']],
+    ['titulo' => 'Unidos en Cristo, sembradores de paz',
+     'texto'  => 'El lema del Santo Padre llevado a la vida de la comunidad.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/2-unidos-en-cristo.pdf']],
+    ['titulo' => 'Familias que cuidan la vida',
+     'texto'  => 'Material para trabajar en familia durante las semanas previas.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/3-familias-que-cuidan-la-vida.pdf']],
+    ['titulo' => 'Los jóvenes y la misión',
+     'texto'  => 'Para grupos juveniles, colegios y pastoral universitaria.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/4-los-jovenes-y-la-mision.pdf']],
+    ['titulo' => 'Pastoral social: la dignidad de toda persona',
+     'texto'  => 'La dimensión social de la fe, con propuestas para la comunidad.',
+     'datos'  => ['archivo' => 'assets/docs/subsidios/5-pastoral-social.pdf']],
+]);
+
+/* La portada de reserva de cada pieza se empareja por el NOMBRE DEL ARCHIVO y
+   no por la posición, que es la lección de la portada: apagar o reordenar una
+   pieza no puede cambiarle la imagen a las demás. */
+$portada = static function (array $p) use ($sitio, $esc): string {
+    $ruta = (string) ($p['datos']['archivo'] ?? '');
+    $base = pathinfo($ruta, PATHINFO_FILENAME);
+
+    if ($base === '' || !is_file(dirname(__DIR__) . "/assets/img/subsidios/{$base}-420.jpg")) {
+        return '';
+    }
+
+    $w = $j = [];
+    foreach ([420, 840] as $ancho) {
+        $w[] = $esc($sitio->asset("assets/img/subsidios/{$base}-{$ancho}.webp")) . " {$ancho}w";
+        $j[] = $esc($sitio->asset("assets/img/subsidios/{$base}-{$ancho}.jpg"))  . " {$ancho}w";
+    }
+
+    return '<picture>'
+         . '<source type="image/webp" sizes="(min-width:1024px) 22vw, (min-width:600px) 40vw, 80vw" srcset="' . implode(', ', $w) . '">'
+         . '<img src="' . $esc($sitio->asset("assets/img/subsidios/{$base}-420.jpg")) . '"'
+         . ' sizes="(min-width:1024px) 22vw, (min-width:600px) 40vw, 80vw" srcset="' . implode(', ', $j) . '"'
+         . ' alt="" loading="lazy" decoding="async"></picture>';
+};
+
+/* El nombre del archivo descargado, a partir del título de la pieza. */
+$nombreDescarga = static function (string $titulo, string $archivo): string {
+    $ext  = strtolower((string) pathinfo($archivo, PATHINFO_EXTENSION)) ?: 'pdf';
+    $base = mb_strtolower(trim($titulo));
+    $base = strtr($base, ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u','ü'=>'u','ñ'=>'n']);
+    $base = preg_replace('~[^a-z0-9]+~', '-', $base) ?? '';
+    $base = trim($base, '-');
+
+    return ($base === '' ? 'documento' : mb_substr($base, 0, 80)) . '.' . $ext;
+};
+
+$destacada = null;
+$rejilla   = [];
+foreach ($piezas as $p) {
+    $esDestacada = mb_strtolower(trim((string) ($p['datos']['destacado'] ?? ''))) !== '';
+    if ($esDestacada && $destacada === null) { $destacada = $p; continue; }
+    $rejilla[] = $p;
+}
+?>
+<?php if ($piezas !== []): ?>
+<section class="seccion subsidios" id="subsidios" aria-labelledby="t-subsidios">
+  <div class="contenedor">
+
+    <header class="seccion__encabezado seccion__encabezado--mayor">
+      <hr class="seccion__filete" data-reveal="line-draw">
+      <span class="rotulo"><?= $esc($campo('subsidios', 'rotulo', 'Ya disponibles')) ?></span>
+      <h2 class="titular--mayor" id="t-subsidios" data-reveal="mask-lines">
+        <span class="linea"><span><?= $esc($campo('subsidios', 'titulo', 'Subsidios para la visita')) ?></span></span>
+      </h2>
+      <div class="texto-lectura">
+        <?= $rico($campo('subsidios', 'texto',
+            '<p>Cinco materiales aprobados por la Conferencia Episcopal Peruana para preparar la visita en la parroquia, el colegio y la familia. Descarga libre y uso gratuito.</p>')) ?>
+      </div>
+    </header>
+
+    <?php
+    /* Una pieza: portada, título, texto y botón. El botón sólo existe si el
+       archivo existe de verdad —$peso() devuelve vacío si no—, porque un
+       enlace de descarga que da 404 en la página que reparte los documentos es
+       peor que no ponerlo. */
+    $pintarPieza = static function (array $p, bool $ancha) use ($esc, $sitio, $peso, $portada, $nombreDescarga): void {
+        $archivo = trim((string) ($p['datos']['archivo'] ?? ''));
+        $kilos   = $peso($archivo);
+        $img     = $sitio->imagen($p, $portada($p), [
+            'sizes' => $ancha ? '(min-width:900px) 30vw, 80vw' : '(min-width:1024px) 22vw, (min-width:600px) 40vw, 80vw',
+        ]);
+        ?>
+        <article class="subsidio<?= $ancha ? ' subsidio--ancha' : '' ?>" data-reveal="fade-rise">
+          <?php if ($img !== ''): ?>
+            <div class="subsidio__portada"><?= $img ?></div>
+          <?php endif; ?>
+          <div class="subsidio__cuerpo">
+            <h3 class="subsidio__titulo"><?= $esc($p['titulo'] ?? '') ?></h3>
+            <?php if (($p['texto'] ?? '') !== ''): ?>
+              <p class="subsidio__texto"><?= $esc(strip_tags((string) $p['texto'])) ?></p>
+            <?php endif; ?>
+            <?php if ($kilos !== ''): ?>
+              <p class="subsidio__pie">
+                <?php /* El nombre con el que se guarda en el ordenador de quien
+                         descarga sale del TÍTULO, no de la ruta. Los archivos que
+                         suben desde el panel se llaman «doc-61d109b8.pdf» —el
+                         nombre lo pone el servidor, por seguridad—, y con eso en
+                         la carpeta de descargas nadie sabe qué bajó. */ ?>
+                <a class="btn btn--primario" href="<?= $esc($sitio->asset($archivo)) ?>"
+                   download="<?= $esc($nombreDescarga($p['titulo'] ?? '', $archivo)) ?>"
+                   aria-label="Descargar «<?= $esc($p['titulo'] ?? '') ?>» en PDF, <?= $esc($kilos) ?>">
+                  <svg aria-hidden="true"><use href="#i-descarga"/></svg>
+                  Descargar PDF
+                </a>
+                <span class="subsidio__peso">PDF · <?= $esc($kilos) ?></span>
+              </p>
+            <?php else: ?>
+              <p class="estado">En preparación</p>
+            <?php endif; ?>
+          </div>
+        </article>
+        <?php
+    };
+    ?>
+
+    <?php if ($destacada !== null): ?>
+      <?php $pintarPieza($destacada, true); ?>
+    <?php endif; ?>
+
+    <?php if ($rejilla !== []): ?>
+      <div class="subsidios-rejilla">
+        <?php foreach ($rejilla as $p): ?><?php $pintarPieza($p, false); ?><?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
+  </div>
+</section>
+<?php endif; ?>
+
+<section class="seccion seccion--tinte" aria-labelledby="t-mat">
   <div class="contenedor">
     <header class="seccion__encabezado seccion__encabezado--mayor">
       <hr class="seccion__filete" data-reveal="line-draw">
       <span class="rotulo"><?= $esc($campo('habra-disponible', 'rotulo', 'En preparación')) ?></span>
       <h2 class="titular--mayor" id="t-mat" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('habra-disponible', 'titulo', 'Qué habrá disponible')) ?></span></span></h2>
-        <!-- COPY PENDIENTE DE VALIDACIÓN -->
-      <p>Todo será de descarga libre y de uso gratuito para parroquias, colegios y movimientos. Nada de esto está publicado todavía.</p>
+      <?php /* Decía «nada de esto está publicado todavía», y con los subsidios
+               arriba había dejado de ser cierto. La regla nº3 del encargo —lo
+               que no es oficial se dice que no lo es— vale también al revés: lo
+               que ya está publicado no puede seguir anunciándose como pendiente
+               dos secciones más abajo. */ ?>
+      <p>Además de los subsidios ya publicados, esto es lo que la Conferencia Episcopal
+         prepara. Todo será de descarga libre y de uso gratuito para parroquias,
+         colegios y movimientos.</p>
     </header>
     <ul class="dias">
       <li class="dia" data-reveal="fade-rise"><h3 class="dia__sede">Guía de oración</h3><p class="dia__ventana">PDF · para las semanas previas</p><p class="estado">En preparación</p></li>

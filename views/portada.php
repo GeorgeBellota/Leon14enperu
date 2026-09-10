@@ -581,7 +581,7 @@ $total   = count($laminas);
 <section class="seccion seccion--tinte llegada" id="la-visita" aria-labelledby="t-llegada">
   <div class="contenedor">
     <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-7">
+      <div class="col-m-4 col-t-6 col-d-6">
 
         <header class="seccion__encabezado seccion__encabezado--mayor">
           <hr class="seccion__filete" data-reveal="line-draw">
@@ -618,7 +618,7 @@ $total   = count($laminas);
 
                El respaldo es la FOTO 3 que envió el cliente. En cuanto alguien
                elija una imagen desde el panel, ésta deja de pintarse. */ ?>
-      <figure class="figura ar-3-2 figura--portal llegada__figura col-m-4 col-t-6 col-d-5" data-reveal="fade-rise" data-reveal-delay="0.1">
+      <figure class="figura ar-3-2 figura--portal llegada__figura col-m-4 col-t-6 col-d-6" data-reveal="fade-rise" data-reveal-delay="0.1">
         <?= $sitio->imagen($secciones['llega-al-peru'] ?? [],
             $foto('fotos/llegada-obispos', 1440, 960,
                   'El Santo Padre con los obispos de la Conferencia Episcopal Peruana',
