@@ -10,8 +10,8 @@ Septiembre de 2026. Portada y menú.
 | **`2-DESHACER.sql`** | Sólo si algo sale mal. Devuelve las cosas como estaban. |
 
 Son la alternativa a `php database/migrate.php` para cuando en el servidor no
-hay consola. Hacen exactamente lo mismo que las migraciones **0021, 0022, 0023
-y 0024**, que son las canónicas: si tocas algo, tócalo ahí y regenera esto.
+hay consola. Hacen exactamente lo mismo que las migraciones **0021, 0022, 0023,
+0024 y 0025**, que son las canónicas: si tocas algo, tócalo ahí y regenera esto.
 
 ## Antes
 
@@ -76,6 +76,20 @@ en su cifra de siempre, con un alta reciente.
 el código como respaldo, y lo que esté subido desde el panel gana. Si alguna de
 esas filas trae un número, esa lámina no enseñará la imagen nueva: hay que
 sustituirla a mano en la intranet.
+
+## Los PDF no son SQL
+
+Los seis PDF de los subsidios viajan con el código, en `assets/docs/subsidios/`.
+El SQL sólo crea la sección y sus seis piezas, que son las que apuntan a esos
+archivos. Si el despliegue no sube la carpeta, las piezas se pintan **sin botón
+de descarga** —la vista comprueba que el archivo exista antes de ofrecerlo— en
+lugar de dar un 404 al pulsar.
+
+El subsidio más pesado son 10,2 MB. Para que se puedan sustituir desde la
+intranet, el PHP del alojamiento necesita `upload_max_filesize` y
+`post_max_size` por encima de esa cifra; con el valor de 8 MB que traen muchos
+hostings, la subida se rechaza. La pantalla de Documentos lo dice con nombre y
+apellidos en vez de fallar en silencio.
 
 ## Y lo último, que no es SQL
 
@@ -186,13 +200,65 @@ UPDATE `ajustes` SET `valor` = TRIM(BOTH ',' FROM CONCAT(COALESCE(`valor`,''), '
  WHERE `clave` = 'menu.visibles' AND TRIM(COALESCE(`valor`,'')) <> ''
    AND NOT FIND_IN_SET('materiales', REPLACE(COALESCE(`valor`,''), ' ', ''));
 
--- ── 7 · Se anotan las cuatro migraciones como aplicadas ────────────────────
+
+-- ── 7 · La sección de subsidios de /materiales/ ────────────────────────────
+--  Los seis PDF ya viajan con el código, en assets/docs/subsidios/. Esto crea
+--  la sección para que se puedan editar desde la intranet.
+INSERT INTO `secciones`
+  (`pagina_id`, `clave`, `nombre`, `plantilla`, `orden`, `activa`, `rotulo`, `titulo`, `texto`)
+SELECT p.id, 'subsidios', 'Subsidios descargables', 'descargas', 5, 1,
+       'Ya disponibles', 'Subsidios para la visita',
+       '<p>Cinco materiales aprobados por la Conferencia Episcopal Peruana para preparar la visita en la parroquia, el colegio y la familia. Descarga libre y uso gratuito.</p>'
+  FROM `paginas` p
+ WHERE p.clave = 'materiales'
+   AND NOT EXISTS (SELECT 1 FROM (SELECT `pagina_id`, `clave` FROM `secciones`) AS ya
+                    WHERE ya.pagina_id = p.id AND ya.clave = 'subsidios');
+
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 10, 1, 'Subsidios para la visita del Papa León XIV al Perú', 'El documento que presenta los cinco subsidios y cómo usarlos en la parroquia, el colegio y la familia.', '{"archivo":"assets/docs/subsidios/subsidios-papa-leon-xiv.pdf","destacado":"sí"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 10);
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 20, 1, 'Papa León: cercano y peruano', 'Quién es León XIV y qué lo une al Perú, para conocerlo antes de recibirlo.', '{"archivo":"assets/docs/subsidios/1-papa-leon-cercano-peruano.pdf"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 20);
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 30, 1, 'Unidos en Cristo, sembradores de paz', 'El lema del Santo Padre llevado a la vida de la comunidad.', '{"archivo":"assets/docs/subsidios/2-unidos-en-cristo.pdf"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 30);
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 40, 1, 'Familias que cuidan la vida', 'Material para trabajar en familia durante las semanas previas.', '{"archivo":"assets/docs/subsidios/3-familias-que-cuidan-la-vida.pdf"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 40);
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 50, 1, 'Los jóvenes y la misión', 'Para grupos juveniles, colegios y pastoral universitaria.', '{"archivo":"assets/docs/subsidios/4-los-jovenes-y-la-mision.pdf"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 50);
+INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `datos`)
+SELECT sub.id, 60, 1, 'Pastoral social: la dignidad de toda persona', 'La dimensión social de la fe, con propuestas para la comunidad.', '{"archivo":"assets/docs/subsidios/5-pastoral-social.pdf"}'
+  FROM (SELECT s.id FROM `secciones` s JOIN `paginas` p ON p.id = s.pagina_id
+         WHERE p.clave = 'materiales' AND s.clave = 'subsidios' LIMIT 1) AS sub
+ WHERE NOT EXISTS (SELECT 1 FROM (SELECT `seccion_id`, `orden` FROM `bloques`) AS ya
+                    WHERE ya.seccion_id = sub.id AND ya.orden = 60);
+
+-- ── 8 · Se anotan las migraciones como aplicadas ───────────────────────────
 --  Para que `php database/migrate.php` no vuelva a pasarlas por encima.
 INSERT IGNORE INTO `migraciones` (`archivo`) VALUES
   ('0021_cambios_cliente_portada.sql'),
   ('0022_menu_leon_cep_subsidios.sql'),
   ('0023_slider_colecta_jerarquia.sql'),
-  ('0024_slider_banner_sin_texto.sql');
+  ('0024_slider_banner_sin_texto.sql'),
+  ('0025_subsidios_descargables.sql');
 
 COMMIT;
 
@@ -215,6 +281,14 @@ SELECT b.`orden`, b.`activo`, b.`rotulo`, b.`titulo`, b.`datos`, b.`imagen_id`
  ORDER BY b.`orden`;
 
 SELECT `clave`, `valor` FROM `ajustes` WHERE `clave` = 'menu.visibles';
+
+-- Las seis descargas de /materiales/, con su PDF.
+SELECT b.`orden`, b.`titulo`, JSON_UNQUOTE(JSON_EXTRACT(b.`datos`, '$.archivo')) AS archivo
+  FROM `bloques` b
+  JOIN `secciones` s ON s.id = b.seccion_id
+  JOIN `paginas`   p ON p.id = s.pagina_id
+ WHERE p.clave = 'materiales' AND s.clave = 'subsidios'
+ ORDER BY b.`orden`;
 
 -- Y esto tiene que seguir intacto: 35 000 y pico.
 SELECT COUNT(*) AS voluntarios FROM `voluntarios`;
@@ -288,9 +362,17 @@ UPDATE `ajustes`
  WHERE `clave` = 'menu.visibles' AND TRIM(COALESCE(`valor`, '')) <> '';
 
 -- 7 · Se desanotan las migraciones, por si se quieren volver a pasar
+-- 7 · Fuera la sección de subsidios. Sus seis piezas se van con ella: la
+--     clave foránea de `bloques` hacia `secciones` es ON DELETE CASCADE.
+DELETE s FROM `secciones` s
+  JOIN `paginas` p ON p.id = s.pagina_id
+ WHERE p.clave = 'materiales' AND s.clave = 'subsidios';
+
+-- 8 · Se desanotan las migraciones
 DELETE FROM `migraciones` WHERE `archivo` IN (
   '0021_cambios_cliente_portada.sql', '0022_menu_leon_cep_subsidios.sql',
-  '0023_slider_colecta_jerarquia.sql', '0024_slider_banner_sin_texto.sql');
+  '0023_slider_colecta_jerarquia.sql', '0024_slider_banner_sin_texto.sql',
+  '0025_subsidios_descargables.sql');
 
 COMMIT;
 ```
