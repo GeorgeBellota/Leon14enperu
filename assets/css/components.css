@@ -1717,10 +1717,17 @@ span.flatpickr-weekday {
 
 
 /* ── Página de detalle ──────────────────────────────────────────────────── */
+/* Los años de un santo, o la fecha y la fuente de una noticia.
+   El color era --ink-soft, que es el gris de texto secundario SOBRE PAPEL. Y
+   esta línea sólo aparece dentro de .cabecera-pagina, que es una banda roja
+   oscura con el texto en blanco: ahí ese gris daba 1,4:1 y no se leía. Se ve en
+   cuanto una ficha estrena portada —las de los santos— pero venía de antes y
+   afectaba igual a las sedes y a las noticias.
+   Ahora es blanco rebajado, como la bajada que tiene justo debajo. */
 .cabecera-pagina__dato {
   margin: .3rem 0 0;
   font-size: .95rem;
-  color: var(--ink-soft);
+  color: color-mix(in srgb, var(--on-primary) 82%, transparent);
   font-variant-numeric: tabular-nums;
 }
 

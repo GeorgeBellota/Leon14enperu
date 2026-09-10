@@ -98,8 +98,15 @@
   inset: 0;
   background: var(--surface);
 }
+/* LLENA la franja, y por decisión del cliente después de verlo montado: con
+   `contain` la pieza se veía entera pero dejaba franjas de crema arriba y
+   abajo, y prefiere que no quede fondo sin cubrir. Vuelve a ser `cover`, que
+   recorta por los lados lo que sobre.
+
+   El `background` de la caja se queda: es lo que se ve si algún día suben una
+   pieza más apaisada todavía, mientras carga. */
 .hero .hero__media--pieza img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: var(--encuadre, 50% 50%);
 }
 .hero__pieza-enlace { display: block; width: 100%; height: 100%; }
@@ -1566,6 +1573,44 @@ body[data-phase="post"] .fase-pre,  body[data-phase="post"] .fase-live { display
 }
 @media (max-width: 1023px) {
   .llegada__figura { margin-block-start: var(--space-xl); }
+}
+
+/* ── A sangre por la derecha ──────────────────────────────────────────────
+   La fotografía ocupaba cinco de las doce columnas y se quedaba corta para lo
+   que es: sesenta obispos en fila con el Santo Padre en medio. A ese tamaño no
+   se distingue a nadie.
+
+   Ahora son seis columnas Y ADEMÁS rompe el contenedor por la derecha hasta el
+   borde de la ventana: de unos 460 px pasa a unos 700 a 1440, cerca del doble
+   de superficie. El texto se queda dentro de la retícula, así que la sección
+   sigue leyéndose de izquierda a derecha; lo único que se sale es la imagen.
+
+   No se usa la utilidad .a-sangre-der, y no es por gusto: aquella resuelve el
+   margen con `calc(50% - 50vw)`, y ese 50 % es el del CONTENEDOR del elemento.
+   Vale para un hijo directo de .contenedor, pero esta figura es una celda de
+   la retícula: ahí el 50 % son media celda —tres columnas— y el sangrado se
+   quedaba a medio camino. Aquí se mide la distancia real que hay del borde
+   interior del contenedor al de la ventana, que es el relleno del contenedor
+   más lo que sobra a los lados cuando la ventana pasa del ancho máximo.
+
+   El `max(0px, …)` es para las ventanas más estrechas que --maxw, donde no
+   sobra nada y el término se volvería negativo. Y el desbordamiento que pueda
+   dejar la barra de scroll lo recorta el `overflow-x: clip` del body. */
+@media (min-width: 1024px) {
+  .llegada__figura {
+    /* Los 8 px de más son holgura, no descuido. La cuenta da exacto sobre el
+       papel, pero `100vw` incluye la barra de desplazamiento en unos
+       navegadores y en otros no, y con el zoom de página los redondeos dejan
+       medio píxel de papel a la vista. Pasarse no cuesta nada —el
+       `overflow-x: clip` del body se come lo que sobre— y quedarse corto deja
+       una raya del fondo pegada al borde. */
+    margin-inline-end: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--maxw)) / 2)) - 8px);
+    /* Y el arco pierde su curva DERECHA. Una pieza que se sale de la pantalla
+       no puede redondearse justo por el lado por el que se sale: la curva se
+       lee como un margen que nadie pidió. Arriba a la izquierda sigue el arco,
+       que es donde se ve y donde significa algo. */
+    border-radius: 34% 0 0 0 / 22% 0 0 0;
+  }
 }
 
 /* Las cuatro ciudades como índice del recorrido. Cada una es un enlace a su

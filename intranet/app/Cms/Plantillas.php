@@ -392,6 +392,51 @@ final class Plantillas
                 'datos'   => [],
             ],
 
+            // ── Descargas ───────────────────────────────────────────────
+            //
+            // Plantilla NUEVA, para los subsidios de /materiales/. Cada pieza
+            // es un bloque con su portada y su PDF.
+            //
+            // El PESO del archivo NO es un campo: lo mide la vista del archivo
+            // real cada vez que pinta la página. Un campo de peso escrito a
+            // mano es un dato que envejece en cuanto alguien sustituye el PDF,
+            // y decir «3,7 MB» de un archivo que ahora pesa nueve es peor que
+            // no decir nada, sobre todo para quien lo abre con datos móviles.
+            'descargas' => [
+                'nombre'  => 'Descargas',
+                'ayuda'   => 'Documentos para descargar, cada uno con su portada y su PDF. '
+                           . 'La portada se elige de la biblioteca de imágenes, como en el resto '
+                           . 'del sitio; el PDF se sube desde la biblioteca de documentos y aquí '
+                           . 'se pega su ruta. El peso del archivo lo calcula la página sola, así '
+                           . 'que no hay que escribirlo ni mantenerlo.',
+                'campos'  => ['rotulo', 'titulo', 'texto_html'],
+                'bloques' => [
+                    'nombre' => 'Descarga',
+                    'plural' => 'Descargas',
+                    'campos' => ['titulo', 'texto', 'imagen'],
+                    'datos'  => [
+                        'archivo' => [
+                            'etiqueta' => 'Archivo PDF',
+                            'tipo'     => 'archivo',
+                            'ayuda'    => 'Ruta del documento dentro del sitio, por ejemplo '
+                                        . '«assets/docs/subsidios/2-unidos-en-cristo.pdf». Súbelo en '
+                                        . 'Documentos y copia la ruta desde allí. Si se deja vacío, la '
+                                        . 'pieza se muestra sin botón de descarga.',
+                        ],
+                        'destacado' => [
+                            'etiqueta' => 'Destacada',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Escribe «sí» para que esta pieza vaya arriba, sola y a lo '
+                                        . 'ancho, por delante de las demás. Es para el documento que '
+                                        . 'presenta al conjunto. Déjalo vacío en el resto: van en '
+                                        . 'rejilla, en el orden en que estén aquí.',
+                        ],
+                    ],
+                    'maximo' => 12,
+                ],
+                'datos'   => [],
+            ],
+
             'destacado' => [
                 'nombre'  => 'Bloque destacado',
                 'ayuda'   => 'Un bloque conceptual a todo el ancho: rótulo, titular, un texto '

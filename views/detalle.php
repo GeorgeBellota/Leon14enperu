@@ -58,10 +58,48 @@ try {
 
 <?php /* La portada de la pieza. Se edita en el panel, dentro de su
          colección: Páginas → Sedes → Las cuatro sedes → Chiclayo. */ ?>
-<header class="cabecera-pagina<?= empty($pieza['imagen_ruta']) ? ' cabecera-pagina--lisa' : '' ?>">
-  <?php if (!empty($pieza['imagen_ruta'])): ?>
+<?php
+/* ── La portada de las fichas de santo ─────────────────────────────────────
+   Las fichas de los cinco santos no tienen fotografía propia —y no la van a
+   tener: poner la cara de un santo en el sitio de otro es peor que no poner
+   ninguna, que es la razón por la que en la portada llevan un medallón con su
+   inicial—. Así que se quedaban con la cabecera lisa: un rectángulo rojo.
+
+   Ahora traen de respaldo la pieza que envió el cliente, la misma para las
+   cinco, y AQUÍ SÍ es un fondo y no una pieza que preservar: se recorta como
+   cualquier portada, lleva un velo tenue para que el texto se lea encima y la
+   composición va centrada.
+
+   Sólo para los santos. Esta vista sirve también a las sedes, a los obispos, a
+   las comisiones y a las noticias, y ahí una imagen de santos no pinta nada:
+   cada una lleva la suya o su cabecera lisa, como hasta hoy.
+
+   Y sigue mandando el panel: si algún día eligen una imagen para una ficha
+   concreta, esa gana sobre este respaldo. */
+$esSanto = ($activa ?? '') === 'tierra-de-santos';
+
+$portadaSanto = '';
+if ($esSanto) {
+    $anchosSanto = [640, 1024, 1600, 1950];
+    $wSanto = $jSanto = [];
+    foreach ($anchosSanto as $w) {
+        $wSanto[] = $esc($sitio->asset("assets/img/banners/cabecera-santos-{$w}.webp")) . " {$w}w";
+        $jSanto[] = $esc($sitio->asset("assets/img/banners/cabecera-santos-{$w}.jpg"))  . " {$w}w";
+    }
+    $portadaSanto = '<picture>'
+      . '<source type="image/webp" sizes="100vw" srcset="' . implode(', ', $wSanto) . '">'
+      . '<img src="' . $esc($sitio->asset('assets/img/banners/cabecera-santos-1600.jpg')) . '"'
+      . ' sizes="100vw" srcset="' . implode(', ', $jSanto) . '"'
+      . ' width="1950" height="624" alt=""'
+      . ' fetchpriority="high" decoding="async"></picture>';
+}
+
+$conPortada = !empty($pieza['imagen_ruta']) || $portadaSanto !== '';
+?>
+<header class="cabecera-pagina<?= $conPortada ? '' : ' cabecera-pagina--lisa' ?><?= $esSanto ? ' cabecera-pagina--santo' : '' ?>">
+  <?php if ($conPortada): ?>
     <div class="cabecera-pagina__media">
-      <?= $sitio->imagen($pieza, '', ['sizes' => '100vw', 'prioridad' => true]) ?>
+      <?= $sitio->imagen($pieza, $portadaSanto, ['sizes' => '100vw', 'prioridad' => true]) ?>
     </div>
   <?php endif; ?>
   <div class="cabecera-pagina__contenido contenedor">
