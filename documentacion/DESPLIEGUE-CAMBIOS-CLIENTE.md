@@ -105,12 +105,17 @@ ubigeo, ni el cifrado—, pero la prueba se hace igual.
 ```sql
 -- ===========================================================================
 --  LEON14ENPERU · CAMBIOS DE CONTENIDO PARA PRODUCCIÓN
---  Equivale a las migraciones 0021, 0022, 0023 y 0024 en un solo archivo.
---  EL CÓDIGO SE DESPLIEGA ANTES QUE ESTO.
+--  Equivale a las migraciones 0021, 0022, 0023, 0024 y 0025 en un solo
+--  archivo. EL CÓDIGO SE DESPLIEGA ANTES QUE ESTO.
 -- ===========================================================================
---  Sólo toca `bloques` (el carrusel de la portada) y una fila de `ajustes`
---  (el menú). Ni un DELETE, ni un DROP, ni un TRUNCATE, ni un ALTER.
---  No toca voluntarios, usuarios, auditoria, medios, comunicados ni paginas.
+--  Toca cuatro tablas y ninguna más:
+--    · `bloques`     las láminas del carrusel y las seis descargas
+--    · `secciones`   una fila nueva: los subsidios de /materiales/
+--    · `ajustes`     una fila: el menú
+--    · `migraciones` el registro de lo aplicado
+--
+--  Ni un DELETE, ni un DROP, ni un TRUNCATE, ni un ALTER. No toca
+--  voluntarios, usuarios, auditoria, medios, comunicados ni paginas.
 --  Se puede ejecutar dos veces: no duplica ni deshace nada.
 -- ===========================================================================
 
