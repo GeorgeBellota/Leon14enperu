@@ -69,7 +69,12 @@ final class Catalogo extends Model
         );
 
         foreach ($filas as &$j) {
-            $limite    = $j['limite'] === null ? null : (int) $j['limite'];
+            /* `?? null` y no `$j['limite']` a secas: si los archivos suben antes
+               que la migración, la columna todavía no existe y esto se llama en
+               cada visita al formulario. Sin el `??`, cinco avisos por visita en
+               el registro. Sin columna no hay tope, que es el comportamiento
+               correcto mientras tanto. */
+            $limite    = ($j['limite'] ?? null) === null ? null : (int) $j['limite'];
             $inscritos = (int) $j['inscritos'];
 
             $j['limite']    = $limite;
@@ -96,8 +101,13 @@ final class Catalogo extends Model
      */
     public function jurisdiccionAdmite(int $id): bool
     {
+        /* `j.*` y no `j.limite`: si los archivos suben antes que la migración,
+           nombrar una columna que aún no existe es un ERROR de SQL, no un
+           aviso, y esto se llama al guardar una inscripción. Con `j.*` la
+           consulta sigue siendo válida y el `?? null` de abajo la deja sin
+           tope, que es lo correcto mientras la columna no esté. */
         $fila = $this->bd()->fila(
-            'SELECT j.limite,
+            'SELECT j.*,
                     (SELECT COUNT(*) FROM voluntarios v
                       WHERE v.jurisdiccion_id = j.id AND v.borrado_en IS NULL) AS inscritos
                FROM jurisdicciones j
@@ -110,7 +120,9 @@ final class Catalogo extends Model
             return false;
         }
 
-        return $fila['limite'] === null || (int) $fila['inscritos'] < (int) $fila['limite'];
+        $limite = $fila['limite'] ?? null;
+
+        return $limite === null || (int) $fila['inscritos'] < (int) $limite;
     }
 
     /** Guarda el tope de una jurisdicción. Null = sin tope. */
