@@ -115,3 +115,16 @@ README.local-claude.md
 #
 # Se entrega a mano, al responsable, junto con el servidor.
 documentacion/SEGURIDAD.md
+
+# ── LA CACHÉ DEL ESPEJO ─────────────────────────────────────────────────────
+# La escribe el servidor en cada visita al formulario: es estado de una
+# máquina, no del proyecto. Versionada, cada despliegue la pisa con la copia
+# de otra y aparece como modificada sin que nadie la toque.
+intranet/almacen/espejo/*.json
+
+# ── DOCUMENTOS DE ENTREGA ───────────────────────────────────────────────────
+# Describen la infraestructura y los controles de seguridad, igual que
+# SEGURIDAD.md. Y el acta es un documento de negocio, no código.
+documentacion/ENTREGA-Y-ALCANCE.md
+documentacion/flujos-transfronterizos.html
+ACTA-DE-ENTREGA-SIMPLIFICADA.*
