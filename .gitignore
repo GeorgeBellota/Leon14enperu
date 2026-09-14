@@ -128,3 +128,14 @@ intranet/almacen/espejo/*.json
 documentacion/ENTREGA-Y-ALCANCE.md
 documentacion/flujos-transfronterizos.html
 ACTA-DE-ENTREGA-SIMPLIFICADA.*
+
+# ── NADA DE .md NI .txt ─────────────────────────────────────────────────────
+# La documentación cuenta cómo está montado esto: rutas del servidor, nombres
+# de servicios, versiones, qué está cerrado y qué no. Se queda en disco y se
+# entrega a mano.
+#
+# robots.txt es la excepción y no es documentación: el sitio lo sirve y el
+# vhost lo declara. Si sale del repositorio, deja de desplegarse.
+*.md
+*.txt
+!robots.txt
