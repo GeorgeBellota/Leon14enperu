@@ -73,20 +73,24 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
         <?php endif; ?>
       <?php endif; ?>
 
-      <?php if ($auth->puedeAlguno("ajustes.general", "mantenimiento.gestionar")): ?>
+      <?php if ($auth->puedeAlguno("ajustes.general", "mantenimiento.gestionar", "catalogos.editar")): ?>
         <p class="menu__grupo">Administración</p>
         <?php if ($auth->puede("ajustes.general")): ?>
           <a class="menu__enlace" href="<?= $url("/configuracion") ?>"<?= $activo("/configuracion") ?>>Configuración</a>
+        <?php endif; ?>
+        <?php if ($auth->puede("catalogos.editar")): ?>
+          <a class="menu__enlace" href="<?= $url("/catalogos") ?>"<?= $activo("/catalogos") ?>>Catálogos</a>
         <?php endif; ?>
         <?php if ($auth->puede("mantenimiento.gestionar")): ?>
           <a class="menu__enlace" href="<?= $url("/mantenimiento") ?>"<?= $activo("/mantenimiento") ?>>Mantenimiento</a>
         <?php endif; ?>
       <?php endif; ?>
 
-      <?php /* Catálogos, biblioteca, usuarios, actividad y ajustes tienen sus
-               permisos creados y sus rutas escritas, pero todavía no tienen
-               controlador. No se enseñan en el menú hasta que existan: un
-               enlace que lleva a un 404 es peor que un menú corto. */ ?>
+      <?php /* La biblioteca, los usuarios, la actividad y el resto de ajustes
+               tienen sus permisos creados y sus rutas escritas, pero todavía
+               no tienen controlador. No se enseñan en el menú hasta que
+               existan: un enlace que lleva a un 404 es peor que un menú corto.
+               Catálogos salió de esta lista al escribirse el suyo. */ ?>
     </nav>
 
     <div class="lateral__pie">
