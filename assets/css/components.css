@@ -1737,3 +1737,79 @@ span.flatpickr-weekday {
   color: var(--ink-mute);
   line-height: 1.45;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   AVISO DE COOKIES
+
+   Sólo existe si hay medición configurada en el panel. Nace oculto y lo
+   muestra consentimiento.js: sin JavaScript no se mide nada, así que tampoco
+   hay nada que consentir ni cartel que enseñar.
+
+   Abajo y a lo ancho, no en el centro tapando la página: un cartel que
+   bloquea el contenido empuja a pulsar «aceptar» para quitárselo de encima, y
+   eso no es un consentimiento, es una rendición.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.consentimiento {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 90;
+  padding: var(--space-s) var(--gutter);
+  background: var(--surface-invert);
+  color: var(--on-primary);
+  box-shadow: 0 -6px 24px rgb(0 0 0 / .22);
+  animation: subeAviso .28s var(--ease) both;
+}
+
+/* `display: none` del atributo hidden lo gana cualquier `display` posterior:
+   se declara aquí para que no dependa del orden de las hojas. */
+.consentimiento[hidden] { display: none; }
+
+@keyframes subeAviso {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consentimiento { animation: none; }
+}
+
+.consentimiento__caja {
+  max-width: 62rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  flex-wrap: wrap;
+}
+
+.consentimiento__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  flex: none;
+}
+
+.consentimiento__texto {
+  margin: 0;
+  flex: 1 1 24rem;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.consentimiento__texto a { color: var(--gold-invert); }
+
+/* Los dos botones miden lo mismo y están uno al lado del otro. Un «rechazar»
+   en letra pequeña o a dos clics no es una elección libre. */
+.consentimiento__botones {
+  display: flex;
+  gap: var(--space-xs);
+  flex: none;
+}
+.consentimiento__botones .btn { min-width: 8.5rem; }
+
+@media (max-width: 720px) {
+  .consentimiento__caja { gap: var(--space-xs); }
+  .consentimiento__botones { width: 100%; }
+  .consentimiento__botones .btn { flex: 1; min-width: 0; }
+}

@@ -188,6 +188,49 @@ $estaVisible = static fn (string $clave): bool => $todas || in_array($clave, $vi
     </p>
   </section>
 
+  <?php /* ── Medición ─────────────────────────────────────────────────────
+           Se pide el IDENTIFICADOR, no el fragmento de código que Google y
+           Meta dan para pegar. Ese fragmento es JavaScript, y un campo libre
+           cuyo contenido acaba dentro de un <script> deja que quien entre al
+           panel ejecute lo que quiera en todas las páginas del sitio. */ ?>
+  <section class="tarjeta sep-l">
+    <header class="tarjeta__cabecera"><h2>Medición de visitas</h2></header>
+
+    <p class="campo__ayuda">
+      Los dos campos son opcionales y vienen vacíos. Mientras lo estén, el sitio
+      no carga nada de Google ni de Meta, no guarda ninguna cookie de
+      seguimiento y no muestra ningún aviso.
+    </p>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="c-ga4">Google Analytics · identificador de medición</label>
+      <input type="text" id="c-ga4" name="analitica_ga4" value="<?= $e($ga4) ?>"
+             placeholder="G-XXXXXXXXXX" maxlength="20" spellcheck="false">
+      <p class="campo__ayuda">
+        Está en Google Analytics, en <strong>Administrar → Flujos de datos</strong>.
+        Empieza por <code>G-</code>. No pegues el bloque de código: sólo el identificador.
+      </p>
+    </div>
+
+    <div class="campo">
+      <label class="campo__etiqueta" for="c-pixel">Meta · identificador del píxel</label>
+      <input type="text" id="c-pixel" name="analitica_pixel" value="<?= $e($pixel) ?>"
+             placeholder="123456789012345" maxlength="20" inputmode="numeric" spellcheck="false">
+      <p class="campo__ayuda">
+        Está en el <strong>Administrador de eventos</strong> de Meta. Son sólo números.
+      </p>
+    </div>
+
+    <?php if ($ga4 !== '' || $pixel !== ''): ?>
+      <p class="campo__ayuda campo__ayuda--aviso sep-m">
+        <strong>Con esto activado, el sitio pide consentimiento antes de medir.</strong>
+        Ninguna de las dos herramientas se carga hasta que la persona acepta, y
+        quien rechace no es seguido. La página de Cookies y la de Privacidad
+        tienen que decir qué se usa y para qué.
+      </p>
+    <?php endif; ?>
+  </section>
+
   <?php /* ── Logotipo ────────────────────────────────────────────────────
            Mientras no haya ninguno, la cabecera de la web muestra sólo el
            nombre. Antes llevaba el lirio del escudo pontificio y se retiró:

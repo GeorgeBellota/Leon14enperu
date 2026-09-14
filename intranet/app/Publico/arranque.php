@@ -93,14 +93,51 @@ if (!headers_sent()) {
      */
     $nonce = $sitio->nonce();
 
+    /* ── La medición abre la CSP, y sólo mientras esté encendida ───────────
+     *
+     * Google Analytics y el píxel de Meta necesitan ejecutar código de sus
+     * dominios y hablar con sus servidores. Eso obliga a ensanchar la política
+     * más importante del sitio público, así que se ensancha SÓLO cuando hay un
+     * identificador configurado en el panel.
+     *
+     * El día que se vacíen esos campos, la política vuelve sola a estar
+     * cerrada. Sin esto, bastaría una prueba de un martes para dejar el sitio
+     * abierto a dos terceros para siempre, porque nadie se acuerda de volver a
+     * cerrar lo que ya no molesta.
+     *
+     * Los dominios son los que cada herramienta documenta. Ni uno más: un
+     * comodín aquí valdría por cualquier subdominio que esas empresas creen
+     * mañana, sin que nadie lo revise.
+     */
+    $scriptExtra  = '';
+    $conectaExtra = '';
+    $imagenExtra  = '';
+
+    if ($sitio->mide()) {
+        $medicion = $sitio->medicion();
+
+        if ($medicion['ga4'] !== '') {
+            $scriptExtra  .= ' https://www.googletagmanager.com';
+            $conectaExtra .= ' https://www.googletagmanager.com https://www.google-analytics.com'
+                          . ' https://analytics.google.com https://region1.google-analytics.com';
+            $imagenExtra  .= ' https://www.googletagmanager.com https://www.google-analytics.com';
+        }
+
+        if ($medicion['pixel'] !== '') {
+            $scriptExtra  .= ' https://connect.facebook.net';
+            $conectaExtra .= ' https://www.facebook.com';
+            $imagenExtra  .= ' https://www.facebook.com';
+        }
+    }
+
     header(
         "Content-Security-Policy: "
         . "default-src 'self'; "
-        . "script-src 'self' 'nonce-{$nonce}'; "
+        . "script-src 'self' 'nonce-{$nonce}'{$scriptExtra}; "
         . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         . "font-src 'self' https://fonts.gstatic.com; "
-        . "img-src 'self' data:; "
-        . "connect-src 'self'; "
+        . "img-src 'self' data:{$imagenExtra}; "
+        . "connect-src 'self'{$conectaExtra}; "
         . "form-action 'self'; "
         . "frame-ancestors 'self'; "
         . "base-uri 'self'; "

@@ -25,10 +25,20 @@ declare(strict_types=1);
 
 $raiz = $sitio->enlace('');   // prefijo de TODOS los enlaces de cabecera y pie
 
-$titulo      = (string) ($meta['titulo'] ?? 'León XIV en el Perú');
-$descripcion = (string) ($meta['descripcion'] ?? '');
+/* ── El SEO que venga del panel ───────────────────────────────────────────
+   Manda lo que se haya escrito en Páginas → Datos para buscadores, y sólo
+   eso: un campo que se deje vacío no vuelve aquí, y la página conserva el
+   texto que trae escrito abajo.
+
+   Así, quien no toque nada en el panel ve exactamente lo de siempre, y quien
+   quiera afinar el título de una página no necesita un despliegue. Si la base
+   no responde, seo() devuelve vacío y esto no llega a notarse. */
+$seoPanel = $sitio->seo((string) ($activa ?? ''));
+
+$titulo      = (string) ($seoPanel['titulo']      ?? $meta['titulo']      ?? 'León XIV en el Perú');
+$descripcion = (string) ($seoPanel['descripcion'] ?? $meta['descripcion'] ?? '');
 $rutaPagina  = ltrim((string) ($meta['ruta'] ?? ''), '/');
-$ogImagen    = (string) ($meta['og_imagen'] ?? 'assets/img/og/og-inicio.jpg');
+$ogImagen    = (string) ($seoPanel['og_imagen']   ?? $meta['og_imagen']   ?? 'assets/img/og/og-inicio.jpg');
 $ogTipo      = (string) ($meta['og_tipo'] ?? 'article');
 /* ── La fase del sitio ────────────────────────────────────────────────────
    «pre» antes del viaje, «live» durante los días de visita y «post» después.
@@ -119,6 +129,10 @@ document.documentElement.className += ' js';
 </div>
 <?php endif; ?>
 
+<?php /* El aviso de cookies. Sólo aparece si hay medición configurada en el
+         panel, y no trae ni un script de seguimiento: sólo los identificadores,
+         inertes, que consentimiento.js usará si la persona acepta. */ ?>
+<?php require dirname(__DIR__) . '/assets/parciales/consentimiento.php'; ?>
 <?php /* ── El ORDEN importa ─────────────────────────────────────────────────
          Con «defer» los scripts se ejecutan en el orden en que aparecen, y
          main.js es el orquestador: hace «if (L14.hero) L14.hero.init()» para
@@ -140,6 +154,12 @@ document.documentElement.className += ' js';
 <script src="<?= $esc($sitio->asset($script)) ?>" defer></script>
 <?php endforeach; ?>
 <script src="<?= $esc($sitio->asset('assets/js/form.js')) ?>" defer></script>
+<?php if ($sitio->mide()): ?>
+<?php /* Sólo se carga si hay algo que medir. Si el panel tiene los campos
+         vacíos, este archivo ni se pide: una petición menos y ninguna
+         posibilidad de que algo se encienda por accidente. */ ?>
+<script src="<?= $esc($sitio->asset('assets/js/consentimiento.js')) ?>" defer></script>
+<?php endif; ?>
 <script src="<?= $esc($sitio->asset('assets/js/main.js')) ?>" defer></script>
 <?= $meta['pie_extra'] ?? '' ?>
 </body>

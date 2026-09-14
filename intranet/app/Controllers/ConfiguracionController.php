@@ -83,6 +83,8 @@ final class ConfiguracionController extends Controller
             'inicioViaje' => self::paraFormulario((string) $ajustes->leer('viaje.inicio', '')),
             'finViaje'    => self::paraFormulario((string) $ajustes->leer('viaje.fin', '')),
             'fase'        => (string) $ajustes->leer('sitio.fase', 'auto'),
+            'ga4'         => (string) $ajustes->leer('analitica.ga4', ''),
+            'pixel'       => (string) $ajustes->leer('analitica.pixel', ''),
 
             // El logotipo se pregunta al disco, no a un ajuste: así, si alguien
             // lo borra por FTP, el panel enseña la verdad y no un recuerdo.
@@ -184,12 +186,46 @@ final class ConfiguracionController extends Controller
             $cambioLogo = 'retirado';
         }
 
+        /* ── Medición ──────────────────────────────────────────────────────
+           Se guarda el IDENTIFICADOR, nunca el fragmento de código que Google
+           y Meta dan para pegar.
+
+           No es comodidad: ese fragmento es JavaScript, y un campo de texto
+           libre cuyo contenido acaba dentro de un <script> es una puerta
+           abierta a que quien entre al panel ejecute lo que quiera en todas
+           las páginas del sitio. Guardando sólo el identificador, y con el
+           formato validado, lo único que puede llegar al HTML son letras,
+           números y guiones. El fragmento lo compone el servidor.
+
+           Vacío = apagado, y apagado de verdad: sin script, sin aviso de
+           cookies y con la Content-Security-Policy cerrada como hoy. */
+        $ga4   = strtoupper(trim($peticion->texto('analitica_ga4', '')));
+        $pixel = trim($peticion->texto('analitica_pixel', ''));
+
+        if ($ga4 !== '' && preg_match('/^G-[A-Z0-9]{6,14}$/', $ga4) !== 1) {
+            $this->conError(
+                'El identificador de Google Analytics no tiene el formato correcto. '
+                . 'Es del tipo G-XXXXXXXXXX, y lo encuentras en Administrar → Flujos de datos.',
+                '/configuracion'
+            );
+        }
+
+        if ($pixel !== '' && preg_match('/^\d{10,20}$/', $pixel) !== 1) {
+            $this->conError(
+                'El identificador del píxel de Meta son sólo números, entre 10 y 20 dígitos. '
+                . 'Lo encuentras en el Administrador de eventos.',
+                '/configuracion'
+            );
+        }
+
         $ajustes->escribir('sitio.pagina_inicio', $inicio);
         $ajustes->escribir('menu.visibles', $todas ? '' : implode(',', $marcadas));
         $ajustes->escribir('pie.modo', $pie);
         $ajustes->escribir('viaje.inicio', $inicioViaje);
         $ajustes->escribir('viaje.fin', $finViaje);
         $ajustes->escribir('sitio.fase', $fase);
+        $ajustes->escribir('analitica.ga4', $ga4);
+        $ajustes->escribir('analitica.pixel', $pixel);
 
         Auditoria::registrar($this->c, 'editar', 'ajustes', null, [
             'pagina_inicio' => $inicio,

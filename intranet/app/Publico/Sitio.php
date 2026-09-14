@@ -212,6 +212,99 @@ final class Sitio
     }
 
     /**
+     * Los identificadores de medición configurados en el panel.
+     *
+     * ── Por qué se vuelve a validar aquí ─────────────────────────────────
+     *
+     * Porque el valor sale de la base, y entre la base y el <script> no puede
+     * haber ni un carácter sin comprobar. El panel ya valida el formato al
+     * guardar, pero una fila puede llegar de otro sitio —una migración, una
+     * edición a mano, un volcado restaurado— y ésta es la última puerta antes
+     * de que el valor entre en una página.
+     *
+     * Si el formato no cuadra, se ignora. Preferible perder la medición a
+     * inyectar algo que no sabemos qué es.
+     *
+     * @return array{ga4:string, pixel:string}
+     */
+    public function medicion(): array
+    {
+        if ($this->bdCaida) {
+            return ['ga4' => '', 'pixel' => ''];
+        }
+
+        $ga4   = strtoupper(trim($this->ajuste('analitica.ga4', '')));
+        $pixel = trim($this->ajuste('analitica.pixel', ''));
+
+        return [
+            'ga4'   => preg_match('/^G-[A-Z0-9]{6,14}$/', $ga4) === 1 ? $ga4 : '',
+            'pixel' => preg_match('/^\d{10,20}$/', $pixel) === 1 ? $pixel : '',
+        ];
+    }
+
+    /** ¿Hay algo que medir? Decide el aviso de cookies y la apertura de la CSP. */
+    public function mide(): bool
+    {
+        $m = $this->medicion();
+
+        return $m['ga4'] !== '' || $m['pixel'] !== '';
+    }
+
+    /**
+     * Los datos de buscador de una página, si el panel los tiene puestos.
+     *
+     * ── Qué devuelve ─────────────────────────────────────────────────────
+     *
+     * Sólo las claves con valor. Un campo vacío en el panel NO se devuelve, y
+     * así la plantilla conserva el texto que la vista traía escrito. Es la
+     * diferencia entre «el panel manda cuando dice algo» y «el panel borra el
+     * título de la página en cuanto alguien guarda sin rellenarlo».
+     *
+     * ── Si la base no responde ───────────────────────────────────────────
+     *
+     * Devuelve un array vacío y el sitio sigue con los textos de la vista. El
+     * SEO es importante, pero no tanto como que la página se pinte.
+     *
+     * @return array{titulo?:string, descripcion?:string, og_imagen?:string}
+     */
+    public function seo(string $clave): array
+    {
+        if ($clave === '' || $this->bdCaida) {
+            return [];
+        }
+
+        try {
+            $this->paginas ??= new Pagina($this->c);
+            $fila = $this->paginas->seoDe($clave);
+        } catch (Throwable $e) {
+            error_log('[sitio] no se pudo leer el seo de «' . $clave . '»: ' . $e->getMessage());
+            $this->bdCaida = true;
+
+            return [];
+        }
+
+        if ($fila === null) {
+            return [];
+        }
+
+        $seo = [];
+
+        foreach (['titulo' => 'titulo_seo', 'descripcion' => 'descripcion_seo'] as $salida => $columna) {
+            $valor = trim((string) ($fila[$columna] ?? ''));
+            if ($valor !== '') {
+                $seo[$salida] = $valor;
+            }
+        }
+
+        $imagen = trim((string) ($fila['og_imagen_ruta'] ?? ''));
+        if ($imagen !== '') {
+            $seo['og_imagen'] = ltrim($imagen, '/');
+        }
+
+        return $seo;
+    }
+
+    /**
      * El instante al que apunta la cuenta atrás, en ISO 8601 con huso.
      *
      * Sale del ajuste `viaje.inicio`, que se edita en Configuración general.
