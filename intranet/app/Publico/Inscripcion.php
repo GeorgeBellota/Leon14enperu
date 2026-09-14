@@ -676,6 +676,21 @@ final class Inscripcion
         $jurisdiccion = (int) ($e['jurisdiccion_id'] ?? 0);
         if ($jurisdiccion <= 0 || !$this->catalogo->jurisdiccionValida($jurisdiccion)) {
             $this->errores['jurisdiccion_id'] = 'Elige la jurisdicción en la que quieres servir.';
+        } elseif (!$this->catalogo->jurisdiccionAdmite($jurisdiccion)) {
+            /* ── El cupo se comprueba AQUÍ, no sólo en el desplegable ──────
+               El «disabled» de la opción es una pista visual y nada más: no
+               impide mandar el id a mano, y sobre todo no cubre el caso que
+               pasa solo —abrir el formulario con tres plazas libres, tardar
+               seis minutos en rellenarlo y enviarlo cuando ya no queda
+               ninguna—.
+
+               El mensaje dice qué pasó y qué hacer, porque esa persona no ha
+               hecho nada mal: rellenó un formulario que estaba abierto. Y el
+               error va al campo, así que el formulario vuelve con todo lo que
+               escribió y sólo esa casilla por corregir. */
+            $this->errores['jurisdiccion_id'] =
+                'Esa jurisdicción acaba de completar sus plazas. Elige otra: el resto de '
+                . 'tus datos se conservan.';
         } else {
             $this->limpio['jurisdiccion_id'] = $jurisdiccion;
         }

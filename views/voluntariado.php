@@ -160,7 +160,13 @@ $departamentosDeReserva = static function (): array {
 };
 
 $servicios      = $espejo->recordar('servicios',      fn () => $catalogo->servicios());
-$jurisdicciones = $espejo->recordar('jurisdicciones', fn () => $catalogo->jurisdicciones());
+/* Con el cupo de cada una: cuántas plazas tiene, cuántas van y si está llena.
+   El espejo consulta siempre y sólo tira de su copia si la base no responde;
+   si eso pasa, una copia vieja podría ofrecer una jurisdicción ya completa,
+   pero el servidor la rechaza al guardar. Es el mismo trato que el resto de
+   los catálogos: preferible una lista un minuto desfasada que un formulario
+   que no abre. */
+$jurisdicciones = $espejo->recordar('jurisdicciones', fn () => $catalogo->jurisdiccionesConCupo());
 
 // Si no se puede saber, se da por abierta: cerrar el formulario por una
 // consulta que no responde sería perder inscripciones sin motivo.
@@ -761,8 +767,18 @@ $meta = [
                     <span class="campo__selector">
                       <select id="jurisdiccion" name="jurisdiccion_id" required data-valida="requerido"<?= isset($errores['jurisdiccion_id']) ? ' aria-invalid="true"' : '' ?>>
                         <option value="">Elige una</option>
+                        <?php /* Una jurisdicción llena SE VE, con su nombre y un «completado»
+                                 detrás, y no se puede elegir. Quitarla del desplegable haría
+                                 pensar que la web falla o que esa sede no existe; dejarla a la
+                                 vista explica por qué no está disponible.
+
+                                 El «disabled» es sólo la pista visual. Quien decide de verdad
+                                 es Inscripcion.php al guardar: aquí no hay ninguna garantía,
+                                 porque el id se puede enviar a mano y porque entre abrir el
+                                 formulario y enviarlo pueden agotarse las plazas. */ ?>
                         <?php foreach ($jurisdicciones as $j): ?>
-                          <option value="<?= (int) $j['id'] ?>"<?= (string) ($anterior['jurisdiccion_id'] ?? '') === (string) $j['id'] ? ' selected' : '' ?>><?= $esc($j['nombre']) ?></option>
+                          <?php $llena = !empty($j['completa']); ?>
+                          <option value="<?= (int) $j['id'] ?>"<?= $llena ? ' disabled' : '' ?><?= !$llena && (string) ($anterior['jurisdiccion_id'] ?? '') === (string) $j['id'] ? ' selected' : '' ?>><?= $esc($j['nombre']) ?><?= $llena ? ' — completado' : '' ?></option>
                         <?php endforeach; ?>
                       </select>
                       <svg aria-hidden="true"><use href="#i-chevron"/></svg>
