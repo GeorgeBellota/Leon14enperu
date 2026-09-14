@@ -20,6 +20,7 @@ use Intranet\Core\Controller;
 use Intranet\Core\ErrorDeNegocio;
 use Intranet\Core\Imagen;
 use Intranet\Core\Request;
+use Intranet\Core\Response;
 use Intranet\Models\Medio;
 use Throwable;
 
@@ -45,16 +46,58 @@ final class MedioController extends Controller
         ]);
     }
 
+    /**
+     * ¿Quien sube espera JSON en vez de una redirección?
+     *
+     * Lo pregunta el selector de imágenes del editor de secciones, que sube sin
+     * salir de la pantalla. Una redirección ahí no sirve de nada: quien la pidió
+     * es un `fetch`, no el navegador, y la sesión de edición sigue abierta
+     * detrás con todo lo que el usuario llevaba escrito.
+     */
+    private function quiereJson(): bool
+    {
+        return str_contains((string) ($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json');
+    }
+
+    /**
+     * Termina la petición con un error, por el camino que corresponda.
+     *
+     * Existe para no repetir el mismo `if` siete veces dentro de subir(). El 422
+     * es deliberado: el archivo llegó bien, lo que no cuadra es su contenido.
+     */
+    private function falloAlSubir(bool $json, string $mensaje): void
+    {
+        if ($json) {
+            Response::json(['ok' => false, 'mensaje' => $mensaje], 422);
+            exit;
+        }
+
+        $this->conError($mensaje, '/medios');
+    }
+
     public function subir(Request $peticion): void
     {
         $this->exigirCsrf($peticion);
 
+        $json       = $this->quiereJson();
         $alt        = trim($peticion->texto('alt', ''));
         $decorativa = $peticion->casilla('decorativa');
         $archivo    = $_FILES['imagen'] ?? null;
 
         if (!is_array($archivo) || (int) ($archivo['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            $this->conError('Elige la imagen que quieres subir.', '/medios');
+            /* Un $_FILES vacío no siempre es «no eligió archivo»: cuando la
+               subida pasa de post_max_size, PHP descarta la petición entera y
+               llega aquí sin $_POST y sin $_FILES. Decirlo es la diferencia
+               entre arreglarlo y reintentar diez veces el mismo archivo. */
+            if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0 && $_POST === []) {
+                $this->falloAlSubir(
+                    $json,
+                    'La imagen es más grande de lo que admite el servidor. Pide que suban '
+                    . '«upload_max_filesize» y «post_max_size» en el PHP del alojamiento.'
+                );
+            }
+
+            $this->falloAlSubir($json, 'Elige la imagen que quieres subir.');
         }
 
         // El texto alternativo es obligatorio salvo que la imagen se marque
@@ -62,9 +105,9 @@ final class MedioController extends Controller
         // fuera a quien navega con lector de pantalla, y añadirlo después
         // significa repasar el sitio entero buscando cuáles faltan.
         if ($alt === '' && !$decorativa) {
-            $this->conError(
-                'Escribe qué se ve en la imagen, o márcala como decorativa si no aporta información.',
-                '/medios'
+            $this->falloAlSubir(
+                $json,
+                'Escribe qué se ve en la imagen, o márcala como decorativa si no aporta información.'
             );
         }
 
@@ -90,8 +133,9 @@ final class MedioController extends Controller
                 @unlink($completa);
             }
         } catch (ErrorDeNegocio $e) {
-            // conError redirige y termina la petición: no se sigue por aquí.
-            $this->conError($e->getMessage(), '/medios');
+            // falloAlSubir termina la petición —redirigiendo o con JSON—: no se
+            // sigue por aquí.
+            $this->falloAlSubir($json, $e->getMessage());
         }
 
         $nombre = Adjunto::nombreLegible((string) ($archivo['name'] ?? 'imagen'));
@@ -112,9 +156,9 @@ final class MedioController extends Controller
 
             error_log('[medios] no se pudo registrar la imagen: ' . $e->getMessage());
 
-            $this->conError(
-                'No se pudo guardar la imagen. Inténtalo de nuevo; si vuelve a fallar, avisa al equipo técnico.',
-                '/medios'
+            $this->falloAlSubir(
+                $json,
+                'No se pudo guardar la imagen. Inténtalo de nuevo; si vuelve a fallar, avisa al equipo técnico.'
             );
         }
 
@@ -125,12 +169,31 @@ final class MedioController extends Controller
 
         $variantes = $procesada['variantes']['anchos'] ?? [];
 
-        $this->conExito(
-            $variantes === []
-                ? 'Imagen subida.'
-                : 'Imagen subida. Se generaron ' . count($variantes) . ' tamaños en WebP y respaldo.',
-            '/medios'
-        );
+        $aviso = $variantes === []
+            ? 'Imagen subida.'
+            : 'Imagen subida. Se generaron ' . count($variantes) . ' tamaños en WebP y respaldo.';
+
+        /* Al selector del editor le hace falta la imagen recién creada para
+           meterla en la rejilla y dejarla elegida, sin recargar. Se devuelve lo
+           mismo que el listado pinta de cada una. */
+        if ($json) {
+            Response::json([
+                'ok'    => true,
+                'aviso' => $aviso,
+                'medio' => [
+                    'id'             => $id,
+                    'ruta'           => $procesada['ruta'],
+                    'url'            => $this->c->urlSitio('/' . ltrim((string) $procesada['ruta'], '/')),
+                    'alt'            => $decorativa ? '' : $alt,
+                    'nombre_archivo' => $nombre,
+                    'ancho'          => $procesada['ancho'] ?? null,
+                    'alto'           => $procesada['alto'] ?? null,
+                ],
+            ], 201);
+            exit;
+        }
+
+        $this->conExito($aviso, '/medios');
     }
 
     /** Cambiar el texto alternativo sin volver a subir el archivo. */

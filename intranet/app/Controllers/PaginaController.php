@@ -55,6 +55,141 @@ final class PaginaController extends Controller
         ]);
     }
 
+    /**
+     * Los datos que ve un buscador y los que ve quien comparte el enlace.
+     *
+     * Hasta ahora vivían escritos dentro de cada vista, así que cambiar el
+     * título de una página en Google era desplegar código. Las columnas ya
+     * estaban en la tabla desde el principio, sin que nadie las usara.
+     *
+     * @param array<string, string> $params
+     */
+    public function seo(Request $peticion, array $params): void
+    {
+        $modelo = new Pagina($this->c);
+        $pagina = $modelo->porClave($params['clave'] ?? '');
+
+        if ($pagina === null) {
+            $this->conError('Esa página no existe.', '/paginas');
+        }
+
+        $this->ver('paginas/seo', [
+            'titulo' => 'Buscadores · ' . $pagina['nombre'],
+            'pagina' => $pagina,
+            'medios' => (new Medio($this->c))->paraElegir(),
+        ]);
+    }
+
+    /** @param array<string, string> $params */
+    public function guardarSeo(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        $modelo = new Pagina($this->c);
+        $pagina = $modelo->porClave($params['clave'] ?? '');
+
+        if ($pagina === null) {
+            $this->conError('Esa página no existe.', '/paginas');
+        }
+
+        $destino = '/paginas/' . $pagina['clave'] . '/seo';
+
+        /* Vacío significa «usa lo que trae la página», no «déjalo en blanco».
+           Por eso el 0 se convierte en null y no en cadena vacía. */
+        $imagen = (int) $peticion->entero('og_imagen_id', 0);
+
+        $modelo->guardarSeo(
+            (string) $pagina['clave'],
+            $peticion->texto('titulo_seo', ''),
+            $peticion->texto('descripcion_seo', ''),
+            $imagen > 0 ? $imagen : null,
+            $this->c->auth()->id()
+        );
+
+        Auditoria::registrar($this->c, 'editar', 'paginas', (int) $pagina['id'], [
+            'pagina' => $pagina['clave'],
+            'accion' => 'datos para buscadores',
+        ]);
+
+        $this->conExito('Datos guardados. Ya salen en la página.', $destino);
+    }
+
+    /**
+     * Cambia el orden en que salen las secciones de una página.
+     *
+     * ── Dos formas de llegar aquí, y las dos valen ───────────────────────
+     *
+     *   · `orden[]` con la lista entera de claves. Es lo que manda el
+     *     navegador después de arrastrar.
+     *   · `mover` = subir|bajar más la `clave` de una. Es lo que mandan las
+     *     flechas, que son botones normales dentro de un formulario normal y
+     *     funcionan sin una línea de JavaScript.
+     *
+     * La segunda no es un resto del pasado: es la que sigue funcionando el día
+     * que el JavaScript falle, y la única que puede usar quien se mueve por el
+     * panel con el teclado.
+     *
+     * @param array<string, string> $params
+     */
+    public function ordenar(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        $modelo = new Pagina($this->c);
+        $pagina = $modelo->porClave($params['clave'] ?? '');
+
+        if ($pagina === null) {
+            $this->conError('Esa página no existe.', '/paginas');
+        }
+
+        $destino = '/paginas/' . $pagina['clave'];
+        $actual  = array_column($modelo->secciones((int) $pagina['id']), 'clave');
+        $pedido  = $peticion->post('orden');
+
+        if (is_array($pedido) && $pedido !== []) {
+            $nuevo = $pedido;
+        } else {
+            /* El camino de las flechas. Cada botón lleva su propio `name` y la
+               clave como valor, que es la forma que tiene el HTML de decir cuál
+               de veinte botones se pulsó: sólo el pulsado se envía. */
+            $hacia = $peticion->texto('subir', '') !== '' ? 'subir'
+                   : ($peticion->texto('bajar', '') !== '' ? 'bajar' : '');
+            $clave = trim((string) $peticion->texto($hacia ?: 'subir', ''));
+
+            $indice = $hacia === '' ? false : array_search($clave, $actual, true);
+
+            if ($indice === false) {
+                $this->conError('No se pudo mover esa sección.', $destino);
+            }
+
+            $vecina = $hacia === 'subir' ? $indice - 1 : $indice + 1;
+
+            if ($vecina < 0 || $vecina >= count($actual)) {
+                // Ya estaba arriba del todo o abajo del todo. No es un error:
+                // simplemente no hay a dónde moverla.
+                $this->redirigir($destino);
+                return;
+            }
+
+            $nuevo = $actual;
+            [$nuevo[$indice], $nuevo[$vecina]] = [$nuevo[$vecina], $nuevo[$indice]];
+        }
+
+        $movidas = $modelo->reordenarSecciones((int) $pagina['id'], $nuevo, $this->c->auth()->id());
+
+        if ($movidas === 0) {
+            $this->conError('No se pudo guardar el orden.', $destino);
+        }
+
+        Auditoria::registrar($this->c, 'editar', 'paginas', null, [
+            'pagina' => $pagina['clave'],
+            'accion' => 'orden de secciones',
+            'orden'  => $nuevo,
+        ]);
+
+        $this->conExito('Orden guardado. Así salen ahora en la página.', $destino);
+    }
+
     /** @param array<string, string> $params */
     public function editar(Request $peticion, array $params): void
     {

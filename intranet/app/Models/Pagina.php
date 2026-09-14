@@ -214,6 +214,109 @@ final class Pagina extends Model
         return $nuevo === 1;
     }
 
+    /**
+     * Los datos de buscador de una página, con la ruta de la imagen ya resuelta.
+     *
+     * El JOIN evita una segunda consulta para traducir `og_imagen_id` a una
+     * ruta: esto se llama en CADA página pública que se pinta, y es la clase de
+     * sitio donde una consulta de más se nota.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function seoDe(string $clave): ?array
+    {
+        return $this->bd()->fila(
+            'SELECT p.titulo_seo, p.descripcion_seo, m.ruta AS og_imagen_ruta
+               FROM paginas p
+               LEFT JOIN medios m ON m.id = p.og_imagen_id
+              WHERE p.clave = :clave
+              LIMIT 1',
+            ['clave' => $clave]
+        );
+    }
+
+    /**
+     * Guarda los datos de buscador de una página.
+     *
+     * Los campos vacíos se guardan como NULL y no como cadena vacía: es la
+     * forma de decir «aquí no hay nada puesto», y es lo que hace que la página
+     * vuelva a usar el texto que trae escrito la vista.
+     */
+    public function guardarSeo(
+        string $clave,
+        string $titulo,
+        string $descripcion,
+        ?int $imagenId,
+        ?int $usuarioId
+    ): int {
+        return $this->bd()->actualizar(
+            'paginas',
+            [
+                'titulo_seo'      => trim($titulo) === '' ? null : mb_substr(trim($titulo), 0, 190),
+                'descripcion_seo' => trim($descripcion) === '' ? null : mb_substr(trim($descripcion), 0, 300),
+                'og_imagen_id'    => $imagenId,
+                'actualizado_por' => $usuarioId,
+            ],
+            'clave = :clave',
+            ['clave' => $clave]
+        );
+    }
+
+    /**
+     * Reescribe el orden de las secciones de una página.
+     *
+     * ── Por qué se numera de diez en diez ────────────────────────────────
+     *
+     * Porque deja hueco. Si una migración futura tiene que meter una sección
+     * entre la segunda y la tercera, le pone el 25 y no hay que renumerar las
+     * que vienen detrás. Es como estaban numeradas desde el principio.
+     *
+     * ── Por qué sólo mueve las que ya existen ────────────────────────────
+     *
+     * La lista de claves llega del navegador. Se cruza con lo que la página
+     * tiene de verdad y lo que no cuadre se ignora: una clave inventada no
+     * puede tocar la sección de otra página, porque el WHERE lleva siempre el
+     * id de ésta.
+     *
+     * @param  array<int, string> $claves en el orden deseado
+     * @return int                cuántas secciones se movieron
+     */
+    public function reordenarSecciones(int $paginaId, array $claves, ?int $usuarioId): int
+    {
+        $suyas = $this->bd()->columna(
+            'SELECT clave FROM secciones WHERE pagina_id = :pagina',
+            ['pagina' => $paginaId]
+        );
+
+        if ($suyas === []) {
+            return 0;
+        }
+
+        $validas = array_values(array_filter(
+            array_unique(array_map('strval', $claves)),
+            static fn (string $c): bool => in_array($c, $suyas, true)
+        ));
+
+        if ($validas === []) {
+            return 0;
+        }
+
+        return (int) $this->bd()->transaccion(function () use ($paginaId, $validas, $usuarioId): int {
+            $movidas = 0;
+
+            foreach ($validas as $posicion => $clave) {
+                $movidas += $this->bd()->actualizar(
+                    'secciones',
+                    ['orden' => ($posicion + 1) * 10, 'actualizado_por' => $usuarioId],
+                    'pagina_id = :pagina AND clave = :clave',
+                    ['pagina' => $paginaId, 'clave' => $clave]
+                );
+            }
+
+            return $movidas;
+        });
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function secciones(int $paginaId): array
     {

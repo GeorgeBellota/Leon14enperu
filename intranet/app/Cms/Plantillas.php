@@ -505,7 +505,8 @@ final class Plantillas
             // misma foto se cambia una vez y cambia en todas partes, y el sitio
             // público puede pedirle sus variantes para armar el <picture>.
             'imagen'     => ['etiqueta' => 'Imagen', 'tipo' => 'imagen', 'columna' => 'imagen_id',
-                             'ayuda' => 'Se elige de la biblioteca. Para subir una nueva, ve a Imágenes.'],
+                             'ayuda' => 'Pulsa una miniatura para elegirla. Si la que quieres no está, '
+                                      . 'súbela aquí mismo: no hace falta salir ni perder lo escrito.'],
             // La segunda fotografía, para teléfono. Es opcional: sin ella se
             // sirve la de arriba en todas las pantallas, como hasta ahora.
             'imagen_movil' => ['etiqueta' => 'Imagen para móvil', 'tipo' => 'imagen',

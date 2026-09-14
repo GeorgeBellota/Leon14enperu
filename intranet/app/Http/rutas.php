@@ -15,6 +15,7 @@
 declare(strict_types=1);
 
 use Intranet\Controllers\AuthController;
+use Intranet\Controllers\CatalogoController;
 use Intranet\Controllers\ComunicadoController;
 use Intranet\Controllers\ConfiguracionController;
 use Intranet\Controllers\MantenimientoController;
@@ -60,6 +61,11 @@ return static function (Router $r): void {
         $r->get('',                  [PaginaController::class, 'listar'])->nombre('paginas');
         $r->get('/{clave}',          [PaginaController::class, 'secciones']);
         $r->post('/{clave}/publicar', [PaginaController::class, 'publicar'])->permiso('paginas.publicar');
+        // Va ANTES de /{clave}/{seccion} o la capturaría como si «orden» fuese
+        // el nombre de una sección.
+        $r->post('/{clave}/orden',    [PaginaController::class, 'ordenar'])->permiso('paginas.editar');
+        $r->get('/{clave}/seo',       [PaginaController::class, 'seo'])->permiso('paginas.editar');
+        $r->post('/{clave}/seo',      [PaginaController::class, 'guardarSeo'])->permiso('paginas.editar');
         $r->get('/{clave}/{seccion}', [PaginaController::class, 'editar'])->permiso('paginas.editar');
         $r->post('/{clave}/{seccion}', [PaginaController::class, 'guardar'])->permiso('paginas.editar');
     });
@@ -114,13 +120,17 @@ return static function (Router $r): void {
         $r->post('/ip/{id:\d+}/borrar',   [MantenimientoController::class, 'borrarIp']);
     });
 
+    // ── Catálogos ────────────────────────────────────────────────────────
+    // De momento sólo el cupo de cada jurisdicción: cuántas inscripciones
+    // admite. Los nombres y el orden siguen viniendo de las migraciones,
+    // porque quedan escritos en 36 000 inscripciones y cambiarlos no es una
+    // edición cualquiera.
+    $r->get('/catalogos',  [CatalogoController::class, 'listar'])->permiso('catalogos.editar');
+    $r->post('/catalogos', [CatalogoController::class, 'guardar'])->permiso('catalogos.editar');
+
     /* ══════════════════════════════════════════════════════════════════════
        PENDIENTE. El núcleo ya soporta estas rutas; faltan sus controladores.
        Se dejan escritas para que el orden del trabajo quede fijado.
-
-    // Catálogos: los seis servicios y las jurisdicciones, que alimentan a la
-    // vez el formulario público y las tarjetas de la sección «servicios».
-    $r->get('/catalogos', [CatalogoController::class, 'listar'])->permiso('catalogos.editar');
 
     // Usuarios, roles y auditoría
     $r->get('/usuarios',                 [UsuarioController::class, 'listar'])->permiso('usuarios.ver');
