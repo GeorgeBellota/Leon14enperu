@@ -112,6 +112,25 @@ if (!headers_sent()) {
     $scriptExtra  = '';
     $conectaExtra = '';
     $imagenExtra  = '';
+    $marcoExtra   = '';
+
+    /* ── El directo abre el marco, y sólo mientras haya transmisión ───────
+     *
+     * Hoy no existe una directiva `frame-src`, así que manda `default-src
+     * 'self'` y un iframe de YouTube no llega ni a pedirse: el navegador lo
+     * rechaza antes. Para que el reproductor funcione hay que declararla.
+     *
+     * Se declara SÓLO cuando hay un vídeo configurado en el panel, y vuelve
+     * a desaparecer al vaciar el campo. El dominio es el de privacidad
+     * mejorada: cuenta la visualización igual y no pone cookies de
+     * publicidad mientras nadie pulse play.
+     *
+     * Aun así el reproductor no se carga al abrir la página: hace falta
+     * pulsar. Ver assets/parciales/directo.php.
+     */
+    if ($sitio->emite()) {
+        $marcoExtra = " https://www.youtube-nocookie.com";
+    }
 
     if ($sitio->mide()) {
         $medicion = $sitio->medicion();
@@ -138,6 +157,7 @@ if (!headers_sent()) {
         . "font-src 'self' https://fonts.gstatic.com; "
         . "img-src 'self' data:{$imagenExtra}; "
         . "connect-src 'self'{$conectaExtra}; "
+        . "frame-src 'self'{$marcoExtra}; "
         . "form-action 'self'; "
         . "frame-ancestors 'self'; "
         . "base-uri 'self'; "

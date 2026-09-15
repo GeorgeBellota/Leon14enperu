@@ -188,6 +188,47 @@ $estaVisible = static fn (string $clave): bool => $todas || in_array($clave, $vi
     </p>
   </section>
 
+  <?php /* ── Transmisión en directo ───────────────────────────────────────
+           Se pide el identificador o la dirección, no el bloque <iframe> que
+           da YouTube: ese bloque es HTML, y un campo libre cuyo contenido
+           acaba en la página deja meter lo que sea. El reproductor lo compone
+           el servidor. */ ?>
+  <section class="tarjeta sep-l">
+    <header class="tarjeta__cabecera"><h2>Transmisión en directo</h2></header>
+
+    <p class="campo__ayuda">
+      Aparece en <strong>En directo</strong>. Vacío = la página se queda como
+      está, sin reproductor.
+    </p>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="c-directo">Vídeo o canal de YouTube</label>
+      <input type="text" id="c-directo" name="directo_youtube" value="<?= $e($directo) ?>"
+             placeholder="https://www.youtube.com/watch?v=..." spellcheck="false">
+      <p class="campo__ayuda">
+        Pega la dirección de la transmisión tal cual. También vale el
+        identificador suelto: 11 caracteres para un vídeo concreto, o el del
+        canal —empieza por <code>UC</code>— para que emita lo que el canal esté
+        dando en cada momento, sin tener que volver aquí cada día.
+      </p>
+    </div>
+
+    <div class="campo">
+      <label class="campo__etiqueta" for="c-directo-titulo">Título sobre el reproductor</label>
+      <input type="text" id="c-directo-titulo" name="directo_titulo" value="<?= $e($directoTitulo) ?>"
+             placeholder="Misa en el Parque Bicentenario" maxlength="120">
+    </div>
+
+    <?php if ($directo !== ''): ?>
+      <p class="campo__ayuda campo__ayuda--aviso sep-m">
+        <strong>El reproductor no carga solo: hace falta pulsar.</strong>
+        Hasta que alguien lo hace, la página no contacta con YouTube ni deja
+        ninguna cookie. Al pulsar, la visualización se cuenta entera en tus
+        estadísticas de YouTube.
+      </p>
+    <?php endif; ?>
+  </section>
+
   <?php /* ── Medición ─────────────────────────────────────────────────────
            Se pide el IDENTIFICADOR, no el fragmento de código que Google y
            Meta dan para pegar. Ese fragmento es JavaScript, y un campo libre

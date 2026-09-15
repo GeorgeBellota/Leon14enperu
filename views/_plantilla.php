@@ -154,6 +154,12 @@ document.documentElement.className += ' js';
 <script src="<?= $esc($sitio->asset($script)) ?>" defer></script>
 <?php endforeach; ?>
 <script src="<?= $esc($sitio->asset('assets/js/form.js')) ?>" defer></script>
+<?php if ($sitio->reproductorPintado()): ?>
+<?php /* Sólo en la página que pintó el reproductor, no en todas las que
+         tienen transmisión configurada: la configuración es del sitio entero
+         y el reproductor sale en una sola página. */ ?>
+<script src="<?= $esc($sitio->asset('assets/js/directo.js')) ?>" defer></script>
+<?php endif; ?>
 <?php if ($sitio->mide()): ?>
 <?php /* Sólo se carga si hay algo que medir. Si el panel tiene los campos
          vacíos, este archivo ni se pide: una petición menos y ninguna

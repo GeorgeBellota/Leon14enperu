@@ -1813,3 +1813,76 @@ span.flatpickr-weekday {
   .consentimiento__botones { width: 100%; }
   .consentimiento__botones .btn { flex: 1; min-width: 0; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TRANSMISIÓN EN DIRECTO
+
+   Hasta que alguien pulsa no hay <iframe>: lo que se ve es un botón que ocupa
+   el mismo sitio que ocupará el reproductor. Por eso la proporción se reserva
+   con `aspect-ratio` desde el principio — si no, al crear el marco la página
+   daría un salto y el contenido de abajo se movería bajo el cursor.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.seccion--directo { padding-block: var(--space-l) var(--space-m); }
+
+.directo {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  margin-block: var(--space-m);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-invert);
+}
+
+.directo__marco { width: 100%; height: 100%; border: 0; display: block; }
+
+/* El botón ES el reproductor hasta que se pulsa: ocupa toda la caja. */
+.directo__portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  padding: var(--space-m);
+  cursor: pointer;
+  border: 0;
+  color: var(--on-primary);
+  background: var(--surface-invert);
+  text-align: center;
+  font: inherit;
+}
+
+.directo__play {
+  display: block;
+  color: #FF0000;
+  transition: transform .18s var(--ease);
+}
+.directo__portada:hover .directo__play,
+.directo__portada:focus-visible .directo__play { transform: scale(1.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .directo__play { transition: none; }
+}
+
+.directo__pie {
+  display: grid;
+  gap: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  max-width: 44ch;
+}
+
+/* Decirlo antes de que pase, no después: quien pulsa sabe que va a conectarse
+   con YouTube. Ese aviso es lo que convierte el clic en consentimiento. */
+.directo__nota {
+  font-size: .82rem;
+  font-weight: 400;
+  opacity: .78;
+  line-height: 1.45;
+}
+
+.directo__sinjs { margin: 0; font-size: .95rem; }

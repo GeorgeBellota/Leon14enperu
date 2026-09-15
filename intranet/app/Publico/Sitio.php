@@ -49,6 +49,9 @@ final class Sitio
     private ?Catalogo $catalogo = null;
     private bool $bdCaida = false;
 
+    /** Lo pone el parcial del directo al pintarse. Ver reproductorPintado(). */
+    private bool $hayReproductor = false;
+
     public function __construct(array $config, Request $peticion)
     {
         $this->c = new Contenedor($config, $peticion);
@@ -248,6 +251,79 @@ final class Sitio
         $m = $this->medicion();
 
         return $m['ga4'] !== '' || $m['pixel'] !== '';
+    }
+
+    /**
+     * La transmisión en directo configurada en el panel.
+     *
+     * ── Se guarda el IDENTIFICADOR, nunca el <iframe> ────────────────────
+     *
+     * YouTube da un bloque de HTML para pegar. Un campo de texto libre cuyo
+     * contenido acaba dentro de la página deja que quien entre al panel meta
+     * lo que quiera en todas las visitas. Aquí sólo entran letras, números,
+     * guiones y rayas bajas, y el reproductor lo compone el servidor.
+     *
+     * ── Dos formas de emitir, y las dos valen ────────────────────────────
+     *
+     *   · Un vídeo concreto: 11 caracteres. Sirve para un directo con fecha
+     *     y hora, y sigue funcionando cuando termina y queda grabado.
+     *   · Un canal: «UC» y 22 caracteres. Emite lo que el canal esté dando
+     *     en ese momento, así que no hay que tocar el panel cada día.
+     *
+     * Si el formato no cuadra, se devuelve vacío. Preferible no emitir a
+     * emitir cualquier cosa.
+     *
+     * @return array{tipo:string, id:string, titulo:string}
+     */
+    public function directo(): array
+    {
+        $vacio = ['tipo' => '', 'id' => '', 'titulo' => ''];
+
+        if ($this->bdCaida) {
+            return $vacio;
+        }
+
+        $id     = trim($this->ajuste('directo.youtube', ''));
+        $titulo = trim($this->ajuste('directo.titulo', ''));
+
+        if (preg_match('/^UC[A-Za-z0-9_-]{22}$/', $id) === 1) {
+            return ['tipo' => 'canal', 'id' => $id, 'titulo' => $titulo];
+        }
+
+        if (preg_match('/^[A-Za-z0-9_-]{11}$/', $id) === 1) {
+            return ['tipo' => 'video', 'id' => $id, 'titulo' => $titulo];
+        }
+
+        return $vacio;
+    }
+
+    /** ¿Hay transmisión configurada? Decide si la CSP admite el iframe. */
+    public function emite(): bool
+    {
+        return $this->directo()['id'] !== '';
+    }
+
+    /**
+     * ¿Ha pintado esta página el reproductor?
+     *
+     * Lo marca assets/parciales/directo.php al pintarse, y lo lee la plantilla
+     * para decidir si pide directo.js.
+     *
+     * Hace falta porque las dos cosas no coinciden: la transmisión se
+     * configura una vez y vale para todo el sitio, pero el reproductor sólo
+     * sale en la página que lo incluye. Sin esto, las otras veintitrés pedían
+     * un guion que se cierra en su primera línea al no encontrar nada.
+     *
+     * Funciona porque la plantilla se pinta DESPUÉS de la vista: cuando llega
+     * a los scripts, el parcial ya se ejecutó.
+     */
+    public function reproductorPintado(?bool $marcar = null): bool
+    {
+        if ($marcar === true) {
+            $this->hayReproductor = true;
+        }
+
+        return $this->hayReproductor;
     }
 
     /**

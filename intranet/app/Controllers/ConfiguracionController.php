@@ -85,6 +85,8 @@ final class ConfiguracionController extends Controller
             'fase'        => (string) $ajustes->leer('sitio.fase', 'auto'),
             'ga4'         => (string) $ajustes->leer('analitica.ga4', ''),
             'pixel'       => (string) $ajustes->leer('analitica.pixel', ''),
+            'directo'     => (string) $ajustes->leer('directo.youtube', ''),
+            'directoTitulo' => (string) $ajustes->leer('directo.titulo', ''),
 
             // El logotipo se pregunta al disco, no a un ajuste: así, si alguien
             // lo borra por FTP, el panel enseña la verdad y no un recuerdo.
@@ -218,6 +220,47 @@ final class ConfiguracionController extends Controller
             );
         }
 
+        /* ── La transmisión en directo ─────────────────────────────────────
+           Mismo criterio que la medición: se guarda el IDENTIFICADOR, no el
+           bloque <iframe> que da YouTube. El reproductor lo compone el
+           servidor, así que por aquí sólo pueden entrar letras, números,
+           guiones y rayas bajas.
+
+           Se acepta pegar la dirección entera porque es lo que todo el mundo
+           tiene a mano, pero lo que se guarda es el identificador que hay
+           dentro. */
+        $directo       = trim($peticion->texto('directo_youtube', ''));
+        $directoTitulo = trim($peticion->texto('directo_titulo', ''));
+
+        if ($directo !== '') {
+            foreach ([
+                '~[?&]v=([A-Za-z0-9_-]{11})~',          // watch?v=…
+                '~youtu\.be/([A-Za-z0-9_-]{11})~',       // youtu.be/…
+                '~/live/([A-Za-z0-9_-]{11})~',           // /live/…
+                '~/embed/([A-Za-z0-9_-]{11})~',          // /embed/…
+                '~channel/(UC[A-Za-z0-9_-]{22})~',       // channel/UC…
+            ] as $patron) {
+                if (preg_match($patron, $directo, $m) === 1) {
+                    $directo = $m[1];
+                    break;
+                }
+            }
+
+            $esCanal = preg_match('/^UC[A-Za-z0-9_-]{22}$/', $directo) === 1;
+            $esVideo = preg_match('/^[A-Za-z0-9_-]{11}$/', $directo) === 1;
+
+            if (!$esCanal && !$esVideo) {
+                $this->conError(
+                    'No reconozco ese vídeo de YouTube. Pega la dirección completa de la '
+                    . 'transmisión, o sólo el identificador: 11 caracteres para un vídeo, '
+                    . 'o el del canal, que empieza por UC.',
+                    '/configuracion'
+                );
+            }
+        }
+
+        $directoTitulo = mb_substr($directoTitulo, 0, 120);
+
         $ajustes->escribir('sitio.pagina_inicio', $inicio);
         $ajustes->escribir('menu.visibles', $todas ? '' : implode(',', $marcadas));
         $ajustes->escribir('pie.modo', $pie);
@@ -226,6 +269,8 @@ final class ConfiguracionController extends Controller
         $ajustes->escribir('sitio.fase', $fase);
         $ajustes->escribir('analitica.ga4', $ga4);
         $ajustes->escribir('analitica.pixel', $pixel);
+        $ajustes->escribir('directo.youtube', $directo);
+        $ajustes->escribir('directo.titulo', $directoTitulo);
 
         Auditoria::registrar($this->c, 'editar', 'ajustes', null, [
             'pagina_inicio' => $inicio,

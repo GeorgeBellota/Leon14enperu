@@ -69,6 +69,12 @@ $hay = static fn (string $s): bool
   </div>
 </header>
 
+<?php /* El reproductor, si hay transmisión configurada en el panel. Va lo
+         primero: quien entra aquí durante la visita viene a ver, no a leer.
+         Si no hay nada configurado el parcial no pinta un byte y la página
+         se queda exactamente como está hoy. */ ?>
+<?php require dirname(__DIR__) . '/assets/parciales/directo.php'; ?>
+
 <section class="seccion" aria-labelledby="t-directo">
   <div class="contenedor"><div class="reticula"><div class="col-m-4 col-t-6 col-d-7">
     <header class="seccion__encabezado seccion__encabezado--mayor">
