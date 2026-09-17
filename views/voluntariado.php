@@ -815,11 +815,18 @@ $meta = [
                 </div>
                 </div><?php /* cierra la fila de tres */ ?>
 
+                <?php /* La frase que sigue al párrafo del panel es fija a propósito: es
+                         la declaración de consentimiento, no una nota informativa, y la
+                         CEP pidió su redacción exacta —«autorizo el tratamiento y
+                         transferencia», no sólo «he leído»—. Que quede aquí y no en el
+                         campo editable evita que un cambio de contenido la debilite sin
+                         que nadie se dé cuenta: «he leído la política» no es lo mismo que
+                         autorizar el tratamiento y la transferencia de los datos. */ ?>
                 <label class="casilla<?= isset($errores['consentimiento']) ? ' campo--error' : '' ?>">
                   <input type="checkbox" id="consentimiento" name="consentimiento" value="1" required<?= !empty($anterior['consentimiento']) ? ' checked' : '' ?>>
                   <span class="casilla__texto">
                     <?= $rico($dato('inscripcion', 'consentimiento', 'Autorizo el tratamiento de mis datos personales para gestionar mi inscripción como voluntario.')) ?>
-                    He leído la <a href="<?= $esc($sitio->enlace('privacidad/')) ?>">política de privacidad</a>. *
+                    <a href="<?= $esc($sitio->enlace('privacidad/')) ?>">Ver Política de Privacidad completa</a>. He leído la información proporcionada y autorizo el tratamiento y transferencia de mis datos personales para las finalidades indicadas. *
                   </span>
                 </label>
                 <?php if (isset($errores['consentimiento'])): ?><p class="campo__error" role="alert"><?= $esc($errores['consentimiento']) ?></p><?php endif; ?>
