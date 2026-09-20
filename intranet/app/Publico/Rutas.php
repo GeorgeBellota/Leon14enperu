@@ -4,9 +4,8 @@
  *  Rutas del sitio público.
  * ============================================================================
  *
- *  Un mapa de dirección → vista. Sustituye a la carpeta por página: antes,
- *  publicar /prensa/ exigía crear la carpeta prensa/ con su index.php dentro,
- *  con las cuarenta y cinco líneas de <head> repetidas una vez más.
+ *  Un mapa de dirección → vista. Publicar una página son dos cosas: una línea
+ *  aquí y un archivo en views/. Ni carpeta, ni bootstrap repetido.
  *
  *  ── Por qué en código y no en la base ────────────────────────────────────
  *
@@ -19,10 +18,9 @@
  *
  *  ── Añadir una página ────────────────────────────────────────────────────
  *
- *   1. Una entrada aquí.
+ *   1. Una entrada en todas().
  *   2. Un archivo en views/ con el mismo nombre que la vista.
- *
- *  Ni carpeta, ni index.php, ni <head> repetido.
+ *   3. Si se quiere en el menú, añadir la clave al ajuste `menu.visibles`.
  */
 
 declare(strict_types=1);
@@ -40,34 +38,61 @@ final class Rutas
     public static function todas(): array
     {
         return [
-            'voluntariado'         => ['clave' => 'voluntariado',         'vista' => 'voluntariado'],
-
-            // Colecciones con página de detalle. La ruta de las dos últimas
-            // lleva barra dentro a propósito: /cep/obispos/ cuelga de la
-            // sección institucional, y el mapa de rutas es texto, así que
-            // la jerarquía de tres niveles no cuesta nada.
-            'tierra-de-santos'     => ['clave' => 'tierra-de-santos',     'vista' => 'coleccion'],
-            'cep/obispos'          => ['clave' => 'obispos',              'vista' => 'coleccion'],
-            'cep/comisiones'       => ['clave' => 'comisiones',           'vista' => 'coleccion'],
-            'participa'            => ['clave' => 'participa',            'vista' => 'coleccion'],
-            'multimedia'           => ['clave' => 'multimedia',           'vista' => 'coleccion'],
-            'el-papa'              => ['clave' => 'el-papa',              'vista' => 'el-papa'],
+            // ── Las catorce del rediseño ─────────────────────────────────
+            'papa-leon-xiv'        => ['clave' => 'papa-leon-xiv',        'vista' => 'papa-leon-xiv'],
             'sedes'                => ['clave' => 'sedes',                'vista' => 'sedes'],
             'agenda'               => ['clave' => 'agenda',               'vista' => 'agenda'],
             'cep'                  => ['clave' => 'cep',                  'vista' => 'cep'],
+            'subsidios'            => ['clave' => 'subsidios',            'vista' => 'subsidios'],
+            'voluntariado'         => ['clave' => 'voluntariado',         'vista' => 'voluntariado'],
             'noticias'             => ['clave' => 'noticias',             'vista' => 'noticias'],
+            'prensa'               => ['clave' => 'prensa',               'vista' => 'prensa'],
+            'contacto'             => ['clave' => 'contacto',             'vista' => 'contacto'],
+            'santos'               => ['clave' => 'santos',               'vista' => 'santos'],
+            'logo-y-lema'          => ['clave' => 'logo-y-lema',          'vista' => 'logo-y-lema'],
             'preguntas-frecuentes' => ['clave' => 'preguntas-frecuentes', 'vista' => 'preguntas-frecuentes'],
+
+            // ── Colecciones con página de detalle ────────────────────────
+            // La ruta de las dos últimas lleva barra dentro a propósito:
+            // /cep/obispos/ cuelga de la sección institucional, y el mapa es
+            // texto, así que la jerarquía de tres niveles no cuesta nada.
+            'participa'            => ['clave' => 'participa',            'vista' => 'coleccion'],
+            'multimedia'           => ['clave' => 'multimedia',           'vista' => 'coleccion'],
+            'cep/obispos'          => ['clave' => 'obispos',              'vista' => 'coleccion'],
+            'cep/comisiones'       => ['clave' => 'comisiones',           'vista' => 'coleccion'],
+
+            // ── El resto de páginas del sitio ────────────────────────────
             'guia-del-peregrino'   => ['clave' => 'guia-del-peregrino',   'vista' => 'guia-del-peregrino'],
-            'materiales'           => ['clave' => 'materiales',           'vista' => 'materiales'],
             'en-directo'           => ['clave' => 'en-directo',           'vista' => 'en-directo'],
             'donativo'             => ['clave' => 'donativo',             'vista' => 'donativo'],
             'patrocinios'          => ['clave' => 'patrocinios',          'vista' => 'patrocinios'],
-            'prensa'               => ['clave' => 'prensa',               'vista' => 'prensa'],
-            'contacto'             => ['clave' => 'contacto',             'vista' => 'contacto'],
             'transparencia'        => ['clave' => 'transparencia',        'vista' => 'transparencia'],
             'aviso-legal'          => ['clave' => 'aviso-legal',          'vista' => 'aviso-legal'],
             'privacidad'           => ['clave' => 'privacidad',           'vista' => 'privacidad'],
             'cookies'              => ['clave' => 'cookies',              'vista' => 'cookies'],
+        ];
+    }
+
+    /**
+     * ── Direcciones que cambiaron de nombre ──────────────────────────────
+     *
+     * El rediseño renombró tres páginas. Las direcciones antiguas llevan
+     * meses publicadas, compartidas e indexadas, así que no se apagan: se
+     * responden con un 301 a la nueva. El buscador traspasa el
+     * posicionamiento y nadie se encuentra un 404.
+     *
+     * Se resuelve aquí y no en el .htaccess a propósito: así el mapa de
+     * direcciones está entero en un archivo y sigue funcionando en un
+     * servidor que no lea los .htaccess.
+     *
+     * @return array<string, string>  antigua → nueva
+     */
+    public static function mudanzas(): array
+    {
+        return [
+            'el-papa'          => 'papa-leon-xiv',
+            'tierra-de-santos' => 'santos',
+            'materiales'       => 'subsidios',
         ];
     }
 
@@ -79,6 +104,12 @@ final class Rutas
     public static function resolver(string $ruta): ?array
     {
         return self::todas()[trim($ruta, '/')] ?? null;
+    }
+
+    /** La dirección nueva de una que se mudó, o null si no se mudó. */
+    public static function mudanza(string $ruta): ?string
+    {
+        return self::mudanzas()[trim($ruta, '/')] ?? null;
     }
 
     /** ¿Existe esta clave de página? Lo usa el despachador de la portada. */

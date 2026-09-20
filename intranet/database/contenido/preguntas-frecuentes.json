@@ -1,0 +1,170 @@
+{
+  "pagina": {
+    "clave": "preguntas-frecuentes",
+    "nombre": "Preguntas frecuentes",
+    "ruta": "/preguntas-frecuentes/",
+    "titulo_seo": "Preguntas frecuentes · Viaje de León XIV al Perú",
+    "descripcion_seo": "Fechas, sedes, cómo asistir, voluntariado y cómo seguir la visita del Papa León XIV al Perú, del 11 al 16 de noviembre de 2026.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Preguntas frecuentes",
+      "texto": "@bd",
+      "imagen": "preguntas-frecuentes/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "visita",
+      "nombre": "La visita",
+      "plantilla": "texto_apartados",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "La visita",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Cuándo viene el Papa León XIV al Perú?",
+          "texto": "Del 11 al 16 de noviembre de 2026. Es la tercera etapa de su primera gira sudamericana, después de Uruguay y Argentina. La Santa Sede lo anunció el 5 de agosto de 2026."
+        },
+        {
+          "orden": 20,
+          "titulo": "¿Qué ciudades visitará?",
+          "texto": "Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa. El orden del viaje y los días que corresponden a cada sede no se han publicado."
+        },
+        {
+          "orden": 30,
+          "titulo": "¿Por qué esas seis?",
+          "texto": "Son la capital y su arquidiócesis primada, con la provincia del Callao; la diócesis que el Santo Padre pastoreó entre 2015 y 2023, con el pueblo de Santa Cruz; la Iglesia andina más antigua del país y un vicariato apostólico amazónico. Costa, sierra y selva."
+        },
+        {
+          "orden": 40,
+          "titulo": "¿Cuándo se sabrá el programa?",
+          "texto": "No hay fecha anunciada. El programa detallado lo publica la Oficina de Prensa de la Santa Sede, habitualmente algunas semanas antes del viaje, y la Conferencia Episcopal Peruana lo difunde en el país."
+        },
+        {
+          "orden": 50,
+          "titulo": "¿Se transmitirán los actos?",
+          "texto": "Los viajes apostólicos se transmiten habitualmente por los medios de la Santa Sede y por las emisoras y canales de la Iglesia en el país. Los enlaces concretos se publicarán cuando existan."
+        },
+        {
+          "orden": 60,
+          "titulo": "¿Hay cuentas oficiales en redes sociales?",
+          "texto": "Todavía no. Cuando existan se anunciarán en este sitio. Cualquier cuenta que hoy diga representar la visita no es oficial."
+        },
+        {
+          "orden": 70,
+          "titulo": "¿Dónde consigo materiales para mi parroquia?",
+          "texto": "En la página de materiales de pastoral. Guía de oración, subsidio de catequesis, cantoral y banners, todo de descarga libre, conforme se vayan aprobando."
+        }
+      ]
+    },
+
+    {
+      "clave": "asistir-actos",
+      "nombre": "Actividades",
+      "plantilla": "texto_apartados",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Actividades",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Habrá que inscribirse para asistir?",
+          "texto": "Por confirmar. Las condiciones de acceso forman parte del programa oficial y todavía no se han publicado. No des por válida ninguna inscripción que no proceda de la Conferencia Episcopal Peruana o de tu diócesis."
+        },
+        {
+          "orden": 20,
+          "titulo": "¿Las misas tendrán entradas?",
+          "texto": "Por confirmar. En otros viajes apostólicos algunas celebraciones han sido de acceso libre y otras han requerido pase por razones de aforo y seguridad."
+        },
+        {
+          "orden": 30,
+          "titulo": "¿Los encuentros son gratuitos?",
+          "texto": "Sí. Todos los actos de la Visita Apostólica son gratuitos. Si alguien te cobra por una entrada, por una inscripción o por un pase, no es oficial."
+        },
+        {
+          "orden": 40,
+          "titulo": "¿Qué debo llevar?",
+          "texto": "Agua, protección para el sol, calzado cómodo, tu documento de identidad y tus medicinas. La guía del peregrino lo detalla."
+        }
+      ]
+    },
+
+    {
+      "clave": "voluntariado",
+      "nombre": "Voluntariado",
+      "plantilla": "texto_apartados",
+      "orden": 40,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Voluntariado",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Quién puede ser voluntario?",
+          "texto": "Hay seis servicios y un lugar para cada talento: resguardo y orden, acogida y hospitalidad, comunicación, logística, primeros auxilios y traducción e interpretación. La inscripción es la Fase 01 y se hace por internet."
+        },
+        {
+          "orden": 20,
+          "titulo": "¿Qué documentos me pedirán?",
+          "texto": "En la Fase 02 se solicitan carta de recomendación de un sacerdote, religioso o religiosa u obispo, declaración o certificado de antecedentes judiciales y penales, entrevista personal según necesidad y evaluación psicológica cuando sea posible. Nada de eso se sube a este sitio: la organización indicará el canal."
+        },
+        {
+          "orden": 30,
+          "titulo": "¿Puedo elegir el servicio?",
+          "texto": "Indicas tu preferencia al inscribirte. La asignación definitiva se comunica en la Fase 03, junto con la credencial."
+        },
+        {
+          "orden": 40,
+          "titulo": "¿Qué hacen con mis datos?",
+          "texto": "Se usan únicamente para el fin por el que los diste: avisarte de una publicación, responder tu consulta o gestionar tu inscripción como voluntario. La política de privacidad lo detalla."
+        }
+      ]
+    },
+
+    {
+      "clave": "este-sitio",
+      "nombre": "Sobre la web",
+      "plantilla": "texto_apartados",
+      "orden": 50,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Sobre la web",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Usa cookies?",
+          "texto": "No. Este sitio no instala cookies ni tiene analítica ni scripts de seguimiento. Solo usa almacenamiento del navegador para guardar el borrador del formulario de voluntariado y para no repetirte el aviso de la portada."
+        }
+      ]
+    }
+  ],
+
+  "notas": [
+    "Las cinco secciones reutilizan las claves que ya tenían («cabecera», «visita», «asistir-actos», «voluntariado», «este-sitio») para conservar su SEO y su historial. Lo que cambia es la plantilla de los cuatro grupos: pasan de «texto_lectura» a «texto_apartados», porque en el rediseño cada pregunta es un apartado (titulo = pregunta, texto = respuesta) y así el editor puede añadir, quitar y reordenar preguntas desde el panel sin tocar código.",
+    "Las respuestas no estaban en la base: la vista antigua las traía escritas a mano en el HTML y en el JSON-LD. Se recuperan aquí una a una, literales, para que no se pierdan al migrar. Ahora sí quedan en la base y el JSON-LD de la página se genera a partir de ellas.",
+    "Se retira la sección «seguir-visita» [texto_lectura]: el rediseño agrupa las preguntas en cuatro bloques y sus tres preguntas —transmisiones, redes sociales y materiales para la parroquia— pasan a «La visita», que es donde las coloca el editable. Su texto no se pierde: viaja con las preguntas.",
+    "El editable baja de diecinueve preguntas a dieciséis. Se quedan fuera tres que hoy sí están publicadas: «¿Cómo llego a mi sede?», «¿Hay zona para personas con discapacidad?» y «¿Quién publica esta web?» (esta última con el marcador [RESPONSABLE POR CONFIRMAR] sin resolver). Su texto queda en el volcado de producción y en el respaldo; si se quieren recuperar, se añaden como apartados desde el panel, que admite hasta veinte por grupo.",
+    "El rótulo y la bajada de «cabecera» quedan como @bd: el editable no dibuja ninguna de las dos cosas sobre el titular del héroe —sólo «Preguntas frecuentes» en dos líneas—, así que el texto se conserva en la base por si vuelve a hacer falta. OJO: el rótulo guardado dice «Diecinueve respuestas» y la página nueva lista dieciséis. Como no se pinta, no se toca; el día que se vuelva a mostrar hay que corregir el número.",
+    "El rótulo de los cuatro grupos («Preguntas» en los cuatro) queda también como @bd: el editable no dibuja línea encima de los titulares de grupo, sólo el filete granate de 79,4 x 5 px que la hoja pinta con ::after.",
+    "Tres respuestas se ajustan porque la pregunta cambió con el rediseño y la de la base ya no contestaba a lo que se pregunta. Se conserva la redacción original y se toca lo mínimo: «¿Qué ciudades visitará?» pasa de cuatro ciudades a las seis del rediseño (las mismas que ya declaran sedes.json y home.json); «¿Por qué esas seis?» —antes «¿Por qué esas cuatro?»— suma el Callao y Santa Cruz con las palabras de sedes.json; y «¿Los encuentros son gratuitos?» —antes «¿Cuánto cuesta asistir?»— empieza por «Sí» en vez de por «Nada», porque ahora la pregunta es de sí o no. El resto de la segunda frase es literal.",
+    "La pregunta 7 del editable está escrita «¿Donde consigo…», sin tilde. Se migra con la tilde («¿Dónde consigo…»), que es como está publicada hoy: es una errata del editable, no una decisión de diseño, y un acento no mueve la maqueta.",
+    "La imagen del héroe es «preguntas-frecuentes/hero» (2880 x 1164). La base no tenía ninguna elegida para esta cabecera; mientras no la haya, la vista pinta esa misma fotografía escrita a mano como respaldo."
+  ]
+}

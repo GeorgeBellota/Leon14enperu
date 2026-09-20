@@ -1,65 +1,99 @@
 <?php
 /**
- * Cabecera y menú móvil, comunes a todas las páginas.
+ * ============================================================================
+ *  Cabecera del sitio — rediseño 2026.
+ * ============================================================================
  *
- * Variables que espera:
- *   $raiz     prefijo de URL hasta la raíz del sitio ('../' desde una
- *             subcarpeta, './' desde la portada).
- *   $activa   clave de la página actual, para marcar aria-current.
+ *  La barra tiene 76 px de alto, la marca a la izquierda y la navegación a la
+ *  derecha, exactamente como el editable. Se queda fija al desplazarse.
  *
- * @var string $raiz
- * @var string $activa
+ *  ── Lo que se decide desde el panel ──────────────────────────────────────
+ *
+ *   · Qué entradas se ven        → ajuste `menu.visibles`
+ *   · El logotipo                → assets/img/marca/marca.(svg|png|webp|jpg)
+ *   · La fecha de la cuenta atrás→ Configuración general → Fechas del viaje
+ *
+ *  ── La regla de las diez entradas ────────────────────────────────────────
+ *
+ *  El editable dibuja nueve enlaces y a 1440 px ocupan justo el ancho
+ *  disponible. Como desde el panel se puede añadir cualquiera de las
+ *  veintitantas páginas del sitio, hace falta una salida: a partir de ONCE
+ *  entradas la navegación de escritorio se repliega en el mismo menú
+ *  desplegable que ya se usa en móvil. Así se pueden publicar todas las
+ *  páginas que se quiera sin que los enlaces se salgan de la pantalla ni haya
+ *  que tocar una línea de código.
+ *
+ *  Variables que espera:
+ *    $raiz     prefijo de URL hasta la raíz del sitio
+ *    $activa   clave de la página actual, para marcar aria-current
+ *
+ *  @var string $raiz
+ *  @var string $activa
+ *  @var \Intranet\Publico\Sitio $sitio
  */
 
 $raiz   = $raiz   ?? './';
 $activa = $activa ?? '';
 
-/* El menú en un array: añadir una entrada es una línea, y la versión de
-   escritorio y la de móvil no pueden descuadrarse entre sí. */
-$menu = [
-    'el-papa'              => 'Papa León XIV',
+/* ── El catálogo completo ─────────────────────────────────────────────────
+   TODAS las páginas que se pueden poner en el menú. No es lo que se muestra:
+   es de dónde elige el panel. Añadir una entrada aquí es una línea, y la
+   navegación de escritorio y la de móvil salen de la misma lista, así que no
+   pueden descuadrarse entre sí. */
+$catalogo = [
+    'papa-leon-xiv'        => 'Papa León XIV',
     'sedes'                => 'Sedes',
     'agenda'               => 'Agenda',
-    'tierra-de-santos'     => 'Tierra de santos',
     'cep'                  => 'CEP',
-    'noticias'             => 'Noticias',
+    'subsidios'            => 'Subsidios Pastorales',
     'voluntariado'         => 'Voluntariado',
+    'noticias'             => 'Noticias',
+    'prensa'               => 'Prensa',
+    'contacto'             => 'Contacto',
+
+    // Publicadas, pero fuera del menú mientras nadie las añada desde el panel.
+    'santos'               => 'Santos del Perú',
+    'logo-y-lema'          => 'Logo y lema',
+    'preguntas-frecuentes' => 'Preguntas frecuentes',
+    'guia-del-peregrino'   => 'Guía del peregrino',
     'participa'            => 'Participa',
     'multimedia'           => 'Multimedia',
-    'prensa'               => 'Prensa',
-    /* «Subsidios» y no «Materiales»: es la palabra que usa el cliente y la que
-       busca una parroquia. La página sigue siendo /materiales/ —una dirección
-       ya compartida no se cambia— y su titular sigue diciendo «Materiales de
-       pastoral», que se edita desde el panel si algún día quieren igualarlo. */
-    'materiales'           => 'Subsidios',
-    'guia-del-peregrino'   => 'Guía del peregrino',
-    'preguntas-frecuentes' => 'Preguntas frecuentes',
-    'patrocinios'          => 'Patrocinios',
+    'en-directo'           => 'En directo',
     'donativo'             => 'Donaciones',
-    'contacto'             => 'Contacto',
+    'patrocinios'          => 'Patrocinios',
+    'transparencia'        => 'Transparencia',
 ];
 
-/* ── Qué entradas se muestran ─────────────────────────────────────────────
-   El ajuste `menu.visibles` de la intranet lleva las claves separadas por
-   comas; vacío significa mostrarlas todas.
+/* ── Qué entradas se ven ──────────────────────────────────────────────────
+   El ajuste `menu.visibles` lleva las claves separadas por comas y manda
+   sobre todo lo demás. Si está vacío —o si la base no responde— se muestran
+   las nueve del diseño: es la navegación que se dibujó y la que cabe sin
+   apretar. Antes, el vacío significaba «todas», y con veinte páginas
+   publicadas eso llenaba la barra de enlaces. */
+$porDefecto = ['papa-leon-xiv', 'sedes', 'agenda', 'cep', 'subsidios',
+               'voluntariado', 'noticias', 'prensa', 'contacto'];
 
-   La lista de arriba se queda como está a propósito: es el menú COMPLETO y
-   sirve de reserva. Si la base no responde, el sitio se queda con toda su
-   navegación en lugar de sin ninguna, que es lo que pasaría si las entradas
-   vinieran únicamente de la consulta. */
+$menu = array_intersect_key($catalogo, array_flip($porDefecto));
+
 if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
-    // El try es lo que hace cierto el párrafo de arriba.
-    //
-    // Sin él, `ajuste()` lanzaba con la base caída y se llevaba por delante la
-    // página ENTERA: se pintaba la cabeza del documento y ahí se cortaba todo,
-    // sin cuerpo, sin formulario y sin mensaje. La reserva existía y no
-    // entraba nunca, porque la excepción ocurría antes de poder usarla.
+    /* El try es lo que hace cierto el párrafo de arriba: sin él, `ajuste()`
+       con la base caída se llevaba por delante la página entera —se pintaba
+       la cabeza del documento y ahí se cortaba todo—, y la reserva no llegaba
+       a entrar nunca porque la excepción ocurría antes de poder usarla. */
     try {
         $visibles = (string) $sitio->catalogo()->ajuste('menu.visibles', '');
 
         if (trim($visibles) !== '') {
             $permitidas = array_filter(array_map('trim', explode(',', $visibles)));
-            $menu = array_intersect_key($menu, array_flip($permitidas));
+            $elegidas   = array_intersect_key($catalogo, array_flip($permitidas));
+
+            /* Se respeta el orden en el que se escribieron en el panel. */
+            $menu = [];
+            foreach ($permitidas as $clave) {
+                if (isset($elegidas[$clave])) {
+                    $menu[$clave] = $elegidas[$clave];
+                }
+            }
         }
     } catch (\Throwable $e) {
         error_log('[cabecera] no se pudo leer menu.visibles: ' . $e->getMessage());
@@ -68,24 +102,17 @@ if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
 
 $esc = static fn ($v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
-/* Con muchas entradas visibles la navegación de escritorio ya va justa a
-   1100 px. La cabecera se marca para que el CSS retire la cuenta atrás en esa
-   franja en lugar de empujar los enlaces fuera de la pantalla. El umbral son
-   seis entradas: con las ocho que hubo en su día la barra ya desbordaba. */
-$menuLargo = count($menu) > 6;
+/* A partir de once entradas la barra de escritorio no da más de sí: se
+   repliega en el desplegable. Ver la nota de arriba. */
+$menuCompacto = count($menu) > 10;
 
 /* ── El logotipo ───────────────────────────────────────────────────────────
-   Aquí había el lirio del escudo pontificio. Se quitó: el escudo y sus
-   elementos son símbolos heráldicos del Santo Padre y su uso no está
-   aprobado. Hasta que lo esté, la marca es sólo su nombre.
+   Si desde el panel se sube uno, se pinta en lugar del texto. Se comprueba el
+   ARCHIVO y no un ajuste guardado: si alguien lo borra por FTP, la cabecera
+   vuelve al texto sola en vez de enseñar una imagen rota.
 
-   Si desde el panel se sube un logotipo, se pinta en su lugar. Y si no hay
-   ninguno —que es el caso mientras nadie suba nada—, la cabecera se queda con
-   el texto, que es correcto por sí solo y no depende de que nadie apruebe
-   nada.
-
-   Se comprueba el ARCHIVO, no un ajuste guardado: si alguien lo borra por FTP,
-   la cabecera vuelve al texto sola en lugar de enseñar una imagen rota. */
+   El texto no es un apaño: «León XIV / EN PERÚ» compuesto en Neulis es la
+   marca del editable. */
 $logotipo = null;
 $rutaLogo = dirname(__DIR__, 2) . '/assets/img/marca';
 
@@ -96,38 +123,30 @@ foreach (['svg', 'png', 'webp', 'jpg'] as $ext) {
     }
 }
 
-/* Un solo sitio donde se decide qué es la marca, para que la cabecera y el
-   menú móvil no puedan acabar enseñando cosas distintas. */
 $pintarMarca = static function () use ($logotipo, $esc, $raiz): void {
     if ($logotipo !== null) {
-        echo '<img class="marca__logo" src="' . $esc($raiz . $logotipo) . '" alt="León XIV en el Perú" width="180" height="48">';
+        echo '<img class="brand__logo" src="' . $esc($raiz . $logotipo)
+           . '" alt="León XIV en el Perú" width="180" height="48">';
         return;
     }
     ?>
-    <span class="marca__texto">
-      <span class="marca__nombre">León XIV</span>
-      <span class="marca__lugar">En el Perú</span>
-    </span>
+    <span class="brand__name">León XIV</span>
+    <span class="brand__sub">EN PERÚ</span>
     <?php
 };
 
-/* ── La cuenta atrás, en la cabecera ──────────────────────────────────────
-   Estaba sólo en la portada, en una tira bajo el carrusel. Ahí la veía quien
-   entraba por la home y nadie más: quien llega a «Voluntariado» desde un
-   enlace compartido —que es por donde entra la mayoría— no sabía cuántos días
-   faltan. En la cabecera está en las veinticuatro páginas y no se va con el
-   scroll, porque la cabecera es fija.
+/* ── La cuenta atrás ──────────────────────────────────────────────────────
+   El editable la dibuja grande, en la banda dorada de la portada. Pero quien
+   entra por un enlace compartido a «Voluntariado» no pasa por la portada, así
+   que en el resto de páginas se conserva la tira fina de arriba: la misma
+   información, sin robarle sitio a la cabecera de 76 px.
 
-   La fecha sale del panel (Configuración general → Fechas del viaje), igual
-   que antes. Si $sitio no está disponible o la base no responde, el atributo
-   no se escribe y countdown.js usa su fecha de reserva: el 11 de noviembre de
-   2026, la anunciada por la Santa Sede. Un contador con la fecha oficial es
-   mejor que un hueco vacío.
+   La fecha sale del panel. Si la base no responde, el atributo no se escribe
+   y rediseno.js usa su fecha de reserva —el 11 de noviembre de 2026, la
+   anunciada por la Santa Sede—, que es mejor que un hueco.
 
-   Las tres fases —antes, durante y después del viaje— se resuelven con las
-   clases fase-pre / fase-live / fase-post, que enciende y apaga el CSS a
-   partir del data-phase del <body>. El 11 de noviembre el contador se retira
-   solo y deja el saludo, sin que nadie tenga que desplegar nada. */
+   Las tres fases del viaje (antes, durante y después) las enciende el CSS a
+   partir del data-phase del <body>: el 11 de noviembre la tira cambia sola. */
 $objetivo = '';
 
 if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
@@ -138,89 +157,43 @@ if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
     }
 }
 
-/* ── Cómo se escribe el contador ──────────────────────────────────────────
-   La solicitud de la Conferencia Episcopal lo pide así, literal:
-
-       Faltan
-       XX DÍAS · XX HORAS · XX MINUTOS · XX SEGUNDOS
-       para recibir al Papa León XIV en el Perú
-
-   Esa forma entera son tres renglones, y en una barra fija de 64 px de alto no
-   caben: al lado del logotipo y del botón de menú quedan unos 220 px. Así que
-   la barra lleva la forma corta —66 d, 15 h— y el panel del menú, que ocupa la
-   pantalla completa, lleva la redacción del documento tal cual.
-
-   No es una versión aguada: la frase de cierre y las palabras enteras están en
-   el sitio donde se pueden leer, y quien usa lector de pantalla oye siempre la
-   forma larga, porque countdown.js la mantiene en [data-contador-lectura]. */
-$pintarCuenta = static function (string $variante = "cabecera") use ($esc, $objetivo): void {
-    $unidades = [
-        'dias'     => ['corta' => 'd', 'larga' => 'días'],
-        'horas'    => ['corta' => 'h', 'larga' => 'horas'],
-        'minutos'  => ['corta' => 'm', 'larga' => 'minutos'],
-        'segundos' => ['corta' => 's', 'larga' => 'segundos'],
-    ];
-    $larga = $variante === 'menu';
-    ?>
-    <div class="cuenta-cab cuenta-cab--<?= $esc($variante) ?>" data-contador<?= $objetivo !== '' ? ' data-objetivo="' . $esc($objetivo) . '"' : '' ?>>
-      <p class="cuenta-cab__reloj fase-pre">
-        <span class="cuenta-cab__rotulo">Faltan</span>
-        <?php foreach ($unidades as $unidad => $palabra): ?>
-          <span class="cuenta-cab__par cuenta-cab__par--<?= $esc($unidad) ?>">
-            <span class="cuenta-cab__num" data-unidad="<?= $esc($unidad) ?>">—</span><span class="cuenta-cab__uni"><?= $esc($larga ? $palabra['larga'] : $palabra['corta']) ?></span>
-          </span>
-        <?php endforeach; ?>
-      </p>
-      <?php if ($larga): ?>
-        <p class="cuenta-cab__cierre fase-pre">para recibir al Papa León XIV en el Perú</p>
-      <?php endif; ?>
-      <p class="cuenta-cab__aviso fase-live">El Santo Padre está en el Perú</p>
-      <p class="cuenta-cab__aviso fase-post">Gracias, Santo Padre</p>
-      <?php /* El texto para lector de pantalla lo lleva SÓLO la copia de la
-               barra: las dos se actualizan igual y anunciarlo dos veces
-               convierte una ayuda en un estorbo. */ ?>
-      <?php if ($variante === "cabecera"): ?><span class="solo-lectores" data-contador-lectura></span><?php endif; ?>
-    </div>
-    <?php
-};
+$tiraCuenta = $activa !== 'home';
 ?>
-<header class="cabecera<?= $menuLargo ? " cabecera--menu-largo" : "" ?>" data-cabecera>
-  <div class="cabecera__fondo"></div>
-  <div class="contenedor">
-    <div class="cabecera__interior">
-      <a class="marca" href="<?= $esc($raiz) ?>" aria-label="León XIV en el Perú, ir al inicio">
-        <?php $pintarMarca(); ?>
-      </a>
-      <nav class="nav" aria-label="Navegación principal">
-        <?php foreach ($menu as $clave => $rotulo): ?>
-          <a class="nav__enlace" href="<?= $esc($raiz . $clave . '/') ?>"<?= $clave === $activa ? ' aria-current="page"' : '' ?>><?= $esc($rotulo) ?></a>
-        <?php endforeach; ?>
-      </nav>
-      <div class="cabecera__acciones">
-        <?php $pintarCuenta(); ?>
-        <a class="btn btn--primario" href="<?= $esc($raiz) ?>voluntariado/">Sé voluntario</a>
-        <button class="boton-menu" type="button" data-abrir-menu aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir el menú">
-          <svg aria-hidden="true"><use href="#i-menu"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-</header>
-
-<div class="menu-movil" id="menu-movil">
-  <div class="contenedor">
-    <div class="menu-movil__cabecera">
-      <span class="marca">
-        <?php $pintarMarca(); ?>
-      </span>
-      <button class="boton-menu" type="button" data-cerrar-menu aria-label="Cerrar el menú"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
-    </div>
-    <?php $pintarCuenta("menu"); ?>
-    <nav class="menu-movil__lista" aria-label="Navegación principal, versión móvil">
-      <?php foreach ($menu as $clave => $rotulo): ?>
-        <a href="<?= $esc($raiz . $clave . '/') ?>"<?= $clave === $activa ? ' aria-current="page"' : '' ?>><?= $esc($rotulo) ?></a>
-      <?php endforeach; ?>
-    </nav>
-    <a class="btn btn--primario btn--bloque" href="<?= $esc($raiz) ?>voluntariado/">Sé voluntario</a>
+<?php if ($tiraCuenta): ?>
+<div class="tira-cuenta" data-countdown<?= $objetivo !== '' ? ' data-objetivo="' . $esc($objetivo) . '"' : '' ?>>
+  <div class="tira-cuenta__inner">
+    <p class="tira-cuenta__reloj fase-pre">
+      <span class="tira-cuenta__rotulo">Faltan</span>
+      <span class="tira-cuenta__par"><b data-cd="dias">00</b><span>días</span></span>
+      <span class="tira-cuenta__par"><b data-cd="horas">00</b><span>horas</span></span>
+      <span class="tira-cuenta__par"><b data-cd="minutos">00</b><span>minutos</span></span>
+      <span class="tira-cuenta__par"><b data-cd="segundos">00</b><span>segundos</span></span>
+      <span class="tira-cuenta__cierre">para recibir al Papa León XIV en el Perú</span>
+    </p>
+    <p class="tira-cuenta__aviso fase-live">El Santo Padre está en el Perú</p>
+    <p class="tira-cuenta__aviso fase-post">Gracias, Santo Padre</p>
   </div>
 </div>
+<?php endif; ?>
+
+<header class="site-header<?= $menuCompacto ? ' site-header--compacto' : '' ?>">
+  <div class="site-header__inner">
+    <a class="brand" href="<?= $esc($raiz) ?>" aria-label="León XIV en el Perú, ir al inicio">
+      <?php $pintarMarca(); ?>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Abrir menú">
+      <span class="nav-toggle__bars"></span>
+    </button>
+
+    <nav class="nav" id="site-nav" aria-label="Navegación principal">
+      <?php foreach ($menu as $clave => $rotulo): ?>
+      <a class="nav__link<?= $clave === $activa ? ' is-active' : '' ?>"
+         href="<?= $esc($raiz . $clave . '/') ?>"<?= $clave === $activa ? ' aria-current="page"' : '' ?>><?= $esc($rotulo) ?></a>
+      <?php endforeach; ?>
+      <?php /* En el desplegable, el botón de voluntariado va dentro; en la barra
+               de escritorio no aparece, porque el editable no lo dibuja. */ ?>
+      <a class="btn nav__cta" href="<?= $esc($raiz) ?>voluntariado/">Sé voluntario</a>
+    </nav>
+  </div>
+</header>

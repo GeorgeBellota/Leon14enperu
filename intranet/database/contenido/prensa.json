@@ -1,0 +1,89 @@
+{
+  "pagina": {
+    "clave": "prensa",
+    "nombre": "Prensa",
+    "ruta": "/prensa/",
+    "titulo_seo": "Prensa · Viaje de León XIV al Perú",
+    "descripcion_seo": "Acreditación, contacto y condiciones de uso del material gráfico para los medios que cubran la Visita Apostólica del Papa León XIV al Perú.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Prensa",
+      "texto": "Acreditación, contacto y condiciones de uso del material gráfico.",
+      "imagen": "prensa/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "como-acreditarse",
+      "nombre": "Acreditación",
+      "plantilla": "texto_lectura",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "PROCESO AÚN NO HABILITADO",
+      "titulo": "Acreditación",
+      "texto": "<p>El <strong>Ministerio de Relaciones <br>Exteriores</strong> estará a cargo <br>del proceso de acreditación <br>de prensa. La fecha de inicio <br>y los requisitos se <br><strong>comunicarán <br>oportunamente a través de <br>los canales oficiales: </strong>página <br>web de la Cancillería y la <br>web oficial de la visita del <br>Papa León XIV.</p>",
+      "imagen": "prensa/p01",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "uso-imagenes-escudo",
+      "nombre": "Uso de imágenes y del escudo",
+      "plantilla": "texto_apartados",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Uso de imágenes y del escudo",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "Retrato pontificio", "texto": "El retrato oficial se publica sin recortes sobre el rostro, sin filtros de color y sin\ntexto superpuesto. Crédito: Santa Sede." },
+        { "orden": 20, "titulo": "Escudo pontificio",  "texto": "Conserva siempre sus esmaltes propios. No se recorta, no se deforma y no se\nusa como elemento decorativo repetido." },
+        { "orden": 30, "titulo": "Citas",              "texto": "Las palabras del Santo Padre se citan por su fuente oficial. Este sitio no publica\nninguna frase suya que no conste en un documento de la Santa Sede." },
+        { "orden": 40, "titulo": "Kit de prensa",      "texto": "Dosier, logotipos y fotografías en alta resolución." }
+      ]
+    },
+
+    {
+      "clave": "contacto-prensa",
+      "nombre": "Botón de contacto",
+      "plantilla": "destacado",
+      "orden": 40,
+      "activa": 1,
+      "titulo": "Contacto de prensa",
+      "cta_texto": "Contacto",
+      "cta_url": "contacto/",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "multimedia",
+      "nombre": "Multimedia",
+      "plantilla": "tarjetas_foto",
+      "orden": 50,
+      "activa": 1,
+      "titulo": "Multimedia",
+      "datos": {},
+      "bloques": []
+    }
+  ],
+
+  "notas": [
+    "Sección nueva: «contacto-prensa» (el botón centrado que el editable dibuja bajo la tabla) y «multimedia» (la galería de tres marcos). Las otras tres reutilizan la clave que ya tenían para conservar su contenido, su SEO y su historial.",
+    "«multimedia» se migra SIN bloques a propósito: en el editable los tres marcos están vacíos, porque el material gráfico todavía no está cerrado. Mientras no haya ninguna pieza, la vista pinta los tres marcos negros con el icono de cámara y el pie «Autor: Nombre y apellidos»; al subir la primera fotografía en el panel, esos marcos de reserva desaparecen.",
+    "El rótulo de «cabecera» («Para medios») y el de «uso-imagenes-escudo» («Material») quedan como @bd: el diseño nuevo no los pinta —el editable no dibuja ninguna línea encima de esos titulares— pero el texto se conserva en la base por si vuelve a hacer falta.",
+    "El texto de «como-acreditarse» SÍ se sustituye. El que había en la base estaba marcado «COPY PENDIENTE DE VALIDACIÓN» en la vista antigua; el del editable es el validado y nombra al Ministerio de Relaciones Exteriores como responsable del trámite. Los <br> clavan el corte de línea del editable y la hoja los oculta por debajo de 1024 px.",
+    "Se retira «notas-de-prensa» [noticias]: el rediseño de la página no dibuja ningún listado de comunicados. Su texto queda en el volcado de producción y en el respaldo; si los comunicados vuelven, su sitio natural es /noticias/."
+  ]
+}

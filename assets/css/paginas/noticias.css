@@ -1,0 +1,265 @@
+/* =============================================================================
+   NOTICIAS — medidas tomadas del editable NOTICIAS.ai (mesa de trabajo 1440 px).
+   El editable no dibuja la cabecera del sitio, así que todo el contenido de esta
+   página cae 76 px más abajo que en el editable (76 px = alto de .site-header).
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ HÉROE */
+/* Banda duotono de 582 px con el título y el sumario centrados.             */
+.hero--noticias{
+  --hero-h:calc(582 * var(--u));
+  height:calc(582 * var(--u));
+  background:var(--wine);
+}
+.hero--noticias .hero__media img{object-position:center}
+
+.hero--noticias .hero__inner{
+  justify-content:flex-start;gap:0;
+  padding-block:calc(361.6 * var(--u)) 0;
+}
+.hero--noticias .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(85.44 * var(--u));line-height:calc(102.53 * var(--u));
+  letter-spacing:-.0102em;color:#EDEDED;
+}
+.hero--noticias .hero__sub{
+  margin-top:calc(4.85 * var(--u));max-width:none;
+  font-family:"Poppins",sans-serif;font-weight:300;
+  font-size:calc(28 * var(--u));line-height:calc(33.6 * var(--u));color:#FFFFFF;
+}
+.hero--noticias .hero__sub strong{font-weight:600}
+
+/* ------------------------------------------------------- BANDA DE CONTENIDO */
+.noticias{
+  background:#ECECEC;
+  padding-top:calc(90.5 * var(--u));
+  padding-bottom:calc(133.5 * var(--u));
+}
+/* Caja de composición del editable: 1219,5 px centrados (x 110,8 → 1330,3). */
+.noticias__wrap{
+  width:100%;max-width:calc(1219.5 * var(--u) + var(--gutter)*2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){
+  .noticias__wrap{max-width:calc(1219.5 * var(--u));padding-inline:0}
+}
+
+.noticias__grid{
+  display:grid;
+  grid-template-columns:calc(690 * var(--u)) minmax(0,1fr);
+  column-gap:calc(34.3 * var(--u));
+  align-items:start;
+}
+/* La columna de la izquierda es de ancho fijo (690 px del editable) y el
+   contenido ya no lo escribe el maquetador: viene del panel. Un titular con
+   una palabra muy larga —o una dirección pegada dentro del texto— se saldría
+   de su columna y se metería en la de al lado. Con esto se parte. */
+.destacada,
+.noticia{min-width:0;overflow-wrap:break-word}
+
+/* ------------------------------------------------------ NOTICIA DESTACADA */
+.destacada__foto{box-shadow:var(--shadow-soft);line-height:0}
+/* En el editable la foto está reflejada en horizontal; se reproduce igual. */
+.destacada__foto img{width:100%;height:auto;transform:scaleX(-1)}
+
+/* Las fechas van en versalitas en el editable, pero en el panel se escriben
+   como se leen —«5 de agosto de 2026», dice la ayuda del campo—, así que la
+   caja alta la pone la hoja y no el editor. Sin esto, la misma página mezcla
+   «FECHA POR CONFIRMAR» con «Agosto de 2026». */
+.destacada__fecha,
+.noticia__fecha{text-transform:uppercase}
+
+.destacada__fecha{
+  margin-top:calc(37.96 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;color:#595959;
+  font-size:calc(23.09 * var(--u));line-height:calc(32.33 * var(--u));letter-spacing:-.0069em;
+}
+.destacada__titulo{
+  margin-top:calc(8.28 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;color:var(--ink);
+  font-size:calc(48.1 * var(--u));line-height:calc(42.6 * var(--u));letter-spacing:-.0112em;
+}
+.destacada__texto{
+  margin-top:calc(22.14 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;color:var(--ink);
+  font-size:calc(24 * var(--u));line-height:calc(30 * var(--u));
+}
+.destacada__texto strong{font-weight:600}
+
+/* ---------------------------------------------------- LISTA DE NOTICIAS */
+.noticias__lista{margin-top:calc(55.94 * var(--u))}
+
+.noticia+.noticia{padding-top:calc(20.64 * var(--u))}
+.noticia:not(:last-child){
+  padding-bottom:calc(27.1 * var(--u));
+  border-bottom:calc(0.5 * var(--u)) solid #595959;
+}
+
+.noticia__fecha{
+  font-family:"Poppins",sans-serif;font-weight:300;color:#595959;
+  font-size:calc(16.53 * var(--u));line-height:calc(23.14 * var(--u));letter-spacing:-.0054em;
+}
+.noticia__titulo{
+  margin-top:calc(5.17 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;color:var(--ink);
+  font-size:calc(34.42 * var(--u));line-height:calc(32 * var(--u));letter-spacing:-.0065em;
+}
+.noticia__texto{
+  margin-top:calc(7.9 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;color:var(--ink);
+  font-size:calc(17.18 * var(--u));line-height:calc(21.45 * var(--u));
+}
+/* La tercera noticia lleva algo más de aire en el editable. */
+.noticia:nth-child(3) .noticia__texto{margin-top:calc(13.6 * var(--u))}
+
+/* ------------------------------------------------------- BOTONES «Ver más» */
+/* En el editable el fondo es un degradado radial sobre el granate base. */
+.destacada__mas,
+.noticia__mas{
+  --btn-bg:radial-gradient(ellipse 46.8% 170% at 39.3% -18.5%,
+            #CD1324 0%,#A8101E 40%,#960E1B 60%,#840D18 80%,#6D0A13 100%);
+  background-color:var(--wine);
+  min-width:0;min-height:0;padding:0;
+}
+.destacada__mas{
+  margin-top:calc(29.7 * var(--u));
+  width:calc(165 * var(--u));height:calc(39.2 * var(--u));
+  font-size:calc(24.53 * var(--u));
+}
+.noticia__mas{
+  margin-top:calc(20.5 * var(--u));
+  width:calc(118.3 * var(--u));height:calc(28.3 * var(--u));
+  font-size:calc(17.56 * var(--u));
+}
+
+/* ------------------------------------------------- FILETE DE SEPARACIÓN */
+.noticias__filete{
+  border:0;margin:calc(47 * var(--u)) 0 0;
+  height:calc(0.5 * var(--u));background:#595959;
+}
+
+/* ------------------------------------------------------------------ VIDEOS */
+.videos__h{
+  margin-top:calc(89.29 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;color:var(--ink);
+  font-size:calc(53.93 * var(--u));line-height:calc(70.65 * var(--u));letter-spacing:-.0056em;
+}
+.videos__h::after{
+  content:"";display:block;
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));
+  margin:calc(-2.94 * var(--u)) 0 0 calc(2.25 * var(--u));
+  background:var(--wine);
+}
+
+/* Carrusel horizontal: arranca en la caja de composición y se sale por la
+   derecha hasta el borde de la ventana, igual que en el editable. */
+.videos__rail{
+  --rail-gap:calc(30 * var(--u));
+  --rail-item:calc(551 * var(--u));
+  margin-top:calc(57.7 * var(--u));
+  margin-right:calc(50% - 50vw);
+  padding-bottom:calc(20 * var(--u));
+}
+.videos__card{aspect-ratio:551 / 308;background:#000}
+.videos__card .video-card__play{
+  width:calc(191 * var(--u));height:calc(191 * var(--u));
+  border-width:calc(4 * var(--u));
+}
+.videos__card .video-card__play::after{
+  border-left:calc(61.7 * var(--u)) solid #fff;
+  border-top:calc(34.1 * var(--u)) solid transparent;
+  border-bottom:calc(34.1 * var(--u)) solid transparent;
+  margin-left:calc(6.15 * var(--u));
+}
+
+/* --------------------------------------------------------------------- PIE */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u));order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  /* Los saltos de línea del editable solo valen para la maqueta de 1440 px. */
+  .br-esc{display:none}
+
+  .hero--noticias{height:auto;min-height:clamp(380px,52vw,582px)}
+  .hero--noticias .hero__media img{object-position:66% center}
+  .hero--noticias::after{
+    content:"";position:absolute;inset:0;z-index:0;
+    background:linear-gradient(180deg,rgba(60,6,11,.10) 0%,rgba(60,6,11,.28) 62%,rgba(60,6,11,.45) 100%);
+  }
+  .hero--noticias .hero__inner{
+    position:relative;z-index:1;
+    justify-content:center;min-height:clamp(380px,52vw,582px);
+    padding-block:clamp(56px,9vw,96px);
+  }
+  .hero--noticias .hero__title{font-size:clamp(40px,7.4vw,86px);line-height:1.2;letter-spacing:-.01em}
+  .hero--noticias .hero__sub{
+    margin-top:clamp(8px,1.2vw,14px);
+    font-size:clamp(17px,2.4vw,28px);line-height:1.25;max-width:36ch;
+  }
+
+  .noticias{padding-block:clamp(40px,6vw,80px) clamp(48px,8vw,120px)}
+  .noticias__wrap{max-width:calc(var(--container) + var(--gutter)*2)}
+  .noticias__grid{grid-template-columns:1fr;row-gap:clamp(36px,5vw,60px)}
+
+  .destacada__fecha{font-size:clamp(14px,1.9vw,23px);line-height:1.4;margin-top:clamp(16px,2.4vw,30px)}
+  .destacada__titulo{font-size:clamp(28px,4.4vw,48px);line-height:1.05;margin-top:clamp(8px,1.1vw,12px)}
+  .destacada__texto{font-size:clamp(16px,2.2vw,24px);line-height:1.35;margin-top:clamp(14px,2vw,24px);max-width:64ch}
+
+  .noticias__lista{margin-top:0}
+  .noticia+.noticia{padding-top:clamp(20px,2.6vw,30px)}
+  .noticia:not(:last-child){padding-bottom:clamp(20px,2.6vw,30px);border-bottom-width:1px}
+  .noticia__fecha{font-size:clamp(13px,1.6vw,17px);line-height:1.4}
+  .noticia__titulo{font-size:clamp(22px,3.2vw,35px);line-height:1.1;margin-top:clamp(6px,.8vw,9px)}
+  .noticia__texto,
+  .noticia:nth-child(3) .noticia__texto{font-size:clamp(15px,1.8vw,18px);line-height:1.45;margin-top:clamp(8px,1vw,12px);max-width:64ch}
+
+  .destacada__mas,
+  .noticia__mas{
+    width:auto;height:auto;min-width:0;max-width:100%;
+    padding:.4em 1.4em;margin-top:clamp(16px,2vw,24px);
+  }
+  .destacada__mas{font-size:clamp(16px,2.1vw,25px)}
+  .noticia__mas{font-size:clamp(14px,1.7vw,18px)}
+
+  .noticias__filete{margin-top:clamp(32px,4.4vw,56px);height:1px}
+
+  .videos__h{font-size:clamp(30px,5vw,54px);line-height:1.15;margin-top:clamp(36px,5vw,72px)}
+  .videos__h::after{width:clamp(52px,5.5vw,80px);height:4px;margin:clamp(8px,1vw,14px) 0 0}
+
+  .videos__rail{
+    --rail-gap:clamp(14px,2.2vw,30px);
+    --rail-item:clamp(260px,62vw,551px);
+    margin-top:clamp(24px,3.4vw,50px);
+    padding-bottom:16px;
+  }
+  .videos__card .video-card__play{
+    width:clamp(68px,14vw,150px);height:clamp(68px,14vw,150px);border-width:3px;
+  }
+  .videos__card .video-card__play::after{
+    border-left:clamp(20px,4.4vw,48px) solid #fff;
+    border-top:clamp(11px,2.4vw,26px) solid transparent;
+    border-bottom:clamp(11px,2.4vw,26px) solid transparent;
+    margin-left:clamp(2px,.5vw,5px);
+  }
+
+  .site-footer__inner{gap:10px 28px}
+}
+
+@media (max-width:767px){
+  .hero--noticias{min-height:clamp(340px,72vw,460px)}
+  .hero--noticias .hero__inner{min-height:clamp(340px,72vw,460px);padding-block:clamp(48px,12vw,72px)}
+  .hero--noticias .hero__sub{max-width:30ch}
+
+  .destacada__mas,
+  .noticia__mas{width:max-content}
+
+  .videos__rail{--rail-item:min(78vw,420px)}
+}
+
+@media (max-width:479px){
+  .hero--noticias .hero__title{font-size:clamp(36px,11vw,52px)}
+  .hero--noticias .hero__sub{font-size:clamp(15px,4.4vw,19px);max-width:26ch}
+  .videos__rail{--rail-item:min(82vw,360px)}
+}

@@ -136,6 +136,13 @@ ACTA-DE-ENTREGA-SIMPLIFICADA.*
 #
 # robots.txt es la excepción y no es documentación: el sitio lo sirve y el
 # vhost lo declara. Si sale del repositorio, deja de desplegarse.
+#
+# database/contenido/README.md es la otra. No cuenta cómo está montado el
+# servidor: explica el formato de los .json que están AQUÍ, en el repositorio,
+# y en particular qué significa el marcador «@bd» y cómo se resuelve. Ese
+# detalle ya costó una pérdida de texto en la base por no estar escrito al
+# lado de los archivos que lo usan.
 *.md
 *.txt
 !robots.txt
+!intranet/database/contenido/README.md

@@ -1,0 +1,89 @@
+{
+  "pagina": {
+    "clave": "cep",
+    "nombre": "La Iglesia en el Perú",
+    "ruta": "/cep/",
+    "titulo_seo": "La Iglesia en el Perú · Conferencia Episcopal Peruana · León XIV en el Perú",
+    "descripcion_seo": "La Conferencia Episcopal Peruana y las cinco jurisdicciones eclesiásticas que acogen el viaje apostólico del Papa León XIV al Perú: Lima, Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "La Iglesia en el Perú",
+      "texto": "La Conferencia Episcopal Peruana y las cinco jurisdicciones eclesiásticas que acogen el viaje apostólico.",
+      "imagen": "cep/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "quien-organiza-visita",
+      "nombre": "Quién organiza la visita",
+      "plantilla": "texto_lectura",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "¿Quién organiza la visita?",
+      "texto": "<p>La <strong>Conferencia Episcopal Peruana</strong> reúne a los obispos de las diócesis, arquidiócesis, prelaturas y vicariatos apostólicos del país. Es el organismo que coordina la preparación del viaje en el Perú, difunde y adapta lo que publica la Santa Sede, y articula el trabajo de las cuatro jurisdicciones que reciben al Santo Padre.</p><p>León XIV la conoce por dentro. Fue su segundo vicepresidente desde marzo de 2018, miembro de su Consejo Económico y presidente de la Comisión Episcopal de Cultura y Educación. En 2023 la propia Conferencia le concedió la Medalla de Oro de Santo Toribio de Mogrovejo.</p><p>Los datos de contacto institucional de la Conferencia se publicarán en la página de contacto.</p>",
+      "imagen": "cep/p01",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "quien-acoge-cada",
+      "nombre": "Quién acoge cada sede",
+      "plantilla": "texto_apartados",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "¿Quién acoge cada sede?",
+      "texto": "<p>Una arquidiócesis primada, una arquidiócesis andina, dos diócesis y un vicariato apostólico de territorio de misión.</p>",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "Lima\nArquidiócesis de Lima · Primada del Perú",
+          "texto": "Creada en 1546 por el papa Paulo III. Confirmada como arquidiócesis primada en 1943. Abarca a más de nueve millones de habitantes."
+        },
+        {
+          "orden": 20,
+          "titulo": "Callao\nDiócesis del Callao",
+          "texto": "Fue creada por S.S. Pablo VI, mediante el documento pontificio <em>Aptiorem Ecclesiarum</em> en 1967. La fe de su comunidad se expresa en la profunda devoción a sus santos patrones: la Virgen del Carmen de la Legua y el Señor del Mar. Se organiza en cuatro decanatos, que reúnen cerca de 60 parroquias."
+        },
+        {
+          "orden": 30,
+          "titulo": "Chiclayo - Santa Cruz\nDiócesis de Chiclayo · Lambayeque y Santa Cruz",
+          "texto": "Erigida el 17 de diciembre de 1956 con territorio de la arquidiócesis de Trujillo y de la diócesis de Cajamarca. Robert Prevost fue su obispo entre 2015 y 2023."
+        },
+        {
+          "orden": 40,
+          "titulo": "Cusco\nArquidiócesis del Cusco",
+          "texto": "Una de las Iglesias más antiguas del continente, elevada al rango de arquidiócesis en 1943. El Señor de los Temblores es su Patrón Jurado."
+        },
+        {
+          "orden": 50,
+          "titulo": "Pucallpa\nVicariato Apostólico de Pucallpa · Ucayali",
+          "texto": "Erigido el 2 de marzo de 1956 al dividirse el vicariato de Ucayali. Depende directamente de la Santa Sede y cubre más de 52.000 km² de Amazonía."
+        }
+      ]
+    }
+  ],
+
+  "notas": [
+    "Las tres secciones reutilizan la clave que ya tenían en la base: «cabecera», «quien-organiza-visita» y «quien-acoge-cada». Ninguna es nueva.",
+    "«quien-acoge-cada» cambia de plantilla: era «texto_lectura» y pasa a «texto_apartados», porque ahora la tabla de jurisdicciones son piezas editables. Su título y su rótulo se conservan.",
+    "El rótulo de las tres secciones queda como está en la base («@bd»): el rediseño ya no pinta rótulo en esta página, y borrarlo sería tirar texto que alguien escribió.",
+    "El título de cada apartado lleva dos líneas: la primera es el nombre en dorado y el resto, la jurisdicción en granate. Es la forma de decir las dos cosas con «texto_apartados», que sólo da título y texto a cada pieza. Con una sola línea la fila sale sin subtítulo y no se rompe nada.",
+    "La bajada de la cabecera pasa de «cuatro jurisdicciones» a «cinco»: el rediseño añade el Callao a la tabla y el editable ya dice cinco.",
+    "El botón «Ir a Sedes» no sale de la base: «texto_apartados» no tiene campos de botón. Está fijo en la vista, apuntando a /sedes/.",
+    "Se retiran de esta página tres secciones que el rediseño no pinta: «sobre-la-cep», «presidencia» y «mapa-iglesia-peru». Su texto queda en el volcado de producción y en el respaldo."
+  ]
+}

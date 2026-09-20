@@ -1,0 +1,834 @@
+{
+ "agenda": {
+  "hero": {
+   "jpg": "assets/img/agenda/hero.jpg",
+   "webp": "assets/img/agenda/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/agenda/p01.jpg",
+   "webp": "assets/img/agenda/p01.webp",
+   "w": 1084,
+   "h": 626,
+   "place": {
+    "x": 136.2,
+    "y": 913.5,
+    "w": 542,
+    "h": 313
+   }
+  },
+  "p02": {
+   "jpg": "assets/img/agenda/p02.jpg",
+   "webp": "assets/img/agenda/p02.webp",
+   "w": 1084,
+   "h": 626,
+   "place": {
+    "x": 136.5,
+    "y": 2186.5,
+    "w": 542,
+    "h": 313
+   }
+  },
+  "p03": {
+   "jpg": "assets/img/agenda/p03.jpg",
+   "webp": "assets/img/agenda/p03.webp",
+   "w": 1084,
+   "h": 626,
+   "place": {
+    "x": 136.5,
+    "y": 3153.5,
+    "w": 542,
+    "h": 313
+   }
+  },
+  "p04": {
+   "jpg": "assets/img/agenda/p04.jpg",
+   "webp": "assets/img/agenda/p04.webp",
+   "w": 1041,
+   "h": 601,
+   "place": {
+    "x": 136.5,
+    "y": 3896.5,
+    "w": 542,
+    "h": 313
+   }
+  }
+ },
+ "brand": {
+  "cep-simbolo-blanco": {
+   "png": "assets/img/brand/cep-simbolo-blanco.png",
+   "webp": "assets/img/brand/cep-simbolo-blanco.webp",
+   "w": 600,
+   "h": 625
+  },
+  "escudo-color": {
+   "png": "assets/img/brand/escudo-color.png",
+   "webp": "assets/img/brand/escudo-color.webp",
+   "w": 1200,
+   "h": 1674
+  },
+  "logo-lockup-dorado": {
+   "png": "assets/img/brand/logo-lockup-dorado.png",
+   "webp": "assets/img/brand/logo-lockup-dorado.webp",
+   "w": 1552,
+   "h": 1268
+  },
+  "logo-lockup-hero": {
+   "png": "assets/img/brand/logo-lockup-hero.png",
+   "webp": "assets/img/brand/logo-lockup-hero.webp",
+   "w": 1600,
+   "h": 1477
+  },
+  "logo-lockup-negro": {
+   "png": "assets/img/brand/logo-lockup-negro.png",
+   "webp": "assets/img/brand/logo-lockup-negro.webp",
+   "w": 1556,
+   "h": 1268
+  },
+  "logo-lockup-rojo": {
+   "png": "assets/img/brand/logo-lockup-rojo.png",
+   "webp": "assets/img/brand/logo-lockup-rojo.webp",
+   "w": 1600,
+   "h": 1313
+  },
+  "logo-lockup-rojo-alt": {
+   "png": "assets/img/brand/logo-lockup-rojo-alt.png",
+   "webp": "assets/img/brand/logo-lockup-rojo-alt.webp",
+   "w": 1552,
+   "h": 1268
+  }
+ },
+ "cep": {
+  "hero": {
+   "jpg": "assets/img/cep/hero.jpg",
+   "webp": "assets/img/cep/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/cep/p01.jpg",
+   "webp": "assets/img/cep/p01.webp",
+   "w": 1066,
+   "h": 988,
+   "place": {
+    "x": 797.5,
+    "y": 784.1,
+    "w": 533,
+    "h": 493.9
+   }
+  }
+ },
+ "contacto": {
+  "hero": {
+   "jpg": "assets/img/contacto/hero.jpg",
+   "webp": "assets/img/contacto/hero.webp",
+   "w": 2880,
+   "h": 1164
+  }
+ },
+ "index": {
+  "hero": {
+   "jpg": "assets/img/index/hero.jpg",
+   "webp": "assets/img/index/hero.webp",
+   "w": 2880,
+   "h": 932
+  },
+  "p00": {
+   "jpg": "assets/img/index/p00.jpg",
+   "webp": "assets/img/index/p00.webp",
+   "w": 1452,
+   "h": 912,
+   "place": {
+    "x": -0.5,
+    "y": 2467.3,
+    "w": 1440,
+    "h": 893.2
+   }
+  },
+  "p01": {
+   "png": "assets/img/index/p01.png",
+   "webp": "assets/img/index/p01.webp",
+   "w": 1511,
+   "h": 1489,
+   "place": {
+    "x": 611,
+    "y": 2616,
+    "w": 755.4,
+    "h": 744.3
+   }
+  },
+  "p02": {
+   "jpg": "assets/img/index/p02.jpg",
+   "webp": "assets/img/index/p02.webp",
+   "w": 491,
+   "h": 761,
+   "place": {
+    "x": 87.5,
+    "y": 5188.7,
+    "w": 245.5,
+    "h": 380.6
+   }
+  },
+  "p03": {
+   "jpg": "assets/img/index/p03.jpg",
+   "webp": "assets/img/index/p03.webp",
+   "w": 484,
+   "h": 750,
+   "place": {
+    "x": 341.2,
+    "y": 5188.7,
+    "w": 245.5,
+    "h": 380.6
+   }
+  },
+  "p04": {
+   "jpg": "assets/img/index/p04.jpg",
+   "webp": "assets/img/index/p04.webp",
+   "w": 491,
+   "h": 734,
+   "place": {
+    "x": 595.8,
+    "y": 5188.7,
+    "w": 245.5,
+    "h": 366.8
+   }
+  },
+  "p05": {
+   "jpg": "assets/img/index/p05.jpg",
+   "webp": "assets/img/index/p05.webp",
+   "w": 352,
+   "h": 546,
+   "place": {
+    "x": 851.4,
+    "y": 5188.7,
+    "w": 245.5,
+    "h": 380.6
+   }
+  },
+  "p06": {
+   "jpg": "assets/img/index/p06.jpg",
+   "webp": "assets/img/index/p06.webp",
+   "w": 491,
+   "h": 761,
+   "place": {
+    "x": 1107,
+    "y": 5188.7,
+    "w": 245.5,
+    "h": 380.6
+   }
+  },
+  "p08": {
+   "jpg": "assets/img/index/p08.jpg",
+   "webp": "assets/img/index/p08.webp",
+   "w": 326,
+   "h": 462,
+   "place": {
+    "x": 123,
+    "y": 1983.3,
+    "w": 163,
+    "h": 229.7
+   }
+  },
+  "p09": {
+   "jpg": "assets/img/index/p09.jpg",
+   "webp": "assets/img/index/p09.webp",
+   "w": 331,
+   "h": 469,
+   "place": {
+    "x": 385.7,
+    "y": 1980.9,
+    "w": 165.3,
+    "h": 234.1
+   }
+  },
+  "p10": {
+   "jpg": "assets/img/index/p10.jpg",
+   "webp": "assets/img/index/p10.webp",
+   "w": 343,
+   "h": 483,
+   "place": {
+    "x": 651,
+    "y": 1978,
+    "w": 171.1,
+    "h": 240.8
+   }
+  },
+  "p11": {
+   "jpg": "assets/img/index/p11.jpg",
+   "webp": "assets/img/index/p11.webp",
+   "w": 336,
+   "h": 475,
+   "place": {
+    "x": 917,
+    "y": 1979.6,
+    "w": 168,
+    "h": 237.6
+   }
+  },
+  "p12": {
+   "jpg": "assets/img/index/p12.jpg",
+   "webp": "assets/img/index/p12.webp",
+   "w": 330,
+   "h": 468,
+   "place": {
+    "x": 1180,
+    "y": 1982,
+    "w": 165,
+    "h": 233.8
+   }
+  },
+  "p13": {
+   "jpg": "assets/img/index/p13.jpg",
+   "webp": "assets/img/index/p13.webp",
+   "w": 835,
+   "h": 767,
+   "place": {
+    "x": 86.5,
+    "y": 3978.5,
+    "w": 417.3,
+    "h": 383.3
+   }
+  },
+  "p14": {
+   "jpg": "assets/img/index/p14.jpg",
+   "webp": "assets/img/index/p14.webp",
+   "w": 835,
+   "h": 767,
+   "place": {
+    "x": 510.6,
+    "y": 3978.5,
+    "w": 417.3,
+    "h": 383.3
+   }
+  },
+  "p15": {
+   "jpg": "assets/img/index/p15.jpg",
+   "webp": "assets/img/index/p15.webp",
+   "w": 835,
+   "h": 767,
+   "place": {
+    "x": 936.2,
+    "y": 3978.5,
+    "w": 417.3,
+    "h": 383.3
+   }
+  },
+  "p16": {
+   "jpg": "assets/img/index/p16.jpg",
+   "webp": "assets/img/index/p16.webp",
+   "w": 835,
+   "h": 767,
+   "place": {
+    "x": 298.6,
+    "y": 4369.8,
+    "w": 417.3,
+    "h": 383.3
+   }
+  },
+  "p17": {
+   "jpg": "assets/img/index/p17.jpg",
+   "webp": "assets/img/index/p17.webp",
+   "w": 826,
+   "h": 759,
+   "place": {
+    "x": 723.3,
+    "y": 4369.8,
+    "w": 417.3,
+    "h": 383.3
+   }
+  }
+ },
+ "noticias": {
+  "hero": {
+   "jpg": "assets/img/noticias/hero.jpg",
+   "webp": "assets/img/noticias/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/noticias/p01.jpg",
+   "webp": "assets/img/noticias/p01.webp",
+   "w": 1249,
+   "h": 753,
+   "place": {
+    "x": 110.5,
+    "y": 672.5,
+    "w": 690,
+    "h": 416
+   }
+  }
+ },
+ "papa-leon-xiv": {
+  "hero": {
+   "jpg": "assets/img/papa-leon-xiv/hero.jpg",
+   "webp": "assets/img/papa-leon-xiv/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/papa-leon-xiv/p01.jpg",
+   "webp": "assets/img/papa-leon-xiv/p01.webp",
+   "w": 1162,
+   "h": 755,
+   "place": {
+    "x": 758.5,
+    "y": 4421.5,
+    "w": 581,
+    "h": 377.5
+   }
+  },
+  "p02": {
+   "jpg": "assets/img/papa-leon-xiv/p02.jpg",
+   "webp": "assets/img/papa-leon-xiv/p02.webp",
+   "w": 1164,
+   "h": 778,
+   "place": {
+    "x": 758.5,
+    "y": 4829.5,
+    "w": 582,
+    "h": 389
+   }
+  },
+  "p03": {
+   "jpg": "assets/img/papa-leon-xiv/p03.jpg",
+   "webp": "assets/img/papa-leon-xiv/p03.webp",
+   "w": 982,
+   "h": 930,
+   "place": {
+    "x": 110.5,
+    "y": 5248.5,
+    "w": 606,
+    "h": 574
+   }
+  },
+  "p04": {
+   "jpg": "assets/img/papa-leon-xiv/p04.jpg",
+   "webp": "assets/img/papa-leon-xiv/p04.webp",
+   "w": 784,
+   "h": 841,
+   "place": {
+    "x": 761,
+    "y": 6070,
+    "w": 589,
+    "h": 632.1
+   }
+  },
+  "p05": {
+   "jpg": "assets/img/papa-leon-xiv/p05.jpg",
+   "webp": "assets/img/papa-leon-xiv/p05.webp",
+   "w": 726,
+   "h": 458,
+   "place": {
+    "x": 109.5,
+    "y": 6590.5,
+    "w": 625,
+    "h": 394
+   }
+  },
+  "p06": {
+   "png": "assets/img/papa-leon-xiv/p06.png",
+   "webp": "assets/img/papa-leon-xiv/p06.webp",
+   "w": 835,
+   "h": 1165,
+   "place": {
+    "x": 110,
+    "y": 7202,
+    "w": 417.2,
+    "h": 581.9
+   }
+  },
+  "p07": {
+   "jpg": "assets/img/papa-leon-xiv/p07.jpg",
+   "webp": "assets/img/papa-leon-xiv/p07.webp",
+   "w": 816,
+   "h": 1160,
+   "place": {
+    "x": 97.5,
+    "y": 675.5,
+    "w": 408,
+    "h": 580
+   }
+  },
+  "p08": {
+   "jpg": "assets/img/papa-leon-xiv/p08.jpg",
+   "webp": "assets/img/papa-leon-xiv/p08.webp",
+   "w": 474,
+   "h": 491,
+   "place": {
+    "x": 110.5,
+    "y": 2377.5,
+    "w": 438,
+    "h": 454.3
+   }
+  },
+  "p09": {
+   "jpg": "assets/img/papa-leon-xiv/p09.jpg",
+   "webp": "assets/img/papa-leon-xiv/p09.webp",
+   "w": 925,
+   "h": 880,
+   "place": {
+    "x": 110.5,
+    "y": 2984.5,
+    "w": 512,
+    "h": 527
+   }
+  },
+  "p10": {
+   "jpg": "assets/img/papa-leon-xiv/p10.jpg",
+   "webp": "assets/img/papa-leon-xiv/p10.webp",
+   "w": 665,
+   "h": 766,
+   "place": {
+    "x": 819,
+    "y": 3546,
+    "w": 531,
+    "h": 617.5
+   }
+  },
+  "p11": {
+   "jpg": "assets/img/papa-leon-xiv/p11.jpg",
+   "webp": "assets/img/papa-leon-xiv/p11.webp",
+   "w": 778,
+   "h": 732,
+   "place": {
+    "x": 849.5,
+    "y": 1882.5,
+    "w": 488,
+    "h": 452.3
+   }
+  }
+ },
+ "preguntas-frecuentes": {
+  "hero": {
+   "jpg": "assets/img/preguntas-frecuentes/hero.jpg",
+   "webp": "assets/img/preguntas-frecuentes/hero.webp",
+   "w": 2880,
+   "h": 1164
+  }
+ },
+ "prensa": {
+  "hero": {
+   "jpg": "assets/img/prensa/hero.jpg",
+   "webp": "assets/img/prensa/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/prensa/p01.jpg",
+   "webp": "assets/img/prensa/p01.webp",
+   "w": 1550,
+   "h": 946,
+   "place": {
+    "x": 565.5,
+    "y": 711.5,
+    "w": 775,
+    "h": 473
+   }
+  }
+ },
+ "santos": {
+  "hero": {
+   "jpg": "assets/img/santos/hero.jpg",
+   "webp": "assets/img/santos/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/santos/p01.jpg",
+   "webp": "assets/img/santos/p01.webp",
+   "w": 1010,
+   "h": 1594,
+   "place": {
+    "x": 825.5,
+    "y": 800.5,
+    "w": 505,
+    "h": 797
+   }
+  }
+ },
+ "sede": {
+  "hero": {
+   "jpg": "assets/img/sede/hero.jpg",
+   "webp": "assets/img/sede/hero.webp",
+   "w": 2880,
+   "h": 1164
+  }
+ },
+ "sedes": {
+  "hero": {
+   "jpg": "assets/img/sedes/hero.jpg",
+   "webp": "assets/img/sedes/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/sedes/p01.jpg",
+   "webp": "assets/img/sedes/p01.webp",
+   "w": 847,
+   "h": 774,
+   "place": {
+    "x": 795.5,
+    "y": 691.5,
+    "w": 534.5,
+    "h": 488
+   }
+  },
+  "p02": {
+   "jpg": "assets/img/sedes/p02.jpg",
+   "webp": "assets/img/sedes/p02.webp",
+   "w": 956,
+   "h": 640,
+   "place": {
+    "x": 109.5,
+    "y": 1213.5,
+    "w": 633,
+    "h": 424
+   }
+  },
+  "p03": {
+   "jpg": "assets/img/sedes/p03.jpg",
+   "webp": "assets/img/sedes/p03.webp",
+   "w": 841,
+   "h": 765,
+   "place": {
+    "x": 773.5,
+    "y": 1843.5,
+    "w": 557,
+    "h": 507
+   }
+  },
+  "p04": {
+   "jpg": "assets/img/sedes/p04.jpg",
+   "webp": "assets/img/sedes/p04.webp",
+   "w": 1010,
+   "h": 556,
+   "place": {
+    "x": 825.5,
+    "y": 3007.5,
+    "w": 505,
+    "h": 278
+   }
+  },
+  "p05": {
+   "jpg": "assets/img/sedes/p05.jpg",
+   "webp": "assets/img/sedes/p05.webp",
+   "w": 1010,
+   "h": 556,
+   "place": {
+    "x": 825.5,
+    "y": 2700.5,
+    "w": 505,
+    "h": 278
+   }
+  },
+  "p06": {
+   "jpg": "assets/img/sedes/p06.jpg",
+   "webp": "assets/img/sedes/p06.webp",
+   "w": 1010,
+   "h": 578,
+   "place": {
+    "x": 825.5,
+    "y": 3316.5,
+    "w": 505,
+    "h": 289
+   }
+  },
+  "p07": {
+   "jpg": "assets/img/sedes/p07.jpg",
+   "webp": "assets/img/sedes/p07.webp",
+   "w": 531,
+   "h": 478,
+   "place": {
+    "x": 790.5,
+    "y": 3977.5,
+    "w": 540,
+    "h": 486
+   }
+  },
+  "p08": {
+   "jpg": "assets/img/sedes/p08.jpg",
+   "webp": "assets/img/sedes/p08.webp",
+   "w": 804,
+   "h": 1237,
+   "place": {
+    "x": 110.3,
+    "y": 4495.5,
+    "w": 561.2,
+    "h": 863
+   }
+  },
+  "p09": {
+   "jpg": "assets/img/sedes/p09.jpg",
+   "webp": "assets/img/sedes/p09.webp",
+   "w": 1056,
+   "h": 884,
+   "place": {
+    "x": 802.5,
+    "y": 5276.5,
+    "w": 528,
+    "h": 442
+   }
+  },
+  "p10": {
+   "jpg": "assets/img/sedes/p10.jpg",
+   "webp": "assets/img/sedes/p10.webp",
+   "w": 378,
+   "h": 375,
+   "place": {
+    "x": 828.5,
+    "y": 5941.5,
+    "w": 502,
+    "h": 498
+   }
+  },
+  "p11": {
+   "jpg": "assets/img/sedes/p11.jpg",
+   "webp": "assets/img/sedes/p11.webp",
+   "w": 674,
+   "h": 864,
+   "place": {
+    "x": 828.5,
+    "y": 6462,
+    "w": 502,
+    "h": 643.5
+   }
+  },
+  "p12": {
+   "jpg": "assets/img/sedes/p12.jpg",
+   "webp": "assets/img/sedes/p12.webp",
+   "w": 679,
+   "h": 970,
+   "place": {
+    "x": 837.5,
+    "y": 7411.5,
+    "w": 493,
+    "h": 704.9
+   }
+  },
+  "p13": {
+   "jpg": "assets/img/sedes/p13.jpg",
+   "webp": "assets/img/sedes/p13.webp",
+   "w": 623,
+   "h": 1015,
+   "place": {
+    "x": 110.3,
+    "y": 8156.5,
+    "w": 540.2,
+    "h": 879
+   }
+  },
+  "p14": {
+   "jpg": "assets/img/sedes/p14.jpg",
+   "webp": "assets/img/sedes/p14.webp",
+   "w": 1194,
+   "h": 568,
+   "place": {
+    "x": 110.5,
+    "y": 2379.5,
+    "w": 597,
+    "h": 284
+   }
+  }
+ },
+ "subsidios": {
+  "hero": {
+   "jpg": "assets/img/subsidios/hero.jpg",
+   "webp": "assets/img/subsidios/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/subsidios/p01.jpg",
+   "webp": "assets/img/subsidios/p01.webp",
+   "w": 397,
+   "h": 563,
+   "place": {
+    "x": 112.5,
+    "y": 1294.2,
+    "w": 351.1,
+    "h": 494.7
+   }
+  },
+  "p02": {
+   "jpg": "assets/img/subsidios/p02.jpg",
+   "webp": "assets/img/subsidios/p02.webp",
+   "w": 399,
+   "h": 565,
+   "place": {
+    "x": 492.9,
+    "y": 1289.8,
+    "w": 355.5,
+    "h": 503.5
+   }
+  },
+  "p03": {
+   "jpg": "assets/img/subsidios/p03.jpg",
+   "webp": "assets/img/subsidios/p03.webp",
+   "w": 400,
+   "h": 563,
+   "place": {
+    "x": 878.2,
+    "y": 1283.5,
+    "w": 368,
+    "h": 517.9
+   }
+  },
+  "p04": {
+   "jpg": "assets/img/subsidios/p04.jpg",
+   "webp": "assets/img/subsidios/p04.webp",
+   "w": 398,
+   "h": 563,
+   "place": {
+    "x": 106.3,
+    "y": 2070.7,
+    "w": 361.4,
+    "h": 511.2
+   }
+  },
+  "p05": {
+   "jpg": "assets/img/subsidios/p05.jpg",
+   "webp": "assets/img/subsidios/p05.webp",
+   "w": 396,
+   "h": 561,
+   "place": {
+    "x": 488.9,
+    "y": 2075.9,
+    "w": 355.1,
+    "h": 503
+   }
+  },
+  "p06": {
+   "jpg": "assets/img/subsidios/p06.jpg",
+   "webp": "assets/img/subsidios/p06.webp",
+   "w": 1198,
+   "h": 674,
+   "place": {
+    "x": 115.2,
+    "y": 850.4,
+    "w": 681.8,
+    "h": 383.6
+   }
+  }
+ },
+ "voluntariado": {
+  "hero": {
+   "jpg": "assets/img/voluntariado/hero.jpg",
+   "webp": "assets/img/voluntariado/hero.webp",
+   "w": 2880,
+   "h": 1164
+  },
+  "p01": {
+   "jpg": "assets/img/voluntariado/p01.jpg",
+   "webp": "assets/img/voluntariado/p01.webp",
+   "w": 454,
+   "h": 499,
+   "place": {
+    "x": 776,
+    "y": 2670,
+    "w": 557,
+    "h": 612.2
+   }
+  }
+ }
+}

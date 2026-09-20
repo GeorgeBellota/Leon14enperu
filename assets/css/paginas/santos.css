@@ -1,0 +1,272 @@
+/* =============================================================================
+   SANTOS — «Cinco Santos, un mismo corazón».
+   Medidas tomadas del editable SANTOS.ai (mesa de trabajo 1440 x 1766 px).
+   El editable no dibuja la cabecera: en la página, el contenido baja 76 px.
+   El editable tampoco dibuja la banda de pie; se usa el pie dorado del sitio.
+   ========================================================================== */
+
+/* Fondo de página exacto del editable (582 → 1766) */
+body{background:#EDEDED}
+
+/* Caja de composición: el contenido del editable va de x=110 a x=1330 */
+.santos-wrap{
+  width:100%;
+  max-width:calc(1220 * var(--u) + var(--gutter) * 2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){
+  .santos-wrap{max-width:calc(1220 * var(--u));padding-inline:0}
+}
+
+/* ------------------------------------------------------------------ HÉROE */
+/* Banda duotono de 582 px; la foto ya viene compuesta en hero.jpg */
+.santos-hero{background:#C9870F}
+.santos-hero .hero__media img{object-position:50% 50%}
+
+.santos-hero .hero__inner{
+  min-height:calc(582 * var(--u));
+  justify-content:flex-start;align-items:center;text-align:center;
+  gap:0;padding-block:0;padding-top:calc(329.2 * var(--u));
+}
+
+/* El editable centra el titular en x=698,7: 21 px a la izquierda del eje de la
+   mesa de trabajo, mientras que el párrafo sí va centrado en 720. */
+.santos-hero .hero__title{
+  font-family:"Neulis",sans-serif;color:#EEEEEE;
+  transform:translateX(calc(-18.4 * var(--u)));
+}
+.santos-hero__t1{
+  display:block;font-weight:700;
+  font-size:calc(74.8 * var(--u));line-height:calc(74.8 * var(--u));
+}
+.santos-hero__t2{
+  display:block;font-weight:500;
+  font-size:calc(59.03 * var(--u));line-height:calc(44.6 * var(--u));
+}
+/* El editable rompe la bajada después de «vivir», y la maqueta estática lo
+   consigue con un <br>. Aquí el texto lo escribe el panel y no se puede
+   sembrar un salto a mano, así que se fija la medida de la caja —la anchura
+   de esa primera línea en el editable, 841,8 px— y el salto lo hace solo. Si
+   alguien escribe una bajada más larga, sigue rompiendo por donde toca en vez
+   de estirarse hasta los bordes de la pantalla. */
+.santos-hero .hero__sub{
+  margin-top:calc(20.7 * var(--u));max-width:calc(848 * var(--u));margin-inline:auto;
+  font-weight:300;font-size:calc(28 * var(--u));line-height:calc(33.6 * var(--u));
+  color:#FFFFFF;
+}
+.santos-hero .hero__sub strong{font-weight:600}
+
+/* ------------------------------------------------------------ ENTRADILLA */
+/* El editable presentaba a un solo santo y entraba directo en su ficha. La
+   página pinta los cinco que hay en la base, así que el texto de presentación
+   que ya estaba escrito allí abre la serie. No estrena tipografía: es la misma
+   caja y el mismo cuerpo que el resto de las fichas. */
+.santos-intro{padding-top:calc(72 * var(--u))}
+.santos-intro__caja{max-width:calc(715 * var(--u))}
+.santos-intro .santos-texto{margin-top:calc(12 * var(--u))}
+
+/* ------------------------------------------ SANTO TORIBIO DE MOGROVEJO */
+/* Halo blanco del editable: círculo de r=107 centrado en (253,2 · 709). */
+.santos-toribio{
+  padding-top:calc(93.5 * var(--u));
+  padding-bottom:calc(34 * var(--u));
+  background-image:radial-gradient(
+    circle calc(107 * var(--u)) at calc(253.2 * var(--u)) calc(127 * var(--u)),
+    rgba(255,255,255,.66),rgba(255,255,255,0));
+  background-repeat:no-repeat;
+}
+
+/* Columna de texto (110 → 825) y retrato (825,5 → 1330,5).
+   `min-width:0` en la columna: sin él, un texto sin espacios —una URL pegada
+   en el panel— ensancharía la rejilla y sacaría el retrato de la pantalla.
+   Y si una ficha se queda sin retrato, el texto ocupa las dos columnas en vez
+   de dejar medio ancho en blanco. */
+.santos-toribio__grid{
+  display:grid;
+  grid-template-columns:calc(715 * var(--u)) calc(505 * var(--u));
+}
+.santos-toribio__grid--solo{grid-template-columns:minmax(0,1fr)}
+.santos-toribio__col{min-width:0}
+
+/* Titular con el filete granate de 61 x 4 px que lo precede */
+.santos-h{
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(44 * var(--u));line-height:calc(49 * var(--u));
+  color:var(--wine);letter-spacing:-.004em;
+}
+.santos-h::before{
+  content:"";display:block;
+  width:calc(61 * var(--u));height:calc(4 * var(--u));
+  background:var(--wine);margin-bottom:calc(10.3 * var(--u));
+}
+/* La línea de virtudes va en versalitas en el editable. En el panel se
+   escribe como se lee —«Pastor · Misión · Defensa de los pueblos»—, así que
+   la caja de alta la pone el CSS y no el editor. */
+.santos-kicker{
+  font-weight:300;font-size:calc(22.64 * var(--u));line-height:calc(27.2 * var(--u));
+  color:#595959;letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* Banda arena de 680,4 x 134 px.
+   Alto MÍNIMO, no fijo: el resumen de cada santo lo escribe el panel y el más
+   largo ya ocupa dos líneas. Con `height` la segunda se salía de la banda. */
+.santos-cita{
+  width:calc(680.4 * var(--u));max-width:100%;min-height:calc(134 * var(--u));
+  margin-top:calc(34.5 * var(--u));margin-left:calc(1.6 * var(--u));
+  padding:calc(20 * var(--u)) calc(24 * var(--u)) calc(22 * var(--u));
+  background:#F2D9AD;text-align:center;
+}
+.santos-cita__txt{
+  font-family:"Neulis",sans-serif;font-weight:500;font-style:italic;
+  font-size:calc(28 * var(--u));line-height:calc(33.6 * var(--u));
+  color:var(--wine);
+}
+.santos-cita__fuente{
+  margin-top:calc(6.4 * var(--u));
+  font-weight:300;font-size:calc(21 * var(--u));line-height:calc(26.8 * var(--u));
+  color:#000000;
+}
+.santos-cita__fuente em{font-style:italic}
+
+/* Cuerpo de texto: 24/30 px, con 13 px extra entre párrafos.
+   La medida (669 px) es la de la línea más larga del editable —667 px—, con
+   dos de margen. La maqueta estática marcaba cada salto con un <br>; con el
+   texto del panel eso no se puede, así que se fija la medida y las líneas
+   caen donde caían. */
+.santos-texto{margin-top:calc(36.8 * var(--u));max-width:calc(669 * var(--u))}
+.santos-texto p{
+  font-weight:300;font-size:calc(24 * var(--u));line-height:calc(30 * var(--u));
+  color:#1C1416;
+}
+.santos-texto p+p{margin-top:calc(13 * var(--u))}
+.santos-texto strong{font-weight:600}
+
+/* Retrato: 505 x 797 px con la sombra suave que el editable lleva quemada.
+   `align-self:start` porque la altura de la columna de texto la decide el
+   panel: sin él la figura se estiraba hasta el alto de la fila y la sombra
+   quedaba colgando por debajo de la fotografía. */
+.santos-retrato{
+  width:calc(505 * var(--u));margin-top:calc(125 * var(--u));align-self:start;
+  box-shadow:calc(6 * var(--u)) calc(8 * var(--u)) calc(14 * var(--u)) rgba(0,0,0,.18);
+}
+.santos-retrato img{width:100%;height:auto}
+
+/* --------------------------------------------------------------------- PIE
+   Banda de 135 px; las dos líneas legales van apiladas a la izquierda (x=111)
+   con las líneas base en y=1699,6 y 1721,6 del editable. */
+/* El alto es MÍNIMO y la composición sólo se aplica al pie simple: si desde
+   la intranet se pone `pie.modo` en «completo», el pie trae además cuatro
+   columnas de enlaces y las redes, y con un alto fijo de 135 px se habrían
+   quedado cortadas. */
+.site-footer:not(.site-footer--completo){min-height:calc(135 * var(--u));align-items:flex-start}
+.site-footer:not(.site-footer--completo) .site-footer__inner{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0;
+  padding-top:calc(52.9 * var(--u));
+  max-width:calc(1218 * var(--u) + var(--gutter) * 2);
+}
+@media (min-width:1440px){
+  .site-footer:not(.site-footer--completo) .site-footer__inner{max-width:calc(1218 * var(--u))}
+}
+.site-footer__legal{grid-column:1;grid-row:1}
+.site-footer__credits{grid-column:1;grid-row:2;margin-top:calc(.6 * var(--u))}
+.site-footer__links{
+  grid-column:2;grid-row:1 / span 2;align-self:center;
+  display:flex;flex-wrap:wrap;justify-content:flex-end;
+  gap:calc(4 * var(--u)) calc(22 * var(--u));
+}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* =========================================================== RESPONSIVE ===
+   Requisito del cliente: en tablet y móvil ninguna imagen de contenido puede
+   recortarse ni deformarse, y no puede haber scroll horizontal. */
+@media (max-width:1023px){
+  /* Los saltos de línea son los del editable: solo valen en escritorio */
+  .santos-br{display:none}
+
+  /* ----------------------------------------------------------------- HÉROE */
+  /* La banda se recorta en alto: el encuadre apunta al celebrante */
+  .santos-hero .hero__media img{object-position:28% 50%}
+
+  .santos-hero .hero__inner{
+    min-height:clamp(360px,52vw,520px);
+    padding-block:clamp(72px,10vw,110px);
+    justify-content:center;
+  }
+  .santos-hero .hero__title{transform:none}
+  .santos-hero__t1{font-size:clamp(38px,6.1vw,75px);line-height:1.02}
+  .santos-hero__t2{font-size:clamp(30px,4.8vw,59px);line-height:1.1}
+  .santos-hero .hero__sub{
+    margin-top:clamp(10px,1.6vw,20px);max-width:38ch;
+    font-size:clamp(17px,2.2vw,28px);line-height:1.25;
+  }
+
+  /* -------------------------------------------- SANTO TORIBIO DE MOGROVEJO */
+  .santos-toribio{
+    padding-top:clamp(44px,6.5vw,94px);
+    padding-bottom:clamp(48px,7vw,90px);
+    background-image:none;
+  }
+  .santos-toribio__grid{
+    grid-template-columns:minmax(0,1fr);
+    row-gap:clamp(28px,4vw,48px);
+  }
+
+  .santos-h{font-size:clamp(28px,4.3vw,44px);line-height:1.15}
+  .santos-h::before{
+    width:clamp(48px,4.3vw,61px);height:4px;
+    margin-bottom:clamp(8px,1vw,11px);
+  }
+  .santos-kicker{
+    margin-top:clamp(4px,.7vw,8px);
+    font-size:clamp(15px,2.2vw,23px);line-height:1.35;
+  }
+
+  .santos-cita{
+    width:100%;max-width:680px;height:auto;margin-left:0;
+    margin-top:clamp(24px,3.4vw,40px);
+    padding:clamp(18px,2.4vw,26px) clamp(18px,2.6vw,32px) clamp(20px,2.6vw,28px);
+  }
+  .santos-cita__txt{font-size:clamp(18px,2.4vw,28px);line-height:1.25}
+  .santos-cita__fuente{
+    margin-top:clamp(8px,1vw,12px);
+    font-size:clamp(14px,1.8vw,21px);line-height:1.35;
+  }
+
+  /* La entradilla y el cuerpo sueltan la medida del editable: aquí el ancho
+     lo marca ya la caja de composición. */
+  .santos-intro{padding-top:clamp(36px,5vw,72px)}
+  .santos-intro__caja{max-width:none}
+
+  .santos-texto{margin-top:clamp(24px,3.4vw,40px);max-width:none}
+  .santos-texto p{font-size:clamp(16px,2.1vw,24px);line-height:1.45}
+  .santos-texto p+p{margin-top:1.1em}
+
+  /* El retrato pasa a ancho completo con su proporción natural: no se recorta */
+  .santos-retrato{
+    width:100%;max-width:505px;margin:0 auto;
+    box-shadow:6px 8px 14px rgba(0,0,0,.18);
+  }
+
+  /* ------------------------------------------------------------------- PIE */
+  /* Mismo alcance que arriba —sólo el pie simple— para que las dos reglas
+     pesen igual y mande la última, que es ésta. */
+  .site-footer:not(.site-footer--completo){min-height:134px;align-items:center}
+  .site-footer:not(.site-footer--completo) .site-footer__inner{
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+    padding-block:clamp(20px,3vw,30px);
+    max-width:calc(var(--container) + var(--gutter) * 2);
+  }
+  .site-footer__legal,.site-footer__credits{margin-top:0}
+  .site-footer__links{justify-content:flex-start;gap:4px 22px;align-self:flex-start;order:3}
+}
+
+@media (max-width:767px){
+  .santos-hero .hero__inner{min-height:clamp(340px,74vw,420px)}
+  .santos-hero .hero__sub{max-width:30ch}
+}
+
+@media (max-width:479px){
+  .santos-hero .hero__inner{padding-block:clamp(56px,14vw,80px)}
+  .santos-cita{padding:18px 18px 20px}
+}

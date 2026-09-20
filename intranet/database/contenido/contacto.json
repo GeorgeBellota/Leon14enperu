@@ -1,0 +1,86 @@
+{
+  "pagina": {
+    "clave": "contacto",
+    "nombre": "Contacto",
+    "ruta": "/contacto/",
+    "titulo_seo": "Contacto · Viaje de León XIV al Perú",
+    "descripcion_seo": "Escríbenos y te respondemos. Formulario de contacto y canales directos del Viaje Apostólico de Su Santidad el Papa León XIV al Perú, 11–16 de noviembre de 2026.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Contacto",
+      "texto": "@bd",
+      "imagen": "contacto/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "escribenos",
+      "nombre": "Escríbenos",
+      "plantilla": "generica",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "Escríbenos",
+      "texto": "",
+      "cta_texto": "Enviar mensaje",
+      "cta_url": "",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "rotulo": "voluntariado", "titulo": "Voluntariado" },
+        { "orden": 20, "rotulo": "patrocinios",  "titulo": "Patrocinios" },
+        { "orden": 30, "rotulo": "donativo",     "titulo": "Donativo" },
+        { "orden": 40, "rotulo": "prensa",       "titulo": "Prensa" },
+        { "orden": 50, "rotulo": "materiales",   "titulo": "Materiales de pastoral" },
+        { "orden": 60, "rotulo": "otra",         "titulo": "Otra consulta" }
+      ]
+    },
+
+    {
+      "clave": "canales",
+      "nombre": "Canales directos",
+      "plantilla": "generica",
+      "orden": 30,
+      "activa": 1,
+      "titulo": "Canales directos",
+      "texto": "",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "Voluntariado",
+          "texto": "comunica.laicosyjuventud@iglesiacatolica.org.pe",
+          "enlace_url": "mailto:comunica.laicosyjuventud@iglesiacatolica.org.pe"
+        },
+        {
+          "orden": 20,
+          "titulo": "Prensa",
+          "texto": "contacto@leon14enperu.com",
+          "enlace_url": "mailto:contacto@leon14enperu.com"
+        },
+        { "orden": 30, "rotulo": "youtube",   "titulo": "Youtube",   "texto": "@leon14enperu" },
+        { "orden": 40, "rotulo": "facebook",  "titulo": "Facebook",  "texto": "/LeonXIVEnPeru" },
+        { "orden": 50, "rotulo": "instagram", "titulo": "Instagram", "texto": "León XIV en el Perú" },
+        { "orden": 60, "rotulo": "tiktok",    "titulo": "Tik Tok",   "texto": "@leon14enperu" },
+        { "orden": 70, "rotulo": "whatsapp",  "titulo": "Canal de difusión WhatsApp", "texto": "Papa León XIV en el Perú" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "«cabecera» y «escribenos» conservan la clave que ya tenían en la base, con su historial y su SEO. «canales» es nueva: el editable dibuja la lista de correos y redes, que hasta ahora estaba escrita a mano en la vista y decía «[CORREO POR CONFIRMAR]».",
+    "Los campos marcados «@bd» se dejan como están en producción: el rótulo de la cabecera («Organización del viaje») y el de «escribenos» («Formulario»), que el diseño nuevo ya no pinta pero no conviene borrar, y la bajada de la cabecera, que en la base es más larga que en el editable y avisa de las preguntas frecuentes. La vista aguanta las tres líneas que ocupa.",
+    "«escribenos» pasa de la plantilla «texto_lectura» a «generica» para que el panel pueda editar tres cosas que antes estaban escritas en el código: el texto del botón (cta_texto) y las opciones del desplegable «Motivo», que ahora son sus bloques. En cada bloque, el Título es lo que se lee y el Rótulo, el valor que viajará en el envío.",
+    "En los bloques de «canales»: Título = la etiqueta en granate (los dos puntos los pone la vista), Texto = el dato que se lee, Destino del enlace = «mailto:…» para los correos y vacío para las redes —así el editor puede añadir después la dirección de cada perfil—, y Número o rótulo = el nombre del icono: youtube, facebook, instagram, tiktok o whatsapp.",
+    "El formulario NO tiene envío en servidor: no existe en el proyecto. Hoy sólo valida en el navegador. Los correos de «Canales directos» son la vía real de contacto mientras tanto."
+  ]
+}

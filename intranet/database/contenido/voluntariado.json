@@ -1,0 +1,189 @@
+{
+  "pagina": {
+    "clave": "voluntariado",
+    "nombre": "Voluntariado",
+    "ruta": "/voluntariado/",
+    "titulo_seo": "Voluntariado «Los amigos de León» · Viaje de León XIV al Perú",
+    "descripcion_seo": "Si tienes entre 18 y 45 años participa como voluntario en la Visita del Papa León XIV al Perú. Seis servicios, tres pasos y un proceso de selección claro.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "Voluntariado",
+      "titulo": "Los amigos de León",
+      "texto": "<strong>Si tienes entre 18 y 45 años</strong> participa como voluntario en la Visita del Papa León XIV. Una experiencia para <strong>servir, acoger y hacer comunidad</strong>.",
+      "imagen": "voluntariado/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "resumen",
+      "nombre": "En treinta segundos",
+      "plantilla": "pasos_numerados",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "¡Quiero ser voluntario!",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "Eliges tu servicio",
+          "texto": "Son seis servicios. No importa tu profesión o el tiempo que puedas dar. Todos son bienvenidos.",
+          "enlace_texto": "Ver los seis",
+          "enlace_url": "#servicios"
+        },
+        {
+          "orden": 20,
+          "titulo": "Rellenas el formulario",
+          "texto": "Es la Fase 01 y el único paso que se hace por internet. Solo cinco minutos.",
+          "enlace_texto": "Ir al formulario",
+          "enlace_url": "#inscripcion"
+        },
+        {
+          "orden": 30,
+          "titulo": "La organización te escribe",
+          "texto": "Validación de documentos y, más adelante, acreditación y credenciales.",
+          "enlace_texto": "Ver el proceso",
+          "enlace_url": "#proceso"
+        }
+      ]
+    },
+
+    {
+      "clave": "servicios",
+      "nombre": "Los seis servicios",
+      "plantilla": "tarjetas_icono",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Un lugar para cada talento",
+      "texto": "",
+      "datos": {
+        "cierre": [
+          "Seis servicios, una sola misión: servir con alegría.",
+          "Porque encontrarnos con el Santo Padre también significa poner nuestros dones al servicio de los demás.",
+          "¿Te animas a ser parte de esta experiencia?"
+        ],
+        "grito": "",
+        "boton_texto": "Inscríbete ahora",
+        "boton_url": "#inscripcion"
+      },
+      "bloques": []
+    },
+
+    {
+      "clave": "proceso",
+      "nombre": "Las tres fases",
+      "plantilla": "fases",
+      "orden": 40,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Proceso de selección",
+      "texto": "",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "rotulo": "1",
+          "titulo": "Inscripción",
+          "texto": "<strong>Rellenas el formulario</strong> de esta página con tus datos, la jurisdicción en la que quieres servir y el servicio que prefieres. Es el único paso que se hace por internet.",
+          "datos": {
+            "vinetas": [
+              "Nombres y apellidos, DNI y fecha de nacimiento",
+              "Dirección completa, correo electrónico y número telefónico",
+              "Talla de polo y contacto de emergencia",
+              "Jurisdicción y servicio"
+            ]
+          }
+        },
+        {
+          "orden": 20,
+          "rotulo": "2",
+          "titulo": "Validación",
+          "texto": "Se solicitarán algunos documentos adicionales. <strong>Nada de esto se sube a esta web:</strong> la organización te indicará por qué canal entregarlos.",
+          "datos": {
+            "vinetas": [
+              "Carta de recomendación de sacerdote, religioso(a) u obispo",
+              "Certificado Único Laboral (documento oficial, gratuito y digital emitido por el Ministerio de Trabajo y Promoción del Empleo)",
+              "Entrevista personal (según necesidad)",
+              "Evaluación psicológica (cuando sea posible)"
+            ]
+          }
+        },
+        {
+          "orden": 30,
+          "rotulo": "3",
+          "titulo": "Acreditación",
+          "texto": "<strong>El último paso</strong>, ya cerca de la visita.",
+          "datos": {
+            "vinetas": [
+              "Confirmación oficial",
+              "Asignación de área de servicio",
+              "Entrega de credenciales"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "clave": "inscripcion",
+      "nombre": "Formulario de inscripción",
+      "plantilla": "formulario",
+      "orden": 50,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Inscríbete como voluntario",
+      "datos": {
+        "ten_a_mano_titulo": "Ten a mano",
+        "ten_a_mano": [
+          "Tu <strong>DNI</strong>, ocho dígitos",
+          "Tu <strong>nombre completo</strong>",
+          "Tu <strong>fecha de nacimiento</strong>",
+          "Tu <strong>departamento, provincia y distrito</strong>",
+          "Tu <strong>dirección</strong>: calle o avenida y número",
+          "Tu <strong>correo electrónico</strong> y tu <strong>número telefónico</strong>",
+          "Tu <strong>talla de polo</strong>: S, M, L, XL o XXL",
+          "La <strong>jurisdicción</strong> en la que quieres servir",
+          "El <strong>servicio</strong> que prefieres, de los seis"
+        ],
+        "nota": "El contacto de emergencia es opcional: puedes darlo más adelante. Y si te interrumpen, lo que hayas escrito se guarda en este navegador.",
+        "consentimiento": "La CONFERENCIA EPISCOPAL PERUANA (CEP) tratará sus datos personales para gestionar su inscripción, selección y participación en el voluntariado, conforme a la Ley N.º 29733 y su Reglamento.\nSus datos podrán ser transferidos, según corresponda, al Arzobispado de Lima, Obispado de Chiclayo, Arzobispado del Cusco y Vicariato Apostólico de Pucallpa, y comunicados, cuando resulte necesario, a entidades públicas competentes en materia de seguridad, salud o protección. Serán conservados por un plazo máximo de cuatro (4) meses y luego eliminados.\nEl uso de fotografías, imagen o voz requerirá una autorización independiente.",
+        "ancla_rotulo": "Fase 01 · Solo por internet",
+        "ancla_titulo": "Inscríbete como voluntario",
+        "ancla_dato": "Nueve datos, unos cinco minutos"
+      },
+      "bloques": []
+    },
+
+    {
+      "clave": "despues",
+      "nombre": "Después de enviar",
+      "plantilla": "texto_lectura",
+      "orden": 60,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "¿Qué procede?",
+      "texto": "<h3>Consultas sobre el voluntariado.</h3><p>Enviar el formulario no es quedar seleccionado, y tampoco hace falta que hagas nada más por tu cuenta: a partir de aquí la organización te busca a ti.</p><p>Para consultas o dudas relacionadas con el voluntariado para la visita del papa León XIV al Perú 2026, puedes escribir a <a href=\"mailto:comunica.laicosyjuventud@iglesiacatolica.org.pe\">comunica.laicosyjuventud@iglesiacatolica.org.pe</a></p>",
+      "datos": {},
+      "bloques": []
+    }
+  ],
+
+  "notas": [
+    "Las seis secciones son las que ya estaban en producción: cabecera, resumen, servicios, proceso, inscripcion y despues. No se retira ninguna y no se crea ninguna nueva; sólo cambian los textos que el rediseño rehace.",
+    "«inscripcion.datos.consentimiento» va COPIADO LITERAL de producción, no como «@bd». Es el texto legal que acepta cada voluntario y que queda guardado con su ficha; lo redactó la CEP y el editable de Illustrator no lo dibuja, así que lo natural habría sido marcarlo «@bd» y no tocarlo. No se puede: la migración sólo entiende «@bd» en un campo entero, y «datos» es una columna JSON que se escribe de una pieza. Con «@bd» dentro, la base acababa guardando esas tres letras como texto del consentimiento. Si algún día hay que cambiarlo, se cambia en el panel y aquí; y si se prefiere no tocar ninguno de estos valores, la forma correcta es poner «\"datos\": \"@bd\"» para toda la sección.",
+    "Los seis servicios NO se listan aquí: las tarjetas salen de la tabla «servicios», que es la misma que llena el desplegable del formulario. Si estuvieran duplicadas, un día la tarjeta diría una cosa y la opción del formulario otra.",
+    "Los rótulos («En treinta segundos», «Seis servicios», «Tres fases», «Solo esta fase se hace por internet»), los textos de entrada de «servicios» y «proceso» y la línea «¡El Perú te necesita!» se dejan vacíos: el rediseño no los dibuja. La vista los sigue pintando si alguien los escribe, así que el campo del panel no es una vía muerta; simplemente hoy no hay nada que pintar.",
+    "Los números de fase pasan de «01/02/03» a «1/2/3»: el editable los dibuja de un solo dígito, a 100 px.",
+    "La cabecera estrena la fotografía del rediseño («voluntariado/hero», el duotono naranja y verde) en lugar de la antigua cab-voluntariado."
+  ]
+}

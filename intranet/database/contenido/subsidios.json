@@ -1,0 +1,110 @@
+{
+  "pagina": {
+    "clave": "subsidios",
+    "nombre": "Subsidios pastorales",
+    "ruta": "/subsidios/",
+    "titulo_seo": "Subsidios Pastorales · León XIV en el Perú",
+    "descripcion_seo": "Cinco subsidios pastorales de la Conferencia Episcopal Peruana para preparar la visita del Papa León XIV al Perú en la parroquia, el colegio y la familia. Descarga libre y uso gratuito.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Subsidios",
+      "texto": "Lo que necesitas para preparar la visita en comunidad.",
+      "imagen": "subsidios/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "subsidios",
+      "nombre": "Subsidios descargables",
+      "plantilla": "descargas",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Subsidios para la visita",
+      "texto": "<p>Cinco materiales elaborados por la Conferencia Episcopal <br>Peruana a ser difundidos para preparar la visita en la parroquia, <br>el colegio y la familia. <strong>Descarga libre y uso gratuito</strong>.</p>",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "PARA LA VISITA DEL PAPA\nLEÓN XIV AL PERÚ",
+          "texto": "El documento que presenta los cinco \nsubsidios y cómo usarlos en la parroquia, \nel colegio y la familia.",
+          "imagen": "subsidios/p06",
+          "datos": { "archivo": "@bd", "destacado": "sí" }
+        },
+        {
+          "orden": 20,
+          "titulo": "PAPA LEÓN:\nCERCANO Y PERUANO",
+          "texto": "Quién es León XIV y qué lo une\nal Perú, para conocerlo antes\nde recibirlo.",
+          "imagen": "subsidios/p01",
+          "datos": { "archivo": "@bd" }
+        },
+        {
+          "orden": 30,
+          "titulo": "UNIDOS EN CRISTO,\nSEMBRADORES DE PAZ",
+          "texto": "El lema del Santo Padre\nllevado a la vida de la\ncomunidad.",
+          "imagen": "subsidios/p02",
+          "datos": { "archivo": "@bd" }
+        },
+        {
+          "orden": 40,
+          "titulo": "FAMILIAS QUE\nCUIDAN LA VIDA",
+          "texto": "Material para trabajar en\nfamilia durante las semanas\nprevias.",
+          "imagen": "subsidios/p03",
+          "datos": { "archivo": "@bd" }
+        },
+        {
+          "orden": 50,
+          "titulo": "LOS JÓVENES Y\nLA MISIÓN",
+          "texto": "Para grupos juveniles, colegios\ny pastoral universitaria.",
+          "imagen": "subsidios/p04",
+          "datos": { "archivo": "@bd" }
+        },
+        {
+          "orden": 60,
+          "titulo": "PASTORAL SOCIAL: LA\nDIGNIDAD DE TODA PERSONA",
+          "texto": "La dimensión social de la fe,\ncon propuestas para la\ncomunidad.",
+          "imagen": "subsidios/p05",
+          "datos": { "archivo": "@bd" }
+        }
+      ]
+    },
+
+    {
+      "clave": "habra-disponible",
+      "nombre": "Qué habrá disponible",
+      "plantilla": "texto_apartados",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "¿Qué habrá disponible?",
+      "texto": "<p>Además de los subsidios ya publicados, esto es lo que la <br>Conferencia Episcopal prepara. Todo será de descarga libre <br>y de uso gratuito para parroquias, colegios y movimientos.</p>",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "Guía de oración",               "texto": "PDF · para las semanas previas" },
+        { "orden": 20, "titulo": "Subsidio de catequesis",        "texto": "PDF · Niños, jóvenes y adultos" },
+        { "orden": 30, "titulo": "Himno",                         "texto": "Video" },
+        { "orden": 40, "titulo": "Fondos de pantalla y avatares", "texto": "Móvil, escritorio y redes" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "La página se llamaba «materiales» y la migración la renombra a «subsidios», que es su dirección nueva; /materiales/ responde con un 301 desde Rutas::mudanzas().",
+    "Las tres secciones REUTILIZAN la clave que ya tenían en la base —«cabecera», «subsidios» y «habra-disponible»— para conservar su contenido y su historial. «habra-disponible» pasa de la plantilla «texto_lectura» a «texto_apartados» porque el rediseño la pinta como tabla de dos columnas y necesita bloques.",
+    "«archivo»: \"@bd\" en los seis bloques. Los PDF ya están subidos y registrados en la base —y son los archivos reales que la gente descarga—; el editable no aporta ninguna URL, así que aquí no se toca ni uno. La marca «destacado» sí se escribe: dice cuál de las seis va arriba, sola y a lo ancho, y eso sí lo decide el diseño.",
+    "El rótulo de las tres secciones queda vacío a propósito: el editable no dibuja ninguna versalita sobre el titular en esta página. Los que había en la base («Para parroquias y colegios», «Ya disponibles», «En preparación») dejan de pintarse; el campo sigue en el panel y la vista lo pinta en cuanto alguien escriba algo en el del héroe.",
+    "El titular de la sección «subsidios» no se ve —el editable lo resuelve con el filete dorado y el «Subsidios» del héroe— pero se conserva como encabezado accesible de la sección.",
+    "Los <br> del texto de entrada son los saltos del editable a 1440 px. La hoja de la página los anula por debajo de 1024 px, así que quitarlos desde el panel no rompe nada: sólo cambia dónde parte la línea en escritorio.",
+    "Se retiran dos secciones que el rediseño no pinta: «corre-voz» (el kit de difusión, con el copy aún pendiente de validación) y «avisame-cuando-esten» (el formulario de aviso por correo, que nunca llegó a guardar en ninguna tabla). Su texto queda en el volcado de producción y en el respaldo."
+  ]
+}

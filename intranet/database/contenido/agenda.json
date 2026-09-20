@@ -1,0 +1,71 @@
+{
+  "pagina": {
+    "clave": "agenda",
+    "nombre": "Agenda",
+    "ruta": "/agenda/",
+    "titulo_seo": "Agenda · León XIV en el Perú · 11–16 de noviembre de 2026",
+    "descripcion_seo": "Días de encuentro: cronograma del viaje apostólico del Papa León XIV al Perú en Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa, del 11 al 16 de noviembre de 2026.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "Agenda",
+      "titulo": "Días de encuentro",
+      "texto": "El Papa León XIV estará en el Perú del\n**11 al 16 de noviembre** de 2026.",
+      "imagen": "agenda/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "cuatro-ventanas",
+      "nombre": "Sedes del cronograma",
+      "plantilla": "tarjetas_foto",
+      "orden": 20,
+      "activa": 1,
+      "titulo": "Filtrar el cronograma por ciudad",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "Lima - Callao", "imagen": "agenda/p01" },
+        { "orden": 20, "titulo": "Chiclayo", "texto": "Santa Cruz", "imagen": "agenda/p02" },
+        { "orden": 30, "titulo": "Cusco", "imagen": "agenda/p03" },
+        { "orden": 40, "titulo": "Pucallpa", "imagen": "agenda/p04" }
+      ]
+    },
+
+    {
+      "clave": "itinerario",
+      "nombre": "Itinerario del Santo Padre",
+      "plantilla": "jornadas",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "@bd",
+      "texto": "@bd",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } },
+        { "orden": 20, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } },
+        { "orden": 30, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } },
+        { "orden": 40, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } },
+        { "orden": 50, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } },
+        { "orden": 60, "rotulo": "@bd", "titulo": "@bd", "texto": "@bd", "enlace_texto": "@bd", "enlace_url": "@bd", "datos": { "actividades": "@bd" } }
+      ]
+    }
+  ],
+
+  "notas": [
+    "El itinerario entero va con «@bd». El editable dibuja «XX:00 Hrs.» y «Lorem ipsum» en todas las jornadas menos en la del 11 de noviembre: es relleno de maqueta. Lo real —las seis jornadas con sus actividades, su fecha y su enlace a la sede— ya está en producción y no se toca. Los seis bloques se listan sólo para que la migración sepa que siguen ahí y no los retire.",
+    "Cuando la Oficina de Prensa de la Santa Sede publique el programa, la hora se escribe DELANTE de cada actividad en el panel —«12:00 Hrs. Llegada al Aeropuerto del Callao»— y la vista la separa sola y la pinta en granate. Mientras no la lleve, la actividad se pinta sin hora: aquí no se inventa ninguna.",
+    "«cuatro-ventanas» conserva su clave —y con ella su historial— pero cambia de forma: era un texto sobre las cuatro jurisdicciones y pasa a ser la lista de sedes del cronograma, cada una con su fotografía. Su «título» es el nombre accesible del grupo de filtros; el «texto» de un bloque es la segunda sede, la que el editable dibuja un cuerpo más pequeño («Chiclayo - Santa Cruz»).",
+    "La clave de filtro de cada sede sale de la primera palabra de su nombre: «Lima - Callao» da «lima», y a esa sede van todas las jornadas cuyo título empieza por «Lima». Si una jornada nombra una ciudad que no está entre las sedes, la vista le abre apartado propio en lugar de dejarla sin pintar.",
+    "La bajada del héroe admite dos marcas: un salto de línea para partirla donde la parte el editable y **asteriscos** para la negrita de «11 al 16 de noviembre». El campo del panel es texto plano y se escapa antes de marcar, así que no puede colarse ninguna otra etiqueta.",
+    "Se retiran de la agenda cinco secciones que el rediseño no pinta: sabe-hoy, suele-incluir-viaje, como-cuando-anunciara, avisame-cuando-publique y mas-pregunta. Su texto queda en el volcado de producción y en el respaldo; «¿Qué suele incluir un viaje apostólico?» y las cinco dudas tienen sitio natural en Preguntas frecuentes si se quieren recuperar."
+  ]
+}

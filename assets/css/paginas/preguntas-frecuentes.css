@@ -1,0 +1,209 @@
+/* =============================================================================
+   Preguntas frecuentes.
+   Medidas tomadas del editable Preguntas-frecuentes.ai (mesa 1440 x 3317 px).
+   El editable no dibuja la cabecera: en la página, el contenido baja 76 px.
+   ========================================================================== */
+
+/* Fondo de página exacto del editable */
+body{background:#E6E6E6}
+
+/* Caja de composición: el contenido del editable arranca en x=111 */
+.pf-wrap{
+  width:100%;
+  max-width:calc(1218 * var(--u) + var(--gutter) * 2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){
+  .pf-wrap{max-width:calc(1218 * var(--u));padding-inline:0}
+}
+
+/* ------------------------------------------------------------------ HÉROE */
+/* Banda duotono de 582 px; la foto ya viene compuesta a 1440 x 582 (x2) */
+.pf-hero{background:#B3720A}
+.pf-hero .hero__media img{object-position:50% 50%}
+
+.pf-hero .hero__inner{
+  min-height:calc(582 * var(--u));
+  justify-content:flex-start;align-items:center;text-align:center;
+  gap:0;padding-block:0;padding-top:calc(358.7 * var(--u));
+}
+.pf-hero .hero__title{
+  font-family:"Neulis",sans-serif;color:#E6E6E6;line-height:1;
+}
+/* «Preguntas» — Neulis Bold 92,59 px, línea base en y=448,7 */
+.pf-hero__t1{
+  display:block;font-weight:700;
+  font-size:calc(92.59 * var(--u));line-height:calc(121 * var(--u));
+  letter-spacing:calc(-0.667 * var(--u));
+}
+/* «frecuentes» — Neulis Regular 81,1 px, línea base en y=515,6 */
+.pf-hero__t2{
+  display:block;font-weight:400;
+  font-size:calc(81.1 * var(--u));line-height:calc(106 * var(--u));
+  margin-top:calc(-43.1 * var(--u));
+  letter-spacing:calc(-1.37 * var(--u));
+}
+
+/* -------------------------------------------------------------- CONTENIDO */
+/* Banda #E6E6E6 de y=582 a y=3183 del editable */
+.pf-contenido{
+  background:#E6E6E6;
+  padding-top:calc(162.4 * var(--u));
+  padding-bottom:calc(135.7 * var(--u));
+}
+
+/* Separación entre grupos, medida del editable */
+.pf-g2{margin-top:calc(101.1 * var(--u))}
+.pf-g3{margin-top:calc(129.1 * var(--u))}
+.pf-g4{margin-top:calc(124.1 * var(--u))}
+
+/* ------------------------------------------------- Titular de cada grupo */
+/* Neulis Bold 53,93 px + filete granate de 79,4 x 5 px */
+.pf-grupo__h{
+  display:block;
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(53.93 * var(--u));line-height:calc(70 * var(--u));
+  letter-spacing:calc(-0.35 * var(--u));
+  color:#1C1416;
+}
+.pf-grupo__h::after{
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));
+  margin-top:0;border-radius:0;
+}
+
+/* --------------------------------------------------------- Lista/acordeón */
+/* El editable no dibuja filete superior: solo uno bajo cada pregunta */
+.pf-lista{
+  width:calc(1028.3 * var(--u));max-width:100%;
+  margin-top:calc(38.9 * var(--u));
+  border-top:0;
+}
+/* El editable traza el filete a 0,5 px de #595959: sobre #E6E6E6 rinde #9A9A9A */
+.pf-lista .accordion__item{
+  border-bottom:1px solid #9A9A9A;
+}
+
+.pf-lista .accordion__btn{
+  align-items:center;gap:calc(24 * var(--u));
+  padding:calc(var(--pt,19.1) * var(--u)) calc(7.8 * var(--u)) calc(22.9 * var(--u)) 0;
+}
+.pf-pregunta{
+  display:block;
+  font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:calc(35.58 * var(--u));line-height:calc(49 * var(--u));
+  letter-spacing:calc(-0.43 * var(--u));
+  color:#1C1416;
+  /* Las preguntas ya no están escritas en el HTML: llegan del panel y pueden
+     ser mucho más largas que las del editable. La pregunta es un hijo flex
+     del botón y con min-width:auto no baja de su palabra más larga, así que
+     una dirección web pegada en el campo empujaba el «+» fuera de la ventana
+     a 390 px. Con min-width:0 encoge y con overflow-wrap:anywhere la palabra
+     se parte antes que la fila. Con el texto del editable no cambia nada. */
+  min-width:0;overflow-wrap:anywhere;
+}
+
+/* El «+» del editable: 42 px Poppins Light, tinta de 23 x 23 px en #757575 */
+.pf-lista .accordion__icon{
+  width:calc(23 * var(--u));height:calc(23 * var(--u));
+  margin-top:calc(10 * var(--u));
+  font-size:calc(23 * var(--u));
+  color:#757575;
+}
+.pf-lista .accordion__icon::before,
+.pf-lista .accordion__icon::after{
+  height:calc(2.3 * var(--u));
+}
+
+/* Respuestas: marcador provisional, el editable solo trae las preguntas */
+.pf-respuesta{
+  padding-bottom:calc(22.9 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;
+  font-size:calc(24 * var(--u));line-height:calc(32 * var(--u));
+  color:#595959;max-width:calc(880 * var(--u));
+}
+
+/* ----------------------------------- Altos exactos de fila (padding-top) */
+/* Cada pregunta conserva la distancia entre líneas base del editable */
+.pf-g1 .accordion__item:nth-child(3){--pt:20.1}
+.pf-g1 .accordion__item:nth-child(5){--pt:23.1}
+.pf-g1 .accordion__item:nth-child(6){--pt:21.1}
+.pf-g1 .accordion__item:nth-child(7){--pt:24.1}
+.pf-g2 .accordion__item:nth-child(3){--pt:20.1}
+.pf-g3 .accordion__item:nth-child(3){--pt:20.1}
+.pf-g3 .accordion__item:nth-child(4){--pt:26.1}
+
+/* --------------------------------------------------------------------- PIE */
+/* En el editable los dos textos legales caen 7 px por debajo del centro */
+.site-footer__inner{padding-top:calc(14.2 * var(--u))}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  .pf-hero .hero__inner{
+    min-height:clamp(340px,50vw,520px);
+    justify-content:center;
+    padding-top:0;padding-block:clamp(64px,9vw,104px);
+  }
+  .pf-hero__t1{
+    font-size:clamp(40px,7.2vw,92px);line-height:1.04;
+    letter-spacing:-.008em;
+  }
+  .pf-hero__t2{
+    font-size:clamp(35px,6.3vw,81px);line-height:1.04;
+    margin-top:0;letter-spacing:-.012em;
+  }
+
+  .pf-contenido{
+    padding-top:clamp(48px,7vw,120px);
+    padding-bottom:clamp(48px,7vw,110px);
+  }
+  .pf-g2,.pf-g3,.pf-g4{margin-top:clamp(44px,6.4vw,104px)}
+
+  .pf-grupo__h{
+    font-size:clamp(28px,4.3vw,54px);line-height:1.2;letter-spacing:-.006em;
+  }
+  .pf-grupo__h::after{
+    width:clamp(56px,5.6vw,80px);height:4px;margin-top:clamp(6px,.9vw,12px);
+  }
+
+  .pf-lista{
+    width:100%;margin-top:clamp(22px,3vw,40px);
+  }
+  .pf-lista .accordion__item{border-bottom-width:1px}
+  /* Fuera del escritorio todas las filas comparten el mismo alto */
+  .pf-lista .accordion__btn{
+    padding:clamp(15px,2vw,24px) 0;
+    gap:clamp(16px,2.4vw,30px);
+  }
+  .pf-pregunta{
+    font-size:clamp(17px,2.5vw,36px);line-height:1.3;letter-spacing:-.008em;
+  }
+  .pf-lista .accordion__icon{
+    width:clamp(18px,2.1vw,26px);height:clamp(18px,2.1vw,26px);
+    margin-top:0;flex:0 0 auto;
+  }
+  .pf-lista .accordion__icon::before,
+  .pf-lista .accordion__icon::after{height:2px}
+
+  .pf-respuesta{
+    padding-bottom:clamp(14px,1.9vw,24px);
+    font-size:clamp(15px,1.9vw,24px);line-height:1.5;max-width:70ch;
+  }
+
+  .site-footer__inner{padding-top:0}
+}
+
+@media (max-width:767px){
+  /* Sin salto en el corte de 768 px: la banda sigue la misma pendiente */
+  .pf-hero .hero__inner{min-height:clamp(300px,50vw,384px)}
+  .pf-hero__t1{font-size:clamp(38px,11vw,66px)}
+  .pf-hero__t2{font-size:clamp(33px,9.6vw,58px)}
+
+  .pf-pregunta{font-size:clamp(16px,4.3vw,24px);line-height:1.32}
+  .pf-lista .accordion__icon{width:18px;height:18px}
+}
+
+@media (max-width:479px){
+  .pf-hero__t1{font-size:clamp(34px,10.4vw,46px)}
+  .pf-hero__t2{font-size:clamp(30px,9vw,40px)}
+  .pf-grupo__h{font-size:clamp(26px,7.4vw,34px)}
+}

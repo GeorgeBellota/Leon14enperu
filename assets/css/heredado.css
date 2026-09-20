@@ -1,0 +1,611 @@
+/* =============================================================================
+   heredado.css — las piezas del sitio que siguen vivas, vestidas de nuevo.
+
+   El rediseño sustituye las vistas, pero hay código que NO se toca porque
+   funciona y porque detrás hay 37.000 inscripciones: el formulario de
+   voluntariado (assets/js/form.js lo maneja por sus clases), el aviso
+   emergente, el banner de cookies y el reproductor de la transmisión.
+
+   Ese marcado conserva su vocabulario de clases —cambiarlo obligaría a tocar
+   form.js— y aquí se le da el aspecto del diseño nuevo. Es una capa de
+   traducción, no un sistema paralelo: todo sale de los tokens de sistema.css.
+   ========================================================================== */
+
+/* ---------------------------------------------------- 1. Rejilla heredada */
+.contenedor{
+  width:100%;max-width:calc(var(--container) + var(--gutter)*2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){.contenedor{padding-inline:0;max-width:var(--container)}}
+
+.reticula{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.6vw,38px)}
+@media (min-width:768px){.reticula{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.reticula{grid-template-columns:repeat(12,minmax(0,1fr))}}
+
+/* Sin esto, una celda con contenido largo —una dirección de correo, una URL—
+   ensancha su columna y saca la página de la pantalla. */
+.reticula>*{min-width:0}
+
+.col-m-4{grid-column:span 4}
+.col-m-2{grid-column:span 2}
+@media (min-width:768px){
+  .col-t-6{grid-column:span 6}.col-t-4{grid-column:span 4}
+  .col-t-3{grid-column:span 3}.col-t-2{grid-column:span 2}
+}
+@media (min-width:1024px){
+  .col-d-12{grid-column:span 12}.col-d-8{grid-column:span 8}.col-d-7{grid-column:span 7}
+  .col-d-6{grid-column:span 6}.col-d-5{grid-column:span 5}.col-d-4{grid-column:span 4}
+  .col-d-3{grid-column:span 3}
+}
+
+.seccion{padding-block:var(--sp-section);background:var(--bg)}
+.seccion--tinte{background:#E6E6E6}
+.seccion--pastel{background:var(--pink)}
+.seccion--pastel-acento{background:#F7EAD2}
+.sep-l{margin-top:clamp(24px,3.2vw,46px)}
+.solo-lectores{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ------------------------------------------------ 2. Titulares heredados */
+.seccion__encabezado{margin-bottom:clamp(22px,3vw,44px)}
+.seccion__filete{border:0;height:4px;width:78px;background:var(--gold);margin:0 0 clamp(14px,1.6vw,22px);border-radius:2px}
+.rotulo{
+  display:block;font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:var(--fs-sm);letter-spacing:.14em;text-transform:uppercase;color:var(--grey-600);
+  margin-bottom:.45em;
+}
+.rotulo--claro{color:rgba(255,255,255,.82)}
+.titular--mayor{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:var(--fs-h2);
+  line-height:1.06;color:var(--ink);margin:0;
+}
+.titular--mayor .linea,.titular--mayor .linea>span{display:block}
+.ornamento{display:none}
+.seccion__pie{margin-top:clamp(20px,2.6vw,36px)}
+.texto-lectura{font-size:var(--fs-base);line-height:1.5;color:var(--ink);max-width:68ch}
+.texto-lectura p+p{margin-top:1.1em}
+.texto-lectura strong{font-weight:600}
+.enlace-flecha{display:inline-flex;align-items:center;gap:.5em;color:var(--wine);font-weight:500}
+.enlace-flecha svg{width:1em;height:1em;fill:currentColor}
+.enlace-flecha:hover{text-decoration:underline}
+
+/* --------------------------------------------- 3. Botones (compatibilidad)
+   El marcado heredado escribe «btn btn--primario». El sistema nuevo define
+   .btn; aquí sólo se añaden los modificadores que el rediseño no tenía. */
+.btn--primario{background-image:var(--grad-btn);color:#EEEEEE}
+.btn--linea{
+  background-image:none;background-color:transparent;
+  border:2px solid var(--wine);color:var(--wine);
+}
+.btn--linea:hover{background-color:var(--wine);color:#EEEEEE}
+.btn--ocupado{opacity:.65;pointer-events:none}
+.btn--ocupado::after{
+  content:"";width:1em;height:1em;margin-left:.5em;border-radius:50%;
+  border:2px solid currentColor;border-top-color:transparent;
+  animation:heredado-giro .7s linear infinite;
+}
+@keyframes heredado-giro{to{transform:rotate(360deg)}}
+
+/* -------------------------------------------- 4. Fases: antes/durante/después
+   El <body> lleva data-phase y el CSS enciende y apaga lo que corresponde.
+   El 11 de noviembre el sitio cambia solo. */
+.fase-pre,.fase-live,.fase-post{display:none}
+[data-phase="pre"]  .fase-pre {display:block}
+[data-phase="live"] .fase-live{display:block}
+[data-phase="post"] .fase-post{display:block}
+
+/* ------------------------------------------- 5. Tira de la cuenta atrás */
+.tira-cuenta{background:var(--wine);color:#EEEEEE}
+.tira-cuenta__inner{
+  width:100%;max-width:calc(var(--container) + var(--gutter)*2);
+  margin-inline:auto;padding:8px var(--gutter);
+  display:flex;justify-content:center;
+}
+.tira-cuenta p{margin:0;font-size:clamp(12px,1.05vw,15px);line-height:1.5;text-align:center}
+.tira-cuenta__reloj{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.28em .7em}
+.tira-cuenta__rotulo{font-weight:300;opacity:.85}
+.tira-cuenta__par{display:inline-flex;align-items:baseline;gap:.28em}
+.tira-cuenta__par b{font-family:"Neulis",sans-serif;font-weight:600;font-variant-numeric:tabular-nums;color:var(--gold)}
+.tira-cuenta__par span{font-weight:300;opacity:.85}
+.tira-cuenta__cierre{font-weight:300;opacity:.85}
+.tira-cuenta__aviso{font-weight:500;color:var(--gold)}
+@media (max-width:767px){
+  .tira-cuenta__cierre{display:none}
+  .tira-cuenta__par span{display:none}
+  .tira-cuenta__par b::after{content:attr(data-uni);font-weight:300;opacity:.8;margin-left:.1em}
+}
+
+/* ------------------------------------------------- 6. Barra fija de móvil */
+.barra-fija{
+  position:fixed;left:0;right:0;bottom:0;z-index:55;display:none;
+  padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  background:rgba(237,237,237,.94);backdrop-filter:blur(8px);
+  box-shadow:0 -2px 14px rgba(0,0,0,.14);
+}
+@media (max-width:767px){.barra-fija{display:block}body{padding-bottom:84px}}
+@media print{.barra-fija{display:none}}
+
+/* ------------------------------------------------------ 7. Menú compacto
+   A partir de once entradas la barra de escritorio se repliega en el mismo
+   desplegable del móvil. Lo decide cabecera.php contando las visibles. */
+.site-header--compacto .nav-toggle{display:flex;position:relative}
+.site-header--compacto .nav{
+  position:fixed;top:0;right:0;z-index:65;
+  width:min(86vw,380px);height:100dvh;background:#F6F6F6;
+  flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;
+  padding:92px 28px 40px;overflow-y:auto;margin-bottom:0;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 30px rgba(0,0,0,.18);
+}
+body.nav-open .site-header--compacto .nav{transform:translateX(0)}
+.site-header--compacto .nav__link{
+  font-size:19px;padding:15px 0;border-bottom:1px solid rgba(0,0,0,.08);
+}
+.site-header--compacto .nav__link.is-active::after{display:none}
+.site-header--compacto .nav__link.is-active{font-weight:600}
+
+/* El botón de voluntariado sólo aparece dentro del desplegable. */
+.nav__cta{display:none}
+@media (max-width:1023px){
+  .nav__cta{display:inline-flex;margin-top:22px;width:100%;min-width:0}
+}
+.site-header--compacto .nav__cta{display:inline-flex;margin-top:22px;width:100%;min-width:0}
+
+/* ------------------------------------------------ 8. Pie: enlaces y columnas */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u));order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+.site-footer--completo{min-height:0;display:block;padding-block:clamp(36px,4.6vw,66px) 0}
+.site-footer--completo .site-footer__inner{flex-direction:column;align-items:stretch;padding-top:0}
+.pie-columnas{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(18px,2.4vw,34px);width:100%;margin-bottom:clamp(24px,3vw,40px);
+}
+.pie-columnas__titulo{
+  background:none;border:0;padding:0 0 .6em;cursor:default;text-align:left;
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-base);color:var(--ink);
+}
+.pie-columnas__lista{display:flex;flex-direction:column;gap:.42em}
+.pie-columnas__lista a{font-size:var(--fs-sm);font-weight:300;color:var(--ink);opacity:.85}
+.pie-columnas__lista a:hover{opacity:1;text-decoration:underline}
+.pie-redes{display:flex;align-items:center;gap:.8em;margin-bottom:clamp(18px,2.4vw,32px);width:100%}
+.pie-redes__iconos{display:inline-flex;gap:.5em}
+.pie-redes__iconos svg{width:22px;height:22px;fill:currentColor;opacity:.55}
+.pie-redes__estado{font-size:var(--fs-xs);opacity:.75}
+@media (max-width:767px){
+  .pie-columnas{grid-template-columns:1fr;gap:0}
+  .pie-columnas__grupo{border-bottom:1px solid rgba(0,0,0,.12)}
+  .pie-columnas__titulo{
+    width:100%;display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;cursor:pointer;
+  }
+  .pie-columnas__titulo::after{content:"+";font-weight:400;font-size:1.3em;line-height:1}
+  .pie-columnas__grupo.esta-abierto .pie-columnas__titulo::after{content:"–"}
+  .pie-columnas__lista{display:none;padding-bottom:14px}
+  .pie-columnas__grupo.esta-abierto .pie-columnas__lista{display:flex}
+}
+
+/* ========================================================================= */
+/* 9. FORMULARIO DE VOLUNTARIADO                                             */
+/*    Las clases las fija el marcado que maneja form.js: no se renombran.    */
+/* ========================================================================= */
+.formulario{max-width:none}
+
+/* Progreso ----------------------------------------------------------------*/
+.progreso{margin-bottom:clamp(20px,2.6vw,34px)}
+.progreso__texto{
+  display:flex;justify-content:space-between;gap:1em;margin:0 0 .6em;
+  font-size:var(--fs-sm);font-weight:500;color:var(--grey-600);
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.progreso__barra{display:block;height:4px;background:rgba(0,0,0,.12);border-radius:2px;overflow:hidden;margin:0}
+.progreso__barra>span{display:block;height:100%;background:var(--wine);transition:width .3s ease}
+
+/* Aviso de errores --------------------------------------------------------*/
+.resumen-errores{
+  margin-bottom:clamp(16px,2vw,26px);padding:.85em 1.1em;border-radius:4px;
+  background:#FBE9E9;border-left:4px solid var(--wine);
+  font-size:var(--fs-base);color:var(--wine);
+}
+.resumen-errores[hidden]{display:none}
+.resumen-errores strong{font-weight:600}
+.resumen-errores--aviso{background:#FDF3DF;border-left-color:var(--gold);color:#6A4A05}
+
+/* Pasos -------------------------------------------------------------------*/
+.paso{border:0;padding:0;margin:0 0 clamp(26px,3.4vw,46px)}
+.paso__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h4);
+  color:var(--wine);margin:0 0 .25em;
+}
+.paso__pie{font-size:var(--fs-sm);color:var(--grey-600);margin:0 0 clamp(14px,1.8vw,24px)}
+/* «paso__seccion» es un <fieldset> que agrupa campos, no un titular: aquí
+   sólo separa grupos. El encabezado que lleva dentro ya es .paso__titulo, así
+   que no se pone tipografía —si se pusiera, la heredarían las etiquetas y los
+   textos de ayuda del grupo, que van en Poppins. */
+.paso__seccion{
+  border:0;padding:0;margin:clamp(18px,2.2vw,30px) 0 0;min-width:0;
+}
+.paso__seccion > .paso__titulo{font-size:var(--fs-md)}
+.paso__rejilla{display:grid;grid-template-columns:1fr;gap:clamp(12px,1.5vw,20px)}
+@media (min-width:640px){
+  .paso__rejilla--par{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .paso__rejilla--dos{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .paso__rejilla--tres{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Campos ------------------------------------------------------------------*/
+.campo{display:flex;flex-direction:column;gap:.4em;min-width:0}
+.campo__etiqueta{font-weight:500;font-size:var(--fs-base);color:var(--ink)}
+.campo__etiqueta--menor{font-size:var(--fs-sm);color:var(--grey-600);text-transform:uppercase;letter-spacing:.08em}
+.campo__opcional{font-weight:300;color:var(--grey-500)}
+.campo__ayuda{font-size:var(--fs-sm);color:var(--grey-600);line-height:1.35}
+
+.campo input[type="text"],.campo input[type="email"],.campo input[type="tel"],
+.campo input[type="number"],.campo input[type="date"],.campo input[type="search"],
+.campo select,.campo textarea,.campo__control{
+  width:100%;min-height:56px;padding:.5em .7em;
+  background:rgba(255,255,255,.55);border:1px solid var(--ink);border-radius:0;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:var(--fs-base);color:var(--ink);
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+.campo textarea{min-height:180px;resize:vertical}
+.campo select{
+  appearance:none;padding-right:2.2em;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%231C1416' stroke-width='2'><path d='M5 9l7 7 7-7'/></svg>");
+  background-repeat:no-repeat;background-position:right .7em center;
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  outline:0;border-color:var(--wine);box-shadow:0 0 0 3px rgba(110,11,20,.16);
+}
+.campo input::placeholder,.campo textarea::placeholder{color:var(--grey-500)}
+
+/* Campo con icono y con botón (el DNI y su lupa) --------------------------*/
+.campo__grupo{position:relative;display:flex;align-items:stretch;min-width:0}
+.campo__grupo input{flex:1 1 auto;min-width:0}
+.campo__simbolo{
+  position:absolute;left:.7em;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;fill:var(--grey-500);pointer-events:none;
+}
+/* El símbolo se apoya en «.campo__grupo», que envuelve sólo al control y sí
+   está posicionado (el DNI y su lupa). Pero el marcado lo cuelga siete veces
+   de «.campo» a secas, que es una columna con la etiqueta, el control y el
+   texto de ayuda: allí «top:50%» caería en medio del conjunto y, al no estar
+   posicionado, el símbolo se escapaba al primer antepasado que sí lo estaba
+   —el panel del formulario— y acababan todos amontonados en el mismo punto.
+   En ese caso vuelve al flujo y se cuela sobre su propio control: 18 px es el
+   centro de los 56 px de alto que mide el campo. */
+.campo>.campo__simbolo,
+.sugiere>.campo__simbolo{
+  position:relative;left:auto;top:18px;transform:none;
+  align-self:flex-start;z-index:2;margin:0 0 calc(-20px - .4em) .7em;
+}
+.campo>.campo__simbolo+input,
+.sugiere>.campo__simbolo+input{padding-left:2.5em}
+.campo__grupo input{padding-left:2.5em}
+.campo__lupa{
+  flex:0 0 auto;width:56px;min-height:56px;border:0;cursor:pointer;
+  background:var(--wine);color:#fff;display:grid;place-items:center;
+  transition:filter .16s ease;
+}
+.campo__lupa:hover{filter:brightness(1.15)}
+.campo__lupa svg{width:20px;height:20px;fill:currentColor}
+.campo--con-boton .campo__grupo input{border-right:0}
+
+/* Selector de opciones y estado -------------------------------------------*/
+/* «.campo__selector» envuelve un <select> y un <svg> de chevron. El <select>
+   ya lleva appearance:none y dibuja su propia flecha de fondo, así que ese
+   <svg> es un duplicado; y como no declara ancho, tomaba el tamaño por
+   defecto de un SVG suelto —300×150— y se descolgaba, enorme, bajo cada
+   desplegable. Con «flex» además compartía línea con el control. */
+.campo__selector{display:block;min-width:0}
+.campo__selector>svg{display:none}
+.campo__selector>select{width:100%}
+.campo__estado{font-size:var(--fs-sm);color:var(--grey-600);min-height:1.2em}
+.campo-grupo{display:flex;flex-direction:column;gap:.55em;min-width:0;border:0;padding:0;margin:0}
+
+/* Error -------------------------------------------------------------------*/
+.campo__error{font-size:var(--fs-sm);color:var(--wine);font-weight:500;display:none}
+.campo--error .campo__error{display:block}
+.campo--error input,.campo--error select,.campo--error textarea{
+  border-color:var(--wine);background:#FDF4F4;
+}
+.campo__error--generico{display:block}
+.campo--aviso-visible .campo__ayuda{color:var(--wine)}
+
+/* Casillas ----------------------------------------------------------------*/
+/* El flex va en la etiqueta —casilla a la izquierda, texto a la derecha—, no
+   en el <span> del texto: dentro de ese span el párrafo legal y su enlace son
+   nodos sueltos, y con «display:flex» cada uno se convertía en una columna.
+   El consentimiento de voluntarios salía partido en tres tiras estrechas. */
+.casilla{display:flex;align-items:flex-start;gap:.6em}
+.casilla__texto{display:block;font-size:var(--fs-base);font-weight:300;line-height:1.4;min-width:0}
+.casilla>input[type="checkbox"],.casilla>input[type="radio"],
+.campo input[type="checkbox"],.campo input[type="radio"]{
+  width:26px;height:26px;min-height:0;flex:0 0 auto;accent-color:var(--wine);margin-top:.1em;
+}
+.casilla__texto a{color:var(--wine);text-decoration:underline}
+/* Los <fieldset> que agrupan campos salían con el marco del navegador; el
+   diseño separa los grupos con un filete fino, no con una caja. */
+.paso fieldset,.form-cms fieldset{min-width:0;border:0;padding:0;margin:0}
+.paso legend,.form-cms legend{padding-inline:0}
+
+/* Sugerencias del ubigeo --------------------------------------------------*/
+.sugiere{position:relative}
+.sugiere__lista{
+  position:absolute;left:0;right:0;top:100%;z-index:20;max-height:260px;overflow-y:auto;
+  background:#fff;border:1px solid var(--ink);border-top:0;box-shadow:var(--shadow-card);
+}
+.sugiere__item{padding:.6em .8em;cursor:pointer;font-size:var(--fs-base);font-weight:300}
+.sugiere__item:hover,.sugiere__item.es-activo{background:var(--pink);color:var(--wine)}
+
+/* Recuadros de apoyo ------------------------------------------------------*/
+.aviso{padding:clamp(16px,2vw,26px);background:#FDF3DF;border-left:4px solid var(--gold);margin-block:clamp(18px,2.2vw,30px)}
+.aviso__titulo{font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-base);margin:0 0 .4em;color:var(--ink)}
+.ten-a-mano{padding:clamp(20px,2.6vw,34px);background:var(--pink)}
+.ten-a-mano__titulo{
+  display:flex;align-items:center;gap:.5em;margin:0 0 .7em;
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h4);color:var(--wine);
+}
+.ten-a-mano__lista{display:flex;flex-direction:column;gap:.42em;font-size:var(--fs-base);font-weight:300}
+.ten-a-mano__lista li{position:relative;padding-left:1.1em;line-height:1.35}
+.ten-a-mano__lista li::before{content:"·";position:absolute;left:.25em;font-weight:700}
+.ten-a-mano__lista strong{font-weight:600}
+.ten-a-mano__nota{margin-top:1em;font-size:var(--fs-sm);color:var(--wine);line-height:1.4}
+
+/* Acciones y confirmación -------------------------------------------------*/
+.form-acciones{display:flex;flex-wrap:wrap;gap:.8em;align-items:center;margin-top:clamp(20px,2.6vw,34px)}
+.confirmacion{padding:clamp(22px,3vw,40px);background:#E9F3E9;border-left:4px solid #2E7D32}
+.confirmacion__nota{margin-top:.8em;font-size:var(--fs-sm);color:var(--grey-700)}
+.trampa{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* Panel lateral fijo del formulario --------------------------------------*/
+.form-fijo{position:sticky;top:96px}
+.form-fijo__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h4);
+  color:var(--ink);margin:0 0 .6em;
+}
+@media (max-width:1023px){.form-fijo{position:static}}
+
+/* Selector de fecha (flatpickr) ------------------------------------------*/
+.flatpickr-calendar{
+  font-family:"Poppins",sans-serif!important;border-radius:0!important;
+  box-shadow:var(--shadow-card)!important;
+}
+.flatpickr-day.selected,.flatpickr-day.selected:hover{
+  background:var(--wine)!important;border-color:var(--wine)!important;
+}
+.flatpickr-day.today{border-color:var(--gold)!important}
+.flatpickr-months .flatpickr-month{color:var(--ink)!important;fill:var(--ink)!important}
+
+/* ========================================================================= */
+/* 10. AVISO EMERGENTE (comunicados)                                         */
+/* ========================================================================= */
+.cta-modal{
+  position:fixed;inset:0;z-index:90;display:none;
+  align-items:center;justify-content:center;padding:var(--gutter);
+  background:rgba(28,20,22,.62);
+}
+.cta-modal.esta-abierto{display:flex}
+.cta-modal__cuerpo{
+  position:relative;width:min(560px,100%);max-height:88dvh;overflow-y:auto;
+  background:#EDEDED;box-shadow:0 18px 50px rgba(0,0,0,.34);
+}
+.cta-modal--cartel .cta-modal__cuerpo{width:min(440px,100%)}
+.cta-modal__media img{width:100%;height:auto;display:block}
+.cta-modal__texto{padding:clamp(20px,3vw,34px)}
+.cta-modal__texto h2,.cta-modal__texto h3{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:var(--fs-h4);
+  color:var(--wine);margin:0 0 .5em;
+}
+.cta-modal__texto p{font-size:var(--fs-base);font-weight:300;line-height:1.45;margin:0 0 .8em}
+.cta-modal__acciones{display:flex;flex-wrap:wrap;gap:.7em;padding:0 clamp(20px,3vw,34px) clamp(20px,3vw,34px)}
+.cta-modal__aspa{
+  position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;cursor:pointer;
+  background:rgba(0,0,0,.55);color:#fff;font-size:24px;line-height:1;border-radius:50%;
+}
+.cta-modal__aspa:hover{background:rgba(0,0,0,.75)}
+body.sin-scroll{overflow:hidden}
+
+/* ========================================================================= */
+/* 11. AVISO DE COOKIES                                                      */
+/* ========================================================================= */
+.consentimiento{position:fixed;left:0;right:0;bottom:0;z-index:80;padding:var(--gutter)}
+.consentimiento__caja{
+  width:min(var(--container),100%);margin-inline:auto;
+  background:#EDEDED;border-top:4px solid var(--gold);box-shadow:0 -6px 30px rgba(0,0,0,.2);
+  padding:clamp(18px,2.4vw,30px);
+  display:flex;flex-wrap:wrap;align-items:center;gap:1em clamp(16px,2vw,30px);
+}
+.consentimiento__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-base);margin:0;color:var(--ink);
+}
+.consentimiento__texto{flex:1 1 320px;font-size:var(--fs-sm);font-weight:300;line-height:1.45;margin:0}
+.consentimiento__texto a{color:var(--wine);text-decoration:underline}
+.consentimiento__botones{display:flex;flex-wrap:wrap;gap:.6em}
+.consentimiento__botones .btn{min-width:0;padding:.42em 1.2em;font-size:var(--fs-base)}
+@media (max-width:767px){.barra-fija~.consentimiento{bottom:74px}}
+
+/* ========================================================================= */
+/* 12. REPRODUCTOR DE LA TRANSMISIÓN                                         */
+/* ========================================================================= */
+.seccion--directo{background:var(--ink);color:#EDEDED}
+.seccion--directo .titular--mayor{color:#EDEDED}
+.seccion--directo .rotulo{color:var(--gold)}
+.directo{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;margin-top:clamp(18px,2.4vw,32px)}
+.directo__portada{width:100%;height:100%;object-fit:cover;opacity:.85}
+.directo__play{
+  position:absolute;inset:0;margin:auto;width:clamp(64px,6vw,92px);height:clamp(64px,6vw,92px);
+  border:3px solid #fff;border-radius:50%;background:rgba(0,0,0,.35);cursor:pointer;
+  display:grid;place-items:center;
+}
+.directo__play::after{
+  content:"";border-left:clamp(18px,1.8vw,26px) solid #fff;
+  border-top:clamp(11px,1.1vw,16px) solid transparent;
+  border-bottom:clamp(11px,1.1vw,16px) solid transparent;margin-left:.3em;
+}
+.directo__play:hover{background:rgba(0,0,0,.55)}
+.directo--abierto .directo__play,.directo--abierto .directo__portada{display:none}
+.directo iframe{width:100%;height:100%;border:0;display:block}
+.directo__pie{margin-top:.8em;font-size:var(--fs-sm);opacity:.8}
+.directo__nota{font-size:var(--fs-sm);opacity:.8}
+.directo__sinjs{padding:1em;text-align:center}
+
+/* ========================================================================= */
+/* 13. Piezas sueltas de las páginas heredadas                               */
+/* ========================================================================= */
+.estado{
+  display:inline-block;padding:.12em .6em;border-radius:2px;
+  background:var(--gold-light);color:#5A3F05;
+  font-size:.8em;font-weight:500;letter-spacing:.02em;
+}
+.estado-actual{
+  padding:clamp(14px,1.8vw,22px);background:#E6E6E6;border-left:4px solid var(--grey-500);
+  margin-bottom:clamp(16px,2vw,26px);
+}
+.estado-actual__frase{font-weight:500;margin:0 0 .3em;color:var(--ink)}
+.estado-actual__meta{font-size:var(--fs-sm);color:var(--grey-600);margin:0}
+.migas{margin-top:clamp(12px,1.6vw,20px);font-size:var(--fs-sm)}
+.migas ol{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
+.migas li+li::before{content:"›";margin-right:.5em;opacity:.6}
+.migas a{text-decoration:underline;opacity:.9}
+.migas a:hover{opacity:1}
+.actos{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:clamp(18px,2.2vw,30px);margin-top:clamp(18px,2.4vw,32px)}
+.acto{padding:clamp(16px,2vw,26px);background:rgba(255,255,255,.55)}
+.acto__titulo{font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-base);margin:0 0 .4em;color:var(--wine)}
+.acto__texto{font-size:var(--fs-sm);font-weight:300;line-height:1.45;margin:0}
+.carta__mas{margin-top:1em}
+.carta:not(.esta-desplegada) .carta__resto{display:none}
+
+/* ========================================================================= */
+/* 14. CABECERA DE PÁGINA HEREDADA                                           */
+/*                                                                           */
+/*  Las páginas que el rediseño no dibujó —legales, guía del peregrino,      */
+/*  donativo, colecciones…— abren con este bloque. Es la misma pieza que el  */
+/*  héroe de las páginas nuevas: banda de 582 px, fotografía a sangre y      */
+/*  titular centrado en blanco.                                              */
+/*                                                                           */
+/*  Sus fotografías no vienen compuestas en duotono como las del editable,   */
+/*  así que el duotono se hace aquí: la imagen se dessatura y encima va el   */
+/*  degradado dorado → granate en multiply. Resultado: entran en el sistema  */
+/*  visual nuevo sin reexportar ni una foto.                                 */
+/* ========================================================================= */
+.cabecera-pagina{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:calc(582 * var(--u));display:flex;align-items:center;
+  background:var(--wine);color:#fff;
+}
+.cabecera-pagina__media{position:absolute;inset:0;z-index:0}
+.cabecera-pagina__media img,.cabecera-pagina__media picture{width:100%;height:100%;display:block}
+.cabecera-pagina__media img{object-fit:cover;object-position:center;filter:grayscale(1) contrast(1.05)}
+.cabecera-pagina__media::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,#E7A115 0%,#D07A0E 32%,#B3401F 62%,#6E0B14 100%);
+  mix-blend-mode:multiply;opacity:.94;
+}
+.cabecera-pagina__contenido{position:relative;z-index:2;width:100%;text-align:center}
+.cabecera-pagina__bloque{
+  display:flex;flex-direction:column;align-items:center;gap:.3em;
+  max-width:52ch;margin-inline:auto;
+}
+.cabecera-pagina__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h2-lg);
+  line-height:1.05;color:#fff;margin:0;
+}
+.cabecera-pagina__bajada{
+  font-size:var(--fs-lead);font-weight:300;line-height:1.18;color:#fff;margin:0;max-width:34ch;
+}
+.cabecera-pagina__bajada strong{font-weight:600}
+.cabecera-pagina__dato{font-size:var(--fs-sm);color:rgba(255,255,255,.85);margin-top:.4em}
+.cabecera-pagina .migas{color:rgba(255,255,255,.88);justify-content:center}
+.cabecera-pagina .migas ol{justify-content:center}
+.cabecera-pagina--colecta .cabecera-pagina__media::after{
+  background:linear-gradient(100deg,#E7A115 0%,#B3401F 55%,#6E0B14 100%);
+}
+@media (max-width:767px){
+  .cabecera-pagina{min-height:clamp(340px,56vw,460px)}
+}
+
+/* ========================================================================= */
+/* 15. Piezas sueltas de las vistas heredadas                                */
+/* ========================================================================= */
+.seccion__encabezado--mayor{margin-bottom:clamp(26px,3.4vw,52px)}
+.legal__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h4);
+  color:var(--wine);margin:clamp(22px,2.6vw,36px) 0 .5em;
+}
+
+/* Botón secundario */
+.btn--secundario{
+  background-image:none;background-color:var(--gold-deep);color:#EEEEEE;
+}
+.btn--secundario:hover{background-color:#F2CA1D}
+
+/* Apilados */
+.pila{display:flex;flex-direction:column;gap:clamp(14px,1.8vw,26px)}
+
+/* Tarjetas genéricas */
+.tarjeta__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-base);
+  color:var(--ink);margin:0 0 .35em;
+}
+.tarjeta__texto{font-size:var(--fs-sm);font-weight:300;line-height:1.45;margin:0;color:var(--grey-700)}
+.tarjeta--pendiente{opacity:.72}
+.tarjeta--pendiente .tarjeta__titulo{color:var(--grey-600)}
+
+/* Casilla de opción */
+.casilla{
+  display:flex;align-items:flex-start;gap:.6em;padding:clamp(12px,1.5vw,20px);
+  background:rgba(255,255,255,.5);border:1px solid var(--line);cursor:pointer;
+}
+.casilla input{width:24px;height:24px;flex:0 0 auto;accent-color:var(--wine);margin-top:.1em}
+.casilla:hover{border-color:var(--wine)}
+
+/* Destinos del aporte (donativo) */
+.destino-aporte{
+  display:flex;gap:.9em;align-items:flex-start;padding:clamp(16px,2vw,26px);
+  background:rgba(255,255,255,.55);
+}
+.destino-aporte__icono{
+  flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;
+  background:var(--gold);color:#fff;border-radius:10px;
+}
+.destino-aporte__icono svg{width:24px;height:24px;fill:currentColor}
+
+/* Mancha decorativa: la clase va en la propia sección, no en un hijo, así que
+   el halo se pinta con un pseudoelemento. El overflow oculto es lo que impide
+   que el halo asome por el borde y saque la página de la pantalla. */
+.mancha{position:relative;isolation:isolate;overflow:hidden}
+.mancha::before{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  width:clamp(180px,26vw,380px);aspect-ratio:1;
+  background:radial-gradient(circle,rgba(231,161,21,.22) 0%,rgba(231,161,21,0) 70%);
+}
+.mancha--sup-der::before{top:-6%;right:-4%}
+
+/* Rejilla de fichas (colecciones y detalle) */
+.rejilla-fichas{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:clamp(20px,2.6vw,38px);
+}
+.ficha__media{width:100%;aspect-ratio:4/3;overflow:hidden;background:#DDD}
+.ficha__media img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+a:hover>.ficha__media img{transform:scale(1.04)}
+.ficha__cuerpo{padding:clamp(12px,1.5vw,20px) 0}
+.ficha__rotulo{
+  display:block;font-size:var(--fs-sm);font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--grey-600);margin-bottom:.3em;
+}
+.ficha__titulo{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:var(--fs-h4);
+  color:var(--ink);margin:0 0 .3em;line-height:1.15;
+}
+.ficha__texto{font-size:var(--fs-sm);font-weight:300;line-height:1.45;color:var(--grey-700);margin:0}
+.vacio{
+  padding:clamp(24px,3vw,44px);text-align:center;color:var(--grey-600);
+  background:rgba(0,0,0,.035);font-size:var(--fs-base);
+}
+
+@media (prefers-reduced-motion:reduce){
+  .btn--ocupado::after{animation:none}
+  .ficha__media img{transition:none}
+}

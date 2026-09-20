@@ -1,0 +1,289 @@
+/* =============================================================================
+   SUBSIDIOS — medidas tomadas del editable SUBSIDIOS.ai (mesa de trabajo
+   1440 x 3722 px). Las subpáginas no llevan marco de navegador: la «y» del
+   editable es directamente la «y» de la página, más los 76 px de la cabecera.
+   ========================================================================== */
+
+:root{--bg:#E8E8E8}
+.site-header{background:var(--bg)}
+
+/* Contenedor de la página: el editable coloca el contenido de 113 a 1237,3 px. */
+.sub-wrap{width:calc(1124.3 * var(--u));margin-left:calc(113 * var(--u))}
+
+/* Filete dorado suelto (el mismo que remata los titulares) */
+.sub-rule{
+  display:block;width:calc(79.4 * var(--u));height:calc(5 * var(--u));
+  background:#E59F15;margin-left:calc(-2.5 * var(--u));
+}
+
+/* ------------------------------------------------------------------ HÉROE */
+.hero--subsi{background:var(--wine)}
+.hero--subsi .hero__media img{object-position:center 42%}
+.hero--subsi .hero__inner{
+  min-height:calc(582 * var(--u));
+  justify-content:flex-start;gap:0;padding-block:0;
+  padding-top:calc(412.6 * var(--u));
+}
+.hero--subsi .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(81.1 * var(--u));line-height:calc(85.2 * var(--u));
+  color:#E8E8E8;
+}
+.hero--subsi .hero__sub{
+  max-width:none;margin-top:calc(9.3 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;
+  font-size:calc(28 * var(--u));line-height:calc(33.6 * var(--u));
+  color:#FFFFFF;
+}
+
+/* -------------------------------------------------------- BANDA CONTENIDO */
+.subsi{
+  background:var(--bg);
+  padding-top:calc(88.7 * var(--u));
+  padding-bottom:calc(51.7 * var(--u));
+}
+
+.subsi__intro{
+  margin-top:calc(29.8 * var(--u));
+  font-weight:300;font-size:calc(26 * var(--u));line-height:calc(31 * var(--u));
+  color:var(--ink);
+}
+.subsi__intro strong{font-weight:600}
+/* El texto ya no está escrito en la maqueta: viene del panel, y desde el panel
+   se puede escribir más de un párrafo. Sin esto los <p> quedarían pegados,
+   porque el reset del sistema les quita el margen. */
+.subsi__intro p + p,.subsi__texto p + p{margin-top:.62em}
+
+/* --------------------------------------------------------- BOTÓN DESCARGAR
+   El editable pinta un rectángulo #6E0B14 con un destello elíptico
+   desplazado al 61,3 % / 13,2 % de la pieza. */
+.btn--descarga{
+  --btn-bg:radial-gradient(ellipse calc(79.645 * var(--u)) calc(88.89 * var(--u)) at 61.3% 13.2%,#AE101F 0%,#6D0A13 100%);
+  min-width:0;min-height:0;padding:0;
+  width:calc(207 * var(--u));height:calc(43.2 * var(--u));
+  background-color:#6D0A13;
+  font-weight:500;font-size:calc(27.14 * var(--u));line-height:1.1;color:#EEEEEE;
+}
+
+/* Una pieza que el panel tiene dada de alta pero cuyo PDF todavía no está
+   subido. La vista no pinta un botón que llevaría a un 404, así que ocupa su
+   sitio esta línea: el hueco del botón se mantiene y la rejilla no se
+   descuadra. El editable no la dibuja porque sus seis piezas ya están
+   publicadas. */
+.descarga-pendiente{
+  font-weight:400;font-size:calc(19.92 * var(--u));line-height:calc(43.2 * var(--u));
+  color:var(--grey-600);
+}
+.subsi-card .descarga-pendiente{margin-top:auto}
+.destacada .descarga-pendiente{margin-top:calc(32.1 * var(--u))}
+
+/* ------------------------------------------------------ PORTADA DESTACADA */
+.destacada{
+  display:grid;
+  grid-template-columns:calc(681.8 * var(--u)) calc(425 * var(--u));
+  column-gap:calc(32 * var(--u));
+  margin-top:calc(51.9 * var(--u));
+  margin-left:calc(2.2 * var(--u));
+}
+.destacada__media img{
+  width:calc(681.8 * var(--u));height:calc(383.6 * var(--u));
+  object-fit:cover;border-radius:calc(12 * var(--u));
+}
+.destacada__h{
+  margin-top:calc(77 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;
+  font-size:calc(26 * var(--u));line-height:calc(31.2 * var(--u));
+  color:#000000;
+}
+.destacada__p{
+  margin-top:calc(14.9 * var(--u));
+  font-weight:300;font-size:calc(20 * var(--u));line-height:calc(24 * var(--u));
+  color:var(--ink);
+}
+.destacada .btn--descarga{margin-top:calc(32.1 * var(--u))}
+
+/* ---------------------------------------------------- LOS CINCO SUBSIDIOS */
+.subsi-cards{
+  display:grid;
+  grid-template-columns:repeat(3,calc(358 * var(--u)));
+  column-gap:calc(25.6 * var(--u));
+  row-gap:calc(54.3 * var(--u));
+  margin-top:calc(55.2 * var(--u));
+  margin-left:calc(-3.1 * var(--u));
+}
+/* La segunda fila del editable va 2 px a la izquierda de la primera. */
+.subsi-card:nth-child(n+4){margin-left:calc(-2 * var(--u))}
+
+/* Altura MÍNIMA, no fija: el editable mide 729,8 px con sus textos, pero los
+   del panel pueden ser más largos y con «height» se saldrían de la tarjeta.
+   Así la fila crece si hace falta y el botón sigue alineado abajo. */
+.subsi-card{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  min-height:calc(729.8 * var(--u));
+}
+.subsi-card__img{
+  display:block;width:100%;height:calc(506 * var(--u));
+  overflow:hidden;border-radius:calc(20 * var(--u));
+}
+.subsi-card__img picture{display:block;width:100%;height:100%}
+.subsi-card__img img{width:100%;height:100%;object-fit:cover}
+
+.subsi-card__h{
+  margin-top:calc(16.5 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;
+  font-size:calc(21.25 * var(--u));line-height:calc(25.5 * var(--u));
+  color:#000000;
+}
+.subsi-card__p{
+  margin-top:calc(18.7 * var(--u));
+  font-weight:400;font-size:calc(19.92 * var(--u));line-height:calc(23.9 * var(--u));
+  color:var(--grey-600);
+}
+.subsi-card .btn--descarga{margin-top:auto}
+
+/* --------------------------------------------------- ¿QUÉ HABRÁ DISPONIBLE? */
+.subsi__h2{
+  display:inline-block;margin-top:calc(89.6 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(60 * var(--u));line-height:calc(63 * var(--u));
+  color:var(--ink);
+}
+.subsi__h2::after{
+  content:"";display:block;
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));
+  background:#E59F15;margin-top:calc(10.1 * var(--u));
+  margin-left:calc(-2.5 * var(--u));
+}
+.subsi__texto{
+  margin-top:calc(27.8 * var(--u));
+  font-weight:300;font-size:calc(26 * var(--u));line-height:calc(31 * var(--u));
+  color:var(--ink);
+}
+
+.subsi-tabla{
+  margin-top:calc(42.4 * var(--u));
+  border-top:calc(.5 * var(--u)) solid #595959;
+}
+/* Misma razón que en las tarjetas: la fila del editable mide 100,35 px, pero
+   un apartado escrito desde el panel puede ocupar dos líneas. Con «height» el
+   texto se salía de la fila y pisaba el filete de abajo.
+
+   Y la primera columna mide 750 y no los 754,2 del editable: el navegador
+   compone Poppins Light 24 px un pelo más ancho que Illustrator, y «PDF · para
+   las semanas previas» —371,8 px medidos— no cabía en los 370,1 px que
+   quedaban. Cuatro píxeles a la izquierda no se ven; esa línea partida en dos,
+   sí, y además desplazaba las tres filas siguientes. */
+.subsi-tabla .datalist__row{
+  grid-template-columns:calc(750 * var(--u)) minmax(0,1fr);
+  gap:0;align-items:baseline;
+  min-height:calc(100.35 * var(--u));
+  padding:calc(32.8 * var(--u)) 0 calc(10 * var(--u));
+  border-bottom:calc(.5 * var(--u)) solid #595959;
+}
+.subsi-tabla .datalist__key{
+  font-family:"Poppins",sans-serif;font-weight:700;
+  font-size:calc(30 * var(--u));line-height:calc(36 * var(--u));
+  color:#E39D15;
+}
+/* Sin «nowrap»: el formato lo escribe quien edita la página y una línea algo
+   más larga que «PDF · para las semanas previas» se saldría de la caja en
+   lugar de partirse. */
+.subsi-tabla .datalist__val{
+  font-weight:300;font-size:calc(24 * var(--u));line-height:calc(36 * var(--u));
+  color:#595959;
+}
+
+/* --------------------------------------------------------------------- PIE */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u));order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  /* Los saltos de línea son los del editable de escritorio: abajo estorban. */
+  .subsi__intro br,.subsi__texto br,.destacada__p br{display:none}
+
+  .sub-wrap{
+    width:100%;max-width:calc(var(--container) + var(--gutter)*2);
+    margin-inline:auto;padding-inline:var(--gutter);
+  }
+
+  .hero--subsi .hero__inner{
+    min-height:clamp(380px,48vw,560px);
+    justify-content:center;padding-top:clamp(56px,8vw,96px);
+    padding-bottom:clamp(40px,6vw,72px);
+  }
+  .hero--subsi .hero__title{font-size:clamp(44px,8.4vw,86px);line-height:1.05}
+  .hero--subsi .hero__sub{font-size:clamp(17px,2.9vw,30px);line-height:1.2;margin-top:clamp(8px,1.2vw,14px);max-width:24ch}
+
+  .subsi{padding-block:clamp(44px,6.5vw,86px) clamp(36px,5vw,60px)}
+  .sub-rule{width:72px;height:4px;margin-left:0}
+  .subsi__intro{margin-top:clamp(18px,2.6vw,30px);font-size:clamp(17px,2.4vw,26px);line-height:1.35}
+
+  .btn--descarga{
+    width:auto;min-width:200px;max-width:100%;height:auto;
+    padding:.34em 1.5em;font-size:clamp(17px,2.2vw,27px);
+    --btn-bg:radial-gradient(ellipse 38.5% 206% at 61.3% 13.2%,#AE101F 0%,#6D0A13 100%);
+  }
+
+  .destacada{
+    grid-template-columns:1fr;row-gap:clamp(22px,3.4vw,38px);
+    margin-top:clamp(28px,4vw,52px);margin-left:0;
+  }
+  .destacada__media img{width:100%;height:auto;object-fit:contain;border-radius:10px}
+  .destacada__h{margin-top:0;font-size:clamp(17px,2.4vw,26px);line-height:1.2}
+  .destacada__p{margin-top:clamp(10px,1.4vw,16px);font-size:clamp(15px,1.9vw,20px);line-height:1.3}
+  .destacada .btn--descarga{margin-top:clamp(18px,2.4vw,32px)}
+
+  .subsi-cards{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:clamp(16px,2.6vw,34px);row-gap:clamp(30px,4.4vw,56px);
+    margin-top:clamp(34px,5vw,64px);margin-left:0;
+  }
+  .subsi-card,.subsi-card:nth-child(n+4){height:auto;margin-left:0}
+  /* Proporción natural de cada portada: por debajo de 1024 px no se recorta nada. */
+  .subsi-card__img{height:auto;overflow:visible;border-radius:0}
+  .subsi-card__img picture{height:auto}
+  .subsi-card__img img{height:auto;object-fit:fill;border-radius:14px}
+  .subsi-card__h{margin-top:clamp(12px,1.8vw,24px);font-size:clamp(14px,1.9vw,21px);line-height:1.2}
+  .subsi-card__p{margin-top:clamp(8px,1.2vw,18px);font-size:clamp(13px,1.75vw,20px);line-height:1.25}
+  .subsi-card .btn--descarga{margin-top:clamp(14px,2vw,26px)}
+
+  .subsi__h2{margin-top:clamp(42px,6vw,86px);font-size:clamp(30px,5.2vw,60px);line-height:1.08}
+  .subsi__h2::after{width:72px;height:4px;margin-top:10px;margin-left:0}
+  .subsi__texto{margin-top:clamp(16px,2.2vw,28px);font-size:clamp(17px,2.4vw,26px);line-height:1.35}
+
+  .subsi-tabla{margin-top:clamp(24px,3.4vw,44px);border-top:1px solid #9A9A9A}
+  .subsi-tabla .datalist__row{
+    grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+    gap:0 20px;height:auto;
+    padding:clamp(16px,2.2vw,30px) 0 clamp(16px,2.2vw,30px);
+    border-bottom:1px solid #9A9A9A;
+  }
+  .subsi-tabla .datalist__key{font-size:clamp(19px,2.6vw,30px);line-height:1.2}
+  .subsi-tabla .datalist__val{font-size:clamp(15px,2vw,24px);line-height:1.2;white-space:normal}
+
+  .site-footer__links{gap:0 22px}
+}
+
+@media (max-width:767px){
+  .hero--subsi .hero__inner{min-height:clamp(340px,62vw,420px)}
+  .hero--subsi .hero__sub{max-width:28ch}
+
+  .subsi-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* Con cinco piezas la última queda sola en su fila y se centra. El «odd» es
+     la salvaguarda: desde el panel se pueden añadir o quitar piezas, y con un
+     número par esta regla dejaba la última a media anchura sin motivo. */
+  .subsi-card:last-child:nth-child(odd){grid-column:1 / -1;max-width:calc(50% - 10px);margin-inline:auto}
+
+  .btn--descarga{width:100%;max-width:280px}
+
+  .subsi-tabla .datalist__row{grid-template-columns:1fr;gap:6px}
+  .subsi-tabla .datalist__val{color:#6A6A6A}
+}
+
+@media (max-width:479px){
+  .subsi-cards{grid-template-columns:1fr;max-width:320px;margin-inline:auto}
+  .subsi-card:last-child:nth-child(odd){max-width:100%}
+  .subsi__h2{font-size:clamp(28px,8vw,36px)}
+}

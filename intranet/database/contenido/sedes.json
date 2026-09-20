@@ -1,0 +1,259 @@
+{
+  "pagina": {
+    "clave": "sedes",
+    "nombre": "Sedes",
+    "ruta": "/sedes/",
+    "titulo_seo": "Sedes · Seis ciudades, una sola nación · León XIV en el Perú",
+    "descripcion_seo": "Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa: las seis ciudades de la Visita Apostólica del Papa León XIV al Perú, del 11 al 16 de noviembre de 2026.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Seis ciudades, una sola nación",
+      "texto": "La costa, el norte, los Andes y la Amazonía. Seis maneras de ser Iglesia en el mismo país.",
+      "imagen": "sedes/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "estas-cuatro",
+      "nombre": "El anuncio de la visita",
+      "plantilla": "generica",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "El anuncio de la visita",
+      "texto": "",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "texto": "<p>El 5 de agosto de 2026, <strong>la Santa Sede anunció <br>oficialmente que el Papa León XIV visitará Lima</strong>, <br>Chiclayo, Cusco y Pucallpa del 11 al 16 de noviembre <br>de 2026. El anuncio confirmó las seis ciudades, pero <br>dejó pendiente la publicación del programa <br>detallado del viaje.</p><p>La elección de estas sedes permite recorrer distintos <br>rostros de la Iglesia peruana: Lima - y la provincia <br>del Callao - sede de la Iglesia metropolitana y <br>centro histórico de la evangelización del país; <br>Chiclayo - y el pueblo de Santa Cruz - la diócesis <br>que León XIV pastoreó como obispo; Cusco, con su <br>profunda tradición de fe y evangelización en los <br>Andes; y Pucallpa, en el corazón de la Amazonía, <br>donde la Iglesia vive su misión junto a comunidades <br>y pueblos diversos.</p>"
+        },
+        { "orden": 20, "imagen": "sedes/p01" },
+        { "orden": 30, "imagen": "sedes/p02" },
+        {
+          "orden": 40,
+          "texto": "<p>Pero este recorrido también tiene un <br>significado personal para el Santo Padre. <br><strong>León XIV llegó al Perú como misionero en <br>1985</strong> y desarrolló aquí buena parte de su <br>vida pastoral: primero en Chulucanas y luego <br>en Trujillo, antes de ser nombrado obispo de <br>Chiclayo en 2015. En 2015 obtuvo además la <br>nacionalidad peruana por naturalización.</p><p>Costa, sierra y selva. Seis ciudades, seis <br>realidades eclesiales y una misma nación <br>que se prepara para recibir a un Papa que <br>conoce de cerca la vida, fe y misión de la <br>Iglesia en el Perú.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "las-cuatro-sedes",
+      "nombre": "Las sedes",
+      "plantilla": "tarjetas_foto",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "@bd",
+      "texto": "@bd",
+      "datos": { "detalle": true },
+      "bloques": [
+        {
+          "orden": 10,
+          "slug": "lima",
+          "titulo": "Lima",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "sedes/p14",
+          "enlace_texto": "@bd",
+          "enlace_url": "sedes/lima/",
+          "datos": { "resumen": "@bd" }
+        },
+        {
+          "orden": 20,
+          "slug": "chiclayo",
+          "titulo": "Chiclayo",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "sedes/p09",
+          "enlace_texto": "@bd",
+          "enlace_url": "sedes/chiclayo/",
+          "datos": { "resumen": "@bd" }
+        },
+        {
+          "orden": 30,
+          "slug": "cusco",
+          "titulo": "Cusco",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "sedes/p10",
+          "enlace_texto": "@bd",
+          "enlace_url": "sedes/cusco/",
+          "datos": { "resumen": "@bd" }
+        },
+        {
+          "orden": 40,
+          "slug": "pucallpa",
+          "titulo": "Pucallpa",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "sedes/p12",
+          "enlace_texto": "@bd",
+          "enlace_url": "sedes/pucallpa/",
+          "datos": { "resumen": "@bd" }
+        }
+      ]
+    },
+
+    {
+      "clave": "lima",
+      "nombre": "Lima — Callao · franja de la página",
+      "plantilla": "generica",
+      "orden": 40,
+      "activa": 1,
+      "rotulo": "11, 12 y 16 de noviembre",
+      "titulo": "Lima - Callao",
+      "subtitulo": "Arquidiócesis de Lima · Primada del Perú\nDiócesis del Callao",
+      "cta_texto": "Ver Agenda",
+      "cta_url": "agenda/",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Por qué esta ciudad?",
+          "texto": "<p>Lima y Callao la puerta de entrada del Santo Padre <br>al Perú. La Diócesis del Callao, es una jurisdicción <br>eclesiástica con 59 años de creación. Por su parte, <br>Lima es la sede de la Arquidiócesis Primada del Perú <br>y fue creada el 12 de febrero de 1546 por el papa <br>Paulo III y, desde sus primeros años, se convirtió en <br>un importante centro desde el que se extendió la <br>misión evangelizadora por amplios territorios de <br>América del Sur. En 1572 recibió el título de Primada <br>del Perú, posteriormente confirmado en 1834 y <br>ratificado en 1943.</p>"
+        },
+        { "orden": 20, "imagen": "sedes/p03" },
+        { "orden": 30, "imagen": "sedes/p14" },
+        {
+          "orden": 40,
+          "texto": "<p>Esta historia tiene en <strong>Santo Toribio de <br>Mogrovejo </strong>una de sus figuras centrales. <br>Segundo arzobispo de Lima, recorrió <br>extensamente su territorio, impulsó la formación <br>del clero y promovió la evangelización en las <br>lenguas de los pueblos originarios. La Santa <br>Sede lo reconoce como una figura fundamental <br>de la evangelización de América y patrono del <br>Episcopado Latinoamericano.</p>"
+        },
+        { "orden": 50, "imagen": "sedes/p05" },
+        {
+          "orden": 60,
+          "titulo": "Su relación con León XIV",
+          "texto": "<p>El vínculo de León XIV con Lima está unido a su <br>servicio a la Iglesia del Perú. Como obispo de <br>Chiclayo, fue elegido en marzo de 2018 segundo <br>vicepresidente de la Conferencia Episcopal Peruana, <br>además de integrar su Consejo Económico y presidir <br>la Comisión Episcopal de Cultura y Educación. En <br>abril de 2020 fue nombrado también administrador <br>apostólico de la diócesis del Callao.</p><p>De 2020 hasta 2021, el Papa León XIV sirvió como <br>administrador apostólico de la Diócesis del Callao. En <br>plena pandemia de 2020 llevó las riendas de la <br>Iglesia del Callao y, en medio de las dificultades <br>propias de ese tiempo, se entregó completamente a <br>la tarea de velar por el cuidado de esta Diócesis.</p>"
+        },
+        { "orden": 70, "imagen": "sedes/p04" },
+        {
+          "orden": 80,
+          "titulo": "¿Qué encontraremos?",
+          "texto": "<p>Lima reúne algunas de las expresiones más <br>significativas de la fe del pueblo peruano: la Basílica <br>Catedral, la memoria de santo Toribio de Mogrovejo, la <br>devoción a Santa Rosa de Lima y la profunda tradición <br>de piedad popular expresada en el Señor de los <br>Milagros.</p><p>La procesión del Cristo de Pachacamilla convoca cada <br>octubre a miles de fieles en las calles de la capital. El <br>propio León XIV se hizo cercano a esta tradición <br>cuando, en octubre de 2025, saludó desde Roma a la <br>Hermandad del Señor de los Milagros con ocasión de <br>su tradicional procesión.</p>"
+        },
+        { "orden": 90, "imagen": "sedes/p06" }
+      ]
+    },
+
+    {
+      "clave": "chiclayo",
+      "nombre": "Chiclayo — Santa Cruz · franja de la página",
+      "plantilla": "generica",
+      "orden": 50,
+      "activa": 1,
+      "rotulo": "13 - 14 de noviembre",
+      "titulo": "Chiclayo - Santa Cruz",
+      "subtitulo": "Diócesis de Chiclayo · Lambayeque y provincia de Santa Cruz, Cajamarca",
+      "cta_texto": "Ver Agenda",
+      "cta_url": "agenda/",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Por qué esta ciudad?",
+          "texto": "<p>Hay lugares que forman parte de una historia y otros <br>que se convierten en parte de la vida. Para León XIV, <br>Chiclayo es ambas cosas. Es la diócesis que lo <br>recibió como administrador apostólico en 2014, <br>donde fue ordenado obispo y donde ejerció su <br>ministerio pastoral durante más de ocho años.</p><p>La Diócesis de Chiclayo fue creada el 17 de diciembre <br>de 1956 por el papa Pío XII, mediante la bula Sicut <br>materfamilias. Su jurisdicción comprende todo el <br>departamento de Lambayeque y la provincia <br>cajamarquina de Santa Cruz. Su sede es la iglesia <br>Santa María Catedral, cuya construcción comenzó en <br>1869 y que hoy forma parte de la memoria y de la <br>vida de la Iglesia local.</p>"
+        },
+        { "orden": 20, "imagen": "sedes/p07" },
+        {
+          "orden": 30,
+          "rotulo": "Palabras del proclamado\nPapa León XIV a su antigua\ndiócesis en Chiclayo:",
+          "texto": "<p>“Mi querida diócesis de Chiclayo, en el <br>Perú, donde un pueblo fiel ha <br>acompañado a su obispo, ha compartido <br>su fe y ha dado tanto, tanto, para seguir <br>siendo Iglesia fiel de Jesucristo”.</p>",
+          "imagen": "sedes/p08"
+        },
+        {
+          "orden": 40,
+          "titulo": "Su relación con León XIV",
+          "texto": "<p>El vínculo entre León XIV y Chiclayo es <br>profundamente pastoral y personal. <br>El 3 de noviembre de 2014, el papa Francisco lo <br>nombró administrador apostólico de la diócesis. El 7 <br>de noviembre tomó posesión y, el 12 de diciembre, <br>fiesta de Nuestra Señora de Guadalupe, recibió la <br>ordenación episcopal en la Catedral de Santa <br>María. El 26 de septiembre de 2015 fue nombrado <br>obispo de Chiclayo.</p><p>Durante sus años en la diócesis, recorrió sus <br>comunidades, acompañó a sacerdotes y fieles y <br>participó activamente en la vida de la Iglesia local. <br>En marzo de 2018 fue elegido segundo <br>vicepresidente de la Conferencia Episcopal <br>Peruana y, desde esa responsabilidad, continuó <br>sirviendo a la Iglesia del país.</p><p>En 2023, al ser llamado a Roma, la Conferencia <br>Episcopal Peruana le concedió la Medalla de Oro <br>de Santo Toribio de Mogrovejo y la Universidad <br>Católica Santo Toribio de Mogrovejo (USAT) le <br>otorgó el doctorado honoris causa en Derecho, en <br>reconocimiento a su servicio a la Iglesia en el Perú.</p>"
+        },
+        { "orden": 50, "imagen": "sedes/p09" },
+        {
+          "orden": 60,
+          "titulo": "¿Qué esperar?",
+          "texto": "<p>En Lambayeque, la fe se expresa en sus parroquias, <br>peregrinaciones y celebraciones, y encuentra en <br>Ciudad Eten uno de sus lugares más significativos. Allí, <br>la tradición del Milagro Eucarístico de 1649 ha dado <br>origen a una arraigada devoción y a numerosas <br>peregrinaciones de fieles. Durante sus años como <br>obispo, Robert Prevost acompañó personalmente esta <br>tradición y llevó a Roma documentación sobre su <br>historia y miles de testimonios de fe.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "cusco",
+      "nombre": "Cusco · franja de la página",
+      "plantilla": "generica",
+      "orden": 60,
+      "activa": 1,
+      "rotulo": "15 de noviembre",
+      "titulo": "Cusco",
+      "subtitulo": "Arquidiócesis del Cusco",
+      "cta_texto": "Ver Agenda",
+      "cta_url": "agenda/",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Por qué esta ciudad?",
+          "texto": "<p>En Cusco, la fe tiene raíces profundas. <strong>La Iglesia llegó <br>a los Andes en los primeros tiempos de la <br>evangelización del Perú</strong> y, desde entonces, la vida <br>cristiana fue tomando rostro propio en sus <br>comunidades, celebraciones y tradiciones. La antigua <br>sede episcopal del Cusco fue elevada a <br>arquidiócesis en 1943.</p><p>Hoy, esa historia sigue viva. Se reza en castellano y en <br>quechua; se celebra en las ciudades, en los pueblos <br>y en las comunidades de altura; y la fe se expresa en <br>peregrinaciones, fiestas y devociones que forman <br>parte de la identidad del pueblo cusqueño.</p>"
+        },
+        { "orden": 20, "imagen": "sedes/p10" },
+        {
+          "orden": 30,
+          "titulo": "Su relación con León XIV",
+          "texto": "<p>En Trujillo, entre 1988 y 1998, dirigió la primera casa de <br>formación conjunta de los vicariatos agustinianos de <br>Chulucanas, Iquitos y Apurímac. Desde allí acompañó <br>la formación de religiosos llamados a servir en <br>territorios tan diversos como los Andes y la Amazonía.</p><p>Por eso, aunque Cusco no forma parte de su historia <br>pastoral directa, sí representa una de las realidades de <br>la Iglesia peruana que León XIV conoció y valoró desde <br>su experiencia misionera y formativa.</p>"
+        },
+        { "orden": 40, "imagen": "sedes/p11" },
+        {
+          "orden": 50,
+          "titulo": "¿Qué esperar?",
+          "texto": "<p>El Señor de los Temblores, Patrón Jurado del Cusco, <br>cuya procesión del Lunes Santo detiene la ciudad <br>entera. El Corpus Christi cusqueño, con sus <br>imágenes recorriendo las calles hasta la catedral. Y <br>la Virgen de los Remedios, patrona de la <br>arquidiócesis. Cusco no necesita que le enseñen a <br>recibir: lleva siglos haciéndolo.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "pucallpa",
+      "nombre": "Pucallpa · franja de la página",
+      "plantilla": "generica",
+      "orden": 70,
+      "activa": 1,
+      "rotulo": "15 de noviembre",
+      "titulo": "Pucallpa",
+      "subtitulo": "Vicariato Apostólico de Pucallpa · Ucayali",
+      "cta_texto": "Ver Agenda",
+      "cta_url": "agenda/",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "¿Por qué esta ciudad?",
+          "texto": "<p><strong>Pucallpa abre la Visita Apostólica al corazón de la <br>Amazonía peruana.</strong> No es sede de una diócesis, sino <br>de un Vicariato Apostólico: una circunscripción <br>eclesiástica destinada a territorios de misión y <br>directamente dependiente de la Santa Sede.</p><p>El Vicariato Apostólico de Pucallpa fue creado el 2 de <br>marzo de 1956 por el papa Pío XII, a partir de la división <br>del antiguo Vicariato Apostólico de Ucayali. Su territorio <br>abarca más de 52 000 kilómetros cuadrados y <br>comprende las provincias de Coronel Portillo y Padre <br>Abad, parte de Atalaya, en Ucayali, y la parte oriental <br>de Puerto Inca, en Huánuco. Su sede está en la ciudad <br>de Pucallpa, donde se encuentra la Catedral de la <br>Inmaculada Concepción.</p><p>Que Pucallpa forme parte de las cinco sedes de la <br>Visita Apostólica expresa algo esencial: la Amazonía no <br>está al margen de la vida de la Iglesia en el Perú. Es <br>parte de su rostro, misión y esperanza.</p>"
+        },
+        { "orden": 20, "imagen": "sedes/p12" },
+        {
+          "orden": 30,
+          "titulo": "Su relación con León XIV",
+          "texto": "<p>La relación de León XIV con la Amazonía peruana se <br>remonta a sus años como misionero y formador en <br>el país.</p><p>Cuando regresó al Perú en 1988, fue enviado a Trujillo <br>para dirigir la primera casa de formación conjunta <br>de los vicariatos agustinianos de Chulucanas, Iquitos <br>y Apurímac. Allí acompañó durante una década la <br>formación de religiosos llamados a servir en <br>realidades muy distintas del país, entre ellas la <br>Amazonía.</p><p>Años después, ya como prefecto del Dicasterio para <br>los Obispos y presidente de la Pontificia Comisión <br>para América Latina, su servicio en la Iglesia universal <br>lo puso en contacto con numerosas Iglesias <br>particulares y territorios de misión de América Latina.</p><h3>¿Qué esperar?</h3><p>La misión del Vicariato se desarrolla junto a <br>poblaciones urbanas, rurales y comunidades <br>indígenas de Ucayali. Su labor pastoral comprende <br>la evangelización, la formación de agentes <br>pastorales, el acompañamiento de las comunidades <br>y el servicio a los pueblos que habitan este territorio.</p><p>En esta tierra, la misión de la Iglesia también está <br>estrechamente vinculada al cuidado de la vida y de <br>la casa común. La Amazonía no es únicamente el <br>escenario de la visita: es una realidad humana, <br>cultural y espiritual que el Santo Padre viene a <br>encontrar y escuchar.</p>"
+        },
+        { "orden": 40, "imagen": "sedes/p13" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "La página pasa de cuatro fichas cortas a cuatro franjas largas —Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa—, alternando gris y rosado como el editable. Conservan su clave «cabecera», «estas-cuatro», «las-cuatro-sedes» y «lima»; «chiclayo», «cusco» y «pucallpa» son nuevas.",
+    "Cada franja es un lienzo: en escritorio sus piezas van colocadas en las coordenadas del editable. La FORMA (cuántas piezas, en qué orden y de qué lado cae cada una) vive en views/sedes.php, que es diseño; el CONTENIDO son estos bloques. De qué tipo es cada pieza lo dice lo que tenga escrito: sólo imagen, una fotografía; sólo texto, un bloque de texto con su «Título» de ladillo; las dos cosas, la fotografía con la cita sobreimpresa —así se pinta el bloque 3 de Chiclayo—. Si desde el panel se añade o se quita una pieza, esa franja deja de usar las coordenadas y pasa al flujo normal: se ve distinta del editable, pero se ve bien.",
+    "«las-cuatro-sedes» se conserva con su «datos.detalle» y sus cuatro «slug»: es lo que hace que index.php resuelva /sedes/lima/ contra views/detalle.php. Su contenido va casi todo con «@bd» porque el editable no dibuja las fichas y la base tiene el texto real de las cuatro. La página nueva no pinta su rejilla de tarjetas —el rediseño no la tiene—, pero sí usa sus bloques: de ahí salen el orden de las franjas y el enlace de cada titular a su ficha. Su rótulo, su titular y su texto de entrada siguen en la base, sin pintarse, para la propia ficha y por si vuelve a hacer falta una rejilla.",
+    "Las tarjetas estrenan fotografía: la de cada sede es la que el editable usa en su franja (la catedral de Lima, la de Chiclayo, la Compañía de Jesús del Cusco y la de Pucallpa). Antes no tenían ninguna, así que /sedes/lima/ salía con la cabecera lisa.",
+    "El titular y la bajada del héroe son los del rediseño y no van con «@bd»: aquí el editable no trae relleno, trae la redacción nueva —«Cuatro ciudades, un solo pueblo» pasa a «Seis ciudades, una sola nación», porque las seis cuentan Callao y Santa Cruz—. El rótulo se deja vacío: el héroe del rediseño no dibuja ninguno.",
+    "«estas-cuatro» cambia de plantilla: era «texto_lectura», de un solo texto, y el rediseño necesita dos columnas cruzadas con dos fotografías, así que pasa a «generica», que admite bloques con imagen. Su titular no se pinta: la sección no lleva encabezado en el editable y el texto se queda sólo para los lectores de pantalla y los buscadores.",
+    "Las franjas de ciudad reparten sus campos así: «Título» es el titular, «Subtítulo» la jurisdicción (admite dos líneas), «Rótulo» la fecha y los dos campos de botón, el «Ver Agenda» del final. La fecha va en el rótulo porque «generica» no tiene un campo propio para ella; ver el informe.",
+    "Se retiran dos secciones: «leon-xiv-y-chiclayo», cuyos tres apartados sin material («Fotografías históricas», «Testimonios», «Momentos de su ministerio») quedan absorbidos por la franja de Chiclayo, que ya desarrolla entero el vínculo del Santo Padre con la diócesis; y «cuatro-sedes-mapa», el diagrama esquemático del recorrido, que el rediseño no dibuja. Su texto queda en el volcado de producción y en el respaldo."
+  ]
+}
