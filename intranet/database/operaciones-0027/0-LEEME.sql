@@ -1,0 +1,81 @@
+-- ===========================================================================
+--  APLICAR EL REDISEÑO 2026 EN PRODUCCIÓN, SÓLO CON SQL
+-- ---------------------------------------------------------------------------
+--  Para quien prefiere no reemplazar la base y no quiere tocar la consola:
+--  aquí no hace falta ni mysqldump ni `php migrate.php`. Son cuatro archivos
+--  que se pegan en phpMyAdmin (o en cualquier cliente) en este orden.
+--
+--  Este archivo no ejecuta nada: es sólo comentario.
+-- ===========================================================================
+--
+--  ── El orden ──────────────────────────────────────────────────────────────
+--
+--    1-antes.sql        Sólo lee. Enseña cómo está la base ahora. Guardar la
+--                       salida: es con lo que se compara al final.
+--
+--    2-respaldo.sql     Duplica dentro de la misma base las siete tablas que
+--                       la migración puede tocar, con el prefijo «zz0027_».
+--                       Unos 190 KB. No copia `voluntarios`: la migración no
+--                       la toca, y duplicar 37.428 filas de datos personales
+--                       sin necesidad sería peor que no hacerlo.
+--
+--    ../migrations/0027_rediseno_2026.sql
+--                       La migración. Va envuelta en una transacción y abre
+--                       con SET NAMES utf8mb4, así que o entra entera o no
+--                       entra nada, y no depende del juego de caracteres que
+--                       traiga la herramienta. Se anota sola en `migraciones`.
+--
+--                       EN phpMyAdmin: pestaña «Importar», y dejar «Juego de
+--                       caracteres del archivo» en utf-8.
+--
+--    3-despues.sql      Sólo lee. Ocho comprobaciones. Si alguna no cuadra,
+--                       ir al paso 4.
+--
+--    4-volver-atras.sql Deshace. Devuelve las siete tablas al estado del
+--                       paso 2. No toca `voluntarios` ni ninguna otra.
+--
+--
+--  ── Qué escribe la migración, exactamente ─────────────────────────────────
+--
+--    paginas      13 altas o actualizaciones, y 3 renombres de clave y ruta
+--    secciones    60 altas o actualizaciones, y 13 UPDATE que apagan lo que
+--                 el diseño nuevo ya no dibuja (activa = 0, NO se borra)
+--    bloques      59 borrados acotados por sección, y 43 altas
+--    medios       1 alta múltiple: las 77 fotografías del rediseño
+--    ajustes      1 alta múltiple: la página de inicio y el menú
+--    migraciones  1 fila, para anotarse
+--
+--  Y nada más. Ni un ALTER, ni un CREATE, ni un DROP, ni un GRANT: no hay
+--  cambio de estructura. `voluntarios` y `voluntarios_historial` no aparecen
+--  en ninguna sentencia, y no existe ninguna clave foránea que llegue hasta
+--  ellas desde las tablas que sí se tocan. Tarda una décima de segundo.
+--
+--
+--  ── Antes de empezar, dos advertencias ────────────────────────────────────
+--
+--  1. El código y la base van juntos. La migración renombra tres páginas
+--     (el-papa, tierra-de-santos y materiales) que sólo las vistas nuevas
+--     saben servir. Aplicarla sin desplegar el código deja esas tres caídas.
+--
+--  2. La raíz del dominio cambia de contenido. Hoy `sitio.pagina_inicio` vale
+--     «voluntariado»: quien entra al dominio pelado ve el formulario de
+--     inscripción. Después verá la portada. El formulario no se pierde
+--     —sigue en /voluntariado/ y entra en el menú— pero si hay carteles, QR o
+--     enlaces en redes apuntando al dominio a secas, dejan de aterrizar en la
+--     inscripción. Es una decisión de campaña, no técnica, y se revierte en
+--     caliente desde Intranet → Configuración, sin desplegar nada.
+--
+--
+--  ── Si algo sale mal ──────────────────────────────────────────────────────
+--
+--  Ejecutar 4-volver-atras.sql. Está probado de punta a punta: sobre una
+--  copia del volcado del 19/09 se corrieron los cuatro pasos en orden y las
+--  23 tablas volvieron a tener exactamente la misma suma de verificación que
+--  producción.
+--
+--  Las tablas zz0027_* se quedan hasta que alguien las borre. Ni el panel ni
+--  el sitio miran tablas con ese prefijo. Al final de 4-volver-atras.sql está
+--  el DROP para cuando ya no hagan falta.
+-- ===========================================================================
+
+SELECT 'Este archivo es sólo documentación. Empezar por 1-antes.sql.' AS aviso;

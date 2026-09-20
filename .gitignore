@@ -38,9 +38,15 @@ intranet/config/config.*.local.php
 #                 contenido del sitio y diez fichas de voluntario INVENTADAS;
 #                 las 35 000 reales no salen de producción.
 #   ubigeo.sql    departamentos, provincias y distritos del Perú
+#   operaciones-*/ el guion para aplicar una migración a mano: comprobaciones
+#                 antes y después, el respaldo y la vuelta atrás. No llevan
+#                 datos dentro: son SELECT y copias de tabla a tabla. Van
+#                 aparte de migrations/ a propósito, porque migrate.php aplica
+#                 TODO lo que encuentra ahí y esto no se debe aplicar solo.
 *.sql
 !intranet/database/migrations/*.sql
 !intranet/database/instalacion/*.sql
+!intranet/database/operaciones-*/*.sql
 !ubigeo.sql
 
 # Inscripciones que el formulario guardó cifradas cuando la base no respondía.
