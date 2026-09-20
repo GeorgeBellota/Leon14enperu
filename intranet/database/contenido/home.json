@@ -8,6 +8,9 @@
     "activa": 1
   },
 
+  "_comentario_conservar": "La sección «colecta» no la pinta la portada nueva, pero es la ÚNICA copia en la base de las cuentas bancarias oficiales de la Colecta Nacional, y /donativo/ las lee de aquí (views/donativo.php y assets/parciales/colecta.php). Ni se apaga ni se borra: el parcial respeta «activa», así que apagarla dejaría /donativo/ avisando contra cuentas falsas sin publicar ninguna verdadera.",
+  "conservar": ["colecta"],
+
   "secciones": [
     {
       "clave": "hero",

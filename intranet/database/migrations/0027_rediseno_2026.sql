@@ -58,8 +58,27 @@
 --           (SELECT COUNT(*) FROM voluntarios) AS voluntarios;
 --
 --  Sobre el volcado de producción del 19/09/2026 debe pasar de
---  24/107/99/9/37428 a 25/92/168/86/37428. Las inscripciones no cambian.
+--  24/107/99/9/37428 a 25/120/203/86/37428. Las inscripciones no cambian.
 -- ===========================================================================
+
+
+-- ──────────────────────────────────────────────────────────────────────────
+--  0 · Cómo se ejecuta esto
+--
+--  SET NAMES: el archivo está en UTF-8 y aquí se dice, porque si no queda a
+--  merced de lo que traiga la herramienta. Importarlo en latin1 termina sin
+--  un solo aviso y deja «La Iglesia en el PerÃº» guardado en la base: una
+--  corrupción silenciosa de todo el texto que sólo se ve abriendo el sitio.
+--
+--  START TRANSACTION: no hay aquí ni un CREATE, ni un ALTER, ni un DROP; son
+--  todo INSERT, UPDATE y DELETE sobre tablas InnoDB, así que la transacción
+--  aguanta de principio a fin. O entra todo, o no entra nada. Sin ella, un
+--  fallo por la mitad dejaba el sitio a medio cambiar y sin marca de por
+--  dónde se había quedado.
+-- ──────────────────────────────────────────────────────────────────────────
+
+SET NAMES utf8mb4;
+START TRANSACTION;
 
 
 -- ──────────────────────────────────────────────────────────────────────────
@@ -204,8 +223,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `rotulo`, `titulo`, `tex
   (@sec, 40, 1, '14 de noviembre', 'Cusco · La fe que nace del encuentro', 'Cusco desde su identidad religiosa, cultural y andina.', 'Conoce la sede de Cusco', 'sedes/', '{"actividades":["Celebración eucarística","Encuentro con la comunidad eclesial","Encuentro con jóvenes y familias","Visita o momento de oración en un lugar significativo"]}'),
   (@sec, 50, 1, '15 de noviembre', 'Lima · Un encuentro con todo el Perú', 'La gran jornada del encuentro nacional.', 'Conoce la sede de Lima', 'sedes/', '{"actividades":["Gran celebración eucarística","Encuentro con familias, jóvenes y diversos sectores","Mensaje del Santo Padre al pueblo peruano","Momento de oración y acción de gracias"]}'),
   (@sec, 60, 1, '16 de noviembre', 'Lima · Hasta pronto, Perú', 'Despedida y salida del Perú.', 'Revive la visita', '#', '{"actividades":["Encuentro de despedida","Mensaje final del Santo Padre","Ceremonia de despedida","Salida del Perú"]}');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'cuatro-ventanas', 'itinerario');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'cuatro-ventanas', 'itinerario');
 
 -- ── Página «cep» ───────────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -236,8 +255,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`) VALUE
   (@sec, 30, 1, 'Chiclayo - Santa Cruz\nDiócesis de Chiclayo · Lambayeque y Santa Cruz', 'Erigida el 17 de diciembre de 1956 con territorio de la arquidiócesis de Trujillo y de la diócesis de Cajamarca. Robert Prevost fue su obispo entre 2015 y 2023.'),
   (@sec, 40, 1, 'Cusco\nArquidiócesis del Cusco', 'Una de las Iglesias más antiguas del continente, elevada al rango de arquidiócesis en 1943. El Señor de los Temblores es su Patrón Jurado.'),
   (@sec, 50, 1, 'Pucallpa\nVicariato Apostólico de Pucallpa · Ucayali', 'Erigido el 2 de marzo de 1956 al dividirse el vicariato de Ucayali. Depende directamente de la Santa Sede y cubre más de 52.000 km² de Amazonía.');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'quien-organiza-visita', 'quien-acoge-cada');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'quien-organiza-visita', 'quien-acoge-cada');
 
 -- ── Página «contacto» ──────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -278,8 +297,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `rotulo`, `titulo`, `tex
   (@sec, 50, 1, 'instagram', 'Instagram', 'León XIV en el Perú'),
   (@sec, 60, 1, 'tiktok', 'Tik Tok', '@leon14enperu'),
   (@sec, 70, 1, 'whatsapp', 'Canal de difusión WhatsApp', 'Papa León XIV en el Perú');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'escribenos', 'canales');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'escribenos', 'canales');
 
 -- ── Página «home» ──────────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -352,8 +371,9 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `rotulo`, `titulo`, `enl
   (@sec, 30, 1, 'MISERICORDIA', 'San Juan\nMacías', 'santos/', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/index/p04.jpg')),
   (@sec, 40, 1, 'MISIÓN', 'San Francisco\nSolano', 'santos/', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/index/p05.jpg')),
   (@sec, 50, 1, 'PASTOR', 'Santo Toribio\nde Mogrovejo', 'santos/', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/index/p06.jpg'));
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('hero', 'falta-poco-encuentro', 'himno', 'abramos-el-corazon', 'subsidios-home', 'llega-al-peru', 'el-recorrido', 'tierra-de-santos');
+-- Se quedan encendidas porque las lee otra página: colecta.
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('hero', 'falta-poco-encuentro', 'himno', 'abramos-el-corazon', 'subsidios-home', 'llega-al-peru', 'el-recorrido', 'tierra-de-santos', 'colecta');
 
 -- ── Página «logo-y-lema» ───────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -387,8 +407,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `imagen_id`) V
   (@sec, 10, 1, 'Versión principal del logotipo, en rojo', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/brand/logo-lockup-rojo-alt.png')),
   (@sec, 20, 1, 'Versión del logotipo en dorado', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/brand/logo-lockup-dorado.png')),
   (@sec, 30, 1, 'Versión del logotipo en negro', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/brand/logo-lockup-negro.png'));
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('marca', 'que-significa', 'su-diseno', 'su-color');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('marca', 'que-significa', 'su-diseno', 'su-color');
 
 -- ── Página «noticias» ──────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -416,8 +436,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `enlace_url`) 
   (@sec, 10, 1, '', ''),
   (@sec, 20, 1, '', ''),
   (@sec, 30, 1, '', '');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'ultimas-noticias', 'videos');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'ultimas-noticias', 'videos');
 
 -- ── Página «papa-leon-xiv» ─────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -494,8 +514,8 @@ DELETE FROM `bloques` WHERE `seccion_id` = @sec;
 INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`, `enlace_texto`, `enlace_url`, `datos`) VALUES
   (@sec, 10, 1, 'Dilexi te', '<p><cite>Dilexi te</cite><strong> («Te he amado»)</strong> es su primera <br>exhortación apostólica y uno de los primeros <br>grandes documentos de su pontificado. En <br>ella, León XIV reflexiona sobre el amor de <br>Dios hacia los pobres y el compromiso de la <br>Iglesia con ellos.</p>', 'Texto completo', 'noticias/', '{"fecha":"4 de octubre de 2025","fuente":"Exhortación Apostólica"}'),
   (@sec, 20, 1, 'Magnifica humanitas', '<p><cite>Magnifica humanitas</cite> es la primera <br>encíclica de León XIV. Reflexiona sobre la <br>protección de la persona y su dignidad en <br>la era de la inteligencia artificial, así como <br>sobre sus implicaciones para la vida social.</p>', 'Texto completo', 'noticias/', '{"fecha":"Firma: 15 de mayo de 2026 | Publicación: 25 de mayo de 2026","fuente":"Carta Encíclica"}');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'quien-leon-xiv', 'raices-vocacion-agustiniana', 'misionero-formador-peru', 'prior-general-obispo', 'chiclayo-pontificado', 'escudo-lema', 'magisterio-hasta-hoy');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'quien-leon-xiv', 'raices-vocacion-agustiniana', 'misionero-formador-peru', 'prior-general-obispo', 'chiclayo-pontificado', 'escudo-lema', 'magisterio-hasta-hoy');
 
 -- ── Página «preguntas-frecuentes» ──────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -550,8 +570,8 @@ SET @sec := LAST_INSERT_ID();
 DELETE FROM `bloques` WHERE `seccion_id` = @sec;
 INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`) VALUES
   (@sec, 10, 1, '¿Usa cookies?', 'No. Este sitio no instala cookies ni tiene analítica ni scripts de seguimiento. Solo usa almacenamiento del navegador para guardar el borrador del formulario de voluntariado y para no repetirte el aviso de la portada.');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'visita', 'asistir-actos', 'voluntariado', 'este-sitio');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'visita', 'asistir-actos', 'voluntariado', 'este-sitio');
 
 -- ── Página «prensa» ────────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -591,8 +611,8 @@ VALUES (@pag, 'multimedia', 'Multimedia', 'tarjetas_foto', 50, 1, 'Multimedia', 
 ON DUPLICATE KEY UPDATE `id` = LAST_INSERT_ID(`id`), `nombre` = VALUES(`nombre`), `plantilla` = VALUES(`plantilla`), `orden` = VALUES(`orden`), `activa` = VALUES(`activa`), `titulo` = VALUES(`titulo`), `datos` = VALUES(`datos`);
 SET @sec := LAST_INSERT_ID();
 DELETE FROM `bloques` WHERE `seccion_id` = @sec;
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'como-acreditarse', 'uso-imagenes-escudo', 'contacto-prensa', 'multimedia');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'como-acreditarse', 'uso-imagenes-escudo', 'contacto-prensa', 'multimedia');
 
 -- ── Página «santos» ────────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -618,8 +638,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `rotulo`, `titulo`, `slu
   (@sec, 30, 1, 'Misericordia · Servicio · Solidaridad', 'San Juan Macías', 'san-juan-macias', '<p>Juan Macías nació en Ribera del Fresno, España, en 1585. Huérfano desde muy joven, trabajó como pastor antes de emigrar a América. Llegó al Perú y se estableció en Lima, donde ingresó a la Orden de Predicadores.</p><p>Durante más de dos décadas fue hermano portero del convento dominico de La Magdalena. Desde ese lugar desarrolló una intensa labor de ayuda a los pobres: su servicio comenzaba en la puerta del convento y se extendía mediante la distribución de alimentos y limosnas.</p><p>Su amistad con San Martín de Porres es otro elemento importante de la historia de la santidad limeña. Fue canonizado por Pablo VI el 28 de septiembre de 1975.</p>', '{"anios":"1585 – 1645","resumen":"Desde la sencillez, hizo de la misericordia una forma de vida."}', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/index/p04.jpg')),
   (@sec, 40, 1, 'Misión · Encuentro · Evangelización', 'San Francisco Solano', 'san-francisco-solano', '<p>Francisco Solano nació en Montilla, España, en 1549. Ingresó a la Orden Franciscana y fue ordenado sacerdote en 1576. Llegó a América en 1589 y desembarcó en Paita, Piura.</p><p>Desde allí emprendió un largo recorrido por territorios del actual Perú y otros países de Sudamérica. Aprendió lenguas indígenas para comunicarse con los pueblos a los que servía y utilizó también la música como instrumento de evangelización.</p><p>Su vida se vincula especialmente con la idea de una Iglesia en salida: caminar, encontrarse con las personas y llevar el Evangelio allí donde se encuentran. Murió en Lima el 14 de julio de 1610.</p>', '{"anios":"1549 – 1610","resumen":"Caminó grandes distancias para llevar el Evangelio al encuentro de los pueblos."}', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/index/p05.jpg')),
   (@sec, 50, 1, 'Pastor · Misión · Defensa de los pueblos', 'Santo Toribio de Mogrovejo', 'santo-toribio-de-mogrovejo', '<p>Toribio Alfonso de Mogrovejo nació en Mayorga, España, en 1538. Estudió Derecho y fue profesor en la Universidad de Salamanca, hasta que fue elegido para asumir el Arzobispado de Lima. Llegó al Perú en 1581.</p><p>Concibió su ministerio como una misión que exigía salir al encuentro de las comunidades. Recorrió extensas regiones del territorio peruano, aprendió quechua y promovió la evangelización en lenguas nativas. Participó decisivamente en el III Concilio Limense.</p><p>Destacó por la defensa de los pueblos indígenas frente a abusos. Murió en Zaña en 1606 y fue canonizado en 1726: en 2026 se conmemoran <strong>300 años de su canonización</strong>, algo que el propio Santo Padre destacó en su encuentro con los obispos del Perú en enero de 2026.</p>', '{"anios":"1538 – 1606","resumen":"Un pastor en salida que recorrió el Perú para anunciar el Evangelio y acompañar a su pueblo."}', (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/santos/p01.jpg'));
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'los-cinco-santos');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'los-cinco-santos');
 
 -- ── Página «sedes» ─────────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -709,8 +729,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`) VALUE
 INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `imagen_id`) VALUES
   (@sec, 20, 1, (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/sedes/p12.jpg')),
   (@sec, 40, 1, (SELECT `id` FROM `medios` WHERE `ruta` = 'assets/img/rediseno/sedes/p13.jpg'));
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'estas-cuatro', 'las-cuatro-sedes', 'lima', 'chiclayo', 'cusco', 'pucallpa');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'estas-cuatro', 'las-cuatro-sedes', 'lima', 'chiclayo', 'cusco', 'pucallpa');
 
 -- ── Página «subsidios» ─────────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -747,8 +767,8 @@ INSERT INTO `bloques` (`seccion_id`, `orden`, `activo`, `titulo`, `texto`) VALUE
   (@sec, 20, 1, 'Subsidio de catequesis', 'PDF · Niños, jóvenes y adultos'),
   (@sec, 30, 1, 'Himno', 'Video'),
   (@sec, 40, 1, 'Fondos de pantalla y avatares', 'Móvil, escritorio y redes');
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'subsidios', 'habra-disponible');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'subsidios', 'habra-disponible');
 
 -- ── Página «voluntariado» ──────────────────────────────────────────────
 INSERT INTO `paginas` (`clave`, `nombre`, `ruta`, `titulo_seo`, `descripcion_seo`, `activa`)
@@ -796,8 +816,8 @@ VALUES (@pag, 'despues', 'Después de enviar', 'texto_lectura', 60, 1, '', '¿Qu
 ON DUPLICATE KEY UPDATE `id` = LAST_INSERT_ID(`id`), `nombre` = VALUES(`nombre`), `plantilla` = VALUES(`plantilla`), `orden` = VALUES(`orden`), `activa` = VALUES(`activa`), `rotulo` = VALUES(`rotulo`), `titulo` = VALUES(`titulo`), `texto` = VALUES(`texto`), `datos` = VALUES(`datos`);
 SET @sec := LAST_INSERT_ID();
 DELETE FROM `bloques` WHERE `seccion_id` = @sec;
--- Las secciones que el diseño nuevo ya no pinta.
-DELETE FROM `secciones` WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'resumen', 'servicios', 'proceso', 'inscripcion', 'despues');
+UPDATE `secciones` SET `activa` = 0
+  WHERE `pagina_id` = @pag AND `clave` NOT IN ('cabecera', 'resumen', 'servicios', 'proceso', 'inscripcion', 'despues');
 
 
 -- ──────────────────────────────────────────────────────────────────────────
@@ -818,3 +838,24 @@ INSERT INTO `ajustes` (`clave`, `valor`, `tipo`, `descripcion`) VALUES
   ('sitio.pagina_inicio', 'home', 'texto', 'Qué página se sirve en la raíz del dominio'),
   ('menu.visibles', 'papa-leon-xiv,sedes,agenda,cep,subsidios,voluntariado,noticias,prensa,contacto', 'texto', 'Claves de las páginas que aparecen en el menú, separadas por comas')
 ON DUPLICATE KEY UPDATE `valor` = VALUES(`valor`);
+
+
+-- ──────────────────────────────────────────────────────────────────────────
+--  5 · Se anota a sí misma
+--
+--  Normalmente esta fila la escribe database/migrate.php después de ejecutar
+--  el archivo. Pero si alguien lo importa a mano —phpMyAdmin, el cliente
+--  mysql—, el migrador no se entera: la base queda migrada y `migraciones`
+--  sigue sin la fila, así que el siguiente `php database/migrate.php` la ve
+--  pendiente y la vuelve a aplicar. Y una segunda pasada borra y recrea
+--  todos los bloques, llevándose por delante lo que se haya corregido desde
+--  el panel entretanto.
+--
+--  Con INSERT IGNORE da igual quién llegue primero: el migrador usa también
+--  IGNORE (migrate.php:102), así que no chocan. Es lo mismo que ya hace
+--  database/instalacion/05-migraciones.sql para quien instala a mano.
+-- ──────────────────────────────────────────────────────────────────────────
+
+INSERT IGNORE INTO `migraciones` (`archivo`) VALUES ('0027_rediseno_2026.sql');
+
+COMMIT;

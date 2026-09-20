@@ -8,8 +8,16 @@ para que la migración pueda cargarlos sin escribir SQL a mano.
 - `"@bd"` en un campo significa «conserva lo que ya hay en la base». Se usa
   donde el editable de Illustrator trae texto de relleno («Lorem ipsum»,
   «XX:00 Hrs.», preguntas sin respuesta) y producción tiene el texto real.
-- Las secciones que la página nueva ya no pinta no se listan aquí; la migración
-  las retira y deja constancia en su cabecera.
+- Las secciones que la página nueva ya no pinta no se listan aquí. La migración
+  **las apaga (`activa = 0`), no las borra**: el sitio queda igual —ninguna
+  vista dibuja una sección inactiva— pero el texto sigue en el panel y se
+  recupera con un interruptor. Borrarlas se llevaba por delante contenido que
+  sólo existía ahí, y sus bloques y su historial de versiones por cascada, sin
+  posibilidad de volver atrás salvo restaurando una copia.
+- `"conservar"` es la lista de secciones que **ni se apagan ni se tocan**,
+  porque las lee otra página aunque la suya ya no las dibuje. Hoy sólo contiene
+  `colecta`, en `home.json`: es la única copia en la base de las cuentas
+  bancarias de la Colecta Nacional, y `/donativo/` las lee de ahí.
 
 De estos archivos sale `migrations/0027_rediseno_2026.sql`.
 
