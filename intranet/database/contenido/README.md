@@ -15,25 +15,29 @@ De estos archivos sale `migrations/0027_rediseno_2026.sql`.
 
 ## Cómo se resuelve `"@bd"`
 
-No lo resuelve MySQL: lo resuelve el generador, leyendo un volcado de la base
-de producción y escribiendo el texto literal en la migración. Por eso la
-migración se puede aplicar sobre una base vacía y sale igual.
+**No lo resuelve MySQL.** La migración que sale de aquí no lleva ningún
+`"@bd"`: lleva ya escrito el texto que tenía producción. El marcador se
+sustituye al generar, leyendo una copia de la base de producción, y por eso la
+migración se puede aplicar tal cual sobre una base vacía y da el mismo
+resultado.
 
-Conviene saberlo por dos motivos:
+Esto importa si algún día se vuelve a generar el SQL desde estos archivos:
 
-1. **Hay que regenerar cuando cambie producción.** El volcado de referencia se
-   saca con `refbd.mjs` desde una base reconstruida a partir del `.sql` de
-   producción; si ese volcado envejece, `"@bd"` conservará texto viejo.
-2. **`"@bd"` vale en cualquier sitio, también dentro de `"datos"`.** Antes no:
-   se resolvía dejando el campo fuera de la sentencia, y eso sólo funcionaba
-   en las secciones, que se actualizan con `ON DUPLICATE KEY UPDATE`. Los
-   bloques se borran y se reinsertan, así que el campo omitido acababa en
-   `NULL`; y `"datos"` se escribe de una pieza, así que el marcador se
-   guardaba tal cual. El texto legal del consentimiento de voluntarios llegó
-   a decir literalmente «@bd» en la base por esto.
+1. **La sustitución necesita una copia de producción a mano.** Sin ella no hay
+   con qué rellenar los `"@bd"`, y el generador avisa por pantalla de cada uno
+   que se quede sin resolver en vez de dejarlo pasar en silencio.
+2. **Los bloques se emparejan con los de producción por su `"slug"`**; si no lo
+   tienen, por la posición que ocupan dentro de la sección.
 
-Si un `"@bd"` no encuentra su equivalente en producción, el generador lo avisa
-por pantalla en vez de dejarlo pasar en silencio.
+### Por qué no se resuelve dejando el campo sin escribir
 
-Los bloques se emparejan con los de producción por su `"slug"`; si no lo
-tienen, por la posición que ocupan dentro de la sección.
+Era lo que se hacía antes, y sólo funciona a medias:
+
+- En las **secciones** sí, porque se actualizan con `ON DUPLICATE KEY UPDATE`:
+  una columna que no se menciona se queda como estaba.
+- En los **bloques** no. Se borran y se vuelven a insertar, así que la columna
+  que no se menciona acaba en `NULL` y el texto de producción se pierde.
+- Dentro de **`"datos"`** tampoco, porque esa columna se escribe entera de una
+  pieza: el marcador se guardaba tal cual, como si «@bd» fuera el texto. El
+  consentimiento legal de voluntarios llegó a decir literalmente «@bd» en la
+  base por esto.
