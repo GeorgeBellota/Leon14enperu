@@ -94,6 +94,12 @@
   background-color:var(--gold-light);background-image:var(--grad-gold-soft);
   padding-top:calc(27 * var(--u));padding-bottom:calc(148.2 * var(--u));
 }
+/* Con la marca apagada desde el gestor sólo queda el himno, y ese zócalo de
+   abajo —que está para dejar respirar al dibujo, muy alto— dejaría media
+   pantalla de dorado vacío. Se iguala al de arriba.
+   En móvil no hace falta: la consulta de medios de más abajo reescribe
+   `padding-block` entero y, por ir después, manda ella. */
+.lema--solo-himno{padding-bottom:calc(27 * var(--u))}
 .hymn{display:inline-flex;align-items:flex-start;gap:calc(9 * var(--u));margin-left:calc(3.3 * var(--u))}
 .hymn__play{
   flex:0 0 auto;width:calc(40.2 * var(--u));height:calc(41.4 * var(--u));background:var(--grey-900);margin-top:calc(4 * var(--u));

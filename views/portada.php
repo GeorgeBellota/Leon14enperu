@@ -159,14 +159,35 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
   </section>
 
   <?php /* ══════════════════════════════════════════ LEMA (fondo dorado) ══ */ ?>
-  <section class="lema">
+  <?php
+  /* ── Las dos mitades se apagan por separado ──────────────────────────────
+     La franja dorada la forman DOS secciones del gestor, y cada una se
+     enciende y se apaga con su «Visible en la web» en Páginas → Inicio:
+
+       · «Himno oficial»                    el play y sus dos líneas
+       · «La marca "Abramos el corazón"»    el dibujo, el párrafo y el botón
+
+     Antes la mitad de la marca se pintaba siempre, apagada o no: la vista no
+     miraba la sección, y al no encontrarla caía en el dibujo y el texto que
+     lleva escritos abajo como reserva. Desde el panel no había forma de
+     quitarla.
+
+     Si se apagan las dos, no se pinta ni la franja: un fondo dorado alto y
+     vacío es peor que no tener sección. */
+  $hayHimno = $hay('himno');
+  $hayMarca = $hay('abramos-el-corazon');
+  ?>
+  <?php if ($hayHimno || $hayMarca): ?>
+  <?php /* «--solo-himno» recorta el zócalo, que sin el dibujo no tiene razón
+           de ser. El porqué, en assets/css/paginas/portada.css. */ ?>
+  <section class="lema<?= $hayMarca ? '' : ' lema--solo-himno' ?>">
     <div class="container">
 
       <?php /* El himno es su propia sección para que tenga su propio enlace:
                el de aquí abajo apunta al himno y el del bloque de la marca, a
                la página del lema. Mientras no haya archivo, lleva a Noticias,
                que es donde se publicará. */ ?>
-      <?php if ($hay('himno') || !$hay('abramos-el-corazon')): ?>
+      <?php if ($hayHimno): ?>
       <a class="hymn" href="<?= $esc($campo('himno', 'cta_url', $sitio->enlace('noticias/'))) ?>">
         <span class="hymn__play" aria-hidden="true"></span>
         <span class="hymn__txt">
@@ -176,6 +197,7 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
       </a>
       <?php endif; ?>
 
+      <?php if ($hayMarca): ?>
       <div class="lema__grid">
         <div class="lema__mark">
           <?php ob_start(); ?>
@@ -201,9 +223,11 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
           <a class="btn lema__cta" href="<?= $esc($campo('abramos-el-corazon', 'cta_url', $sitio->enlace('logo-y-lema/'))) ?>"><?= $esc($campo('abramos-el-corazon', 'cta_texto', 'Conoce más')) ?></a>
         </div>
       </div>
+      <?php endif; ?>
 
     </div>
   </section>
+  <?php endif; ?>
 
   <?php /* ═══════════════════════════════════════════════════ SUBSIDIOS ══ */ ?>
   <?php
