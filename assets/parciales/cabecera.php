@@ -37,32 +37,14 @@ $activa = $activa ?? '';
 
 /* ── El catálogo completo ─────────────────────────────────────────────────
    TODAS las páginas que se pueden poner en el menú. No es lo que se muestra:
-   es de dónde elige el panel. Añadir una entrada aquí es una línea, y la
-   navegación de escritorio y la de móvil salen de la misma lista, así que no
-   pueden descuadrarse entre sí. */
-$catalogo = [
-    'papa-leon-xiv'        => 'Papa León XIV',
-    'sedes'                => 'Sedes',
-    'agenda'               => 'Agenda',
-    'cep'                  => 'CEP',
-    'subsidios'            => 'Subsidios Pastorales',
-    'voluntariado'         => 'Voluntariado',
-    'noticias'             => 'Noticias',
-    'prensa'               => 'Prensa',
-    'contacto'             => 'Contacto',
+   es de dónde elige el panel.
 
-    // Publicadas, pero fuera del menú mientras nadie las añada desde el panel.
-    'santos'               => 'Santos del Perú',
-    'logo-y-lema'          => 'Logo y lema',
-    'preguntas-frecuentes' => 'Preguntas frecuentes',
-    'guia-del-peregrino'   => 'Guía del peregrino',
-    'participa'            => 'Participa',
-    'multimedia'           => 'Multimedia',
-    'en-directo'           => 'En directo',
-    'donativo'             => 'Donaciones',
-    'patrocinios'          => 'Patrocinios',
-    'transparencia'        => 'Transparencia',
-];
+   Vive en Publico\Menu y no aquí porque esta misma lista la necesitan las
+   casillas de Configuración. Estuvo escrita por duplicado, las dos copias se
+   separaron al renombrarse tres páginas en el rediseño, y el panel acabó
+   guardando claves que la web ya no reconocía: la casilla salía marcada y la
+   entrada no aparecía. Una sola lista y dos lectores. */
+$catalogo = \Intranet\Publico\Menu::catalogo();
 
 /* ── Qué entradas se ven ──────────────────────────────────────────────────
    El ajuste `menu.visibles` lleva las claves separadas por comas y manda
@@ -70,8 +52,7 @@ $catalogo = [
    las nueve del diseño: es la navegación que se dibujó y la que cabe sin
    apretar. Antes, el vacío significaba «todas», y con veinte páginas
    publicadas eso llenaba la barra de enlaces. */
-$porDefecto = ['papa-leon-xiv', 'sedes', 'agenda', 'cep', 'subsidios',
-               'voluntariado', 'noticias', 'prensa', 'contacto'];
+$porDefecto = \Intranet\Publico\Menu::porDefecto();
 
 $menu = array_intersect_key($catalogo, array_flip($porDefecto));
 
@@ -83,16 +64,16 @@ if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
     try {
         $visibles = (string) $sitio->catalogo()->ajuste('menu.visibles', '');
 
-        if (trim($visibles) !== '') {
-            $permitidas = array_filter(array_map('trim', explode(',', $visibles)));
-            $elegidas   = array_intersect_key($catalogo, array_flip($permitidas));
+        /* normalizar() traduce las páginas que se renombraron en el rediseño
+           y descarta lo que ya no existe: un ajuste guardado antes de la
+           mudanza sigue valiendo y no deja la entrada fuera del menú. */
+        $permitidas = \Intranet\Publico\Menu::normalizar(explode(',', $visibles));
 
+        if ($permitidas !== []) {
             /* Se respeta el orden en el que se escribieron en el panel. */
             $menu = [];
             foreach ($permitidas as $clave) {
-                if (isset($elegidas[$clave])) {
-                    $menu[$clave] = $elegidas[$clave];
-                }
+                $menu[$clave] = $catalogo[$clave];
             }
         }
     } catch (\Throwable $e) {

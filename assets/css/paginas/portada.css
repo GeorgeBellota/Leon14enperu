@@ -233,6 +233,12 @@
   background-color:var(--gold-light);background-image:var(--grad-gold-soft);
   padding-top:calc(27 * var(--u));padding-bottom:calc(148.2 * var(--u));
 }
+/* Con la marca apagada desde el gestor sólo queda el himno, y ese zócalo de
+   abajo —que está para dejar respirar al dibujo, muy alto— dejaría media
+   pantalla de dorado vacío. Se iguala al de arriba.
+   En móvil no hace falta: la consulta de medios de más abajo reescribe
+   `padding-block` entero y, por ir después, manda ella. */
+.lema--solo-himno{padding-bottom:calc(27 * var(--u))}
 .hymn{display:inline-flex;align-items:flex-start;gap:calc(9 * var(--u));margin-left:calc(3.3 * var(--u))}
 .hymn__play{
   flex:0 0 auto;width:calc(40.2 * var(--u));height:calc(41.4 * var(--u));background:var(--grey-900);margin-top:calc(4 * var(--u));
@@ -243,6 +249,15 @@
   border-left:calc(13 * var(--u)) solid #EDEDED;
   border-top:calc(8.5 * var(--u)) solid transparent;
   border-bottom:calc(8.5 * var(--u)) solid transparent;
+}
+/* Sonando: el triángulo pasa a ser dos barras. La segunda es una sombra de la
+   primera y no un elemento más, porque ::after y ::before ya están gastados y
+   añadir un <span> al marcado sólo para esto no compensa. */
+.hymn.suena .hymn__play::after{
+  border:0;left:50%;
+  width:calc(4.6 * var(--u));height:calc(17 * var(--u));background:#EDEDED;
+  transform:translate(calc(-6.4 * var(--u)),-50%);
+  box-shadow:calc(8.2 * var(--u)) 0 0 #EDEDED;
 }
 .hymn__txt{display:flex;flex-direction:column}
 .hymn__title{font-weight:600;font-size:calc(24.08 * var(--u));color:var(--grey-900);line-height:1.22}

@@ -241,15 +241,60 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
   </section>
 
   <?php /* ══════════════════════════════════════════ LEMA (fondo dorado) ══ */ ?>
-  <section class="lema">
+  <?php
+  /* ── Las dos mitades se apagan por separado ──────────────────────────────
+     La franja dorada la forman DOS secciones del gestor, y cada una se
+     enciende y se apaga con su «Visible en la web» en Páginas → Inicio:
+
+       · «Himno oficial»                    el play y sus dos líneas
+       · «La marca "Abramos el corazón"»    el dibujo, el párrafo y el botón
+
+     Antes la mitad de la marca se pintaba siempre, apagada o no: la vista no
+     miraba la sección, y al no encontrarla caía en el dibujo y el texto que
+     lleva escritos abajo como reserva. Desde el panel no había forma de
+     quitarla.
+
+     Si se apagan las dos, no se pinta ni la franja: un fondo dorado alto y
+     vacío es peor que no tener sección. */
+  $hayHimno = $hay('himno');
+  $hayMarca = $hay('abramos-el-corazon');
+  ?>
+  <?php if ($hayHimno || $hayMarca): ?>
+  <?php /* «--solo-himno» recorta el zócalo, que sin el dibujo no tiene razón
+           de ser. El porqué, en assets/css/paginas/portada.css. */ ?>
+  <section class="lema<?= $hayMarca ? '' : ' lema--solo-himno' ?>">
     <div class="container">
 
       <?php /* El himno es su propia sección para que tenga su propio enlace:
                el de aquí abajo apunta al himno y el del bloque de la marca, a
-               la página del lema. Mientras no haya archivo, lleva a Noticias,
-               que es donde se publicará. */ ?>
-      <?php if ($hay('himno') || !$hay('abramos-el-corazon')): ?>
-      <a class="hymn" href="<?= $esc($campo('himno', 'cta_url', $sitio->enlace('noticias/'))) ?>">
+               la página del lema. */ ?>
+      <?php if ($hayHimno): ?>
+      <?php
+      /* ── El himno suena aquí mismo si lo enlazado es un audio ─────────────
+         En «Enlace» de la sección se pega la ruta del MP3 subido en
+         Contenidos → Documentos. Si termina en .mp3 —o .m4a, .ogg, .wav—,
+         himno.js convierte este enlace en un reproductor y el archivo suena
+         sin salir de la portada.
+
+         Sigue siendo un <a> de verdad y no un <button> a propósito: sin
+         JavaScript, pulsarlo abre el audio en el navegador y se escucha
+         igual. Y mientras nadie pulse no se descarga ni un byte, porque el
+         <audio> lo crea el script en el primer clic. Un himno son varios
+         megas y ésta es la página más visitada del sitio: precargarlo para
+         todo el mundo costaría más ancho de banda que el resto de la portada
+         junta.
+
+         Si el enlace es cualquier otra cosa —hoy «noticias/», que es donde se
+         publicará—, esto se queda como estaba: un enlace normal. */
+      $himnoEnlace = $campo('himno', 'cta_url', $sitio->enlace('noticias/'));
+      $himnoRuta   = (string) (parse_url($himnoEnlace, PHP_URL_PATH) ?: '');
+      $himnoSuena  = preg_match('~\.(mp3|m4a|ogg|wav)$~i', $himnoRuta) === 1;
+
+      if ($himnoSuena) {
+          $meta['scripts'][] = 'assets/js/himno.js';
+      }
+      ?>
+      <a class="hymn<?= $himnoSuena ? ' hymn--audio' : '' ?>" href="<?= $esc($himnoEnlace) ?>"<?= $himnoSuena ? ' data-himno' : '' ?>>
         <span class="hymn__play" aria-hidden="true"></span>
         <span class="hymn__txt">
           <span class="hymn__title"><?= $esc($campo('himno', 'titulo', '“León, hermano del camino”')) ?></span>
@@ -258,6 +303,7 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
       </a>
       <?php endif; ?>
 
+      <?php if ($hayMarca): ?>
       <div class="lema__grid">
         <div class="lema__mark">
           <?php ob_start(); ?>
@@ -283,9 +329,11 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
           <a class="btn lema__cta" href="<?= $esc($campo('abramos-el-corazon', 'cta_url', $sitio->enlace('logo-y-lema/'))) ?>"><?= $esc($campo('abramos-el-corazon', 'cta_texto', 'Conoce más')) ?></a>
         </div>
       </div>
+      <?php endif; ?>
 
     </div>
   </section>
+  <?php endif; ?>
 
   <?php /* ═══════════════════════════════════════════════════ SUBSIDIOS ══ */ ?>
   <?php

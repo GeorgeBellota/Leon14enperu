@@ -5,7 +5,6 @@
  * @var array<string,string> $paginas
  * @var string $inicio
  * @var array  $visibles
- * @var bool   $todas
  * @var string $pie
  * @var string $inicioViaje
  * @var string $finViaje
@@ -17,7 +16,10 @@ use Intranet\Core\View;
 $e   = static fn ($v) => View::e($v);
 $url = static fn (string $r) => View::e($c->url($r));
 
-$estaVisible = static fn (string $clave): bool => $todas || in_array($clave, $visibles, true);
+/* $visibles llega ya resuelto por el controlador: las claves traducidas y, si
+   no hay nada guardado, las nueve del diseño que es lo que enseña la web. Aquí
+   sólo se marca lo que hay. */
+$estaVisible = static fn (string $clave): bool => in_array($clave, $visibles, true);
 ?>
 
 <header class="encabezado">
