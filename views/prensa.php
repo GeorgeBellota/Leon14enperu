@@ -221,8 +221,18 @@ ob_start(); ?>
 
         <dl class="datalist pr-usos__lista">
           <?php foreach ($apartados as $apartado): ?>
+            <?php /* Si el apartado lleva destino, el titular se vuelve enlace.
+                     Misma regla que en Subsidios: un apartado puede apuntar a
+                     un documento sin salir del panel. */ ?>
+            <?php $destinoAp = $sitio->enlaceDelPanel((string) ($apartado['enlace_url'] ?? '')); ?>
             <div class="datalist__row">
-              <dt class="datalist__key"><?= $esc((string) ($apartado['titulo'] ?? '')) ?></dt>
+              <dt class="datalist__key">
+                <?php if ($destinoAp !== ''): ?>
+                  <a href="<?= $esc($destinoAp) ?>"<?= $sitio->esExterno($destinoAp) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>><?= $esc((string) ($apartado['titulo'] ?? '')) ?></a>
+                <?php else: ?>
+                  <?= $esc((string) ($apartado['titulo'] ?? '')) ?>
+                <?php endif; ?>
+              </dt>
               <dd class="datalist__val"><?= nl2br($esc((string) ($apartado['texto'] ?? ''))) ?></dd>
             </div>
           <?php endforeach; ?>

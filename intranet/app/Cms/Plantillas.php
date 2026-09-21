@@ -456,7 +456,15 @@ final class Plantillas
                 'bloques' => [
                     'nombre' => 'Apartado',
                     'plural' => 'Apartados',
-                    'campos' => ['titulo', 'texto'],
+                    /* «enlace_url» sin «enlace_texto» a propósito: estos
+                       apartados son dos columnas, el titular y su explicación,
+                       y no hay hueco para un tercer rótulo. Cuando se pone un
+                       destino, el titular se vuelve enlace; si se deja vacío,
+                       el apartado se pinta como siempre.
+
+                       Es lo que permite colgar de «Guía de oración» el PDF que
+                       vive en Drive sin sacarlo del panel. */
+                    'campos' => ['titulo', 'texto', 'enlace_url'],
                     'maximo' => 20,
                 ],
                 'datos'   => [],
@@ -516,6 +524,16 @@ final class Plantillas
                                       . 'importa. Si la dejas vacía se usa la de arriba.'],
             'cta_texto'  => ['etiqueta' => 'Texto del botón', 'tipo' => 'texto'],
             'cta_url'    => ['etiqueta' => 'Destino del botón', 'tipo' => 'texto'],
+            /* Sin estas dos entradas caían en el rótulo automático y el panel
+               las llamaba «Enlace url» y «Enlace texto», que no dice nada.
+               Las usan el carrusel, los accesos, las tarjetas y los
+               apartados. */
+            'enlace_texto' => ['etiqueta' => 'Texto del enlace', 'tipo' => 'texto'],
+            'enlace_url' => ['etiqueta' => 'Destino del enlace', 'tipo' => 'texto',
+                             'ayuda' => 'Opcional. Una página de este sitio escrita corta '
+                                      . '—«subsidios/»— o una dirección completa de fuera, '
+                                      . 'como un PDF de Google Drive. Lo de fuera se abre en '
+                                      . 'otra pestaña. Si lo dejas vacío, no hay enlace.'],
             default      => ['etiqueta' => ucfirst(str_replace('_', ' ', $campo)), 'tipo' => 'texto'],
         };
     }

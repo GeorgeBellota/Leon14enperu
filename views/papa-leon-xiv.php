@@ -479,8 +479,18 @@ $etapas = [
       <?php if ($datosFicha !== []): ?>
       <dl class="ficha">
         <?php foreach ($datosFicha as $fila): ?>
+          <?php /* Con destino, el rótulo de la fila se vuelve enlace. Misma
+                   regla que en Subsidios y en Prensa: la plantilla es la
+                   misma y el campo tiene que hacer lo mismo en las tres. */ ?>
+          <?php $destinoFila = $sitio->enlaceDelPanel((string) ($fila['enlace_url'] ?? '')); ?>
           <div class="ficha__fila">
-            <dt><?= $esc((string) ($fila['titulo'] ?? '')) ?></dt>
+            <dt>
+              <?php if ($destinoFila !== ''): ?>
+                <a href="<?= $esc($destinoFila) ?>"<?= $sitio->esExterno($destinoFila) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>><?= $esc((string) ($fila['titulo'] ?? '')) ?></a>
+              <?php else: ?>
+                <?= $esc((string) ($fila['titulo'] ?? '')) ?>
+              <?php endif; ?>
+            </dt>
             <dd><?= $linea((string) ($fila['texto'] ?? '')) ?></dd>
           </div>
         <?php endforeach; ?>

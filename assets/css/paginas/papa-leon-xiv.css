@@ -115,6 +115,11 @@
   font-family:"Poppins",sans-serif;font-weight:300;
   font-size:clamp(12px,1.47vw,15px);line-height:1.45;color:#595959;
 }
+/* Si la fila lleva destino desde el gestor, se subraya para que se vea que se
+   pulsa. Misma razón que en .datalist__key: sin esto sería indistinguible del
+   texto, y en móvil no hay «pasar por encima» que lo revele. */
+.ficha dt a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em}
+.ficha dt a:hover{text-decoration-thickness:2px}
 .ficha dd{
   margin:0;font-family:"Poppins",sans-serif;font-weight:300;
   font-size:clamp(13px,1.46vw,15px);line-height:1.45;color:#000;

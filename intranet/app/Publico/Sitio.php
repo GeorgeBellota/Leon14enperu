@@ -113,6 +113,45 @@ final class Sitio
     }
 
     /**
+     * Un destino escrito en el panel, listo para un href.
+     *
+     * En el panel los destinos se escriben cortos —«subsidios/»— y hay que
+     * colgarlos de la raíz del sitio: desde /subsidios/ un enlace relativo
+     * apuntaría a /subsidios/subsidios/. Pero también se pega ahí lo que da
+     * Google Drive, un correo o un ancla, y eso se respeta tal cual.
+     *
+     * Se admite sólo lo que puede vivir en un enlace de una página: http,
+     * https, mailto, tel, una ruta de este sitio o un ancla. Cualquier otra
+     * cosa se trata como ruta interna, y con eso «javascript:…» pegado en el
+     * panel acaba siendo un enlace roto a una página que no existe en vez de
+     * código ejecutándose en el navegador de un visitante.
+     */
+    public function enlaceDelPanel(string $destino): string
+    {
+        $destino = trim($destino);
+
+        if ($destino === '') {
+            return '';
+        }
+
+        return preg_match('~^(?:https?:|mailto:|tel:|/|#)~i', $destino) === 1
+            ? $destino
+            : $this->enlace($destino);
+    }
+
+    /**
+     * ¿Ese destino saca al visitante de este sitio?
+     *
+     * Lo que sale fuera se abre en otra pestaña con rel="noopener noreferrer",
+     * que es lo que ya hacen las noticias, los comunicados y el directo. Aquí
+     * sólo se responde a la pregunta; los atributos los pone cada vista.
+     */
+    public function esExterno(string $destino): bool
+    {
+        return preg_match('~^https?://~i', trim($destino)) === 1;
+    }
+
+    /**
      * Ruta de un CSS o un JS con su versión pegada detrás:
      *
      *     assets/js/form.js  →  ../assets/js/form.js?v=1787251590

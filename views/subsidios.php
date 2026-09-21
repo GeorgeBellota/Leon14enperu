@@ -339,8 +339,22 @@ foreach ($piezas as $p) {
         <?php if ($apartados !== []): ?>
           <dl class="datalist subsi-tabla">
             <?php foreach ($apartados as $a): ?>
+              <?php
+              /* El destino del apartado, si lo tiene. Es lo que permite colgar
+                 de «Guía de oración» el PDF que vive en Drive: se pega la
+                 dirección en el panel y el titular se vuelve enlace. Vacío, el
+                 apartado se pinta como siempre. */
+              $destinoA = $sitio->enlaceDelPanel((string) ($a['enlace_url'] ?? ''));
+              $rotuloA  = (string) ($a['titulo'] ?? '');
+              ?>
               <div class="datalist__row">
-                <dt class="datalist__key"><?= $esc((string) ($a['titulo'] ?? '')) ?></dt>
+                <dt class="datalist__key">
+                  <?php if ($destinoA !== ''): ?>
+                    <a href="<?= $esc($destinoA) ?>"<?= $sitio->esExterno($destinoA) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>><?= $esc($rotuloA) ?></a>
+                  <?php else: ?>
+                    <?= $esc($rotuloA) ?>
+                  <?php endif; ?>
+                </dt>
                 <dd class="datalist__val"><?= $esc(strip_tags((string) ($a['texto'] ?? ''))) ?></dd>
               </div>
             <?php endforeach; ?>

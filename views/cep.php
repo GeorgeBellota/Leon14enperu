@@ -292,12 +292,20 @@ $respaldoFoto = static function (
               continue;
           }
           ?>
+          <?php /* Con destino, el nombre se vuelve enlace. Misma regla que en
+                   Subsidios, Prensa y la ficha del Papa: las cuatro usan la
+                   plantilla «texto con apartados» y el campo tiene que hacer
+                   lo mismo en todas. El enlace envuelve el nombre y su
+                   jurisdicción, que se leen como una sola cosa. */ ?>
+          <?php $destinoJur = $sitio->enlaceDelPanel((string) ($j['enlace_url'] ?? '')); ?>
           <div class="datalist__row">
             <dt class="datalist__key">
+              <?php if ($destinoJur !== ''): ?><a href="<?= $esc($destinoJur) ?>"<?= $sitio->esExterno($destinoJur) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>><?php endif; ?>
               <span class="cep-jur__nombre"><?= $nombreHtml ?></span>
               <?php if ($sub !== ''): ?>
                 <span class="cep-jur__sub"><?= $esc($sub) ?></span>
               <?php endif; ?>
+              <?php if ($destinoJur !== ''): ?></a><?php endif; ?>
             </dt>
             <dd class="datalist__val"><?= $rico((string) ($j['texto'] ?? '')) ?></dd>
           </div>

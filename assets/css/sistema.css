@@ -316,6 +316,13 @@ body.nav-open .nav-backdrop{opacity:1;visibility:visible}
 .datalist__row{display:grid;grid-template-columns:var(--dl,minmax(0,1fr) minmax(0,1.6fr));gap:16px 32px;padding:clamp(12px,1.35vw,19px) 0;border-bottom:1px solid var(--line);align-items:start}
 .datalist__key{font-size:var(--fs-base);color:var(--grey-500);font-weight:300}
 .datalist__val{font-size:var(--fs-base);color:var(--ink);font-weight:300;line-height:1.35}
+/* Un apartado con destino —el PDF que se le cuelga desde el gestor— se pulsa,
+   y tiene que notarse. Con la regla general «a{text-decoration:none}» el
+   enlace salía idéntico al texto de al lado.
+   El subrayado es permanente y no sólo al pasar por encima: en un teléfono no
+   hay «encima», y ahí se lee la mayor parte de este sitio. */
+.datalist__key a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;text-decoration-color:currentColor}
+.datalist__key a:hover{text-decoration-thickness:2px}
 
 /* ---------------------------------------------------------------- 13. Cronograma */
 .timeline{display:grid;grid-template-columns:auto 1fr;gap:0 30px}
