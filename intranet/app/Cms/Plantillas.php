@@ -451,6 +451,30 @@ final class Plantillas
                 'datos'   => [],
             ],
 
+            /* Un texto de entrada y, debajo de la ilustración, notas sueltas
+               que la señalan con una flecha. Nace del editable nuevo de Logo y
+               lema: el collage pasó a ocupar todo el ancho y debajo aparecieron
+               dos apuntes, uno a cada lado, explicando qué se está viendo.
+
+               Las notas son bloques y no dos campos fijos para que se puedan
+               quitar, reordenar o dejar en una sola desde el panel. No llevan
+               titular: en la lámina son texto corrido, y un campo de título
+               vacío en cada ficha sólo confundiría a quien edita. */
+            'texto_con_notas' => [
+                'nombre'  => 'Texto con notas sobre una ilustración',
+                'ayuda'   => 'El titular y un texto de entrada, centrados sobre la ilustración, '
+                           . 'y debajo hasta dos notas que la señalan: la primera se apoya a la '
+                           . 'izquierda y la segunda a la derecha, cada una con su flecha.',
+                'campos'  => ['rotulo', 'titulo', 'texto_html'],
+                'bloques' => [
+                    'nombre' => 'Nota',
+                    'plural' => 'Notas',
+                    'campos' => ['texto'],
+                    'maximo' => 2,
+                ],
+                'datos'   => [],
+            ],
+
             /* Una fila de botones, no uno solo. Nace del editable nuevo de
                Prensa, que pide «Programa oficial» y «Contacto» a los dos lados
                de la misma línea. Cada botón es un bloque —y no dos pares de

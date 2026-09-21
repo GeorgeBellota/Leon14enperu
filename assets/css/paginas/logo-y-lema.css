@@ -1,5 +1,5 @@
 /* =============================================================================
-   LOGO Y LEMA — medidas tomadas del editable (mesa de trabajo 1440 × 3300 px).
+   LOGO Y LEMA — medidas tomadas del editable (mesa de trabajo 1440 × 4732 px).
    El editable de esta página no dibuja la cabecera del sitio: todo el contenido
    va 76 px más abajo, que es justo el alto de .site-header.
 
@@ -34,13 +34,15 @@
   width:calc(1440 * var(--u));max-width:100%;margin-inline:auto;
   /* «min-height»: es el alto del editable, pero la última sección va en flujo
      —ver «Su color y sus versiones»— y tiene que poder alargarlo. */
-  min-height:calc(2310.5 * var(--u));       /* 854,5 → 3165,5 del editable */
+  min-height:calc(3741.5 * var(--u));       /* 854,5 → 4596 del editable */
   /* Tres halos suaves del editable (círculos de r = 183,7 px) detrás de los
-     titulares: #F9F9F9 en el centro que se funde con el gris de página. */
+     titulares: #F9F9F9 en el centro que se funde con el gris de página. El
+     segundo y el tercero siguen a su titular, que en el editable de septiembre
+     cambiaron de sitio. */
   background-image:
     radial-gradient(circle calc(183.7 * var(--u)) at calc(748.8 * var(--u)) calc(158.7 * var(--u)),#F9F9F9 0%,rgba(249,249,249,0) 100%),
-    radial-gradient(circle calc(183.7 * var(--u)) at calc(1081.7 * var(--u)) calc(781.7 * var(--u)),#F9F9F9 0%,rgba(249,249,249,0) 100%),
-    radial-gradient(circle calc(183.7 * var(--u)) at calc(779.8 * var(--u)) calc(1549.7 * var(--u)),#F9F9F9 0%,rgba(249,249,249,0) 100%);
+    radial-gradient(circle calc(183.7 * var(--u)) at calc(720 * var(--u)) calc(832.5 * var(--u)),#F9F9F9 0%,rgba(249,249,249,0) 100%),
+    radial-gradient(circle calc(183.7 * var(--u)) at calc(728.8 * var(--u)) calc(2033.5 * var(--u)),#F9F9F9 0%,rgba(249,249,249,0) 100%);
 }
 /* Las secciones no ocupan flujo: sólo agrupan semánticamente. La excepción es
    «Su color y sus versiones», que sí va en flujo porque lleva bloques
@@ -68,9 +70,9 @@
   position:absolute;left:calc(109.1 * var(--u));width:calc(1219.8 * var(--u));
   height:calc(1 * var(--u));margin:0;border:0;background:rgba(91,91,91,.8);
 }
-.marca-regla--1{top:calc(220.8 * var(--u))}
-.marca-regla--2{top:calc(720.8 * var(--u))}
-.marca-regla--3{top:calc(1441.8 * var(--u))}
+.marca-regla--1{top:calc(221.5 * var(--u))}
+.marca-regla--2{top:calc(742.5 * var(--u))}
+.marca-regla--3{top:calc(1916.5 * var(--u))}
 
 /* ------------------------------------------------------- ¿QUÉ SIGNIFICA? */
 /* El relleno lateral es el de los filetes (x 109,1 → 1328,9): un titular más
@@ -129,6 +131,25 @@
 }
 
 /* -------------------------------------------------------------- SU DISEÑO */
+/* El editable de septiembre sube el titular y su entradilla al centro, pasa el
+   collage a todo el ancho y le cuelga dos notas. Las cinco piezas heredadas no
+   cambian de tamaño ni de x: bajan 273 px, que es lo que crece la sección por
+   arriba. Las coordenadas de aquí son las del editable menos los 854,5 de la
+   banda dorada. */
+.marca-diseno__h{
+  position:absolute;left:0;right:0;top:calc(802.4 * var(--u));
+  padding-inline:calc(109.1 * var(--u));text-align:center;
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(68 * var(--u));
+  line-height:1;color:var(--wine);
+}
+.marca-diseno__txt{
+  position:absolute;left:0;right:0;top:calc(882.2 * var(--u));
+  padding-inline:calc(109.1 * var(--u));text-align:center;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(30 * var(--u));
+  line-height:calc(36 * var(--u));color:#000;
+}
+.marca-diseno__txt strong{font-weight:600}
+
 .marca-collage{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
 .marca-tile{position:absolute;display:block}
 /* La tinta del recorte se pinta con la máscara del archivo de marca. */
@@ -142,50 +163,75 @@
 }
 /* 1 · el Papa, tinta roja sobre dorado */
 .marca-tile--1{
-  left:calc(111.6 * var(--u));top:calc(842.2 * var(--u));
+  left:calc(111.6 * var(--u));top:calc(1115.2 * var(--u));
   width:calc(287.8 * var(--u));aspect-ratio:287.8/493.3;
   background:var(--gold-light);--tinta:var(--red);
   --ms:443.537% 239.023%;--mp:42.278% 38.568%;
 }
 /* 2 · Santo Toribio y San Martín, en negativo sobre gris oscuro */
 .marca-tile--2{
-  left:calc(411.1 * var(--u));top:calc(895 * var(--u));
+  left:calc(411.1 * var(--u));top:calc(1168 * var(--u));
   width:calc(199.3 * var(--u));aspect-ratio:199.3/214.3;
   background:#3A3A3A;--tinta:var(--bg);
   --ms:381.886% 328.091%;--mp:14.008% 45.561%;
 }
 /* 3 · la Virgen, tinta roja sobre el fondo de página */
 .marca-tile--3{
-  left:calc(620.8 * var(--u));top:calc(822.2 * var(--u));
+  left:calc(620.8 * var(--u));top:calc(1095.2 * var(--u));
   width:calc(218.6 * var(--u));aspect-ratio:218.6/287.1;
   background:var(--bg);--tinta:var(--red);
   --ms:535.499% 376.629%;--mp:23.771% 16.847%;
 }
 /* 4 · San Francisco Solano y San Juan Macías, en negativo sobre amarillo */
 .marca-tile--4{
-  left:calc(409.7 * var(--u));top:calc(1118.3 * var(--u));
+  left:calc(409.7 * var(--u));top:calc(1391.3 * var(--u));
   width:calc(429.8 * var(--u));aspect-ratio:429.8/217.2;
   background:var(--gold);--tinta:var(--bg);
   --ms:238.343% 435.681%;--mp:88.294% 50.706%;
 }
 /* 5 · la paloma, tinta roja sobre dorado */
 .marca-tile--5{
-  left:calc(851.4 * var(--u));top:calc(1088.3 * var(--u));
+  left:calc(851.4 * var(--u));top:calc(1361.3 * var(--u));
   width:calc(477 * var(--u));aspect-ratio:477/247.2;
   background:var(--gold-light);--tinta:var(--red);
   --ms:267.862% 477.468%;--mp:66.642% 7.234%;
 }
-
-.marca-diseno__h{
-  position:absolute;left:calc(867.9 * var(--u));top:calc(833.6 * var(--u));
-  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(61 * var(--u));
-  line-height:1;color:var(--wine);
+/* 6 · el emblema entero, sin el logotipo tipográfico. Es la pieza que estrena
+   el editable de septiembre y la única con máscara propia: en el archivo de
+   marca el logotipo va encima de los santos y arrastrarlo sería inevitable.
+   Va sin fondo, directamente sobre el gris de página, como en la lámina. */
+.marca-tile--6{
+  left:calc(853 * var(--u));top:calc(1014.5 * var(--u));
+  width:calc(473 * var(--u));aspect-ratio:473/342;
+  --tinta:var(--red);
 }
-.marca-diseno__txt{
-  position:absolute;left:calc(867.9 * var(--u));top:calc(913.2 * var(--u));
-  width:calc(470 * var(--u));
-  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(30 * var(--u));
-  line-height:calc(36 * var(--u));color:#000;
+.marca-tile--6::before{
+  -webkit-mask-image:url("../../img/rediseno/brand/emblema-mascara.png");
+          mask-image:url("../../img/rediseno/brand/emblema-mascara.png");
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  -webkit-mask-position:0 0;mask-position:0 0;
+}
+
+/* Las dos notas que señalan el collage. Van en el sitio del editable: la
+   primera apoyada a la izquierda (x 110,6) y la segunda alineada por la
+   derecha (x 1305), las dos con su flecha fuera de la caja de texto. */
+.marca-notas{position:absolute;left:0;right:0;top:calc(1631.4 * var(--u));margin:0;padding:0;list-style:none}
+.marca-notas__i{
+  position:absolute;top:0;margin:0;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(26 * var(--u));
+  line-height:calc(31 * var(--u));color:#474747;
+}
+.marca-notas__i--1{left:calc(110.6 * var(--u));width:calc(610 * var(--u));text-align:left}
+.marca-notas__i--2{left:calc(886 * var(--u));width:calc(419 * var(--u));text-align:right}
+.marca-notas__i p{margin:0}
+.marca-notas__flecha{position:absolute;display:block}
+.marca-notas__i--1 .marca-notas__flecha{
+  left:calc(-67.1 * var(--u));top:calc(-129.9 * var(--u));
+  width:calc(52.5 * var(--u));height:calc(158 * var(--u));
+}
+.marca-notas__i--2 .marca-notas__flecha{
+  left:calc(438.5 * var(--u));top:calc(-81.9 * var(--u));
+  width:calc(63 * var(--u));height:calc(116 * var(--u));
 }
 
 /* --------------------------------------------- SU COLOR Y SUS VERSIONES */
@@ -197,30 +243,50 @@
    poder crecer con ella.
 
    Las medidas siguen siendo las del editable: el relleno de arriba pone el
-   titular en su y (1542,6) y los márgenes reproducen los huecos de la lámina,
+   titular en su y (1979) y los márgenes reproducen los huecos de la lámina,
    así que con el contenido de siempre la sección mide exactamente lo mismo. */
-.marca-color{padding-top:calc(1542.6 * var(--u))}
+.marca-color{padding-top:calc(1979 * var(--u))}
 
 /* El editable centra este titular en x = 728, 8 px a la derecha del eje: de
    ahí los 16 px de más a la izquierda. El resto del relleno es el de los
    filetes, para que un titular largo rompa dentro de la caja de texto. */
 .marca-color__h{
   padding-inline:calc(125.1 * var(--u)) calc(109.1 * var(--u));text-align:center;
-  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(61 * var(--u));
-  line-height:calc(48 * var(--u));color:var(--wine);
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(68 * var(--u));
+  line-height:calc(51.5 * var(--u));color:var(--wine);
 }
 
-/* La hilera de versiones. El editable no la centra del todo —92,5 px a la
-   izquierda y 93,5 a la derecha—: ese píxel se recupera cerrando la caja por
-   la derecha. Y alterna 45 y 44 px de hueco entre una pieza y otra, así que
-   se toma el medio: medio píxel no se ve, y así el hueco sigue siendo el
-   mismo cuando las versiones son dos, cuatro o cinco. */
+/* ── De hilera a filas ────────────────────────────────────────────────────
+   El editable de septiembre deja de poner las tres versiones en una fila con
+   un único texto de cierre: ahora va una debajo de otra, cada una con su
+   logotipo centrado y su explicación propia. Los huecos son los de la lámina
+   —59 del titular a la primera, 44 de cada logotipo a su texto y 84 de un
+   bloque al siguiente—, y al ir en columna siguen valiendo igual si alguien
+   añade una cuarta versión o quita una. */
 .marca-versiones{
-  display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
-  gap:calc(44.5 * var(--u));padding-right:calc(1 * var(--u));
-  margin-top:calc(68.9 * var(--u));
+  display:flex;flex-direction:column;align-items:center;
+  gap:calc(84 * var(--u));margin-top:calc(68.5 * var(--u));
 }
-.marca-versiones__i{min-width:0}
+.marca-versiones__i{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;min-width:0;
+}
+.marca-versiones__txt{
+  margin-top:calc(37 * var(--u));max-width:calc(760 * var(--u));text-align:center;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(30 * var(--u));
+  line-height:calc(36 * var(--u));color:#000;
+}
+.marca-versiones__txt strong{font-weight:600}
+/* El editable no reparte igual las tres filas: el hueco del logotipo a su
+   explicación va de 37,7 a 39,1 y baja a 32,7 en la última, y el que separa una
+   fila de la siguiente pasa de 87,4 a 81. Son decisiones de la lámina, no una
+   retícula, así que cada fila lleva las suyas y el valor de arriba queda de
+   reserva para una cuarta versión que alguien añada desde el panel. */
+.marca-versiones__i--1 .marca-versiones__txt{margin-top:calc(37.7 * var(--u))}
+.marca-versiones__i--2 .marca-versiones__txt{margin-top:calc(39.1 * var(--u))}
+.marca-versiones__i--3 .marca-versiones__txt{margin-top:calc(32.7 * var(--u))}
+.marca-versiones__i--1{margin-bottom:calc(3.4 * var(--u))}
+.marca-versiones__i--2{margin-bottom:calc(-3 * var(--u))}
 /* <picture> es en línea: sin esto, el alto de la pieza arrastra el sobrante
    de una caja de línea y la hilera deja de medir lo del editable. */
 .marca-versiones picture{display:block}
@@ -236,6 +302,8 @@
 .marca-version{display:block;width:calc(388 * var(--u));height:auto}
 .marca-versiones__i--3 .marca-version{width:calc(389 * var(--u))}
 
+/* Cierre opcional: el editable nuevo no lo dibuja, pero si alguien escribe uno
+   en el panel se pinta debajo de la última versión en lugar de perderse. */
 .marca-color__txt{
   margin-top:calc(56.6 * var(--u));
   padding-inline:calc(117.5 * var(--u)) calc(109.1 * var(--u));text-align:center;
@@ -244,13 +312,15 @@
 }
 
 /* ------------------------------------------------- TEXTO QUE VIENE DEL CMS */
-/* Los tres textos llegan del panel envueltos en <p>. El reset del sistema ya
-   les quita el margen —por eso la primera línea cae en la coordenada exacta
-   del editable—; lo único que falta es separar el segundo párrafo del primero
+/* Los textos llegan del panel envueltos en <p>. El reset del sistema ya les
+   quita el margen —por eso la primera línea cae en la coordenada exacta del
+   editable—; lo único que falta es separar el segundo párrafo del primero
    cuando alguien escriba más de uno. */
 .marca-lema__txt p+p,
 .marca-diseno__txt p+p,
 .marca-color__txt p+p{margin-top:1em}
+.marca-lema__txt strong,
+.marca-color__txt strong{font-weight:600}
 
 /* ------------------------------------------------------------------- PIE */
 /* El editable coloca el aviso legal y los créditos en la MISMA línea, a los
@@ -316,11 +386,24 @@
     font-size:var(--fs-body);line-height:1.34;
   }
 
-  /* Su diseño — el collage se recompone en dos columnas centradas y cada
-     pieza conserva su proporción y su encuadre; nada se corta de más. */
+  /* Su diseño — el titular y la entradilla van delante, y el collage se
+     recompone en dos columnas centradas: cada pieza conserva su proporción y
+     su encuadre y nada se corta de más. El emblema, que en la mesa ocupa el
+     hueco de arriba a la derecha, abre la rejilla a todo el ancho. */
+  .marca-diseno__h{
+    position:static;padding-inline:0;margin-top:clamp(26px,4.4vw,46px);
+    font-size:var(--fs-h2);line-height:1.1;
+  }
+  .marca-diseno__txt{
+    position:static;padding-inline:0;width:auto;margin-top:clamp(12px,2vw,20px);
+    font-size:var(--fs-body);line-height:1.34;
+  }
+  .marca-diseno__txt br{display:none}
+
   .marca-collage{
     --cu:calc(min(86vw,620px) / 520);
     position:static;width:auto;height:auto;pointer-events:auto;
+    margin-top:clamp(24px,4vw,44px);
     display:grid;
     grid-template-columns:calc(287.8 * var(--cu)) calc(218.6 * var(--cu));
     justify-content:center;align-items:start;justify-items:start;
@@ -328,21 +411,27 @@
   }
   /* Las piezas siguen siendo el contexto de su propia tinta: position:relative. */
   .marca-tile{position:relative;left:auto;top:auto;align-self:start}
-  .marca-tile--1{grid-column:1;grid-row:1 / span 2;width:calc(287.8 * var(--cu))}
-  .marca-tile--3{grid-column:2;grid-row:1;width:calc(218.6 * var(--cu))}
-  .marca-tile--2{grid-column:2;grid-row:2;width:calc(199.3 * var(--cu))}
-  .marca-tile--4{grid-column:1 / -1;grid-row:3;width:calc(429.8 * var(--cu));justify-self:center}
-  .marca-tile--5{grid-column:1 / -1;grid-row:4;width:calc(477 * var(--cu));justify-self:center}
+  .marca-tile--6{grid-column:1 / -1;grid-row:1;width:calc(473 * var(--cu));justify-self:center}
+  .marca-tile--1{grid-column:1;grid-row:2 / span 2;width:calc(287.8 * var(--cu))}
+  .marca-tile--3{grid-column:2;grid-row:2;width:calc(218.6 * var(--cu))}
+  .marca-tile--2{grid-column:2;grid-row:3;width:calc(199.3 * var(--cu))}
+  .marca-tile--4{grid-column:1 / -1;grid-row:4;width:calc(429.8 * var(--cu));justify-self:center}
+  .marca-tile--5{grid-column:1 / -1;grid-row:5;width:calc(477 * var(--cu));justify-self:center}
 
-  .marca-diseno__h{
-    position:static;margin-top:clamp(26px,4.4vw,46px);
-    font-size:var(--fs-h2);line-height:1.1;
+  /* Las notas pasan a ir debajo, una tras otra y las dos a la izquierda. Las
+     flechas se quitan: señalaban a un collage que ya no tienen al lado, y una
+     flecha que no apunta a nada confunde más que ayuda. */
+  .marca-notas{
+    position:static;display:grid;gap:clamp(14px,2.4vw,24px);
+    margin-top:clamp(20px,3.4vw,36px);
   }
-  .marca-diseno__txt{
-    position:static;width:auto;margin-top:clamp(12px,2vw,20px);
+  .marca-notas__i,
+  .marca-notas__i--1,
+  .marca-notas__i--2{
+    position:static;left:auto;width:auto;text-align:left;
     font-size:var(--fs-body);line-height:1.34;
   }
-  .marca-diseno__txt br{display:none}
+  .marca-notas__flecha{display:none}
 
   /* Su color y sus versiones — aquí ya estaba en flujo, así que sólo hay que
      deshacer el relleno y los huecos que colocan la sección en el lienzo. */
@@ -351,12 +440,23 @@
     padding-inline:0;text-align:center;
     font-size:var(--fs-h2);line-height:1.1;
   }
+  /* Aquí ya iban en columna desde el editable nuevo: sólo se aflojan los
+     huecos, que en la mesa son de 84 px. */
   .marca-versiones{
-    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:clamp(18px,3.4vw,38px);align-items:center;padding-right:0;
-    margin-top:clamp(26px,4.4vw,48px);
+    gap:clamp(30px,5.4vw,60px);margin-top:clamp(26px,4.4vw,48px);
+    padding-bottom:clamp(40px,7vw,80px);
   }
+  .marca-versiones__i--1,
+  .marca-versiones__i--2{margin-bottom:0}
+  .marca-versiones__i--1 .marca-versiones__txt,
+  .marca-versiones__i--2 .marca-versiones__txt,
+  .marca-versiones__i--3 .marca-versiones__txt{margin-top:clamp(14px,2.4vw,26px)}
   .marca-version{width:100%;max-width:420px;margin-inline:auto}
+  .marca-versiones__txt{
+    margin-top:clamp(14px,2.4vw,26px);max-width:none;
+    font-size:var(--fs-body);line-height:1.34;
+  }
+  .marca-versiones__txt br{display:none}
   .marca-color__txt{
     padding-inline:0;margin-top:clamp(24px,4vw,44px);
     padding-bottom:clamp(40px,7vw,80px);
@@ -371,6 +471,5 @@
   .marca-lema__txt br,
   .marca-color__txt br{display:none}
 
-  .marca-versiones{grid-template-columns:1fr;gap:clamp(20px,5vw,34px)}
   .marca-version{max-width:min(78vw,380px)}
 }
