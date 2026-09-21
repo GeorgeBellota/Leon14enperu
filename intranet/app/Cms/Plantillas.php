@@ -211,7 +211,7 @@ final class Plantillas
                 'bloques' => [
                     'nombre' => 'Tarjeta',
                     'plural' => 'Tarjetas',
-                    'campos' => ['rotulo', 'titulo', 'texto', 'imagen', 'imagen_movil', 'enlace_texto', 'enlace_url'],
+                    'campos' => ['rotulo', 'titulo_lineas', 'texto', 'imagen', 'imagen_movil', 'enlace_texto', 'enlace_url'],
                     'datos'  => [
                         'resumen' => ['etiqueta' => 'Resumen', 'tipo' => 'area',
                                       'ayuda' => 'Una o dos líneas, para el listado y para cuando se '
@@ -464,7 +464,7 @@ final class Plantillas
 
                        Es lo que permite colgar de «Guía de oración» el PDF que
                        vive en Drive sin sacarlo del panel. */
-                    'campos' => ['titulo', 'texto', 'enlace_url'],
+                    'campos' => ['titulo_lineas', 'texto', 'enlace_url'],
                     'maximo' => 20,
                 ],
                 'datos'   => [],
@@ -505,6 +505,16 @@ final class Plantillas
             'rotulo'     => ['etiqueta' => 'Rótulo', 'tipo' => 'texto',
                              'ayuda' => 'La línea corta en versalitas que va encima del título.'],
             'titulo'     => ['etiqueta' => 'Título', 'tipo' => 'texto'],
+            /* El mismo título, pero en un área: hay titulares que el diseño
+               parte en varios renglones —las tarjetas de Subsidios de la
+               portada, los santos, el nombre y la jurisdicción de cada sede—
+               y donde se corta es una decisión de maqueta, no del navegador.
+               Guarda en la columna `titulo` de siempre, como texto_html en
+               `texto`: ni migración ni columna nueva. */
+            'titulo_lineas' => ['etiqueta' => 'Título', 'tipo' => 'area', 'columna' => 'titulo',
+                             'ayuda' => 'Puedes partirlo en varios renglones con Intro: se respeta '
+                                      . 'tal cual en la web. Si lo dejas en una línea, se pinta '
+                                      . 'en una.'],
             'subtitulo'  => ['etiqueta' => 'Subtítulo', 'tipo' => 'texto'],
             'texto'      => ['etiqueta' => 'Texto de entrada', 'tipo' => 'area'],
             'texto_html' => ['etiqueta' => 'Texto', 'tipo' => 'area', 'columna' => 'texto',
@@ -551,6 +561,7 @@ final class Plantillas
             'rotulo'       => 'Número o rótulo',
             'slug'         => 'Dirección de su página',
             'titulo'       => 'Título',
+            'titulo_lineas' => 'Título',
             'texto'        => 'Texto',
             'icono'        => 'Icono',
             'imagen'       => 'Imagen',

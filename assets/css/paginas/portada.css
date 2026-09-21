@@ -305,9 +305,27 @@
   display:block;margin-top:calc(37.4 * var(--u));
   font-size:calc(19.92 * var(--u));font-weight:400;color:var(--grey-600);line-height:1.2;
 }
+/* ── El titular de la tarjeta ─────────────────────────────────────────────
+   El editable lo parte donde quiere —«PAPA LEÓN: / CERCANO Y PERUANO»— y esos
+   saltos vienen del panel. Con ellos, cada renglón pide hasta unos 230 px y la
+   columna mide 180: el diseño contaba con que el texto se saliera un poco por
+   los lados, hacia el hueco de 84 px que hay entre tarjetas.
+
+   Eso iba bien hasta que un guardado del panel se comió los saltos y los cinco
+   titulares pasaron a una sola línea. Entonces el de en medio llegó a
+   sobresalir 347 px y se pintó ENCIMA de los vecinos: cuatro pares de
+   titulares superpuestos, que es lo que se veía.
+
+   Lo que se hace aquí es dejar de depender de que el texto se salga: la caja
+   del titular se ensancha 56 px sobre su columna —28 por lado, dentro del
+   hueco, que aún deja 28 de aire— y ahí caben los renglones del diseño sin
+   desbordar. Y se quita «nowrap», de modo que un titular más largo de la
+   cuenta se parte solo en vez de invadir al de al lado. Nunca más una edición
+   de texto puede romper la rejilla. */
 .subsi__title{
   display:block;margin-top:calc(6 * var(--u));
-  font-size:calc(21.25 * var(--u));font-weight:600;color:#000;line-height:1.2;white-space:nowrap;
+  width:calc(100% + 56 * var(--u));margin-inline:calc(-28 * var(--u));
+  font-size:calc(21.25 * var(--u));font-weight:600;color:#000;line-height:1.2;
 }
 .subsi a:hover .subsi__title{color:var(--wine)}
 
@@ -527,7 +545,12 @@
   .subsidios__lead{font-size:clamp(17px,2.5vw,30px);max-width:60ch}
   .subsidios__grid{width:100%;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(18px,3vw,40px);row-gap:clamp(28px,4vw,48px)}
   .subsi__kicker{font-size:clamp(13px,1.8vw,19px);margin-top:clamp(12px,1.8vw,24px)}
-  .subsi__title{font-size:clamp(14px,1.9vw,20px)}
+  /* El ensanche de arriba vive del hueco de 84 px que hay entre las cinco
+     tarjetas del diseño ancho. Aquí la rejilla pasa a tres columnas o menos y
+     ese hueco baja a 18-40 px: mantenerlo haría que los titulares se pisaran
+     entre sí, que es justo lo que se venía a evitar. Cada uno se queda en su
+     columna y, como no hay «nowrap», se parte cuando toca. */
+  .subsi__title{font-size:clamp(14px,1.9vw,20px);width:auto;margin-inline:0}
 
   .visita{min-height:0}
   .visita__media::after{background:linear-gradient(180deg,rgba(110,11,20,.92) 0%,rgba(110,11,20,.8) 45%,rgba(110,11,20,.55) 100%)}

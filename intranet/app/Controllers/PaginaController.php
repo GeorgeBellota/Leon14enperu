@@ -382,7 +382,20 @@ final class PaginaController extends Controller
                         continue;
                     }
 
-                    $bloque[$campo] = trim((string) ($fila[$campo] ?? ''));
+                    /* Igual que arriba con las imágenes: la columna la dice la
+                       plantilla. Así un campo puede llamarse «titulo_lineas»
+                       en el panel —para salir como área y admitir renglones— y
+                       seguir guardando en la columna `titulo` de siempre, sin
+                       migración y sin tocar lo que ya hay escrito. */
+                    $columna = Plantillas::columna($campo);
+
+                    /* Los renglones se respetan, pero se normalizan: un
+                       navegador manda CRLF y otro LF, y la vista pública los
+                       pasa por nl2br(). Sin esto, el mismo texto guardado
+                       desde dos equipos daría saltos distintos. */
+                    $valor = str_replace(["\r\n", "\r"], "\n", (string) ($fila[$columna] ?? ''));
+
+                    $bloque[$columna] = trim($valor);
                 }
 
                 /* Lo que la plantilla no declara vuelve tal cual desde el campo

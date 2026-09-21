@@ -73,10 +73,35 @@ $e = static fn ($v) => View::e($v);
         $elegida = $b[$columna] ?? null;
         require __DIR__ . '/_selector-imagen.php';
         ?>
-      <?php elseif ($campo === 'texto'): ?>
-        <textarea name="bloques[<?= $e($i) ?>][<?= $e($campo) ?>]" rows="3"><?= $e($b[$campo] ?? '') ?></textarea>
       <?php else: ?>
-        <input type="text" name="bloques[<?= $e($i) ?>][<?= $e($campo) ?>]" value="<?= $e($b[$campo] ?? '') ?>">
+        <?php
+        /* ── Se pregunta por el TIPO, no por el nombre ────────────────────
+           Antes decía «if ($campo === 'texto')», así que cualquier otro campo
+           salía como <input> de una línea aunque la plantilla lo declarara
+           como área. Y un <input> no puede contener un salto de línea: el
+           navegador los quita del valor al enviarlo.
+
+           Eso se llevó por delante los titulares de las tarjetas de Subsidios
+           de la portada, que van a dos renglones a propósito. Bastó con abrir
+           la sección y guardar: «UNIDOS EN CRISTO,\nSEMBRADORES DE\nPAZ» se
+           guardó como «UNIDOS EN CRISTO,SEMBRADORES DEPAZ», sin salto y sin
+           espacio, y con nowrap eso se desbordaba encima de las tarjetas de
+           al lado. Nada avisó.
+
+           La columna también se pregunta a la plantilla, igual que en las
+           imágenes: así un campo puede llamarse de una forma en el panel y
+           guardar en la columna de siempre. */
+        $columna = Plantillas::columna($campo);
+        $nombre  = 'bloques[' . $i . '][' . $columna . ']';
+        ?>
+        <?php if (Plantillas::campo($campo)['tipo'] === 'area'): ?>
+          <textarea name="<?= $e($nombre) ?>" rows="3"><?= $e($b[$columna] ?? '') ?></textarea>
+        <?php else: ?>
+          <input type="text" name="<?= $e($nombre) ?>" value="<?= $e($b[$columna] ?? '') ?>">
+        <?php endif; ?>
+      <?php endif; ?>
+      <?php if (($ayuda = Plantillas::campo($campo)['ayuda'] ?? '') !== ''): ?>
+        <p class="campo__ayuda"><?= $ayuda /* la ayuda es texto nuestro, no del usuario */ ?></p>
       <?php endif; ?>
     </div>
   <?php endforeach; ?>
