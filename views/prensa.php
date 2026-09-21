@@ -44,15 +44,23 @@ $hay     = static fn (string $s): bool
 
 /* ── Apagar una sección sí; quedarse en blanco, no ────────────────────────
    Una sección que el panel apaga no llega en $secciones y no se pinta. Pero
-   hay dos casos en los que «no llega» NO quiere decir «apagada»: que la base
-   no responda, y que la migración del rediseño todavía no haya cargado las
-   secciones nuevas de esta página. En los dos, la página tiene que salir
-   entera con sus textos de reserva.
+   «no llega» no siempre significa «apagada»: si la base no responde no llega
+   NINGUNA, y entonces la página tiene que salir entera con sus textos de
+   reserva. Una web sobre un viaje papal no puede quedarse muda porque falle
+   MySQL.
 
-   Se distingue por las dos claves que sólo existen después de la migración:
-   si no está ninguna, es que la carga aún no ha pasado por aquí. */
-$migrado = $hay('contacto-prensa') || $hay('multimedia');
-$pinta   = static fn (string $s): bool => !$migrado || $hay($s);
+   Antes la señal eran dos secciones concretas —«contacto-prensa» y
+   «multimedia»—, que sólo existen desde el rediseño y servían para saber si
+   la carga de contenido ya había pasado. Cumplía su papel mientras duró esa
+   ventana, pero dejaba las dos atadas entre sí: apagar LAS DOS desde el panel
+   hacía creer a la página que no había contenido, y reaparecían las dos con
+   sus textos y sus marcos de relleno. Apagar una funcionaba; apagar las dos,
+   no. Imposible de adivinar dentro de unos meses.
+
+   Ahora la señal es que haya llegado algo. Si llegó algo, manda el panel y
+   una sección apagada se queda apagada, sea cual sea y sean cuantas sean. */
+$hayContenido = $secciones !== [];
+$pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
 
 /* ── Destinos que vienen del panel ────────────────────────────────────────
    En el panel los destinos se escriben cortos («contacto/»). Desde /prensa/
