@@ -134,7 +134,12 @@ final class Plantillas
                         'diseno' => [
                             'etiqueta' => 'Diseño de la lámina',
                             'tipo'     => 'texto',
-                            'ayuda'    => 'Vacío = diseño partido, con el texto en el panel de color '
+                            'ayuda'    => '«programa» = la lámina «Preparémonos»: el titular en dorado '
+                                        . 'y negrita sobre su propia fotografía, y un botón dorado con '
+                                        . 'flecha de descarga a la derecha en lugar del granate «En '
+                                        . 'directo» de la izquierda. Con ella la fotografía y el botón '
+                                        . 'salen de la lámina, no de la primera. · '
+                                        . 'Vacío = diseño partido, con el texto en el panel de color '
                                         . 'al lado de la imagen. Es el único que admite el retrato del '
                                         . 'Santo Padre, que no puede llevar velo ni degradado encima. · '
                                         . '«fondo» = fotografía a sangre con el texto encima, apoyado a '
@@ -443,6 +448,60 @@ final class Plantillas
                            . 'breve y un botón. Es la forma del bloque «Abramos el corazón».',
                 'campos'  => ['rotulo', 'titulo', 'texto_html', 'imagen', 'cta_texto', 'cta_url'],
                 'bloques' => null,
+                'datos'   => [],
+            ],
+
+            /* Un texto de entrada y, debajo de la ilustración, notas sueltas
+               que la señalan con una flecha. Nace del editable nuevo de Logo y
+               lema: el collage pasó a ocupar todo el ancho y debajo aparecieron
+               dos apuntes, uno a cada lado, explicando qué se está viendo.
+
+               Las notas son bloques y no dos campos fijos para que se puedan
+               quitar, reordenar o dejar en una sola desde el panel. No llevan
+               titular: en la lámina son texto corrido, y un campo de título
+               vacío en cada ficha sólo confundiría a quien edita. */
+            'texto_con_notas' => [
+                'nombre'  => 'Texto con notas sobre una ilustración',
+                'ayuda'   => 'El titular y un texto de entrada, centrados sobre la ilustración, '
+                           . 'y debajo hasta dos notas que la señalan: la primera se apoya a la '
+                           . 'izquierda y la segunda a la derecha, cada una con su flecha.',
+                'campos'  => ['rotulo', 'titulo', 'texto_html'],
+                'bloques' => [
+                    'nombre' => 'Nota',
+                    'plural' => 'Notas',
+                    'campos' => ['texto'],
+                    'maximo' => 2,
+                ],
+                'datos'   => [],
+            ],
+
+            /* Una fila de botones, no uno solo. Nace del editable nuevo de
+               Prensa, que pide «Programa oficial» y «Contacto» a los dos lados
+               de la misma línea. Cada botón es un bloque —y no dos pares de
+               campos fijos en la sección— para que desde el panel se pueda
+               añadir un tercero, quitar uno o cambiarlos de orden sin tocar
+               código el día que el programa oficial se publique. */
+            'botonera' => [
+                'nombre'  => 'Fila de botones',
+                'ayuda'   => 'Una fila de botones ocupando el ancho de la caja: el primero pegado '
+                           . 'a la izquierda y el último a la derecha. Con un solo botón, queda '
+                           . 'centrado. En el teléfono se apilan uno debajo de otro.',
+                'campos'  => ['titulo'],
+                'bloques' => [
+                    'nombre' => 'Botón',
+                    'plural' => 'Botones',
+                    'campos' => ['titulo', 'enlace_url'],
+                    'datos'  => [
+                        'icono' => [
+                            'etiqueta' => 'Icono',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Escribe «descarga» para que el botón lleve delante la '
+                                        . 'flecha dorada de bajar un archivo. Déjalo vacío para un '
+                                        . 'botón sin icono.',
+                        ],
+                    ],
+                    'maximo' => 4,
+                ],
                 'datos'   => [],
             ],
 

@@ -65,24 +65,13 @@ $pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
 /* ── Destinos que vienen del panel ────────────────────────────────────────
    En el panel los destinos se escriben cortos («contacto/»). Desde /prensa/
    un enlace relativo apuntaría a /prensa/contacto/, que no existe, así que
-   se cuelgan de la raíz del sitio. Lo que ya venga absoluto, con esquema o
-   como ancla, se respeta tal cual.
+   se cuelgan de la raíz del sitio. De eso se encarga $sitio->enlaceDelPanel(),
+   que es la misma regla que usan los apartados y las tarjetas.
 
    Ojo con los nombres: la vista se ejecuta en el mismo ámbito que index.php
    y que _plantilla.php, así que una variable llamada $destino o $pieza
    pisaría las suyas —la ruta resuelta y la pieza del detalle— y rompería la
    página entera. Todo lo de aquí lleva nombre propio. */
-$enlacePanel = static function (string $url) use ($sitio): string {
-    $url = trim($url);
-
-    if ($url === '') {
-        return '';
-    }
-
-    return preg_match('~^(?:https?:|mailto:|tel:|/|#)~i', $url) === 1
-        ? $url
-        : $sitio->enlace($url);
-};
 
 /* El icono de cámara de los marcos de Multimedia. Se dibuja una sola vez y
    se repite: son tres marcos iguales y el trazado es largo. Decorativo, así
@@ -241,18 +230,69 @@ ob_start(); ?>
     </section>
     <?php endif; ?>
 
-    <?php /* ══════════════════════════════════════════════════ CONTACTO ══
-         Un único botón centrado. El texto y el destino se editan en el
-         panel: hoy lleva a /contacto/, y el día que haya un correo propio
-         de prensa se cambia ahí sin tocar código. */ ?>
+    <?php /* ═════════════════════════════════════════════════ BOTONERA ══
+         El editable de septiembre de 2026 cambia aquí: donde había un botón
+         «Contacto» centrado ahora hay una fila con dos, «Programa oficial»
+         pegado a la izquierda y «Contacto» a la derecha, en la misma línea
+         y dentro de la caja de 1218 px.
+
+         Cada botón es un bloque de la sección —plantilla «botonera»—, así
+         que en Páginas → Prensa → Botón de contacto se añaden, se quitan y
+         se reordenan. El día que la Santa Sede publique el programa, basta
+         con cambiar el destino del primero.
+
+         El respaldo de abajo no es adorno: si MySQL no responde no llega
+         ninguna sección, y la página tiene que salir igualmente con la fila
+         que dibuja el editable. */ ?>
     <?php if ($pinta('contacto-prensa')): ?>
     <?php
-    $textoBoton = $campo('contacto-prensa', 'cta_texto', 'Contacto');
-    $urlBoton   = $enlacePanel($campo('contacto-prensa', 'cta_url', '')) ?: $sitio->enlace('contacto/');
+    $botones = $bloques('contacto-prensa', []);
+
+    if ($botones === []) {
+        /* Sin bloques: o la base no respondió, o es una instalación que aún
+           no pasó la migración de la botonera. En el segundo caso la sección
+           todavía guarda su botón en «cta_texto/cta_url», y sería una pena
+           perderlo por estrenar plantilla. */
+        $botones = [
+            ['titulo' => 'Programa oficial', 'enlace_url' => 'agenda/',
+             'datos'  => ['icono' => 'descarga']],
+            ['titulo' => $campo('contacto-prensa', 'cta_texto', 'Contacto'),
+             'enlace_url' => $campo('contacto-prensa', 'cta_url', 'contacto/')],
+        ];
+    }
     ?>
-    <section class="pr-cta" aria-label="Contacto de prensa">
-      <div class="pr-wrap">
-        <a class="btn pr-cta__btn" href="<?= $esc($urlBoton) ?>"><?= $esc($textoBoton) ?></a>
+    <section class="pr-cta" aria-label="<?= $esc($campo('contacto-prensa', 'titulo', 'Contacto de prensa')) ?>">
+      <div class="pr-wrap pr-cta__fila">
+        <?php foreach ($botones as $boton): ?>
+          <?php
+          $rotulo  = trim((string) ($boton['titulo'] ?? ''));
+          $destino = $sitio->enlaceDelPanel((string) ($boton['enlace_url'] ?? ''));
+
+          /* Un botón sin rótulo o sin destino no se pinta: mejor una fila más
+             corta que un botón que no lleva a ninguna parte. */
+          if ($rotulo === '' || $destino === '') {
+              continue;
+          }
+
+          /* `datos` llega como texto JSON desde MySQL y ya como arreglo cuando
+             es el respaldo de aquí arriba. */
+          $datosBoton = $boton['datos'] ?? null;
+          $datosBoton = is_string($datosBoton) ? json_decode($datosBoton, true) : $datosBoton;
+          $conIcono   = is_array($datosBoton)
+              && strcasecmp(trim((string) ($datosBoton['icono'] ?? '')), 'descarga') === 0;
+          ?>
+          <a class="btn pr-cta__btn<?= $conIcono ? ' pr-cta__btn--descarga' : '' ?>" href="<?= $esc($destino) ?>"<?= $sitio->esExterno($destino) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>
+            <?php if ($conIcono): ?>
+              <svg class="ico-baja" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 1.2v16.6M7.4 13.2 12 17.8l4.6-4.6" fill="none" stroke="currentColor"
+                      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M1.2 11.7v11.1h21.6V11.7" fill="none" stroke="currentColor"
+                      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            <?php endif; ?>
+            <span><?= $esc($rotulo) ?></span>
+          </a>
+        <?php endforeach; ?>
       </div>
     </section>
     <?php endif; ?>
