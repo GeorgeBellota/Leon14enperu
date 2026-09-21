@@ -20,59 +20,55 @@ use Intranet\Core\ErrorDeNegocio;
 use Intranet\Core\Logotipo;
 use Intranet\Core\Request;
 use Intranet\Models\Ajuste;
+use Intranet\Publico\Menu;
 
 final class ConfiguracionController extends Controller
 {
     /**
      * Las páginas que pueden aparecer en el menú, con su rótulo.
      *
-     * Es la MISMA lista que hay en assets/parciales/cabecera.php, y las dos
-     * tienen que decir lo mismo: una página que esté aquí y no allí se puede
-     * marcar pero no se muestra; una que esté allí y no aquí se muestra sin
-     * que haya forma de quitarla.
-     *
-     * No sale de la tabla `paginas` a propósito. El menú de una web pública no
-     * es el índice de todo lo que existe: hay páginas —privacidad, cookies,
-     * aviso legal— que viven en el pie y no deben poder subir a la navegación
-     * principal por el hecho de existir en la base.
+     * Delega en Publico\Menu, que es de donde lee también la cabecera del
+     * sitio. Estuvo escrita aquí a mano, en paralelo a la de allí, con un
+     * comentario que decía que las dos tenían que coincidir. No coincidieron:
+     * el rediseño renombró tres páginas, actualizó la de la cabecera y dejó
+     * ésta con los nombres viejos. La casilla «Papa León XIV» guardaba
+     * «el-papa» mientras la web buscaba «papa-leon-xiv», así que salía marcada
+     * y la entrada no aparecía; y como guardar esta pantalla reescribe el
+     * ajuste entero, se perdía al tocar cualquier otra cosa.
      *
      * @return array<string, string>
      */
     public static function paginasDelMenu(): array
     {
-        return [
-            'el-papa'              => 'Papa León XIV',
-            'sedes'                => 'Sedes',
-            'agenda'               => 'Agenda',
-            'tierra-de-santos'     => 'Tierra de santos',
-            'cep'                  => 'CEP',
-            'noticias'             => 'Noticias',
-            'voluntariado'         => 'Voluntariado',
-            'participa'            => 'Participa',
-            'multimedia'           => 'Multimedia',
-            'prensa'               => 'Prensa',
-            'materiales'           => 'Materiales',
-            'guia-del-peregrino'   => 'Guía del peregrino',
-            'preguntas-frecuentes' => 'Preguntas frecuentes',
-            'patrocinios'          => 'Patrocinios',
-            'donativo'             => 'Donaciones',
-            'contacto'             => 'Contacto',
-        ];
+        return Menu::catalogo();
     }
 
     public function panel(Request $peticion): void
     {
         $ajustes = new Ajuste($this->c);
 
-        $visibles = array_filter(array_map('trim',
-            explode(',', (string) $ajustes->leer('menu.visibles', ''))));
+        /* Las casillas tienen que enseñar EXACTAMENTE lo que hay en la web, o
+           dejan de servir para decidir. Por eso se leen igual que allí:
+
+            · normalizar() traduce las páginas que se renombraron, así que un
+              ajuste anterior al rediseño marca la casilla correcta en vez de
+              dejarla vacía y perderse al guardar.
+            · Sin nada guardado, la web enseña las nueve del diseño; aquí se
+              marcan esas nueve, y no todas, que es lo que se hacía antes y
+              prometía un menú que la web no iba a pintar. */
+        $visibles = Menu::normalizar(
+            explode(',', (string) $ajustes->leer('menu.visibles', ''))
+        );
+
+        if ($visibles === []) {
+            $visibles = Menu::porDefecto();
+        }
 
         $this->ver('configuracion/panel', [
             'titulo'   => 'Configuración general',
             'paginas'  => self::paginasDelMenu(),
             'inicio'   => (string) $ajustes->leer('sitio.pagina_inicio', 'home'),
             'visibles' => $visibles,
-            'todas'    => $visibles === [],
             'pie'      => (string) $ajustes->leer('pie.modo', 'completo'),
 
             // Las fechas llegan al formulario en el formato que entiende
@@ -111,7 +107,7 @@ final class ConfiguracionController extends Controller
 
         // ── Entradas del menú ───────────────────────────────────────────
         $marcadas = $peticion->post('visibles', []);
-        $marcadas = is_array($marcadas) ? array_intersect($marcadas, array_keys($paginas)) : [];
+        $marcadas = Menu::normalizar(is_array($marcadas) ? $marcadas : []);
 
         // La página de inicio tiene que seguir estando en el menú. Sin ella,
         // quien entre a una interna se queda sin forma de volver a la portada,
@@ -163,11 +159,6 @@ final class ConfiguracionController extends Controller
         if (!in_array($pie, ['completo', 'simple', 'simple_en_internas'], true)) {
             $pie = 'completo';
         }
-
-        // Si están todas marcadas se guarda vacío: así, cuando en el futuro se
-        // añada una página nueva, aparecerá en el menú sola en lugar de quedar
-        // fuera por no estar en una lista escrita hace meses.
-        $todas = count($marcadas) === count($paginas);
 
         // ── Logotipo ────────────────────────────────────────────────────
         // Se resuelve ANTES de guardar los ajustes: si la imagen se rechaza,
@@ -262,7 +253,12 @@ final class ConfiguracionController extends Controller
         $directoTitulo = mb_substr($directoTitulo, 0, 120);
 
         $ajustes->escribir('sitio.pagina_inicio', $inicio);
-        $ajustes->escribir('menu.visibles', $todas ? '' : implode(',', $marcadas));
+        /* Siempre la lista explícita, aunque estén todas marcadas. Antes, en
+           ese caso se guardaba vacío para que una página nueva entrara sola en
+           el menú. Esa promesa dejó de ser cierta: para la cabecera, vacío ya
+           no significa «todas» sino «las nueve del diseño». Guardar vacío con
+           dieciséis marcadas habría enseñado nueve. */
+        $ajustes->escribir('menu.visibles', implode(',', $marcadas));
         $ajustes->escribir('pie.modo', $pie);
         $ajustes->escribir('viaje.inicio', $inicioViaje);
         $ajustes->escribir('viaje.fin', $finViaje);
@@ -274,7 +270,7 @@ final class ConfiguracionController extends Controller
 
         Auditoria::registrar($this->c, 'editar', 'ajustes', null, [
             'pagina_inicio' => $inicio,
-            'menu'          => $todas ? 'todas' : implode(',', $marcadas),
+            'menu'          => implode(',', $marcadas),
             'pie'           => $pie,
             'viaje_inicio'  => $inicioViaje,
             'viaje_fin'     => $finViaje,
