@@ -111,6 +111,15 @@
   border-top:calc(8.5 * var(--u)) solid transparent;
   border-bottom:calc(8.5 * var(--u)) solid transparent;
 }
+/* Sonando: el triángulo pasa a ser dos barras. La segunda es una sombra de la
+   primera y no un elemento más, porque ::after y ::before ya están gastados y
+   añadir un <span> al marcado sólo para esto no compensa. */
+.hymn.suena .hymn__play::after{
+  border:0;left:50%;
+  width:calc(4.6 * var(--u));height:calc(17 * var(--u));background:#EDEDED;
+  transform:translate(calc(-6.4 * var(--u)),-50%);
+  box-shadow:calc(8.2 * var(--u)) 0 0 #EDEDED;
+}
 .hymn__txt{display:flex;flex-direction:column}
 .hymn__title{font-weight:600;font-size:calc(24.08 * var(--u));color:var(--grey-900);line-height:1.22}
 .hymn__sub{font-weight:400;font-size:calc(17.66 * var(--u));color:var(--grey-500);line-height:1.22;letter-spacing:.055em}
