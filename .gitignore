@@ -135,6 +135,21 @@ documentacion/ENTREGA-Y-ALCANCE.md
 documentacion/flujos-transfronterizos.html
 ACTA-DE-ENTREGA-SIMPLIFICADA.*
 
+# La solicitud del cliente es un documento de negocio. Estaba en el
+# repositorio por duplicado —en la raíz y aquí— y en la raíz, además, la
+# servía el navegador.
+documentacion/ultima-solicitud.pdf
+
+# ── PDF SUELTOS EN LA RAÍZ ──────────────────────────────────────────────────
+# La raíz es la carpeta que sirve el navegador: un PDF dejado ahí mientras se
+# trabaja queda descargable por cualquiera que adivine el nombre, y entra en
+# el repositorio al primer «git add .». Ya pasó con tres.
+#
+# La barra inicial importa: esta regla vale SÓLO para la raíz. Los PDF que se
+# publican de verdad viven en assets/docs/ y en assets/subidos/, y ésos se
+# siguen versionando como hasta ahora.
+/*.pdf
+
 # ── NADA DE .md NI .txt ─────────────────────────────────────────────────────
 # La documentación cuenta cómo está montado esto: rutas del servidor, nombres
 # de servicios, versiones, qué está cerrado y qué no. Se queda en disco y se
