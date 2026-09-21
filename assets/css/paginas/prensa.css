@@ -35,8 +35,12 @@
    la altura es MÍNIMA, no fija, y hay un respiro abajo. Con el texto del
    editable (414,5 + 118,4 + 24 = 556,9) manda el mínimo y la banda mide
    exactamente los 582 px de la mesa de trabajo: no cambia ni un píxel. */
-.pr-hero{min-height:calc(582 * var(--u));background:#8A5A0C}
-.pr-hero .hero__media img{object-position:50% 42%}
+.pr-hero{min-height:calc(582 * var(--u));background:#8A5A0C;container-type:inline-size}
+/* La fotografía ya viene compuesta con la proporción exacta de la banda
+   (2880 x 1164 = 1440 x 582), así que «cover» la encaja sin recortar nada y el
+   encuadre no pinta nada. Se deja escrito para que no vuelva a cambiarse: con
+   estas dos proporciones iguales, mover el object-position no hace nada. */
+.pr-hero .hero__media img{object-position:50% 50%}
 .pr-hero .hero__inner{
   height:auto;min-height:calc(582 * var(--u));justify-content:flex-start;gap:0;
   padding:calc(414.5 * var(--u)) var(--gutter) calc(24 * var(--u));
@@ -50,6 +54,34 @@
   font-size:calc(28 * var(--u));line-height:1;font-weight:300;color:#FFFFFF;
 }
 .pr-hero .hero__sub strong{font-weight:600}
+
+/* ── Por encima de la mesa de 1440 ────────────────────────────────────────
+   «--u» se congela en 1 px a partir de 1440: la banda se queda en 582 px de
+   alto mientras la ventana sigue ensanchando. Y esta banda no es una
+   fotografía cualquiera a la que dé igual perder un poco por arriba: es una
+   composición —duotono más velo dorado— dibujada sobre la mesa de 1440. Al
+   estirarse a lo ancho sin crecer a lo alto, «cover» la ampliaba y le cortaba
+   el 8 % de arriba y el 11 % de abajo. Lo que se veía no era el editable: el
+   velo dorado subía, el encuadre cambiaba y la banda entera se leía de otro
+   color. Eso es lo que se notaba en un monitor de 1700 px.
+
+   Aquí la banda recupera la proporción de la mesa y todo lo de dentro escala
+   con ella, así que la composición es la misma a cualquier ancho. Las medidas
+   son las mismas de arriba divididas entre 1440: a 1440 exactos dan el mismo
+   número que con «--u» y no se mueve ni un píxel.
+
+   Va en unidades de contenedor y no en «vw» a propósito: «vw» incluye la
+   barra de desplazamiento y dejaría la altura un 1 % larga, que es justo el
+   recorte que se quiere evitar. */
+@media (min-width:1440px){
+  .pr-hero{min-height:0}
+  .pr-hero .hero__inner{
+    min-height:40.41667cqw;                                  /* 582  */
+    padding-top:28.78472cqw;padding-bottom:1.66667cqw;       /* 414,5 y 24 */
+  }
+  .pr-hero .hero__title{font-size:5.63194cqw}                /* 81,1 */
+  .pr-hero .hero__sub{margin-top:.64583cqw;font-size:1.94444cqw}  /* 9,3 y 28 */
+}
 
 /* ------------------------------------------------------------ ACREDITACIÓN
    Texto a la izquierda (x=113) y fotografía a la derecha: x=566 → 1340, y=712
