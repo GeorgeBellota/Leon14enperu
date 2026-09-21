@@ -52,10 +52,15 @@
 .pr-hero .hero__sub strong{font-weight:600}
 
 /* ------------------------------------------------------------ ACREDITACIÓN
-   Texto a la izquierda (x=113) y fotografía a la derecha (x=565,5 · 775x473). */
+   Texto a la izquierda (x=113) y fotografía a la derecha: x=566 → 1340, y=712
+   → 1184, o sea 774 x 472. El editable anterior daba 775 x 473 empezando en
+   565,5; es la misma diferencia de redondeo que en Multimedia.
+
+   La fotografía es MÁS ANCHA que su columna a propósito: en la mesa se sale
+   diez píxeles por la derecha de la caja de 1218. */
 .pr-acred{padding-top:calc(125 * var(--u))}
 .pr-acred__grid{
-  display:grid;grid-template-columns:calc(454.5 * var(--u)) minmax(0,1fr);
+  display:grid;grid-template-columns:calc(453.5 * var(--u)) minmax(0,1fr);
   align-items:start;
 }
 /* El respiro de la derecha no está en el editable porque allí el texto es más
@@ -79,11 +84,11 @@
 .pr-acred__copy p+p{margin-top:1.1em}
 
 .pr-acred__foto{
-  width:calc(775 * var(--u));margin-top:calc(4.5 * var(--u));
+  width:calc(774 * var(--u));margin-top:calc(5.25 * var(--u));
   box-shadow:var(--shadow-soft);
 }
 .pr-acred__foto img{
-  width:100%;height:calc(473 * var(--u));object-fit:cover;object-position:50% 50%;
+  width:100%;height:calc(472 * var(--u));object-fit:cover;object-position:50% 50%;
 }
 
 /* ------------------------------------------ USO DE IMÁGENES Y DEL ESCUDO
@@ -132,15 +137,20 @@
 .pr-usos__lista .datalist__row:nth-child(4) .datalist__val{padding-top:calc(35.47 * var(--u))}
 
 /* ---------------------------------------------------------------- BOTONERA
-   El editable nuevo pone dos botones en la misma línea (y=1863,6, alto 49,8),
-   uno en cada extremo de la caja de 1218:
+   El editable nuevo pone dos botones en la misma línea, uno en cada extremo de
+   la caja de 1218. Medidas de la mesa, tomadas de los rectángulos —no de la
+   tinta de las letras, que lleva sus márgenes laterales—:
 
-     «Programa oficial»  x  113 → 451  (338 de ancho, con icono dorado)
-     «Contacto»          x 1059 → 1330 (271, el mínimo de siempre)
+     fila                y 1863,6 → 1913,4  (49,8 de alto)
+     «Programa oficial»  x  113   →  451    (338), icono dorado de 27,4
+     «Contacto»          x 1059   → 1330    (271)
 
-   Van separados por los extremos y no por un hueco fijo, que es lo que los
-   deja clavados ahí sean cuales sean sus rótulos. */
-.pr-cta{padding-top:calc(72.8 * var(--u))}
+   El hueco entre la última regla de la lista (que cierra en y=1790) y la fila
+   es de 73,6.
+
+   Van separados por los extremos y no por un hueco fijo, que es lo que los deja
+   clavados ahí sean cuales sean sus rótulos. */
+.pr-cta{padding-top:calc(73.6 * var(--u))}
 .pr-cta__fila{
   display:flex;flex-wrap:wrap;align-items:center;
   justify-content:space-between;gap:calc(24 * var(--u));
@@ -150,14 +160,30 @@
 .pr-cta__fila:has(> :only-child){justify-content:center}
 /* El rótulo del botón sale del panel. Con medidas fijas, «Contacto para
    medios» se saldría de la caja, así que la caja es el MÍNIMO del editable y
-   crece con el texto. Con «Contacto» (151 px a cuerpo 31,99) manda el mínimo
-   y el botón mide los 272 x 50,8 de la mesa de trabajo. */
+   crece con el texto. Con «Contacto» manda el mínimo y el botón mide los
+   271 x 49,8 de la mesa de trabajo. */
 .pr-cta__btn{
   display:inline-flex;align-items:center;justify-content:center;
-  width:fit-content;max-width:100%;min-width:calc(272 * var(--u));
-  min-height:calc(50.8 * var(--u));
-  padding:0 calc(17.5 * var(--u));gap:calc(11.3 * var(--u));
+  width:fit-content;max-width:100%;min-width:calc(271 * var(--u));
+  min-height:calc(49.8 * var(--u));
+  padding:0 calc(17.5 * var(--u));
   font-size:calc(31.99 * var(--u));line-height:1.1;color:#EDEDED;
+}
+/* ── El botón con icono no va centrado ────────────────────────────────────
+   En el editable su contenido se apoya a la izquierda: el icono empieza a 18,6
+   del borde y la tinta del rótulo a 57,3. Centrarlo dejaba el icono 1,6 px a la
+   izquierda de su sitio y la caja 4,9 px más ancha de la cuenta, porque el
+   navegador reparte por la caja de AVANCE de las letras y el editable coloca
+   por su tinta, y entre una y otra hay 4,8 px de márgenes laterales.
+
+   Con estos tres valores la caja sale por suma —18,6 + 27,4 + 9,3 + 269,2 (el
+   avance del rótulo) + 13,5 = 338— y coincide con el mínimo, así que mide
+   exactamente lo de la mesa; un rótulo más largo la sigue estirando. */
+.pr-cta__btn--descarga{
+  justify-content:flex-start;
+  min-width:calc(338 * var(--u));
+  padding-left:calc(18.6 * var(--u));padding-right:calc(13.5 * var(--u));
+  gap:calc(9.3 * var(--u));
 }
 /* El icono va dorado y el rótulo claro, como en el editable: son dos colores
    distintos dentro del mismo botón, así que el trazo tira de «color» propio. */
@@ -167,21 +193,27 @@
 }
 
 /* -------------------------------------------------------------- MULTIMEDIA
-   Tres marcos de 379,2 x 253,4 con 40,2 de separación (x=112,5 · y=2113,5). */
+   Tres marcos de 378,5 x 252,5 con 41,2 de separación, de x=113 a x=1330 y de
+   y=2114 a y=2366,5.
+
+   Las cifras son las del editable de septiembre de 2026. El anterior daba
+   379,2 x 253,4 con 40,2 de hueco y los marcos un píxel más arriba: no es un
+   cambio de diseño, son dos exportaciones del mismo dibujo que no redondean
+   igual. Manda el editable que hay encima de la mesa. */
 .pr-multimedia{padding-top:calc(73.8 * var(--u));padding-bottom:calc(92.75 * var(--u))}
 .pr-multi__grid{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  column-gap:calc(40.2 * var(--u));row-gap:calc(40.2 * var(--u));
-  margin-top:calc(48.8 * var(--u));
+  column-gap:calc(41.2 * var(--u));row-gap:calc(41.2 * var(--u));
+  margin-top:calc(49.8 * var(--u));
 }
 .pr-multi__marco{
-  aspect-ratio:379.2 / 253.4;background:#1C1416;
+  aspect-ratio:378.53 / 252.5;background:#1C1416;
   display:grid;place-items:center;overflow:hidden;
 }
 .pr-multi__ico{width:29.14%;height:auto}
 /* En el editable los marcos van vacíos, con el icono centrado. Cuando el
    panel sube una fotografía, llena el marco entero conservando el encuadre
-   del editable (379,2 x 253,4). */
+   del editable (378,5 x 252,5). */
 .pr-multi__marco picture{display:block;width:100%;height:100%}
 .pr-multi__marco img{width:100%;height:100%;object-fit:cover}
 .pr-multi__pie{
@@ -284,6 +316,10 @@
     width:fit-content;min-width:240px;max-width:100%;
     height:auto;min-height:0;padding:.34em 1.4em;gap:.5em;font-size:clamp(17px,2.4vw,32px);
   }
+  /* Fuera de la mesa de 1440 el botón ya no mide lo que dice el editable, así
+     que su contenido vuelve al centro: apoyado a la izquierda, con el botón a
+     todo el ancho del teléfono, el rótulo quedaba descolgado. */
+  .pr-cta__btn--descarga{justify-content:center;min-width:240px}
   .pr-cta__btn .ico-baja{width:1.05em;height:1.05em}
 
   .pr-multimedia{padding-top:clamp(44px,6.4vw,78px);padding-bottom:clamp(44px,6.4vw,84px)}

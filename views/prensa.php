@@ -281,7 +281,7 @@ ob_start(); ?>
           $conIcono   = is_array($datosBoton)
               && strcasecmp(trim((string) ($datosBoton['icono'] ?? '')), 'descarga') === 0;
           ?>
-          <a class="btn pr-cta__btn" href="<?= $esc($destino) ?>"<?= $sitio->esExterno($destino) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>
+          <a class="btn pr-cta__btn<?= $conIcono ? ' pr-cta__btn--descarga' : '' ?>" href="<?= $esc($destino) ?>"<?= $sitio->esExterno($destino) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>
             <?php if ($conIcono): ?>
               <svg class="ico-baja" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M12 1.2v16.6M7.4 13.2 12 17.8l4.6-4.6" fill="none" stroke="currentColor"
