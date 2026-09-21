@@ -91,6 +91,20 @@ final class Menu
     }
 
     /**
+     * Los enlaces sueltos de la banda del pie, mientras nadie haya elegido.
+     *
+     * Son las páginas que el diseño no pone en el menú pero a las que tiene
+     * que haber un camino. Sólo salen con el pie en modo simple: en el
+     * completo ya están dentro de las columnas.
+     *
+     * @return list<string>
+     */
+    public static function porDefectoPie(): array
+    {
+        return ['preguntas-frecuentes', 'logo-y-lema', 'santos'];
+    }
+
+    /**
      * Claves guardadas → claves de hoy.
      *
      * Hace tres cosas, y las tres hacen falta:

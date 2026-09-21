@@ -5,6 +5,7 @@
  * @var array<string,string> $paginas
  * @var string $inicio
  * @var array  $visibles
+ * @var array  $pieEnlaces
  * @var string $pie
  * @var string $inicioViaje
  * @var string $finViaje
@@ -188,6 +189,28 @@ $estaVisible = static fn (string $clave): bool => in_array($clave, $visibles, tr
       El copyright se muestra siempre: es la única línea del pie que cumple una función
       legal y no de navegación.
     </p>
+
+    <header class="tarjeta__cabecera sep-m"><h3>Enlaces de la banda</h3></header>
+
+    <p class="vacio">
+      Van debajo del copyright, en una sola línea. Son para las páginas que no están en
+      el menú y a las que conviene dejar un camino. Si no marcas ninguna, la banda se
+      queda sólo con el copyright.
+    </p>
+
+    <p class="campo__ayuda">
+      Sólo aparecen con el pie en «Sólo el copyright» o en las internas. Con el pie
+      completo no se pintan: esas páginas ya están dentro de las columnas.
+    </p>
+
+    <div class="lista-casillas sep-m">
+      <?php foreach ($paginas as $clave => $rotulo): ?>
+        <label class="interruptor">
+          <input type="checkbox" name="pie_enlaces[]" value="<?= $e($clave) ?>"<?= in_array($clave, $pieEnlaces, true) ? ' checked' : '' ?>>
+          <span><?= $e($rotulo) ?></span>
+        </label>
+      <?php endforeach; ?>
+    </div>
   </section>
 
   <?php /* ── Transmisión en directo ───────────────────────────────────────

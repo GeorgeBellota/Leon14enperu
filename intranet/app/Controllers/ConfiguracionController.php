@@ -64,12 +64,22 @@ final class ConfiguracionController extends Controller
             $visibles = Menu::porDefecto();
         }
 
+        /* Los enlaces sueltos de la banda del pie. Aquí null y cadena vacía NO
+           son lo mismo: null es «nunca se ha configurado» y se marcan los tres
+           del diseño, que es lo que la web enseña; vacío es «ninguno», y
+           entonces no se marca nada. Ver assets/parciales/pie.php. */
+        $pieGuardado = $ajustes->leer('pie.enlaces');
+        $pieEnlaces  = $pieGuardado === null
+            ? Menu::porDefectoPie()
+            : Menu::normalizar(explode(',', $pieGuardado));
+
         $this->ver('configuracion/panel', [
-            'titulo'   => 'Configuración general',
-            'paginas'  => self::paginasDelMenu(),
-            'inicio'   => (string) $ajustes->leer('sitio.pagina_inicio', 'home'),
-            'visibles' => $visibles,
-            'pie'      => (string) $ajustes->leer('pie.modo', 'completo'),
+            'titulo'     => 'Configuración general',
+            'paginas'    => self::paginasDelMenu(),
+            'inicio'     => (string) $ajustes->leer('sitio.pagina_inicio', 'home'),
+            'visibles'   => $visibles,
+            'pie'        => (string) $ajustes->leer('pie.modo', 'completo'),
+            'pieEnlaces' => $pieEnlaces,
 
             // Las fechas llegan al formulario en el formato que entiende
             // <input type="datetime-local">: «2026-11-11T00:00». En la base se
@@ -159,6 +169,15 @@ final class ConfiguracionController extends Controller
         if (!in_array($pie, ['completo', 'simple', 'simple_en_internas'], true)) {
             $pie = 'completo';
         }
+
+        /* Los enlaces sueltos de la banda. Aquí sí se admite no marcar
+           ninguno: a diferencia del menú, un pie sin estos enlaces no deja el
+           sitio sin navegación, sólo con el copyright, que es un modo
+           legítimo. Se escribe siempre, aunque sea vacío: esa cadena vacía es
+           la que le dice al pie «los quiero fuera» en lugar de «todavía no lo
+           has tocado». */
+        $pieEnlaces = $peticion->post('pie_enlaces', []);
+        $pieEnlaces = Menu::normalizar(is_array($pieEnlaces) ? $pieEnlaces : []);
 
         // ── Logotipo ────────────────────────────────────────────────────
         // Se resuelve ANTES de guardar los ajustes: si la imagen se rechaza,
@@ -260,6 +279,7 @@ final class ConfiguracionController extends Controller
            dieciséis marcadas habría enseñado nueve. */
         $ajustes->escribir('menu.visibles', implode(',', $marcadas));
         $ajustes->escribir('pie.modo', $pie);
+        $ajustes->escribir('pie.enlaces', implode(',', $pieEnlaces));
         $ajustes->escribir('viaje.inicio', $inicioViaje);
         $ajustes->escribir('viaje.fin', $finViaje);
         $ajustes->escribir('sitio.fase', $fase);
@@ -272,6 +292,7 @@ final class ConfiguracionController extends Controller
             'pagina_inicio' => $inicio,
             'menu'          => implode(',', $marcadas),
             'pie'           => $pie,
+            'pie_enlaces'   => implode(',', $pieEnlaces) ?: '(ninguno)',
             'viaje_inicio'  => $inicioViaje,
             'viaje_fin'     => $finViaje,
             'fase'          => $fase,

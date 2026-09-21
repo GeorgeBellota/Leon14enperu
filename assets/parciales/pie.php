@@ -75,14 +75,46 @@ $columnas = [
     ],
 ];
 
-/* Los enlaces sueltos de la banda: las páginas que el diseño no pone en el
-   menú pero a las que tiene que haber un camino. Si el pie va en modo
-   completo, sobran: ya están en las columnas. */
-$sueltos = [
-    'preguntas-frecuentes/' => 'Preguntas frecuentes',
-    'logo-y-lema/'          => 'Logo y lema',
-    'santos/'               => 'Santos del Perú',
-];
+/* ── Los enlaces sueltos de la banda ──────────────────────────────────────
+   Las páginas que el diseño no pone en el menú pero a las que tiene que
+   haber un camino. Si el pie va en modo completo sobran: ya están en las
+   columnas.
+
+   Cuáles son se elige en Configuración → Pie de página, del mismo catálogo
+   que el menú. Estaban escritos aquí a fuego, sin forma de quitarlos ni de
+   cambiarlos desde el panel.
+
+   El ajuste distingue tres estados, y los tres hacen falta:
+
+     null   nunca se ha configurado → los tres del diseño
+     ''     se configuró a ninguno  → la banda se queda sólo con el copyright
+     resto  las claves elegidas
+
+   Sin esa distinción, «todavía no lo has tocado» y «lo has apagado» serían
+   lo mismo, y no habría manera de dejar la banda limpia. */
+$sueltos = [];
+
+if (!$pieCompleto) {
+    $guardado = null;
+
+    if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
+        try {
+            $guardado = $sitio->catalogo()->ajuste('pie.enlaces');
+        } catch (\Throwable $e) {
+            error_log('[pie] no se pudo leer pie.enlaces: ' . $e->getMessage());
+        }
+    }
+
+    $claves = $guardado === null
+        ? \Intranet\Publico\Menu::porDefectoPie()
+        : \Intranet\Publico\Menu::normalizar(explode(',', $guardado));
+
+    $catalogoPie = \Intranet\Publico\Menu::catalogo();
+
+    foreach ($claves as $clave) {
+        $sueltos[$clave . '/'] = $catalogoPie[$clave];
+    }
+}
 ?>
 <footer class="site-footer<?= $pieCompleto ? ' site-footer--completo' : '' ?>">
   <div class="container site-footer__inner">
@@ -113,7 +145,10 @@ $sueltos = [
 
     <p class="site-footer__legal">leon14enperu.com · Viaje apostólico de Su Santidad el Papa León XIV al Perú, 11–16 de noviembre de 2026.</p>
 
-    <?php if (!$pieCompleto): ?>
+    <?php /* Sin enlaces elegidos no se escribe ni el <nav>: un contenedor de
+             navegación vacío es ruido para un lector de pantalla, que lo
+             anuncia y no encuentra nada dentro. */ ?>
+    <?php if ($sueltos !== []): ?>
       <nav class="site-footer__links" aria-label="Enlaces complementarios">
         <?php foreach ($sueltos as $destino => $rotulo): ?>
           <a href="<?= $esc($raiz . $destino) ?>"<?= rtrim($destino, '/') === ($activa ?? '') ? ' aria-current="page"' : '' ?>><?= $esc($rotulo) ?></a>
