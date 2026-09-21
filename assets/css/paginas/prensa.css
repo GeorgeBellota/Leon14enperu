@@ -131,18 +131,39 @@
 .pr-usos__lista .datalist__row:nth-child(4) .datalist__key{padding-top:calc(31.5 * var(--u))}
 .pr-usos__lista .datalist__row:nth-child(4) .datalist__val{padding-top:calc(35.47 * var(--u))}
 
-/* ---------------------------------------------------------------- CONTACTO
-   Botón de 272 x 50,8 centrado en la mesa (x=584, y=1863,1). */
+/* ---------------------------------------------------------------- BOTONERA
+   El editable nuevo pone dos botones en la misma línea (y=1863,6, alto 49,8),
+   uno en cada extremo de la caja de 1218:
+
+     «Programa oficial»  x  113 → 451  (338 de ancho, con icono dorado)
+     «Contacto»          x 1059 → 1330 (271, el mínimo de siempre)
+
+   Van separados por los extremos y no por un hueco fijo, que es lo que los
+   deja clavados ahí sean cuales sean sus rótulos. */
 .pr-cta{padding-top:calc(72.8 * var(--u))}
+.pr-cta__fila{
+  display:flex;flex-wrap:wrap;align-items:center;
+  justify-content:space-between;gap:calc(24 * var(--u));
+}
+/* Con un solo botón —que es lo que había antes de este editable, y lo que
+   quedará si alguien quita uno en el panel— vuelve al centro. */
+.pr-cta__fila:has(> :only-child){justify-content:center}
 /* El rótulo del botón sale del panel. Con medidas fijas, «Contacto para
    medios» se saldría de la caja, así que la caja es el MÍNIMO del editable y
    crece con el texto. Con «Contacto» (151 px a cuerpo 31,99) manda el mínimo
    y el botón mide los 272 x 50,8 de la mesa de trabajo. */
 .pr-cta__btn{
-  display:flex;margin-inline:auto;
+  display:inline-flex;align-items:center;justify-content:center;
   width:fit-content;max-width:100%;min-width:calc(272 * var(--u));
   min-height:calc(50.8 * var(--u));
-  padding:0 calc(16 * var(--u));font-size:calc(31.99 * var(--u));line-height:1.1;color:#EDEDED;
+  padding:0 calc(17.5 * var(--u));gap:calc(11.3 * var(--u));
+  font-size:calc(31.99 * var(--u));line-height:1.1;color:#EDEDED;
+}
+/* El icono va dorado y el rótulo claro, como en el editable: son dos colores
+   distintos dentro del mismo botón, así que el trazo tira de «color» propio. */
+.pr-cta__btn .ico-baja{
+  width:calc(27.4 * var(--u));height:calc(27.4 * var(--u));
+  flex:0 0 auto;color:#E39D15;
 }
 
 /* -------------------------------------------------------------- MULTIMEDIA
@@ -256,10 +277,14 @@
   }
 
   .pr-cta{padding-top:clamp(30px,4.4vw,56px)}
+  /* Aquí no hay ancho que repartir: los botones se juntan en el centro en vez
+     de irse a los extremos de una caja estrecha. */
+  .pr-cta__fila{justify-content:center;gap:clamp(12px,2vw,22px)}
   .pr-cta__btn{
     width:fit-content;min-width:240px;max-width:100%;
-    height:auto;min-height:0;padding:.34em 1.4em;font-size:clamp(17px,2.4vw,32px);
+    height:auto;min-height:0;padding:.34em 1.4em;gap:.5em;font-size:clamp(17px,2.4vw,32px);
   }
+  .pr-cta__btn .ico-baja{width:1.05em;height:1.05em}
 
   .pr-multimedia{padding-top:clamp(44px,6.4vw,78px);padding-bottom:clamp(44px,6.4vw,84px)}
   /* Dos marcos por fila; el tercero queda solo y se centra con la rejilla de 4
@@ -289,5 +314,8 @@
   .pr-multi__grid{grid-template-columns:1fr;max-width:420px;margin-inline:auto}
   .pr-multi__grid>li,
   .pr-multi__grid>li:last-child{grid-column:auto}
+  /* Dos botones a lo ancho de un teléfono dejan rótulos partidos en tres
+     renglones: se apilan, cada uno entero y de la misma anchura. */
+  .pr-cta__fila{flex-direction:column;align-items:center}
   .pr-cta__btn{width:100%;max-width:340px}
 }
