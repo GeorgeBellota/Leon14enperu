@@ -53,30 +53,73 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
        El carrusel de la portada. Cada lámina se edita en
        Páginas → Inicio → Carrusel principal.
 
-       El editable dibuja una sola fotografía con tres marcas de paso, así
-       que si en el panel hay una lámina se ve una y las marcas no aparecen;
-       con dos o más, el carrusel gira solo cada siete segundos. */ ?>
+       Si en el panel hay una lámina se ve una y las marcas no aparecen; con
+       dos o más, el carrusel gira solo cada siete segundos.
+
+       ── Cada lámina trae lo suyo ──────────────────────────────────────────
+       Antes la fotografía y el botón salían siempre de la PRIMERA lámina:
+       sólo cambiaba el titular. La segunda lámina del editable de 2026 es
+       otra composición entera —otra foto, otro titular y un botón dorado a la
+       derecha en lugar del granate a la izquierda—, así que la foto y el
+       botón pasan a ser de cada lámina.
+
+       El reparto lo decide «datos.diseno» del bloque:
+         (vacío)     la composición de siempre, con el botón «En directo».
+         «programa»  la lámina «Preparémonos», con el botón dorado de descarga.
+
+       Quien no elija foto en el panel hereda la de la primera lámina, que es
+       justo lo que hacían las tres antes de este cambio. */ ?>
   <?php
   $laminas = $bloques('hero', [
       ['titulo' => 'Papa León XIV,', 'texto' => 'le esperamos.'],
-      ['titulo' => 'Abramos',        'texto' => 'el corazón.'],
+      ['titulo' => 'Preparémonos',   'texto' => 'para recibirlo.',
+       'enlace_texto' => 'Programa Oficial', 'enlace_url' => 'agenda/',
+       'datos' => ['diseno' => 'programa']],
       ['titulo' => 'Del 11 al 16',   'texto' => 'de noviembre.'],
   ]);
   $primera = $laminas[0] ?? [];
+
+  /* El diseño de una lámina, tal como lo guarda el panel: `datos` llega como
+     texto JSON desde MySQL y ya como arreglo cuando es un valor de reserva. */
+  $disenoDe = static function (array $lamina): string {
+      $datos = $lamina['datos'] ?? null;
+      $datos = is_string($datos) ? json_decode($datos, true) : $datos;
+
+      return is_array($datos) ? (string) ($datos['diseno'] ?? '') : '';
+  };
   ?>
   <section class="hero hero--home"<?= count($laminas) > 1 ? ' data-slider' : '' ?>
            aria-roledescription="carrusel" aria-label="Destacados">
     <div class="hero__media">
-      <?php
-      ob_start(); ?>
-      <picture>
-        <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero.webp')) ?>" type="image/webp">
-        <img src="<?= $esc($sitio->asset('assets/img/rediseno/index/hero.jpg')) ?>"
-             alt="El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú"
-             width="2880" height="932" fetchpriority="high" decoding="async">
-      </picture>
-      <?php $respaldoHero = (string) ob_get_clean(); ?>
-      <?= $sitio->imagen($primera, $respaldoHero, ['sizes' => '100vw', 'prioridad' => true]) ?>
+      <?php foreach ($laminas as $i => $lamina): ?>
+        <?php
+        /* El respaldo —lo que se ve si MySQL no responde— también es propio de
+           cada lámina: la de «Preparémonos» no puede caer en la fotografía del
+           papamóvil, que es la que ilustra otra frase. */
+        $esPrograma = $disenoDe($lamina) === 'programa';
+        $archivo = $esPrograma ? 'hero-programa' : 'hero';
+        $alt = $esPrograma
+            ? 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV'
+            : 'El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú';
+        ob_start(); ?>
+        <picture>
+          <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.webp')) ?>" type="image/webp">
+          <img src="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.jpg')) ?>"
+               alt="<?= $esc($alt) ?>" width="2880" height="932"
+               <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?> decoding="async">
+        </picture>
+        <?php $respaldoHero = (string) ob_get_clean(); ?>
+        <?php /* Sólo la primera fotografía se anuncia. Las otras acompañan a un
+                 titular que ya lo dice todo, y leerlas seguidas sería ruido. */ ?>
+        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
+             data-slide-foto<?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
+          <?= $sitio->imagen(
+              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma ? [] : $primera),
+              $respaldoHero,
+              ['sizes' => '100vw', 'prioridad' => $i === 0]
+          ) ?>
+        </div>
+      <?php endforeach; ?>
     </div>
 
     <?php /* El emblema de la Conferencia Episcopal, en negativo. Decorativo:
@@ -85,38 +128,77 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
          alt="" aria-hidden="true" width="600" height="625" decoding="async">
 
     <div class="hero-home__inner">
-      <div class="hero-home__slides">
+      <div class="hero-home__slides" id="hero-laminas">
         <?php foreach ($laminas as $i => $lamina): ?>
-          <div class="hero-home__slide<?= $i === 0 ? ' is-active' : '' ?>" data-slide<?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
-            <?php $Etiqueta = $i === 0 ? 'h1' : 'p'; ?>
+          <?php
+          $diseno = $disenoDe($lamina);
+          $rotulo = (string) ($lamina['enlace_texto'] ?? '')
+              ?: ($diseno === 'programa' ? 'Programa Oficial' : 'En directo');
+          $url = (string) ($lamina['enlace_url'] ?? '')
+              ?: $sitio->enlace($diseno === 'programa' ? 'agenda/' : 'en-directo/');
+          $Etiqueta = $i === 0 ? 'h1' : 'p';
+          ?>
+          <div class="hero-home__slide<?= $i === 0 ? ' is-active' : '' ?>"
+               data-slide<?= $diseno !== '' ? ' data-diseno="' . $esc($diseno) . '"' : '' ?><?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
             <<?= $Etiqueta ?> class="hero-home__title">
               <span class="hero-home__t1"><?= $esc((string) ($lamina['titulo'] ?? '')) ?></span>
               <span class="hero-home__t2"><?= $esc((string) ($lamina['texto'] ?? '')) ?></span>
             </<?= $Etiqueta ?>>
+
+            <?php if ($diseno === 'programa'): ?>
+              <a class="btn hero-home__programa" href="<?= $esc($url) ?>">
+                <svg class="ico-baja" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 1.2v16.6M7.4 13.2 12 17.8l4.6-4.6" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1.2 11.7v11.1h21.6V11.7" fill="none" stroke="currentColor"
+                        stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span><?= $esc($rotulo) ?></span>
+              </a>
+            <?php else: ?>
+              <a class="btn hero-home__live" href="<?= $esc($url) ?>">
+                <svg class="ico-live" viewBox="0 0 44 24" width="44" height="24" aria-hidden="true" focusable="false">
+                  <path d="M8.2 3.4C5.6 6 4.1 9.4 4.1 12s1.5 6 4.1 8.6M12.4 6.5c-1.7 1.7-2.6 4-2.6 5.5s.9 3.8 2.6 5.5M35.8 3.4C38.4 6 39.9 9.4 39.9 12s-1.5 6-4.1 8.6M31.6 6.5c1.7 1.7 2.6 4 2.6 5.5s-.9 3.8-2.6 5.5"
+                        fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                  <circle cx="22" cy="12" r="4.2" fill="currentColor"/>
+                </svg>
+                <span><?= $esc($rotulo) ?></span>
+              </a>
+            <?php endif; ?>
           </div>
         <?php endforeach; ?>
       </div>
 
-      <?php
-      $enlaceTexto = (string) ($primera['enlace_texto'] ?? '') ?: 'En directo';
-      $enlaceUrl   = (string) ($primera['enlace_url'] ?? '') ?: $sitio->enlace('en-directo/');
-      ?>
-      <a class="btn hero-home__live" href="<?= $esc($enlaceUrl) ?>">
-        <svg class="ico-live" viewBox="0 0 44 24" width="44" height="24" aria-hidden="true" focusable="false">
-          <path d="M8.2 3.4C5.6 6 4.1 9.4 4.1 12s1.5 6 4.1 8.6M12.4 6.5c-1.7 1.7-2.6 4-2.6 5.5s.9 3.8 2.6 5.5M35.8 3.4C38.4 6 39.9 9.4 39.9 12s-1.5 6-4.1 8.6M31.6 6.5c1.7 1.7 2.6 4 2.6 5.5s-.9 3.8-2.6 5.5"
-                fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-          <circle cx="22" cy="12" r="4.2" fill="currentColor"/>
-        </svg>
-        <span><?= $esc($enlaceTexto) ?></span>
-      </a>
-
+      <?php /* Mando del carrusel: las dos flechas y las marcas de paso. La marca
+               activa lleva dentro la cuenta de los siete segundos, así que el
+               salto se ve venir en lugar de sorprender. */ ?>
       <?php if (count($laminas) > 1): ?>
-        <div class="hero-home__dots dots" role="tablist" aria-label="Elegir destacado">
-          <?php foreach ($laminas as $i => $lamina): ?>
-            <button type="button" data-slide-dot<?= $i === 0 ? ' class="is-active"' : '' ?>
-                    role="tab" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>"
-                    aria-label="Destacado <?= $i + 1 ?>"></button>
-          <?php endforeach; ?>
+        <div class="hero-home__nav">
+          <button class="hero-home__arrow" type="button" data-slide-prev
+                  aria-controls="hero-laminas" aria-label="Destacado anterior">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="hero-home__dots" role="tablist" aria-label="Elegir destacado">
+            <?php foreach ($laminas as $i => $lamina): ?>
+              <button class="hero-dot<?= $i === 0 ? ' is-active' : '' ?>" type="button" data-slide-dot
+                      role="tab" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>"
+                      aria-label="Destacado <?= $i + 1 ?>">
+                <span class="hero-dot__track"><span class="hero-dot__fill"></span></span>
+              </button>
+            <?php endforeach; ?>
+          </div>
+
+          <button class="hero-home__arrow" type="button" data-slide-next
+                  aria-controls="hero-laminas" aria-label="Destacado siguiente">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m9 4 8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       <?php endif; ?>
     </div>

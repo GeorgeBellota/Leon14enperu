@@ -151,32 +151,116 @@
     var slider = $("[data-slider]");
     if (!slider) return;
     var slides = $$("[data-slide]", slider);
+    var fotos = $$("[data-slide-foto]", slider);
     var dots = $$("[data-slide-dot]", slider);
+    var btnPrev = $("[data-slide-prev]", slider);
+    var btnNext = $("[data-slide-next]", slider);
     if (slides.length < 2) return;
     var i = 0, timer = null;
     var DELAY = 7000;
+    var quieto = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-    function go(n) {
+    /* La barra de la marca activa la dibuja el CSS; el tiempo lo pone aquí para
+       que salga del mismo número que el temporizador. */
+    slider.style.setProperty("--hero-paso", (DELAY / 1000) + "s");
+
+    /* Reiniciar una animación CSS exige quitarla, forzar el reflujo leyendo una
+       medida y devolverla: si no, el navegador no la ve como nueva y la barra
+       se queda llena desde el segundo salto. */
+    function reiniciarCuenta(dot) {
+      var barra = dot && dot.querySelector(".hero-dot__fill");
+      if (!barra) return;
+      barra.style.animation = "none";
+      void barra.offsetWidth;
+      barra.style.animation = "";
+    }
+
+    /* «sentido» vale 1 hacia delante y -1 hacia atrás; de él salen el lado por
+       el que entra la lámina nueva y el lado por el que se va la anterior. */
+    function go(n, sentido) {
+      var previo = i;
       i = (n + slides.length) % slides.length;
+      if (sentido) slider.setAttribute("data-dir", sentido > 0 ? "next" : "prev");
+
       slides.forEach(function (s, k) {
         s.classList.toggle("is-active", k === i);
+        s.classList.toggle("is-leaving", k === previo && previo !== i);
         s.setAttribute("aria-hidden", k === i ? "false" : "true");
       });
+      /* Cada lámina trae su fotografía. Si hay menos fotos que láminas —porque
+         el marcado sea el antiguo, con una sola— no se toca nada y el fondo se
+         queda fijo, que es como se comportaba antes. */
+      if (fotos.length === slides.length) {
+        fotos.forEach(function (f, k) { f.classList.toggle("is-active", k === i); });
+      }
       dots.forEach(function (d, k) {
         d.classList.toggle("is-active", k === i);
         d.setAttribute("aria-selected", k === i ? "true" : "false");
+        if (k === i) reiniciarCuenta(d);
       });
     }
-    function play()  { stop(); timer = setInterval(function () { go(i + 1); }, DELAY); }
+    function play()  { stop(); if (!quieto) timer = setInterval(function () { go(i + 1, 1); }, DELAY); }
     function stop()  { if (timer) { clearInterval(timer); timer = null; } }
 
+    /* Al mover a mano se vuelve a contar desde cero: nadie pierde la lámina que
+       acaba de pedir porque al temporizador le quedaba medio segundo. */
+    function irA(n, sentido) {
+      go(n, sentido);
+      if (!enPausa) play();
+    }
+
+    /* El cursor encima y el foco dentro paran la cuenta. Se guardan por separado
+       porque se solapan: sacar el ratón mientras el foco sigue en una flecha no
+       tiene que reanudar nada. */
+    var raton = false, foco = false, enPausa = false;
+    function revisarPausa() {
+      var debe = raton || foco;
+      if (debe === enPausa) return;
+      enPausa = debe;
+      slider.classList.toggle("esta-en-pausa", debe);
+      if (debe) { stop(); } else { reiniciarCuenta(dots[i]); play(); }
+    }
+
     dots.forEach(function (d, k) {
-      d.addEventListener("click", function () { go(k); play(); });
+      d.addEventListener("click", function () { if (k !== i) irA(k, k > i ? 1 : -1); });
     });
-    slider.addEventListener("mouseenter", stop);
-    slider.addEventListener("mouseleave", play);
-    go(0);
-    if (!window.matchMedia("(prefers-reduced-motion:reduce)").matches) play();
+    if (btnPrev) btnPrev.addEventListener("click", function () { irA(i - 1, -1); });
+    if (btnNext) btnNext.addEventListener("click", function () { irA(i + 1, 1); });
+
+    slider.addEventListener("mouseenter", function () { raton = true;  revisarPausa(); });
+    slider.addEventListener("mouseleave", function () { raton = false; revisarPausa(); });
+    slider.addEventListener("focusin",    function () { foco  = true;  revisarPausa(); });
+    /* Al tabular de una flecha a una marca, «focusout» salta antes que el
+       «focusin» siguiente: sin mirar a dónde va el foco, la cuenta se reanudaría
+       y volvería a pararse en el mismo golpe de tecla, y la barra parpadearía. */
+    slider.addEventListener("focusout", function (e) {
+      if (e.relatedTarget && slider.contains(e.relatedTarget)) return;
+      foco = false; revisarPausa();
+    });
+
+    slider.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft")  { e.preventDefault(); irA(i - 1, -1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); irA(i + 1, 1); }
+    });
+
+    /* Arrastre lateral en táctil. Se descarta si el recorrido vertical manda:
+       eso es alguien haciendo scroll, no cambiando de lámina. */
+    var x0 = null, y0 = null;
+    slider.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse") return;
+      x0 = e.clientX; y0 = e.clientY;
+    });
+    slider.addEventListener("pointerup", function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0, dy = e.clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) < 45 || Math.abs(dx) <= Math.abs(dy)) return;
+      irA(dx < 0 ? i + 1 : i - 1, dx < 0 ? 1 : -1);
+    });
+    slider.addEventListener("pointercancel", function () { x0 = null; });
+
+    go(0, 0);
+    play();
   }
 
   /* --------------------------------------------- Vídeos (carga diferida) */

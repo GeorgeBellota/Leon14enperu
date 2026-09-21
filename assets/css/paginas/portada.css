@@ -8,28 +8,65 @@
 .hero--home{
   position:relative;overflow:hidden;background:var(--wine);
   height:calc(466 * var(--u));
+  --ease-suave:cubic-bezier(.22,.61,.36,1);
 }
 .hero--home .hero__media{position:absolute;inset:0;z-index:0}
 .hero--home .hero__media img{width:100%;height:100%;object-fit:cover;object-position:var(--hero-focus,center)}
 
+/* Una fotografía por lámina, en capas superpuestas. La segunda lámina del
+   editable de 2026 es otra composición entera, no sólo otro titular, así que
+   el fondo también cambia; se funde con el mismo tiempo que el texto. */
+.hero-home__foto{
+  position:absolute;inset:0;
+  opacity:0;transition:opacity .68s var(--ease-suave);
+}
+.hero-home__foto.is-active{opacity:1}
+.hero-home__foto picture,.hero-home__foto>img{position:absolute;inset:0;display:block}
+
 .hero-home__escudo{
   position:absolute;z-index:2;
-  left:calc(1258 * var(--u));top:calc(68 * var(--u));
+  right:calc(86 * var(--u));top:calc(68 * var(--u));
   width:calc(96 * var(--u));height:auto;
 }
 
 .hero-home__inner{position:absolute;inset:0;z-index:3}
 
-.hero-home__slides{
+/* La lámina pasa a ser una capa del alto del héroe, no sólo la caja del
+   titular: dentro van el titular Y su botón, cada uno en el sitio que le da el
+   editable. Antes el botón vivía fuera y era siempre el mismo para las tres. */
+.hero-home__slides{position:absolute;inset:0}
+/* El cambio de lámina era seco: «visibility» no entraba en la transición, así
+   que la lámina saliente desaparecía de golpe y sólo se veía entrar a la nueva.
+   Ahora las dos se cruzan —la saliente aguanta visible hasta el final— y se
+   acompañan de un desplazamiento corto en el sentido de la marcha. */
+.hero-home__slide{
+  position:absolute;inset:0;
+  opacity:0;visibility:hidden;
+  transform:translate3d(0,calc(20 * var(--u)),0);
+  transition:opacity .68s var(--ease-suave),
+             transform .68s var(--ease-suave),
+             visibility 0s linear .68s;
+}
+.hero-home__slide.is-active{
+  opacity:1;visibility:visible;transform:none;
+  transition:opacity .68s var(--ease-suave),
+             transform .68s var(--ease-suave),
+             visibility 0s linear 0s;
+}
+/* Con las flechas hay un sentido de avance: la lámina entra por el lado hacia
+   el que se va y la anterior sale por el contrario. «is-leaving» sólo la lleva
+   la que acaba de dejar el sitio; las que esperan turno se quedan del lado de
+   entrada. */
+.hero--home[data-dir="next"] .hero-home__slide{transform:translate3d(calc(44 * var(--u)),0,0)}
+.hero--home[data-dir="prev"] .hero-home__slide{transform:translate3d(calc(-44 * var(--u)),0,0)}
+.hero--home[data-dir="next"] .hero-home__slide.is-leaving{transform:translate3d(calc(-44 * var(--u)),0,0)}
+.hero--home[data-dir="prev"] .hero-home__slide.is-leaving{transform:translate3d(calc(44 * var(--u)),0,0)}
+.hero--home[data-dir] .hero-home__slide.is-active{transform:none}
+.hero-home__title{
   position:absolute;right:calc(101.1 * var(--u));top:calc(291 * var(--u));
   width:calc(620 * var(--u));text-align:right;
+  font-family:"Neulis",sans-serif;font-weight:500;line-height:.887;margin:0;
 }
-.hero-home__slide{
-  position:absolute;right:0;top:0;width:100%;
-  opacity:0;visibility:hidden;transition:opacity .6s ease;
-}
-.hero-home__slide.is-active{opacity:1;visibility:visible;position:relative}
-.hero-home__title{font-family:"Neulis",sans-serif;font-weight:500;line-height:.887;margin:0}
 .hero-home__t1{display:block;font-size:calc(64.53 * var(--u));color:#EEEEEE}
 .hero-home__t2{display:block;font-size:calc(67.33 * var(--u));color:var(--gold)}
 
@@ -41,16 +78,118 @@
 }
 .ico-live{width:calc(44 * var(--u));height:calc(24 * var(--u));flex:0 0 auto}
 
-/* En el editable las tres marcas se solapan 4 px: forman una sola pieza continua. */
+/* ── Lámina «Preparémonos» (PORTADA 2 WEB.ai) ─────────────────────────────
+   Medidas del editable, artboard de 1440 × 465:
+
+     «Preparémonos»     Neulis Bold  60.82 pt, #E7A115, base en y 249
+     «para recibirlo.»  Neulis Med.  58.30 pt, #EEEEEE, base en y 303
+     botón              272 × 40 desde x 1067, y 329.7, fondo #E7A115
+
+   El interlineado sale de las dos bases: 54 pt entre ellas con esos dos
+   cuerpos son 0.92 de línea. Y el «top» de la caja sale de ahí mismo —con la
+   métrica de Neulis (asc .97, desc .335) la primera base cae 47.3 pt por
+   debajo del borde de la caja—, de modo que 249 − 47.3 ≈ 201. */
+.hero-home__slide[data-diseno="programa"] .hero-home__title{
+  top:calc(201 * var(--u));line-height:.92;
+}
+.hero-home__slide[data-diseno="programa"] .hero-home__t1{
+  font-weight:700;font-size:calc(60.82 * var(--u));color:var(--gold);
+}
+.hero-home__slide[data-diseno="programa"] .hero-home__t2{
+  font-weight:500;font-size:calc(58.3 * var(--u));color:#EEEEEE;
+}
+/* El botón del editable no tiene esquinas redondeadas ni degradado: es un
+   rectángulo dorado plano, y el texto va en el gris claro de la marca. */
+.hero-home__programa{
+  position:absolute;right:calc(101.1 * var(--u));top:calc(329.7 * var(--u));
+  min-width:calc(272 * var(--u));min-height:0;
+  width:calc(272 * var(--u));height:calc(40 * var(--u));
+  padding:0;gap:calc(8.2 * var(--u));font-size:calc(25.6 * var(--u));
+  background-image:none;background-color:var(--gold);color:#ECECEC;
+}
+.hero-home__programa:hover{background-color:#F2CA1D;color:var(--wine)}
+.ico-baja{width:calc(22.1 * var(--u));height:calc(22.1 * var(--u));flex:0 0 auto}
+
+/* ------------------------------------------------ MANDO DEL CARRUSEL (hero) */
+/* El editable dibuja tres pastillas negras de 47×32 solapadas 4 px. Sobre la
+   fotografía se leían como un bloque duro y el salto de negro a blanco no
+   avisaba de nada. Se conservan la fila centrada y su altura óptica —el centro
+   sigue en 431 px del editable— pero las marcas pasan a ser barras finas con la
+   cuenta del paso automático dentro, y la fila gana las dos flechas.
+
+   La barra ocupa todo el ancho de la fila, de modo que taparía la mitad baja
+   del botón «En directo»: sólo los controles reciben el cursor.
+
+   La sombra que despega los controles de la fotografía va en cada uno y no en
+   la fila: un «filter» en el padre abre un fondo nuevo para el pintado y dejaría
+   sin efecto el desenfoque de las flechas. */
+.hero-home__nav{
+  position:absolute;left:0;right:0;top:calc(408 * var(--u));z-index:4;
+  display:flex;align-items:center;justify-content:center;gap:calc(22 * var(--u));
+  pointer-events:none;
+}
+
+.hero-home__arrow{
+  flex:0 0 auto;pointer-events:auto;
+  display:grid;place-items:center;padding:0;cursor:pointer;
+  width:calc(46 * var(--u));height:calc(46 * var(--u));
+  border:1px solid rgba(255,255,255,.45);border-radius:50%;
+  background:rgba(18,4,7,.3);color:#EEEEEE;
+  box-shadow:0 calc(2 * var(--u)) calc(10 * var(--u)) rgba(0,0,0,.38);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:background-color .28s var(--ease-suave),border-color .28s var(--ease-suave),
+             color .28s var(--ease-suave),transform .28s var(--ease-suave);
+}
+.hero-home__arrow svg{display:block;width:calc(18 * var(--u));height:calc(18 * var(--u))}
+.hero-home__arrow:hover{background:var(--gold);border-color:var(--gold);color:var(--wine)}
+.hero-home__arrow:active{transform:scale(.93)}
+.hero-home__arrow:focus-visible{outline:3px solid #EEEEEE;outline-offset:3px}
+
 .hero-home__dots{
-  position:absolute;left:calc(653.2 * var(--u));top:calc(415 * var(--u));gap:0;
+  display:flex;align-items:center;gap:calc(4 * var(--u));pointer-events:auto;
 }
-.hero-home__dots button{
-  width:calc(47.2 * var(--u));height:calc(32 * var(--u));border-radius:calc(16 * var(--u));
-  background:rgba(0,0,0,.72);
+/* El botón es transparente y sólo aporta superficie de acierto (≈31 px de alto,
+   los mismos que ocupaba la pastilla del editable); lo que se ve es la barra. */
+.hero-dot{
+  display:block;padding:calc(12 * var(--u)) calc(5 * var(--u));
+  border:0;background:none;cursor:pointer;
 }
-.hero-home__dots button+button{margin-left:calc(-4 * var(--u))}
-.hero-home__dots button.is-active{background:#fff;position:relative;z-index:1}
+.hero-dot:focus-visible{outline:3px solid #EEEEEE;outline-offset:0;border-radius:calc(8 * var(--u))}
+.hero-dot__track{
+  display:block;position:relative;overflow:hidden;
+  width:calc(30 * var(--u));height:calc(7 * var(--u));border-radius:calc(4 * var(--u));
+  background:rgba(255,255,255,.34);
+  box-shadow:0 calc(1 * var(--u)) calc(4 * var(--u)) rgba(0,0,0,.45);
+  transition:width .55s var(--ease-suave),background-color .3s var(--ease-suave);
+}
+.hero-dot:hover .hero-dot__track{background:rgba(255,255,255,.62)}
+.hero-dot.is-active .hero-dot__track{width:calc(74 * var(--u));background:rgba(255,255,255,.28)}
+.hero-dot__fill{
+  position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(90deg,var(--gold) 0%,#F2CA1D 100%);
+  transform:scaleX(0);transform-origin:left center;
+}
+/* La duración la escribe rediseno.js con el mismo valor que usa su temporizador:
+   una sola cifra, imposible que la barra y el salto se desincronicen. */
+.hero-dot.is-active .hero-dot__fill{animation:hero-dot-paso var(--hero-paso,7s) linear forwards}
+.hero--home.esta-en-pausa .hero-dot.is-active .hero-dot__fill{animation-play-state:paused}
+@keyframes hero-dot-paso{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* Sin movimiento no hay paso automático: la barra activa se queda llena y hace
+   de marca, sin cuenta que mirar. */
+/* La lista repite los mismos selectores de arriba, incluidos los del sentido de
+   la marcha: con menos peso no ganarían y la lámina seguiría desplazándose. */
+@media (prefers-reduced-motion:reduce){
+  .hero-home__slide,
+  .hero-home__slide.is-active,
+  .hero--home[data-dir] .hero-home__slide,
+  .hero--home[data-dir] .hero-home__slide.is-leaving{
+    transform:none;
+    transition:opacity .01ms linear,visibility 0s linear;
+  }
+  .hero-dot__track{transition:none}
+  .hero-dot.is-active .hero-dot__fill{animation:none;transform:scaleX(1)}
+}
 
 /* -------------------------------------------------- BANDA CUENTA REGRESIVA */
 .band{
@@ -173,18 +312,44 @@
 .subsi a:hover .subsi__title{color:var(--wine)}
 
 /* --------------------------------------------------------------- LA VISITA */
-.visita{position:relative;overflow:hidden;background:var(--wine);height:calc(892 * var(--u))}
+/* ── Por qué el Papa se salía sobre el texto ──────────────────────────────
+   El recorte iba anclado al borde IZQUIERDO de la ventana (left:611) mientras
+   el texto vive en un contenedor centrado de 1264. En una pantalla de 1440 las
+   dos referencias coinciden y la composición es la del editable; a partir de
+   ahí el contenedor se va hacia la derecha y el recorte no, así que en un
+   monitor de 1800 el texto se metía casi 200 px dentro del Papa. Se veía
+   exactamente lo que pasaba en la captura: la mano cruzando los párrafos.
+
+   Ahora el recorte arranca donde arranca el contenedor —la misma cuenta que
+   hace .container— más su distancia del editable, así que la composición se
+   mantiene igual a cualquier ancho.
+
+   Encima se le añade separación de verdad: en el editable la línea más larga
+   del párrafo llega a pisar el pulgar por unos 40 px. «--visita-papa» lo
+   aparta 70 px más (lo máximo que cabe sin recortarle la mano derecha a 1440)
+   y «--visita-texto» le pone tope a la columna, de modo que entre una cosa y
+   otra quedan unos 43 px libres. */
+.visita{
+  --visita-papa:calc(593 * var(--u));    /* 523 del editable + 70 de aire */
+  --visita-texto:calc(550 * var(--u));
+  position:relative;overflow:hidden;background:var(--wine);
+  min-height:calc(892 * var(--u));
+}
 .visita__media{position:absolute;inset:0;z-index:0}
 .visita__media img{width:100%;height:100%;object-fit:cover;object-position:center}
 .visita__media::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(90deg,#6E0B14 0%,#6E0B14 28%,rgba(110,11,20,.86) 44%,rgba(110,11,20,.25) 66%,rgba(110,11,20,0) 82%);
 }
+/* Va pegado al borde inferior y no a 148 del superior: si el texto crece y la
+   sección con él, el Papa sigue apoyado abajo, que es donde lo corta el
+   editable, en vez de dejar un hueco. */
 .visita__cut{
   position:absolute;z-index:1;
-  left:calc(611 * var(--u));top:calc(148 * var(--u));width:calc(755.4 * var(--u));height:auto;
+  left:calc(max(var(--gutter), (100% - var(--container)) / 2) + var(--visita-papa));
+  bottom:0;top:auto;width:calc(755.4 * var(--u));height:auto;
 }
-.visita__inner{position:relative;z-index:2;padding-top:calc(52 * var(--u))}
+.visita__inner{position:relative;z-index:2;padding-top:calc(52 * var(--u));padding-bottom:calc(100 * var(--u))}
 
 .visita__eyebrow{
   font-family:"Neulis",sans-serif;font-style:italic;font-weight:500;
@@ -195,12 +360,15 @@
   content:"";display:block;width:calc(90.2 * var(--u));height:calc(4 * var(--u));
   background:var(--gold);margin-top:calc(19 * var(--u));margin-left:calc(-2 * var(--u));
 }
+/* El titular cabe en una línea (mide 700 en el editable) y a esa altura el
+   recorte aún no ha empezado, así que puede pasar del tope de la columna; el
+   límite está para que un titular más largo del panel no se meta en la mano. */
 .visita__h{
   margin-top:calc(21.5 * var(--u));
   font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(52.67 * var(--u));
-  color:#EEEEEE;line-height:1.14;max-width:calc(760 * var(--u));
+  color:#EEEEEE;line-height:1.14;max-width:calc(720 * var(--u));
 }
-.visita__copy{margin-top:calc(14.4 * var(--u));max-width:calc(582 * var(--u))}
+.visita__copy{margin-top:calc(14.4 * var(--u));max-width:var(--visita-texto)}
 .visita__copy p{font-size:calc(31 * var(--u));font-weight:300;line-height:1.2;color:#EEEEEE}
 .visita__copy p+p{margin-top:1.2em}
 .visita__copy strong{font-weight:600}
@@ -301,14 +469,41 @@
   .hero--home::after{content:"";position:absolute;inset:0;z-index:1;
     background:linear-gradient(180deg,rgba(60,6,11,.15) 0%,rgba(60,6,11,.45) 58%,rgba(60,6,11,.72) 100%)}
   .hero-home__escudo{left:auto;right:var(--gutter);top:clamp(14px,2.4vw,26px);width:clamp(120px,19vw,240px)}
-  .hero-home__slides{position:relative;right:auto;top:auto;width:100%;text-align:left}
+  /* En apaisado la foto entra entera; recortada a una columna estrecha, el
+     encuadre de siempre deja el titular sobre la pantalla blanca del portátil
+     y «para recibirlo.» se pierde. Se corre el encuadre hacia el granate y se
+     refuerza la veladura sólo en esta lámina. */
+  .hero-home__foto--programa{--hero-focus:45% 50%}
+  .hero-home__foto--programa::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(60,6,11,.28) 0%,rgba(60,6,11,.56) 52%,rgba(60,6,11,.74) 100%);
+  }
+  /* Aquí la lámina deja de ser una capa y vuelve al flujo: titular arriba y
+     botón debajo, que es como cae bien en una columna estrecha. */
+  .hero-home__slides{position:relative;inset:auto;width:100%}
+  .hero-home__slide{position:absolute;left:0;right:0;top:0;bottom:auto;
+    display:flex;flex-direction:column;align-items:flex-start}
+  .hero-home__slide.is-active{position:relative}
+  .hero-home__title{position:relative;right:auto;top:auto;width:100%;text-align:left}
+  .hero-home__slide[data-diseno="programa"] .hero-home__title{top:auto;line-height:.9}
   .hero-home__t1{font-size:clamp(34px,6.4vw,62px)}
   .hero-home__t2{font-size:clamp(35px,6.7vw,65px)}
-  .hero-home__live{position:absolute;left:var(--gutter);bottom:clamp(64px,9vw,92px);top:auto;
-    width:auto;min-width:0;height:auto;padding:.32em 1.1em;gap:.5em;font-size:clamp(17px,2.6vw,26px)}
+  .hero-home__slide[data-diseno="programa"] .hero-home__t1{font-size:clamp(32px,6vw,58px)}
+  .hero-home__slide[data-diseno="programa"] .hero-home__t2{font-size:clamp(31px,5.8vw,56px)}
+  .hero-home__live,.hero-home__programa{position:relative;left:auto;right:auto;top:auto;
+    margin-top:clamp(20px,3.2vw,32px);
+    width:auto;min-width:0;height:auto;min-height:0;
+    padding:.32em 1.1em;gap:.5em;font-size:clamp(17px,2.6vw,26px)}
   .ico-live{width:1.38em;height:.76em}
-  .hero-home__dots{position:absolute;left:50%;transform:translateX(-50%);top:auto;bottom:clamp(22px,3.4vw,34px);gap:6px}
-  .hero-home__dots button{width:34px;height:22px;border-radius:11px}
+  .ico-baja{width:1.05em;height:1.05em}
+  .hero-home__nav{top:auto;bottom:clamp(20px,3.2vw,32px);gap:clamp(12px,2vw,20px)}
+  .hero-home__arrow{width:clamp(38px,5vw,46px);height:clamp(38px,5vw,46px)}
+  .hero-home__arrow svg{width:clamp(15px,2vw,18px);height:clamp(15px,2vw,18px)}
+  .hero-home__dots{gap:4px}
+  .hero-dot{padding:10px 4px}
+  .hero-dot__track{width:24px;height:6px;border-radius:3px}
+  .hero-dot.is-active .hero-dot__track{width:58px}
+  .hero-dot:focus-visible{border-radius:8px}
 
   .band{height:auto;padding-block:clamp(22px,3.4vw,34px)}
   .band__inner{flex-direction:column;align-items:flex-start;gap:clamp(18px,2.8vw,28px)}
@@ -334,9 +529,11 @@
   .subsi__kicker{font-size:clamp(13px,1.8vw,19px);margin-top:clamp(12px,1.8vw,24px)}
   .subsi__title{font-size:clamp(14px,1.9vw,20px)}
 
-  .visita{height:auto}
+  .visita{min-height:0}
   .visita__media::after{background:linear-gradient(180deg,rgba(110,11,20,.92) 0%,rgba(110,11,20,.8) 45%,rgba(110,11,20,.55) 100%)}
-  .visita__cut{position:relative;left:auto;top:auto;width:min(78%,420px);margin:clamp(24px,4vw,40px) auto 0;display:block}
+  /* Sin sitio para ponerlo al lado, el recorte deja de estar posicionado y pasa
+     a ser una pieza más de la columna: aquí no hay nada que pueda pisar. */
+  .visita__cut{position:relative;left:auto;top:auto;bottom:auto;width:min(78%,420px);margin:clamp(24px,4vw,40px) auto 0;display:block}
   .visita__inner{padding-block:clamp(44px,6.5vw,80px) 0}
   .visita__eyebrow{font-size:clamp(26px,4.2vw,42px);margin-left:0}
   .visita__eyebrow::after{width:72px;margin-top:12px;margin-left:0}
@@ -368,8 +565,10 @@
 
 @media (max-width:767px){
   .hero-home__escudo{width:clamp(96px,26vw,150px)}
-  .hero-home__live{position:relative;left:auto;bottom:auto;margin-top:26px;width:max-content;max-width:100%}
-  .hero-home__inner{padding-bottom:clamp(60px,14vw,84px)}
+  .hero-home__live,.hero-home__programa{width:max-content;max-width:100%}
+  /* El botón de la lámina ya va en el flujo: el hueco de abajo tiene que dar
+     cabida a la fila de flechas, que sigue anclada al borde. */
+  .hero-home__inner{padding-bottom:clamp(76px,17vw,96px)}
   .band__count{flex-wrap:wrap;gap:16px 8px}
   .band__unit{flex:1 1 calc(25% - 8px)}
   .subsidios__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
