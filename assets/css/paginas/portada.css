@@ -1,0 +1,373 @@
+/* =============================================================================
+   HOME — medidas tomadas del editable HOME.ai (mesa de trabajo 1440 px).
+   Las coordenadas del editable incluyen 33 px de marco de navegador simulado en la
+   parte superior; aquí ya están descontados.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------- HERO */
+.hero--home{
+  position:relative;overflow:hidden;background:var(--wine);
+  height:calc(466 * var(--u));
+}
+.hero--home .hero__media{position:absolute;inset:0;z-index:0}
+.hero--home .hero__media img{width:100%;height:100%;object-fit:cover;object-position:var(--hero-focus,center)}
+
+.hero-home__escudo{
+  position:absolute;z-index:2;
+  left:calc(1258 * var(--u));top:calc(68 * var(--u));
+  width:calc(96 * var(--u));height:auto;
+}
+
+.hero-home__inner{position:absolute;inset:0;z-index:3}
+
+.hero-home__slides{
+  position:absolute;right:calc(101.1 * var(--u));top:calc(291 * var(--u));
+  width:calc(620 * var(--u));text-align:right;
+}
+.hero-home__slide{
+  position:absolute;right:0;top:0;width:100%;
+  opacity:0;visibility:hidden;transition:opacity .6s ease;
+}
+.hero-home__slide.is-active{opacity:1;visibility:visible;position:relative}
+.hero-home__title{font-family:"Neulis",sans-serif;font-weight:500;line-height:.887;margin:0}
+.hero-home__t1{display:block;font-size:calc(64.53 * var(--u));color:#EEEEEE}
+.hero-home__t2{display:block;font-size:calc(67.33 * var(--u));color:var(--gold)}
+
+.hero-home__live{
+  position:absolute;left:calc(91.3 * var(--u));top:calc(371.3 * var(--u));
+  min-width:calc(272 * var(--u));min-height:calc(50.8 * var(--u));
+  width:calc(272 * var(--u));height:calc(50.8 * var(--u));
+  padding:0;gap:calc(14 * var(--u));font-size:calc(31.99 * var(--u));
+}
+.ico-live{width:calc(44 * var(--u));height:calc(24 * var(--u));flex:0 0 auto}
+
+/* En el editable las tres marcas se solapan 4 px: forman una sola pieza continua. */
+.hero-home__dots{
+  position:absolute;left:calc(653.2 * var(--u));top:calc(415 * var(--u));gap:0;
+}
+.hero-home__dots button{
+  width:calc(47.2 * var(--u));height:calc(32 * var(--u));border-radius:calc(16 * var(--u));
+  background:rgba(0,0,0,.72);
+}
+.hero-home__dots button+button{margin-left:calc(-4 * var(--u))}
+.hero-home__dots button.is-active{background:#fff;position:relative;z-index:1}
+
+/* -------------------------------------------------- BANDA CUENTA REGRESIVA */
+.band{
+  background-image:var(--grad-gold-band);
+  height:calc(131.5 * var(--u));display:flex;align-items:center;
+}
+/* El texto sale del panel y puede ser más largo que el del editable: la
+   columna de la izquierda es la que cede, y la cuenta atrás no se sale nunca. */
+.band__inner{display:flex;align-items:center;justify-content:space-between;gap:calc(40 * var(--u));min-width:0}
+
+.band__when{color:var(--ink);padding-top:calc(4 * var(--u));margin-left:calc(3.7 * var(--u));flex:1 1 auto;min-width:0}
+.band__date{
+  font-family:"Neulis",sans-serif;font-weight:400;font-size:calc(25.9 * var(--u));
+  line-height:1.18;letter-spacing:.005em;
+}
+.band__date strong{font-weight:800}
+/* Cada ciudad lleva en el editable su propio cuerpo y su propio interletraje. */
+.band__cities{
+  display:flex;align-items:baseline;flex-wrap:wrap;color:#fff;
+  font-family:"Pathway Gothic One",sans-serif;line-height:1.1;margin-top:calc(5 * var(--u));
+}
+.band__cities span{display:inline-block}
+.band__cities .c1{font-size:calc(47.2 * var(--u));letter-spacing:.052em}
+.band__cities .c2{font-size:calc(48.06 * var(--u));letter-spacing:0;margin-left:calc(27.4 * var(--u))}
+.band__cities .c3{font-size:calc(46.29 * var(--u));letter-spacing:.039em;margin-left:calc(15.2 * var(--u))}
+.band__cities .c4{font-size:calc(48.23 * var(--u));letter-spacing:.059em;margin-left:calc(18.3 * var(--u))}
+
+.band__count{display:flex;align-items:flex-start;gap:calc(34.4 * var(--u));text-align:center;margin-right:calc(10 * var(--u));flex:0 0 auto}
+.band__unit{display:flex;flex-direction:column;align-items:center;line-height:1}
+.band__num{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(68.87 * var(--u));
+  color:var(--ink);line-height:1;font-variant-numeric:tabular-nums;
+}
+.band__lab{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(21.04 * var(--u));
+  color:var(--ink);line-height:1;margin-top:calc(0.5 * var(--u));
+}
+
+/* ----------------------------------------------------- LEMA (fondo dorado) */
+.lema{
+  background-color:var(--gold-light);background-image:var(--grad-gold-soft);
+  padding-top:calc(27 * var(--u));padding-bottom:calc(148.2 * var(--u));
+}
+.hymn{display:inline-flex;align-items:flex-start;gap:calc(9 * var(--u));margin-left:calc(3.3 * var(--u))}
+.hymn__play{
+  flex:0 0 auto;width:calc(40.2 * var(--u));height:calc(41.4 * var(--u));background:var(--grey-900);margin-top:calc(4 * var(--u));
+  position:relative;
+}
+.hymn__play::after{
+  content:"";position:absolute;left:52%;top:50%;transform:translate(-50%,-50%);
+  border-left:calc(13 * var(--u)) solid #EDEDED;
+  border-top:calc(8.5 * var(--u)) solid transparent;
+  border-bottom:calc(8.5 * var(--u)) solid transparent;
+}
+.hymn__txt{display:flex;flex-direction:column}
+.hymn__title{font-weight:600;font-size:calc(24.08 * var(--u));color:var(--grey-900);line-height:1.22}
+.hymn__sub{font-weight:400;font-size:calc(17.66 * var(--u));color:var(--grey-500);line-height:1.22;letter-spacing:.055em}
+
+.lema__grid{
+  display:grid;grid-template-columns:calc(768.7 * var(--u)) 1fr;
+  column-gap:calc(51.9 * var(--u));
+  margin-top:calc(56 * var(--u));padding-left:calc(13.4 * var(--u));
+}
+.lema__mark img{width:100%;height:auto}
+.lema__copy{padding-top:calc(236.2 * var(--u))}
+.lema__text{
+  font-size:calc(30 * var(--u));font-weight:300;line-height:1.2;color:#000;
+  max-width:calc(420 * var(--u));
+}
+.lema__text strong{font-weight:600}
+.lema__cta{
+  margin-top:calc(22.5 * var(--u));
+  min-width:calc(272 * var(--u));width:calc(272 * var(--u));height:calc(50.8 * var(--u));
+  min-height:0;padding:0;font-size:calc(31.99 * var(--u));
+}
+
+/* -------------------------------------------------------------- SUBSIDIOS */
+.subsidios{background:var(--bg);padding-top:calc(108.4 * var(--u));padding-bottom:calc(121.3 * var(--u))}
+.subsidios__h{
+  font-family:"Neulis",sans-serif;font-size:calc(86.35 * var(--u));line-height:1.05;font-weight:700;
+}
+.subsidios__h .w-med{font-weight:500}
+.subsidios__lead{
+  margin-top:calc(27.5 * var(--u));font-size:calc(33 * var(--u));font-weight:300;line-height:1.2;color:#000;
+  max-width:calc(1005 * var(--u));margin-inline:auto;
+}
+.subsidios__lead strong{font-weight:600}
+
+.subsidios__grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  column-gap:calc(84.6 * var(--u));
+  width:calc(1240.4 * var(--u));margin:calc(27.5 * var(--u)) auto 0;
+}
+.subsi a{display:flex;flex-direction:column;align-items:center;text-align:center}
+.subsi__img{display:block;width:100%;aspect-ratio:180.4 / 249.7;overflow:hidden;box-shadow:var(--shadow-card)}
+.subsi__img img{width:100%;height:100%;object-fit:cover}
+.subsi__kicker{
+  display:block;margin-top:calc(37.4 * var(--u));
+  font-size:calc(19.92 * var(--u));font-weight:400;color:var(--grey-600);line-height:1.2;
+}
+.subsi__title{
+  display:block;margin-top:calc(6 * var(--u));
+  font-size:calc(21.25 * var(--u));font-weight:600;color:#000;line-height:1.2;white-space:nowrap;
+}
+.subsi a:hover .subsi__title{color:var(--wine)}
+
+/* --------------------------------------------------------------- LA VISITA */
+.visita{position:relative;overflow:hidden;background:var(--wine);height:calc(892 * var(--u))}
+.visita__media{position:absolute;inset:0;z-index:0}
+.visita__media img{width:100%;height:100%;object-fit:cover;object-position:center}
+.visita__media::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,#6E0B14 0%,#6E0B14 28%,rgba(110,11,20,.86) 44%,rgba(110,11,20,.25) 66%,rgba(110,11,20,0) 82%);
+}
+.visita__cut{
+  position:absolute;z-index:1;
+  left:calc(611 * var(--u));top:calc(148 * var(--u));width:calc(755.4 * var(--u));height:auto;
+}
+.visita__inner{position:relative;z-index:2;padding-top:calc(52 * var(--u))}
+
+.visita__eyebrow{
+  font-family:"Neulis",sans-serif;font-style:italic;font-weight:500;
+  font-size:calc(43.68 * var(--u));color:var(--gold);line-height:1.1;
+  margin-left:calc(3 * var(--u));
+}
+.visita__eyebrow::after{
+  content:"";display:block;width:calc(90.2 * var(--u));height:calc(4 * var(--u));
+  background:var(--gold);margin-top:calc(19 * var(--u));margin-left:calc(-2 * var(--u));
+}
+.visita__h{
+  margin-top:calc(21.5 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(52.67 * var(--u));
+  color:#EEEEEE;line-height:1.14;max-width:calc(760 * var(--u));
+}
+.visita__copy{margin-top:calc(14.4 * var(--u));max-width:calc(582 * var(--u))}
+.visita__copy p{font-size:calc(31 * var(--u));font-weight:300;line-height:1.2;color:#EEEEEE}
+.visita__copy p+p{margin-top:1.2em}
+.visita__copy strong{font-weight:600}
+.visita__cta{
+  margin-top:calc(38.4 * var(--u));
+  min-width:calc(272 * var(--u));width:calc(272 * var(--u));height:calc(50.8 * var(--u));
+  min-height:0;padding:0;font-size:calc(31.99 * var(--u));color:#EEEEEE;
+}
+
+/* --------------------------------------------------------------- RECORRIDO */
+.recorrido{background:var(--bg);padding-top:calc(130 * var(--u));padding-bottom:calc(58 * var(--u))}
+.recorrido__eyebrow{
+  font-family:"Neulis",sans-serif;font-style:italic;font-weight:500;
+  font-size:calc(43.68 * var(--u));color:var(--gold);line-height:1.1;
+}
+.recorrido__eyebrow::after{
+  content:"";display:block;width:calc(90.2 * var(--u));height:calc(4 * var(--u));
+  background:var(--gold);margin:calc(19 * var(--u)) auto 0;
+}
+.recorrido__h{
+  margin-top:calc(45.2 * var(--u));font-family:"Neulis",sans-serif;line-height:1.02;font-weight:700;letter-spacing:-.008em;
+  font-size:calc(91.23 * var(--u));color:var(--wine);
+}
+.recorrido__h .w-med{display:block;font-weight:500;font-size:calc(72 * var(--u));margin-top:calc(-10.9 * var(--u))}
+.recorrido__lead{
+  margin-top:calc(36 * var(--u));font-size:calc(31.6 * var(--u));font-weight:300;line-height:1.2;color:#000;
+  max-width:calc(1180 * var(--u));margin-inline:auto;
+}
+
+.ciudades{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  column-gap:calc(6.8 * var(--u));row-gap:calc(8 * var(--u));
+  margin-top:calc(77 * var(--u));
+}
+.ciudad{grid-column:span 2}
+.ciudad:nth-child(4){grid-column:2 / span 2}
+.ciudad:nth-child(5){grid-column:4 / span 2}
+.ciudad a{position:relative;display:block;overflow:hidden;aspect-ratio:417.3 / 383.3}
+.ciudad img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.ciudad a:hover img{transform:scale(1.04)}
+.ciudad__cap{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:calc(24 * var(--u)) calc(31.1 * var(--u)) calc(30.6 * var(--u));
+  background:linear-gradient(180deg,rgba(184,133,26,0) 0%,rgba(184,133,26,.72) 46%,rgba(184,133,26,.92) 100%);
+  display:flex;flex-direction:column;
+}
+.ciudad__name{
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(40.35 * var(--u));
+  color:#EEEEEE;line-height:1.05;
+}
+.ciudad__sub{
+  font-family:"Neulis",sans-serif;font-weight:300;font-size:calc(28.88 * var(--u));
+  color:#EEEEEE;line-height:1.1;
+}
+
+/* ------------------------------------------------------------------ SANTOS */
+.santos-home{background:var(--bg);padding-top:calc(31.3 * var(--u));padding-bottom:calc(142 * var(--u))}
+.santos-home__h{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(86.35 * var(--u));line-height:1.03;
+}
+.santos-home__h .w-med{display:block;font-weight:500;font-size:calc(74 * var(--u));margin-top:calc(-18 * var(--u))}
+.santos-home__lead{
+  margin-top:calc(38 * var(--u));font-size:calc(33 * var(--u));font-weight:300;line-height:1.2;color:#000;
+  max-width:calc(1060 * var(--u));margin-inline:auto;
+}
+.santos-home__lead strong{font-weight:600}
+
+.santos-grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  column-gap:calc(8.2 * var(--u));margin-top:calc(72 * var(--u));
+}
+.santo a{position:relative;display:block;overflow:hidden;aspect-ratio:245.5 / 380.6}
+.santo img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.santo a:hover img{transform:scale(1.04)}
+.santo__cap{
+  position:absolute;left:0;right:0;bottom:0;height:59.1%;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 calc(14 * var(--u)) calc(10 * var(--u));
+  background:linear-gradient(180deg,rgba(110,11,20,0) 0%,rgba(110,11,20,.55) 34%,rgba(110,11,20,.93) 78%,#6E0B14 100%);
+}
+.santo__name{
+  font-weight:600;font-size:calc(27.56 * var(--u));color:#EEEEEE;line-height:.95;
+}
+.santo__virtue{
+  margin-top:calc(11 * var(--u));font-weight:300;font-size:calc(19.83 * var(--u));
+  color:var(--gold);line-height:1.2;letter-spacing:.2em;
+}
+
+/* --------------------------------------------------------------------- PIE */
+/* La fila de enlaces del pie es común a todo el sitio: vive en heredado.css */
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  .hero--home{height:auto;min-height:clamp(440px,64vw,620px);--hero-focus:34% 38%}
+  .hero-home__inner{position:relative;inset:auto;display:flex;flex-direction:column;justify-content:center;
+    min-height:clamp(440px,64vw,620px);padding:clamp(80px,12vw,120px) var(--gutter) clamp(76px,10vw,104px);
+    max-width:calc(var(--container) + var(--gutter)*2);margin-inline:auto}
+  .hero--home::after{content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(60,6,11,.15) 0%,rgba(60,6,11,.45) 58%,rgba(60,6,11,.72) 100%)}
+  .hero-home__escudo{left:auto;right:var(--gutter);top:clamp(14px,2.4vw,26px);width:clamp(120px,19vw,240px)}
+  .hero-home__slides{position:relative;right:auto;top:auto;width:100%;text-align:left}
+  .hero-home__t1{font-size:clamp(34px,6.4vw,62px)}
+  .hero-home__t2{font-size:clamp(35px,6.7vw,65px)}
+  .hero-home__live{position:absolute;left:var(--gutter);bottom:clamp(64px,9vw,92px);top:auto;
+    width:auto;min-width:0;height:auto;padding:.32em 1.1em;gap:.5em;font-size:clamp(17px,2.6vw,26px)}
+  .ico-live{width:1.38em;height:.76em}
+  .hero-home__dots{position:absolute;left:50%;transform:translateX(-50%);top:auto;bottom:clamp(22px,3.4vw,34px);gap:6px}
+  .hero-home__dots button{width:34px;height:22px;border-radius:11px}
+
+  .band{height:auto;padding-block:clamp(22px,3.4vw,34px)}
+  .band__inner{flex-direction:column;align-items:flex-start;gap:clamp(18px,2.8vw,28px)}
+  .band__date{font-size:clamp(17px,2.6vw,26px)}
+  .band__cities{display:block;white-space:normal;font-size:clamp(24px,4.4vw,47px);line-height:1.15}
+  .band__cities span{font-size:inherit;letter-spacing:.03em;margin-left:0}
+  .band__cities span+span::before{content:" "}
+  .band__count{gap:clamp(14px,2.6vw,34px);width:100%;justify-content:space-between}
+  .band__num{font-size:clamp(34px,6.2vw,64px)}
+  .band__lab{font-size:clamp(12px,1.9vw,20px)}
+
+  .lema{padding-block:clamp(40px,6vw,70px)}
+  .lema__grid{grid-template-columns:1fr;row-gap:clamp(24px,4vw,44px);padding-left:0}
+  .lema__mark{max-width:520px;margin-inline:auto}
+  .lema__copy{padding-top:0;text-align:center}
+  .lema__text{font-size:clamp(17px,2.4vw,28px);max-width:44ch;margin-inline:auto}
+  .lema__cta{width:auto;min-width:240px;height:auto;padding:.32em 1.3em;font-size:clamp(17px,2.4vw,28px);margin-top:clamp(20px,3vw,30px)}
+
+  .subsidios{padding-block:clamp(48px,7vw,90px)}
+  .subsidios__h{font-size:clamp(32px,6vw,72px)}
+  .subsidios__lead{font-size:clamp(17px,2.5vw,30px);max-width:60ch}
+  .subsidios__grid{width:100%;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(18px,3vw,40px);row-gap:clamp(28px,4vw,48px)}
+  .subsi__kicker{font-size:clamp(13px,1.8vw,19px);margin-top:clamp(12px,1.8vw,24px)}
+  .subsi__title{font-size:clamp(14px,1.9vw,20px)}
+
+  .visita{height:auto}
+  .visita__media::after{background:linear-gradient(180deg,rgba(110,11,20,.92) 0%,rgba(110,11,20,.8) 45%,rgba(110,11,20,.55) 100%)}
+  .visita__cut{position:relative;left:auto;top:auto;width:min(78%,420px);margin:clamp(24px,4vw,40px) auto 0;display:block}
+  .visita__inner{padding-block:clamp(44px,6.5vw,80px) 0}
+  .visita__eyebrow{font-size:clamp(26px,4.2vw,42px);margin-left:0}
+  .visita__eyebrow::after{width:72px;margin-top:12px;margin-left:0}
+  .visita__h{font-size:clamp(28px,4.8vw,50px);max-width:100%;margin-top:18px}
+  .visita__copy{max-width:60ch}
+  .visita__copy p{font-size:clamp(17px,2.5vw,30px)}
+  .visita__cta{width:auto;min-width:240px;height:auto;padding:.32em 1.3em;font-size:clamp(17px,2.4vw,28px)}
+
+  .recorrido{padding-block:clamp(48px,7vw,90px) clamp(30px,4vw,56px)}
+  .recorrido__eyebrow{font-size:clamp(26px,4.2vw,42px)}
+  .recorrido__h{font-size:clamp(32px,6.2vw,88px)}
+  .recorrido__h .w-med{font-size:clamp(26px,4.9vw,70px);margin-top:0}
+  .recorrido__lead{font-size:clamp(17px,2.5vw,30px);max-width:64ch}
+  .ciudades{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(8px,1.2vw,14px);row-gap:clamp(8px,1.2vw,14px);margin-top:clamp(28px,4vw,56px)}
+  .ciudad,.ciudad:nth-child(4),.ciudad:nth-child(5){grid-column:auto}
+  .ciudad__name{font-size:clamp(22px,3.4vw,38px)}
+  .ciudad__sub{font-size:clamp(15px,2.4vw,27px)}
+  .ciudad__cap{padding:clamp(18px,3vw,30px) clamp(16px,2.4vw,30px) clamp(10px,1.4vw,16px)}
+
+  .santos-home{padding-block:clamp(48px,7vw,90px)}
+  .santos-home__h{font-size:clamp(32px,6vw,72px)}
+  .santos-home__h .w-med{font-size:clamp(27px,5.1vw,62px);margin-top:0}
+  .santos-home__lead{font-size:clamp(17px,2.5vw,30px);max-width:60ch}
+  .santos-grid{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(10px,1.6vw,20px);row-gap:clamp(10px,1.6vw,20px);margin-top:clamp(28px,4vw,56px)}
+  .santo__name{font-size:clamp(16px,2.4vw,26px)}
+  .santo__virtue{font-size:clamp(11px,1.6vw,18px);letter-spacing:.22em;margin-top:6px}
+  .santo__cap{padding:0 clamp(12px,1.6vw,18px) clamp(10px,1.4vw,16px)}
+}
+
+@media (max-width:767px){
+  .hero-home__escudo{width:clamp(96px,26vw,150px)}
+  .hero-home__live{position:relative;left:auto;bottom:auto;margin-top:26px;width:max-content;max-width:100%}
+  .hero-home__inner{padding-bottom:clamp(60px,14vw,84px)}
+  .band__count{flex-wrap:wrap;gap:16px 8px}
+  .band__unit{flex:1 1 calc(25% - 8px)}
+  .subsidios__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .subsi:last-child{grid-column:1 / -1;max-width:50%;margin-inline:auto}
+  .santos-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .santo:last-child{grid-column:1 / -1;max-width:50%;margin-inline:auto}
+  .ciudades{grid-template-columns:1fr}
+  .visita__cut{width:min(88%,340px)}
+}
+
+@media (max-width:479px){
+  .subsidios__grid{grid-template-columns:1fr;max-width:300px;margin-inline:auto}
+  .subsi:last-child{max-width:100%}
+  .santos-grid{grid-template-columns:1fr;max-width:300px;margin-inline:auto}
+  .santo:last-child{max-width:100%}
+}

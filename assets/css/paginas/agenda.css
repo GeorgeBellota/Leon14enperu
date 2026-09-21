@@ -1,0 +1,223 @@
+/* =============================================================================
+   AGENDA — medidas tomadas del editable AGENDA.ai (mesa de trabajo 1440 x 4679).
+   Las subpáginas no llevan marco de navegador: la «y» del editable es la «y» de la
+   página, desplazada 76 px por la cabecera del sitio.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ HÉROE
+   Banda dorada oscura de 582 px (0–582 en el editable) con la foto en duotono.
+   La insignia «A G E N D A» no está quemada en la imagen: es el recuadro claro
+   de 235 x 51 px que el editable dibuja en x=604,5 y=303,5.                  */
+/* El alto del editable es 582 px EXACTOS, pero el titular y la bajada salen
+   ahora del panel y pueden venir más largos que los de la maqueta. Por eso el
+   582 pasa de «height» a «min-height» y el héroe gana un colchón abajo: con el
+   texto del editable no cambia ni un píxel —303,5 + 219,2 + 40 = 562,7, por
+   debajo del mínimo— y con uno más largo la banda crece en lugar de recortar. */
+.agenda-hero{background:var(--gold-dark);min-height:calc(582 * var(--u))}
+.agenda-hero .hero__media{z-index:0}
+.agenda-hero .hero__media img{width:100%;height:100%;object-fit:cover;object-position:center top}
+
+.agenda-hero .hero__inner{
+  position:relative;z-index:1;min-height:calc(582 * var(--u));gap:0;
+  justify-content:flex-start;align-items:center;text-align:center;
+  padding:calc(303.5 * var(--u)) var(--gutter) calc(40 * var(--u));
+}
+
+.agenda-hero .hero__badge{
+  margin:0;background:#EDEDED;color:var(--gold);
+  font-family:"Neulis",sans-serif;font-weight:500;font-size:calc(36.23 * var(--u));
+  letter-spacing:-.0226em;padding:0 calc(24 * var(--u));
+  height:calc(51 * var(--u));line-height:calc(53.8 * var(--u));
+}
+
+.agenda-hero .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:600;color:#FFFFFF;
+  font-size:calc(82.8 * var(--u));line-height:calc(101.2 * var(--u));
+  margin-top:calc(-4 * var(--u));
+}
+
+.agenda-hero .hero__sub{
+  max-width:none;color:#FFFFFF;font-weight:300;
+  font-size:calc(30.42 * var(--u));line-height:calc(36.5 * var(--u));
+  margin-top:calc(-2.05 * var(--u));
+}
+.agenda-hero .hero__sub strong{font-weight:600}
+
+/* -------------------------------------------------------------- CONTENIDO
+   Fondo #EDEDED de 582 a 4545 en el editable.                              */
+.agenda{background:#EDEDED;padding-top:calc(89.2 * var(--u));padding-bottom:calc(120.5 * var(--u))}
+
+/* El contenido ocupa de x=136 a x=1304: 1168 px centrados en la mesa. */
+.agenda__cont{width:calc(1168 * var(--u));margin-inline:auto}
+
+/* ---------------------------------------------------------------- FILTROS
+   Cinco recuadros de 37,7 px de alto separados 31,8 px; anchos del editable.
+   El interletraje de cada rótulo es el del editable (varía en los compuestos). */
+.agenda__filtros{gap:calc(31.8 * var(--u))}
+/* Los anchos y el alto son los del editable, pero el rótulo lo escribe el
+   panel: si un día una sede se llama más largo que «Chiclayo - Santa Cruz»,
+   el recuadro tiene que crecer en vez de comerse las letras. De ahí el
+   «min-width:max-content» —nunca más estrecho que su texto— y el hueco
+   lateral de 10 px, que con los cinco rótulos del editable no llega a
+   usarse: el más ancho mide 290,2 y le quedan 304,1 de sitio. El alto pasa
+   a mínimo por lo mismo, para un rótulo que necesite dos líneas. */
+.agenda__filtros .chip{
+  width:calc(162.3 * var(--u));min-height:calc(37.7 * var(--u));
+  min-width:max-content;
+  font-size:calc(26.56 * var(--u));letter-spacing:.0247em;
+  padding:calc(.5 * var(--u)) calc(10 * var(--u)) 0;line-height:calc(30 * var(--u));
+  border:1px solid var(--gold-dark);text-align:center;white-space:pre-wrap;
+}
+.agenda__filtros .chip--lima{width:calc(226.9 * var(--u))}
+.agenda__filtros .chip--chiclayo{width:calc(324.1 * var(--u))}
+.agenda__filtros .chip.is-active{background:var(--gold-dark);color:#EEEEEE}
+
+/* ------------------------------------------------------------------ SEDES */
+.ag-sede{padding-top:calc(90.65 * var(--u))}
+.ag-sede--lima{padding-top:calc(109.25 * var(--u))}
+.ag-sede--cusco{padding-top:calc(111.65 * var(--u))}
+.ag-sede--pucallpa{padding-top:calc(117.65 * var(--u))}
+.ag-sede[hidden]{display:none}
+
+.ag-sede__h{
+  font-family:"Pathway Gothic One","Poppins",sans-serif;font-weight:400;color:var(--ink);
+  font-size:calc(48 * var(--u));line-height:calc(55.3 * var(--u));letter-spacing:.0247em;
+  white-space:pre-wrap;
+}
+/* «SANTA CRUZ» va un cuerpo más pequeño que «CHICLAYO -» en el editable;
+   la interlínea propia evita que la caja de línea crezca por debajo. */
+.ag-sede__h--sm{font-size:calc(38 * var(--u));line-height:calc(44 * var(--u))}
+/* Filete granate bajo el titular: 543,3 x 2 px. */
+.ag-sede__h::after{
+  content:"";display:block;width:calc(543.3 * var(--u));height:calc(2 * var(--u));
+  background:var(--wine);margin-top:calc(6.55 * var(--u));
+}
+
+.ag-sede__foto{width:calc(542 * var(--u));margin-top:calc(33.5 * var(--u))}
+.ag-sede__foto img{width:100%;height:auto}
+
+/* ------------------------------------------------------------- CRONOGRAMA */
+.ag-dias{margin-top:calc(30.4 * var(--u))}
+
+.ag-dia{
+  grid-template-columns:calc(74.3 * var(--u)) minmax(0,1fr);
+  gap:0 calc(19.5 * var(--u));
+}
+.ag-dia + .ag-dia{margin-top:calc(43.4 * var(--u))}
+.ag-sede--chiclayo .ag-dia + .ag-dia{margin-top:calc(45.4 * var(--u))}
+/* El 11 de noviembre lleva tres actos y el último va 3 px más arriba. */
+.ag-sede--lima .ag-dia:first-child .ag-acto:last-child{margin-top:calc(-3 * var(--u))}
+.ag-sede--lima .ag-dia:nth-child(2){margin-top:calc(46.4 * var(--u))}
+
+/* La columna de la fecha mide 74,3 px fijos. «11 NOV» cabe de sobra, pero el
+   rótulo lo escribe el panel y podría llegar uno que no sea una fecha («Por
+   confirmar»): que parta la palabra antes que desbordar la rejilla. */
+.ag-dia .timeline__day{padding-top:calc(5.45 * var(--u));overflow-wrap:anywhere}
+.ag-dia .timeline__num{
+  display:block;font-size:calc(47.1 * var(--u));line-height:calc(47.1 * var(--u));
+}
+.ag-dia .timeline__mon{
+  display:block;font-size:calc(30.13 * var(--u));line-height:calc(25.9 * var(--u));
+}
+
+.ag-dia .timeline__items{
+  border-left:1px solid var(--grey-700);
+  padding:calc(11.9 * var(--u)) 0 calc(7.7 * var(--u)) calc(26.7 * var(--u));
+  gap:calc(33 * var(--u));
+}
+.ag-dia .timeline__time,
+.ag-dia .timeline__what{font-size:calc(27.92 * var(--u));line-height:calc(33 * var(--u))}
+
+/* ----------------------------------------------------------- LETRA PEQUEÑA
+   El editable no dibuja esta nota y aun así va: el cronograma que se publica
+   es REFERENCIAL hasta que la Santa Sede apruebe el programa oficial, y esa
+   advertencia ya estaba escrita en la base. Enseñar horas de un viaje papal
+   sin decir que no son definitivas induce a error. Va al pie del cronograma,
+   en cuerpo pequeño, para no tocar la composición de arriba.                */
+.agenda__nota{
+  margin-top:calc(62 * var(--u));max-width:calc(760 * var(--u));
+  font-size:calc(19 * var(--u));line-height:calc(27 * var(--u));
+  font-weight:300;color:var(--grey-600);
+}
+.agenda__nota p + p{margin-top:.6em}
+.agenda__nota strong{font-weight:600;color:var(--grey-900)}
+
+/* -------------------------------------------------------------------- PIE
+   Igual que en la home: los enlaces complementarios bajan a su propia línea
+   para que el aviso legal y los créditos queden como en el editable.        */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u));order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* ============================================================== RESPONSIVE
+   Requisito del cliente: ninguna foto de contenido puede recortarse.        */
+@media (max-width:1023px){
+  .agenda-hero{height:auto}
+  /* El Santo Padre queda a la izquierda del rótulo, nunca tapado por él. */
+  .agenda-hero .hero__media img{object-position:52% 24%}
+  .agenda-hero .hero__inner{
+    min-height:clamp(380px,58vw,520px);height:auto;justify-content:center;
+    padding:clamp(48px,7vw,80px) var(--gutter);
+  }
+  .agenda-hero .hero__badge{
+    font-size:clamp(20px,3.4vw,30px);height:auto;line-height:1.16;
+    padding:clamp(6px,1vw,10px) clamp(14px,2.4vw,22px);
+  }
+  .agenda-hero .hero__title{
+    font-size:clamp(34px,6.4vw,66px);line-height:1.08;margin-top:clamp(10px,1.8vw,18px);
+  }
+  .agenda-hero .hero__sub{
+    font-size:clamp(17px,2.6vw,26px);line-height:1.3;margin-top:clamp(8px,1.4vw,14px);
+    max-width:36ch;
+  }
+
+  .agenda{padding-top:clamp(34px,5.4vw,56px);padding-bottom:clamp(44px,7vw,80px)}
+  .agenda__cont{width:100%;max-width:none;padding-inline:var(--gutter)}
+
+  .agenda__filtros{gap:clamp(10px,1.6vw,16px)}
+  .agenda__filtros .chip,
+  .agenda__filtros .chip--lima,
+  .agenda__filtros .chip--chiclayo{
+    width:auto;min-width:0;min-height:0;font-size:clamp(14px,1.9vw,19px);
+    padding:clamp(6px,1vw,9px) clamp(12px,1.8vw,18px);line-height:1.2;
+  }
+
+  .ag-sede,
+  .ag-sede--lima,
+  .ag-sede--cusco,
+  .ag-sede--pucallpa{padding-top:clamp(40px,6.4vw,70px)}
+
+  .ag-sede__h{font-size:clamp(28px,4.4vw,44px);line-height:1.12}
+  .ag-sede__h--sm{font-size:clamp(23px,3.5vw,35px)}
+  .ag-sede__h::after{width:min(100%,543px);height:2px;margin-top:clamp(8px,1.2vw,14px)}
+
+  /* La foto pasa a fluida: se ve entera, sin recorte ni deformación. */
+  .ag-sede__foto{width:100%;max-width:542px;margin-top:clamp(18px,2.6vw,32px)}
+
+  .ag-dias{margin-top:clamp(22px,3.2vw,34px)}
+  .ag-dia{grid-template-columns:clamp(58px,8vw,80px) minmax(0,1fr);gap:0 clamp(12px,1.8vw,22px)}
+  .ag-dia + .ag-dia,
+  .ag-sede--chiclayo .ag-dia + .ag-dia{margin-top:clamp(26px,3.6vw,44px)}
+  .ag-dia .timeline__day{padding-top:2px}
+  .ag-dia .timeline__num{font-size:clamp(28px,4vw,42px);line-height:1.05}
+  .ag-dia .timeline__mon{font-size:clamp(15px,2vw,24px);line-height:1.2}
+  .ag-dia .timeline__items{
+    padding:4px 0 4px clamp(14px,2.2vw,26px);gap:clamp(16px,2.4vw,28px);
+  }
+  .ag-dia .timeline__time,
+  .ag-dia .timeline__what{font-size:clamp(15px,2.1vw,22px);line-height:1.35}
+
+  .agenda__nota{
+    margin-top:clamp(28px,4vw,50px);max-width:none;
+    font-size:clamp(13px,1.7vw,17px);line-height:1.45;
+  }
+}
+
+@media (max-width:767px){
+  .agenda-hero .hero__inner{min-height:0;padding-block:clamp(56px,14vw,84px)}
+  .ag-dia{grid-template-columns:1fr;gap:10px}
+  .ag-dia .timeline__day{display:flex;align-items:baseline;gap:.4em;text-align:left;padding-top:0}
+  .ag-dia .timeline__num,
+  .ag-dia .timeline__mon{display:inline-block}
+  .ag-dia .timeline__items{padding-left:16px}
+}

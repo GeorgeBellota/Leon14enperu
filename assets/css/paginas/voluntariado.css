@@ -1,0 +1,608 @@
+/* =============================================================================
+   VOLUNTARIADO — medidas tomadas del editable «PÁG VOLUNTARIADO.ai»
+   (mesa de trabajo 1440 x 4432 px). El editable no dibuja la cabecera, así que
+   todo el contenido va 76 px más abajo que sus coordenadas.
+   Fondo de página #EAEAEA (582 → 4298 del editable).
+   ========================================================================== */
+
+:root{ --bg:#EAEAEA }
+
+/* Marco de composición: 1 px del editable = 1 var(--u) */
+.vol-marco{width:calc(1440 * var(--u));margin-inline:auto}
+
+/* Titular de sección centrado + regla dorada (patrón repetido) */
+.vol-h2{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(55.3 * var(--u));
+  line-height:1;letter-spacing:-.005em;color:#1C1416;text-align:center;
+}
+.vol-regla{
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));background:#E6A015;
+  margin-inline:auto;
+}
+
+/* ------------------------------------------------------------------ HÉROE */
+.vol-hero{height:calc(582 * var(--u));background:#C88A0F}
+.vol-hero .hero__media img{width:100%;height:100%;object-fit:cover;object-position:center}
+
+.vol-hero .vol-hero__inner{
+  min-height:0;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;text-align:center;gap:0;
+  padding:calc(372.34 * var(--u)) calc(24 * var(--u)) 0;
+}
+.vol-hero__title{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(81.1 * var(--u));
+  line-height:1;letter-spacing:-.005em;color:#EAEAEA;
+}
+.vol-hero__sub{
+  margin-top:calc(11.66 * var(--u));
+  width:calc(1180 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(28 * var(--u));
+  line-height:calc(33.6 * var(--u));color:#FFFFFF;
+}
+.vol-hero__sub strong{font-weight:600}
+.vol-hero__kicker{font-weight:600;font-style:italic;color:#F5E25D}
+
+/* ------------------------------------------------------- TRES PASOS (1-2-3) */
+.vol-pasos{padding-top:calc(95.42 * var(--u))}
+.vol-pasos .vol-regla{margin-top:calc(19.58 * var(--u))}
+
+/* row-gap: el editable dibuja tres pasos y la plantilla del panel admite
+   hasta seis. Con un cuarto paso la rejilla abre una segunda fila, y sin este
+   hueco las tarjetas se tocarían. Con tres pasos no cambia nada. */
+.vol-pasos__grid{
+  display:grid;grid-template-columns:repeat(3,calc(348 * var(--u)));
+  column-gap:calc(48 * var(--u));row-gap:calc(48 * var(--u));
+  padding-left:calc(150 * var(--u));
+  margin-top:calc(93.2 * var(--u));
+}
+/* Las sombras del editable eran mapas de bits: aquí van como box-shadow. */
+.vol-paso{
+  position:relative;height:calc(367 * var(--u));
+  border:calc(2 * var(--u)) solid #686868;border-radius:calc(22 * var(--u));
+  box-shadow:calc(6 * var(--u)) calc(8 * var(--u)) calc(14 * var(--u)) rgba(0,0,0,.18);
+  text-align:center;
+}
+.vol-paso__num{
+  padding-top:calc(29.95 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(50 * var(--u));
+  line-height:1;color:#6E0B14;
+}
+.vol-paso__tit{
+  width:calc(290 * var(--u));margin:calc(1.14 * var(--u)) auto 0;
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(31.27 * var(--u));
+  line-height:calc(30 * var(--u));color:#6E0B14;
+}
+.vol-paso__txt{
+  width:calc(256 * var(--u));margin:calc(16.01 * var(--u)) auto 0;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;
+}
+.vol-paso__cta{
+  position:absolute;left:calc(26.2 * var(--u));top:calc(307 * var(--u));
+  width:calc(295.7 * var(--u));height:calc(61.8 * var(--u));
+  padding-top:calc(21.25 * var(--u));
+  border-radius:calc(17.5 * var(--u)) calc(17.5 * var(--u)) 0 0;
+  background-image:linear-gradient(90deg,#6D0A13 0%,#6D0A13 28%,#9B0F1B 63%,#6D0A13 100%);
+  color:#EDEDED;font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:calc(25 * var(--u));line-height:1;text-align:center;
+  transition:filter .18s ease;
+}
+.vol-paso__cta:hover{filter:brightness(1.14)}
+
+/* -------------------------------------------------------- SEIS SERVICIOS */
+.vol-servicios{padding-top:calc(124.92 * var(--u))}
+.vol-servicios .vol-regla{margin-top:calc(19.58 * var(--u))}
+
+.vol-serv__grid{
+  display:grid;grid-template-columns:repeat(3,calc(398 * var(--u)));
+  row-gap:calc(64.2 * var(--u));
+  padding-left:calc(166 * var(--u));
+  margin-top:calc(70.5 * var(--u));
+}
+.vol-serv__head{
+  display:flex;align-items:center;gap:calc(18.3 * var(--u));
+  height:calc(65 * var(--u));padding-left:calc(3 * var(--u));
+}
+.vol-serv__ico{width:calc(65 * var(--u));height:calc(65 * var(--u));flex:0 0 auto}
+/* max-width: en el editable los títulos de dos palabras van en dos líneas
+   («Resguardo / y orden»), y allí eso lo decidía un salto escrito a mano. El
+   nombre lo pone ahora el catálogo de servicios, así que el salto tiene que
+   salir del ancho: 260 px parte los seis nombres por donde los parte el
+   editable y deja en una sola línea los que caben («Comunicación»).
+   min-width:0 para que un nombre largo no empuje el icono fuera de la caja. */
+.vol-serv__tit{
+  max-width:calc(260 * var(--u));min-width:0;overflow-wrap:break-word;
+  /* balance reparte las palabras entre las dos líneas igual que las reparte
+     el editable («Resguardo / y orden», no «Resguardo y / orden»). Donde el
+     navegador no lo entienda, el corte cae una palabra más allá y ya está. */
+  text-wrap:balance;
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(32 * var(--u));
+  line-height:calc(32.1 * var(--u));color:#1C1416;
+}
+.vol-serv__txt{
+  margin-top:calc(30.8 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;
+}
+/* Cada bloque de texto es un marco propio del editable: ancho medido uno a uno */
+.vol-serv__txt--1{width:calc(315 * var(--u))}
+.vol-serv__txt--2{width:calc(320 * var(--u))}
+.vol-serv__txt--3{width:calc(345 * var(--u))}
+.vol-serv__txt--4{width:calc(307 * var(--u))}
+.vol-serv__txt--5{width:calc(303 * var(--u))}
+.vol-serv__txt--6{width:calc(329 * var(--u))}
+
+/* ------------------------------------------------------------- INVITACIÓN */
+.vol-cita{padding-top:calc(72.5 * var(--u));text-align:center}
+.vol-cita__quote{
+  font-family:"Poppins",sans-serif;font-weight:500;font-style:italic;
+  font-size:calc(22 * var(--u));line-height:calc(30 * var(--u));color:#6E0B14;
+}
+.vol-cita__txt{
+  width:calc(760 * var(--u));margin:calc(7.5 * var(--u)) auto 0;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(25 * var(--u));color:#1C1416;
+}
+.vol-cita__txt--2{margin-top:calc(9 * var(--u))}
+.vol-cita__accion{margin-top:calc(40.5 * var(--u))}
+.vol-cta{
+  display:inline-block;width:calc(262 * var(--u));height:calc(44.1 * var(--u));
+  padding-top:calc(7.57 * var(--u));
+  background-image:linear-gradient(150deg,#8B0D19 0%,#7A0B15 52%,#6D0A13 100%);
+  color:#EBEBEB;font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:calc(27.68 * var(--u));line-height:1;text-align:center;
+  transition:filter .18s ease;
+}
+.vol-cta:hover{filter:brightness(1.14)}
+
+/* -------------------------------------------------- PROCESO DE SELECCIÓN */
+.vol-proceso{padding-top:calc(107.22 * var(--u))}
+.vol-proceso .vol-regla{margin-top:calc(19.58 * var(--u))}
+
+.vol-proceso__grid{
+  display:grid;
+  grid-template-columns:calc(598.8 * var(--u)) calc(558 * var(--u));
+  column-gap:calc(25.7 * var(--u));
+  padding-left:calc(151 * var(--u));
+  margin-top:calc(63.4 * var(--u));
+  align-items:start;
+}
+
+/* El número y el cuerpo en dos columnas de rejilla, no en posición absoluta.
+   El editable dibuja «1», «2» y «3» y con eso la primera columna mide los
+   73 px de siempre; pero el campo del panel se llama «Número o rótulo» y
+   admite «01» o «Fase 1», que en Neulis a 100 px son más anchos que el hueco
+   y se montaban encima del título. Con minmax la columna crece lo justo y el
+   texto cede el ancho, sin salirse nunca de los 598,8 px de la fase. */
+.vol-fase{
+  position:relative;display:grid;
+  grid-template-columns:minmax(calc(73 * var(--u)),auto) minmax(0,calc(524 * var(--u)));
+}
+.vol-fase__num{
+  grid-column:1;grid-row:1;
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(100 * var(--u));
+  line-height:1;color:#6E0B14;
+}
+.vol-fase__cuerpo{grid-column:2;grid-row:1;padding-top:calc(9.89 * var(--u))}
+.vol-fase__tit{
+  margin-left:calc(-1 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:600;font-size:calc(31.27 * var(--u));
+  line-height:calc(30 * var(--u));color:#6E0B14;
+}
+.vol-fase__txt{
+  margin-top:calc(15.01 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;
+}
+.vol-fase__txt strong{font-weight:600}
+
+.vol-lista{
+  margin-top:calc(30 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;
+}
+.vol-lista li{padding-left:calc(18 * var(--u));text-indent:calc(-18 * var(--u))}
+.vol-lista li+li{margin-top:calc(6 * var(--u))}
+
+.vol-sep{
+  grid-column:1 / -1;
+  width:calc(598.8 * var(--u));height:calc(0.8 * var(--u));background:#686868;
+  margin-top:calc(30.4 * var(--u));
+}
+.vol-fase--2{margin-top:calc(21.9 * var(--u))}
+.vol-fase--2 .vol-sep{margin-top:calc(31.4 * var(--u))}
+.vol-fase--3{margin-top:calc(20.9 * var(--u))}
+.vol-fase--3 .vol-sep{margin-top:calc(26.4 * var(--u))}
+.vol-sep--corta{width:calc(595.8 * var(--u))}
+
+/* Captura del formulario: el editable la tapa por bandas y vuelve a componer
+   los rótulos en texto vivo. Se reproduce igual, a escala del contenedor. */
+.vol-proceso__aside{padding-top:calc(2.3 * var(--u))}
+.vol-form{
+  position:relative;width:100%;container-type:inline-size;
+  --fu:calc(1cqw / 5.58);
+}
+.vol-form img{width:100%;height:auto;display:block}
+.vol-form__parche{position:absolute;left:0;width:100%;background:#FBF9F8}
+.vol-form__parche--1{top:0;height:calc(43.5 * var(--fu))}
+.vol-form__parche--2{top:calc(53.5 * var(--fu));height:calc(57 * var(--fu))}
+.vol-form__parche--3{top:calc(286.5 * var(--fu));height:calc(78 * var(--fu))}
+.vol-form__parche--4{top:calc(418.5 * var(--fu));height:calc(29 * var(--fu))}
+
+.vol-form__eti,.vol-form__lab{position:absolute;line-height:1;white-space:nowrap}
+.vol-form__eti{
+  font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:calc(17.48 * var(--fu));color:#515151;
+}
+.vol-form__lab{
+  font-family:"Poppins",sans-serif;font-weight:600;
+  font-size:calc(16 * var(--fu));color:#1C1416;
+}
+.vol-form__eti--paso {left:calc(14.3 * var(--fu));top:calc(17.14 * var(--fu))}
+.vol-form__eti--fase {left:calc(356.3 * var(--fu));top:calc(17.14 * var(--fu))}
+.vol-form__lab--insc {left:calc(14.3 * var(--fu));top:calc(61.8 * var(--fu))}
+.vol-form__lab--dni  {left:calc(14.3 * var(--fu));top:calc(91.8 * var(--fu))}
+.vol-form__lab--nom  {left:calc(227.3 * var(--fu));top:calc(91.8 * var(--fu))}
+.vol-form__lab--ubi  {left:calc(14.3 * var(--fu));top:calc(289.8 * var(--fu))}
+.vol-form__lab--donde{left:calc(14.3 * var(--fu));top:calc(320.8 * var(--fu))}
+.vol-form__eti--dep  {left:calc(14.3 * var(--fu));top:calc(345.14 * var(--fu))}
+.vol-form__eti--pro  {left:calc(193.3 * var(--fu));top:calc(345.14 * var(--fu))}
+.vol-form__eti--dis  {left:calc(373.3 * var(--fu));top:calc(345.14 * var(--fu))}
+.vol-form__lab--dir  {left:calc(14.3 * var(--fu));top:calc(427.8 * var(--fu))}
+
+/* Aviso rosado «Ten a mano».
+   min-height en lugar de height, y un margen abajo: la lista y la nota salen
+   del panel y pueden crecer. Con las nueve líneas de hoy el recuadro mide
+   exactamente los 557,5 px del editable; con una más, crece en vez de
+   derramar el texto por fuera. */
+.vol-mano{
+  position:relative;box-sizing:border-box;
+  min-height:calc(557.5 * var(--u));margin-top:calc(13.65 * var(--u));
+  background:#F0D3D3;
+  padding:calc(90.6 * var(--u)) calc(22 * var(--u)) calc(34 * var(--u)) calc(22 * var(--u));
+}
+.vol-mano__cab{height:0}
+.vol-mano__ico{
+  position:absolute;left:calc(24.2 * var(--u));top:calc(28.9 * var(--u));
+  width:calc(44.8 * var(--u));height:calc(44.8 * var(--u));
+}
+.vol-mano__tit{
+  position:absolute;left:calc(83.1 * var(--u));top:calc(39.3 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(30.1 * var(--u));
+  line-height:1;color:#6E0B14;
+}
+.vol-mano__lista{
+  width:calc(495 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(24 * var(--u));color:#1C1416;
+}
+.vol-mano__lista li{padding-left:calc(18 * var(--u));text-indent:calc(-18 * var(--u))}
+.vol-mano__lista li+li{margin-top:calc(6 * var(--u))}
+.vol-mano__lista strong{font-weight:600}
+.vol-mano__nota{
+  width:calc(495 * var(--u));margin-top:calc(32.1 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(28 * var(--u));color:#6E0B14;
+}
+
+/* ------------------------------------------------------------ QUÉ PROCEDE */
+.vol-procede{
+  padding:calc(92.84 * var(--u)) 0 calc(73.3 * var(--u)) calc(111 * var(--u));
+}
+.vol-procede__h{
+  margin-left:calc(-2 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(53.93 * var(--u));
+  line-height:1;color:#1C1416;
+}
+.vol-regla--izq{margin:calc(14.53 * var(--u)) auto 0 calc(-4.5 * var(--u))}
+/* El texto de este cierre llega del panel como HTML y no puede traer clases:
+   los mismos estilos se cuelgan también de las etiquetas que escribe el
+   editor (h3 para el titulillo granate, p para los párrafos, a para el
+   correo). Son los selectores con .vol-procede__cuerpo. */
+.vol-procede__cab,
+.vol-procede__cuerpo h3{
+  margin-top:calc(34.9 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#6E0B14;
+}
+.vol-procede__p,
+.vol-procede__cuerpo p{
+  width:calc(1230 * var(--u));margin-top:calc(7 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;
+}
+.vol-procede__cuerpo h3:first-child{margin-top:calc(34.9 * var(--u))}
+.vol-procede__p--2,
+.vol-procede__cuerpo p+p{margin-top:calc(12 * var(--u))}
+.vol-procede__cuerpo strong{font-weight:600}
+.vol-procede__mail,
+.vol-procede__cuerpo a{color:#6E0B14;overflow-wrap:break-word}
+.vol-procede__mail:hover,
+.vol-procede__cuerpo a:hover{text-decoration:underline}
+
+/* ================================ LO QUE AÑADE EL CONTENIDO ADMINISTRABLE ===
+   El editable es una lámina fija; esta página ya no lo es. Lo de aquí abajo
+   cubre lo que el panel permite escribir y el editable no dibuja. Nada de
+   esto se ve con el contenido de hoy: son piezas que aparecen sólo si
+   alguien rellena el campo correspondiente.
+   ========================================================================== */
+
+/* Rótulo (antetítulo) de sección. Las plantillas del panel lo ofrecen en
+   «Pasos», «Servicios» y «Fases»; el editable no lo dibuja y por eso llega
+   vacío. Si algún día se escribe, tiene que verse y no descolocar nada. */
+.vol-rotulo{
+  margin-bottom:calc(10 * var(--u));text-align:center;
+  font-family:"Poppins",sans-serif;font-weight:600;font-style:italic;
+  font-size:calc(22 * var(--u));line-height:1.2;color:#6E0B14;
+}
+
+/* Texto de entrada de sección, misma historia: campo del panel sin dibujo en
+   el editable. Va centrado bajo la regla dorada. */
+.vol-intro{
+  width:min(calc(900 * var(--u)),100%);margin:calc(28 * var(--u)) auto 0;
+  font-family:"Poppins",sans-serif;font-weight:300;font-size:calc(22 * var(--u));
+  line-height:calc(30 * var(--u));color:#1C1416;text-align:center;
+}
+.vol-intro p+p{margin-top:calc(10 * var(--u))}
+.vol-intro strong{font-weight:600}
+
+/* Última línea destacada del cierre de servicios («¡El Perú te necesita!»).
+   El editable no la trae, así que el campo va vacío; escrita, se lee como la
+   cita de arriba. */
+.vol-cita__grito{font-weight:600;color:#6E0B14}
+
+/* Si «Las tres fases» se apaga en el panel, la columna del formulario se
+   queda sola: se centra en vez de dejar medio ancho en blanco. El formulario
+   se pinta SIEMPRE, apagar un texto no puede cerrar la inscripción. */
+.vol-proceso__grid--sola{
+  grid-template-columns:calc(558 * var(--u));justify-content:center;padding-left:0;
+}
+
+/* El editable dibuja el formulario sobre un panel claro recortado del propio
+   pantallazo (#FBF9F8, 558 px de ancho). Con el formulario de verdad ese
+   panel es el fondo del contenedor, con el mismo margen interior de 14 px que
+   mide el editable entre el borde y la primera etiqueta.
+   El titular del panel se oculta aquí porque el editable no lo dibuja —y es
+   aria-hidden, así que no se pierde nada—; en pantallas estrechas vuelve,
+   que es donde el formulario aparece suelto y necesita encabezado. */
+.vol-proceso__aside .form-fijo{background:#FBF9F8;padding:calc(14 * var(--u))}
+.vol-proceso__aside .form-fijo__titulo{display:none}
+
+/* Detalles del formulario propios de esta columna de 558 px. Los seis fallos
+   que eran del sistema —el chevron duplicado, el flex del consentimiento, los
+   símbolos escapados, el marco de los <fieldset>, «.btn[hidden]» y el panel
+   flotante— están arreglados en sistema.css y heredado.css, que es donde
+   viven esas clases; aquí sólo queda lo que depende de este ancho.
+
+   Los botones: .btn pide 272 px de ancho mínimo y aquí sólo hay 530, así que
+   los tres saltaban de línea. El editable dibuja un «CONTINUAR» compacto. */
+.vol-proceso__aside .form-acciones .btn{min-width:0;padding:.5em 1.6em}
+
+/* La casilla del consentimiento, algo menor que la del resto del sitio para
+   que no compita con el párrafo legal. */
+.vol-proceso__aside .casilla>input[type="checkbox"]{
+  width:22px;height:22px;margin-top:.18em;
+}
+
+.vol-proceso__aside .paso__seccion{
+  padding-top:clamp(16px,2vw,26px);border-top:1px solid rgba(0,0,0,.14);
+}
+
+/* Séptimo: los rótulos pequeños en versalitas. A 558 px de columna, los tres
+   de la fila del ubigeo («DEPARTAMENTO PROVINCIA DISTRITO») se salían de su
+   tercio y se pisaban. Se ajustan a los 17,48 px que mide el editable, con
+   un suelo para pantallas estrechas. */
+.vol-proceso__aside .campo__etiqueta--menor{
+  font-size:clamp(12.5px,calc(17.48 * var(--u)),18px);letter-spacing:.04em;
+}
+
+/* Y el último: el acuse de recibo. Sus párrafos salían pegados uno a otro
+   porque el sistema quita los márgenes de <p> y este bloque no los repone.
+   Es lo que lee quien acaba de inscribirse; que se pueda leer. */
+.vol-proceso__aside .confirmacion h2{margin-bottom:.45em;line-height:1.1}
+.vol-proceso__aside .confirmacion p+p{margin-top:.8em}
+
+/* Panel flotante de acceso al formulario (ancla-form.js). Vive fuera de
+   .pagina y sus estilos estaban en las hojas antiguas, que el rediseño ya no
+   carga: se veía como un bloque suelto al final de la página. Aquí recupera
+   su forma —una franja fija abajo— y sólo en pantallas estrechas: desde
+   1024 px el formulario ya acompaña al lector en su propia columna. */
+.ancla-form{display:none}
+
+/* --------------------------------------------------------------------- PIE */
+.site-footer{min-height:calc(134 * var(--u));align-items:flex-start}
+.site-footer .container{max-width:none;padding-inline:calc(111 * var(--u))}
+.site-footer__inner{
+  flex-direction:column;align-items:flex-start;gap:calc(5.56 * var(--u));
+  padding-top:calc(48.19 * var(--u));line-height:1.6;
+}
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u))}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  .vol-marco{width:100%;padding-inline:var(--gutter)}
+
+  .vol-h2{font-size:clamp(28px,4.6vw,48px);line-height:1.08;letter-spacing:0}
+  .vol-regla{width:64px;height:4px;margin-top:clamp(14px,2vw,20px)}
+
+  /* Héroe: la foto nunca se deforma; el encuadre apunta al grupo */
+  .vol-hero{height:auto;min-height:clamp(380px,52vw,560px)}
+  .vol-hero .hero__media img{object-position:52% 32%}
+  .vol-hero::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(40,30,0,.10) 0%,rgba(40,30,0,.30) 55%,rgba(40,30,0,.48) 100%);
+  }
+  .vol-hero .vol-hero__inner{
+    position:relative;z-index:2;justify-content:center;height:auto;
+    min-height:clamp(380px,52vw,560px);
+    padding:clamp(56px,8vw,90px) var(--gutter) clamp(46px,7vw,80px);
+    max-width:calc(var(--container) + var(--gutter)*2);margin-inline:auto;
+  }
+  .vol-hero__title{font-size:clamp(32px,6.4vw,66px);letter-spacing:0}
+  .vol-hero__sub{
+    width:100%;max-width:62ch;margin-top:clamp(12px,1.6vw,18px);
+    font-size:clamp(15px,2.15vw,24px);line-height:1.34;
+  }
+
+  .vol-pasos{padding-top:clamp(40px,6vw,70px)}
+  .vol-pasos__grid{
+    grid-template-columns:1fr;padding-left:0;
+    row-gap:clamp(22px,3vw,34px);margin-top:clamp(28px,4vw,48px);
+    max-width:560px;margin-inline:auto;
+  }
+  .vol-paso{
+    height:auto;border-width:1px;border-radius:16px;
+    box-shadow:5px 7px 13px rgba(0,0,0,.16);
+    padding:clamp(22px,3vw,30px) clamp(18px,3vw,28px) clamp(24px,3.2vw,32px);
+  }
+  .vol-paso__num{padding-top:0;font-size:clamp(28px,4.4vw,44px)}
+  .vol-paso__tit{width:100%;margin-top:clamp(4px,.6vw,8px);font-size:clamp(20px,2.9vw,29px);line-height:1.1}
+  .vol-paso__txt{width:100%;margin-top:clamp(10px,1.4vw,16px);font-size:clamp(15px,2.05vw,21px);line-height:1.42}
+  .vol-paso__cta{
+    position:static;display:block;width:100%;max-width:300px;height:auto;
+    margin:clamp(16px,2.2vw,24px) auto 0;padding:clamp(11px,1.5vw,16px) 1em;
+    font-size:clamp(15px,2.05vw,22px);border-radius:12px;
+  }
+
+  .vol-servicios{padding-top:clamp(44px,6.5vw,78px)}
+  .vol-serv__grid{
+    grid-template-columns:1fr;padding-left:0;
+    row-gap:clamp(26px,3.6vw,44px);margin-top:clamp(28px,4vw,48px);
+    max-width:620px;margin-inline:auto;
+  }
+  .vol-serv__head{height:auto;padding-left:0;gap:clamp(12px,1.8vw,18px)}
+  .vol-serv__ico{width:clamp(48px,7vw,62px);height:clamp(48px,7vw,62px)}
+  /* En una columna sobra ancho: el título vuelve a partirse solo. */
+  .vol-serv__tit{max-width:none;font-size:clamp(20px,2.9vw,30px);line-height:1.12}
+  .vol-serv__txt,
+  .vol-serv__txt--1,.vol-serv__txt--2,.vol-serv__txt--3,
+  .vol-serv__txt--4,.vol-serv__txt--5,.vol-serv__txt--6{
+    width:100%;margin-top:clamp(12px,1.6vw,20px);
+    font-size:clamp(15px,2.05vw,21px);line-height:1.42;
+  }
+
+  .vol-cita{padding-top:clamp(40px,5.6vw,70px)}
+  .vol-cita__quote{font-size:clamp(16px,2.15vw,22px);line-height:1.4}
+  .vol-cita__txt,.vol-cita__txt--2{
+    width:100%;max-width:56ch;margin-top:clamp(10px,1.4vw,16px);
+    font-size:clamp(15px,2.05vw,21px);line-height:1.4;
+  }
+  .vol-cita__accion{margin-top:clamp(22px,3vw,34px)}
+  .vol-cta{
+    width:auto;min-width:240px;height:auto;padding:clamp(9px,1.2vw,13px) 1.4em;
+    font-size:clamp(16px,2.15vw,24px);
+  }
+
+  .vol-proceso{padding-top:clamp(44px,6.5vw,78px)}
+  .vol-proceso__grid{
+    grid-template-columns:1fr;padding-left:0;
+    row-gap:clamp(30px,4vw,50px);margin-top:clamp(28px,4vw,48px);
+  }
+  /* En una columna la fase se apila: el número encima del título. */
+  .vol-fase{display:block}
+  .vol-fase__num{font-size:clamp(40px,6vw,64px);line-height:1}
+  .vol-fase__cuerpo{margin-left:0;width:100%;padding-top:clamp(4px,.6vw,8px)}
+  .vol-fase__tit{margin-left:0;font-size:clamp(20px,2.9vw,29px);line-height:1.1}
+  .vol-fase__txt{margin-top:clamp(8px,1.1vw,14px);font-size:clamp(15px,2.05vw,21px);line-height:1.42}
+  .vol-lista{margin-top:clamp(14px,1.8vw,22px);font-size:clamp(15px,2.05vw,21px);line-height:1.42}
+  .vol-lista li{padding-left:16px;text-indent:-16px}
+  .vol-lista li+li{margin-top:clamp(6px,.8vw,10px)}
+  .vol-sep,.vol-sep--corta{width:100%;height:1px;margin-top:clamp(20px,2.6vw,32px)}
+  .vol-fase--2,.vol-fase--3{margin-top:clamp(20px,2.6vw,32px)}
+  .vol-fase--2 .vol-sep,.vol-fase--3 .vol-sep{margin-top:clamp(20px,2.6vw,32px)}
+
+  .vol-proceso__grid--sola{grid-template-columns:1fr}
+  .vol-proceso__aside{padding-top:0}
+  .vol-form{max-width:558px;margin-inline:auto}
+  .vol-proceso__aside .form-fijo{padding:clamp(14px,2.4vw,22px)}
+  /* Suelto y sin la columna de fases al lado, el formulario sí necesita su
+     encabezado: aquí vuelve el titular que en escritorio se oculta. */
+  .vol-proceso__aside .form-fijo__titulo{display:block}
+  .vol-mano{
+    min-height:0;max-width:558px;margin:clamp(24px,3.2vw,40px) auto 0;
+    padding:clamp(22px,3vw,34px) clamp(18px,2.6vw,30px) clamp(26px,3.4vw,40px);
+  }
+  .vol-mano__cab{
+    height:auto;display:flex;align-items:center;gap:clamp(10px,1.4vw,16px);
+    margin-bottom:clamp(14px,1.8vw,22px);
+  }
+  .vol-mano__ico{position:static;width:clamp(34px,4.4vw,44px);height:clamp(34px,4.4vw,44px);flex:0 0 auto}
+  .vol-mano__tit{position:static;font-size:clamp(21px,2.9vw,30px)}
+  .vol-mano__lista,.vol-mano__nota{width:100%;font-size:clamp(15px,2.05vw,21px);line-height:1.4}
+  .vol-mano__lista li{padding-left:16px;text-indent:-16px}
+  .vol-mano__nota{margin-top:clamp(18px,2.4vw,30px)}
+
+  .vol-procede{padding:clamp(44px,6.5vw,78px) 0 clamp(40px,5.5vw,70px)}
+  .vol-procede__h{margin-left:0;font-size:clamp(28px,4.6vw,48px);line-height:1.08}
+  .vol-regla--izq{margin:clamp(12px,1.8vw,18px) auto 0 0}
+  .vol-procede__cab,
+  .vol-procede__cuerpo h3,
+  .vol-procede__cuerpo h3:first-child{margin-top:clamp(20px,2.6vw,32px);font-size:clamp(15px,2.05vw,21px);line-height:1.42}
+  .vol-procede__p,.vol-procede__p--2,
+  .vol-procede__cuerpo p,.vol-procede__cuerpo p+p{
+    width:100%;margin-top:clamp(10px,1.4vw,16px);
+    font-size:clamp(15px,2.05vw,21px);line-height:1.42;
+  }
+  .vol-procede__mail,
+  .vol-procede__cuerpo a{word-break:break-word}
+
+  .vol-rotulo{font-size:clamp(14px,2vw,19px);margin-bottom:clamp(6px,1vw,10px)}
+  .vol-intro{
+    width:100%;max-width:62ch;margin-top:clamp(14px,2vw,22px);
+    font-size:clamp(15px,2.05vw,21px);line-height:1.42;
+  }
+
+  /* El panel flotante, aquí sí: el formulario queda debajo de las tres fases
+     y sin este atajo hay que recorrer la página entera para llegar. Se retira
+     solo cuando #inscripcion entra en pantalla (ancla-form.js). El relleno
+     del <body> reserva su alto para que no tape el pie. */
+  .ancla-form{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:flex;align-items:center;gap:clamp(12px,2.4vw,24px);
+    padding:10px var(--gutter);
+    background:#FBF9F8;border-top:3px solid #6E0B14;
+    box-shadow:0 -6px 18px rgba(0,0,0,.14);
+    transition:opacity .25s ease,transform .25s ease;
+  }
+  .ancla-form[hidden]{display:none}
+  .ancla-form>div{min-width:0}
+  .ancla-form__rotulo{
+    display:block;font-weight:600;font-style:italic;font-size:13px;color:#6E0B14;
+  }
+  .ancla-form__titulo{
+    font-family:"Neulis",sans-serif;font-weight:600;font-size:clamp(16px,2.4vw,19px);
+    line-height:1.15;color:#1C1416;
+  }
+  .ancla-form__dato{font-size:13px;color:#515151}
+  /* width:auto y max-width:none deshacen el «.btn{width:100%}» que sistema.css
+     aplica por debajo de 768 px: aquí el botón comparte línea con el texto y
+     a todo lo ancho lo tapaba. */
+  .ancla-form .btn{
+    margin-inline-start:auto;flex:none;width:auto;max-width:none;
+    min-width:0;min-height:44px;padding:.5em 1.2em;
+  }
+  .ancla-form.esta-oculto{opacity:0;transform:translateY(100%);pointer-events:none}
+  body{padding-bottom:96px}
+
+  .site-footer{min-height:0;align-items:center}
+  .site-footer .container{padding-inline:var(--gutter)}
+  .site-footer__inner{padding-block:clamp(20px,3vw,30px);gap:8px}
+}
+
+@media (max-width:767px){
+  .vol-hero{min-height:clamp(340px,74vw,420px)}
+  .vol-hero .vol-hero__inner{min-height:clamp(340px,74vw,420px)}
+  .vol-paso__cta{max-width:100%}
+  .vol-cta{width:100%;max-width:320px}
+}
+
+@media (max-width:479px){
+  .vol-hero__title{font-size:clamp(27px,8.4vw,34px)}
+  .vol-hero__sub{font-size:clamp(13.5px,3.9vw,16px)}
+  .vol-serv__head{flex-direction:row;align-items:flex-start}
+  .vol-serv__ico{width:44px;height:44px}
+  /* En 390 px la franja sólo da para el titular y el botón. */
+  .ancla-form__rotulo,.ancla-form__dato{display:none}
+}

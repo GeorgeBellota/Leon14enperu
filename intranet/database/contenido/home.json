@@ -1,0 +1,174 @@
+{
+  "pagina": {
+    "clave": "home",
+    "nombre": "Inicio",
+    "ruta": "/",
+    "titulo_seo": "León XIV en el Perú · Visita Apostólica 11–16 de noviembre de 2026",
+    "descripcion_seo": "Sitio oficial de la Visita Apostólica de Su Santidad el Papa León XIV al Perú, del 11 al 16 de noviembre de 2026. Lima, Callao, Chiclayo, Santa Cruz, Cusco y Pucallpa.",
+    "activa": 1
+  },
+
+  "_comentario_conservar": "La sección «colecta» no la pinta la portada nueva, pero es la ÚNICA copia en la base de las cuentas bancarias oficiales de la Colecta Nacional, y /donativo/ las lee de aquí (views/donativo.php y assets/parciales/colecta.php). Ni se apaga ni se borra: el parcial respeta «activa», así que apagarla dejaría /donativo/ avisando contra cuentas falsas sin publicar ninguna verdadera.",
+  "conservar": ["colecta"],
+
+  "secciones": [
+    {
+      "clave": "hero",
+      "nombre": "Carrusel principal",
+      "plantilla": "carrusel_hero",
+      "orden": 10,
+      "activa": 1,
+      "titulo": "Papa León XIV, le esperamos",
+      "texto": "Las láminas que abren la portada. La primera es la que ve todo el mundo.",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "Papa León XIV,",
+          "texto": "le esperamos.",
+          "imagen": "index/hero",
+          "enlace_texto": "En directo",
+          "enlace_url": "en-directo/"
+        },
+        {
+          "orden": 20,
+          "titulo": "Abramos",
+          "texto": "el corazón.",
+          "imagen": "index/hero",
+          "enlace_texto": "En directo",
+          "enlace_url": "en-directo/"
+        },
+        {
+          "orden": 30,
+          "titulo": "Del 11 al 16",
+          "texto": "de noviembre.",
+          "imagen": "index/hero",
+          "enlace_texto": "En directo",
+          "enlace_url": "en-directo/"
+        }
+      ]
+    },
+
+    {
+      "clave": "falta-poco-encuentro",
+      "nombre": "Fechas y cuenta regresiva",
+      "plantilla": "contador",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "11 - 16",
+      "titulo": "NOVIEMBRE 2026",
+      "texto": "LIMA CALLAO · CHICLAYO · CUSCO · PUCALLPA",
+      "datos": {
+        "antes": "Faltan",
+        "despues": "para recibir al Papa León XIV en el Perú"
+      },
+      "bloques": []
+    },
+
+    {
+      "clave": "himno",
+      "nombre": "Himno oficial",
+      "plantilla": "destacado",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "HIMNO OFICIAL",
+      "titulo": "“León, hermano del camino”",
+      "cta_texto": "Escuchar",
+      "cta_url": "noticias/",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "abramos-el-corazon",
+      "nombre": "La marca «Abramos el corazón»",
+      "plantilla": "destacado",
+      "orden": 40,
+      "activa": 1,
+      "titulo": "Abramos el corazón",
+      "texto": "<p><strong>Una invitación</strong> a recibir al Santo Padre, encontrarnos como Iglesia y renovar juntos la esperanza.</p>",
+      "imagen": "brand/logo-lockup-rojo",
+      "cta_texto": "Conoce más",
+      "cta_url": "logo-y-lema/",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "subsidios-home",
+      "nombre": "Subsidios pastorales",
+      "plantilla": "tarjetas_foto",
+      "orden": 50,
+      "activa": 1,
+      "rotulo": "Subsidios",
+      "titulo": "pastorales",
+      "texto": "<p>Preparémos espiritualmente para la <strong>recibir al Santo Padre</strong>, encontrarnos como Iglesia y renovar nuestra esperanza.</p>",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "rotulo": "SUBSIDIO #1", "titulo": "PAPA LEÓN:\nCERCANO Y PERUANO", "imagen": "index/p08", "enlace_url": "subsidios/" },
+        { "orden": 20, "rotulo": "SUBSIDIO #2", "titulo": "UNIDOS EN CRISTO,\nSEMBRADORES DE\nPAZ", "imagen": "index/p09", "enlace_url": "subsidios/" },
+        { "orden": 30, "rotulo": "SUBSIDIO #3", "titulo": "FAMILIAS QUE\nCUIDAN LA VIDA", "imagen": "index/p10", "enlace_url": "subsidios/" },
+        { "orden": 40, "rotulo": "SUBSIDIO #4", "titulo": "LOS JÓVENES Y LA\nMISIÓN", "imagen": "index/p11", "enlace_url": "subsidios/" },
+        { "orden": 50, "rotulo": "SUBSIDIO #5", "titulo": "PASTORAL SOCIAL:\nLA DIGNIDAD DE\nTODA PERSONA", "imagen": "index/p12", "enlace_url": "subsidios/" }
+      ]
+    },
+
+    {
+      "clave": "llega-al-peru",
+      "nombre": "La visita · El Papa León llega al Perú",
+      "plantilla": "destacado",
+      "orden": 60,
+      "activa": 1,
+      "rotulo": "La visita",
+      "titulo": "El Papa León llega al Perú",
+      "texto": "<p><strong>Del 11 al 16 de noviembre de 2026</strong>, el Santo Padre León XIV realizará su Visita Apostólica al Perú, recorriendo Lima, Chiclayo, Cusco y Pucallpa.</p><p>el Santo Padre León XIV recorrerá Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa para encontrarse con el pueblo peruano. Su llegada será una oportunidad para renovar la fe, fortalecer los vínculos que nos unen y reconocer, en medio de nuestras diferencias, aquello que compartimos como nación.</p>",
+      "imagen": "index/p00",
+      "cta_texto": "Agenda",
+      "cta_url": "agenda/",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "el-recorrido",
+      "nombre": "El recorrido · las sedes",
+      "plantilla": "tarjetas_foto",
+      "orden": 70,
+      "activa": 1,
+      "rotulo": "El recorrido",
+      "titulo": "Seis ciudades, una sola nación",
+      "texto": "<p>Seis ciudades que expresan la diversidad y riqueza de la Iglesia en el Perú. Cada sede será espacio de encuentro con el Santo Padre y reflejará una historia, una comunidad y una forma particular de vivir la fe.</p>",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "Lima",     "imagen": "index/p13", "enlace_url": "sedes/" },
+        { "orden": 20, "titulo": "Callao",   "imagen": "index/p14", "enlace_url": "sedes/" },
+        { "orden": 30, "titulo": "Chiclayo", "texto": "Santa Cruz", "imagen": "index/p15", "enlace_url": "sedes/" },
+        { "orden": 40, "titulo": "Cusco",    "imagen": "index/p16", "enlace_url": "sedes/" },
+        { "orden": 50, "titulo": "Pucallpa", "imagen": "index/p17", "enlace_url": "sedes/" }
+      ]
+    },
+
+    {
+      "clave": "tierra-de-santos",
+      "nombre": "Tierra de santos",
+      "plantilla": "tarjetas_foto",
+      "orden": 80,
+      "activa": 1,
+      "titulo": "Cinco santos, un mismo corazón",
+      "texto": "<p>El Perú tiene una tradición de santidad que forma parte de la <strong>identidad espiritual</strong> de su pueblo.</p>",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "rotulo": "ORACIÓN",      "titulo": "Santa Rosa\nde Lima",        "imagen": "index/p02", "enlace_url": "santos/" },
+        { "orden": 20, "rotulo": "CARIDAD",      "titulo": "San Martín\nde Porres",      "imagen": "index/p03", "enlace_url": "santos/" },
+        { "orden": 30, "rotulo": "MISERICORDIA", "titulo": "San Juan\nMacías",           "imagen": "index/p04", "enlace_url": "santos/" },
+        { "orden": 40, "rotulo": "MISIÓN",       "titulo": "San Francisco\nSolano",      "imagen": "index/p05", "enlace_url": "santos/" },
+        { "orden": 50, "rotulo": "PASTOR",       "titulo": "Santo Toribio\nde Mogrovejo", "imagen": "index/p06", "enlace_url": "santos/" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "Se retiran de la portada once secciones que el rediseño no pinta: todo-necesitas-antes, cronicas-visita, itinerario, dias-encuentro, colecta, cuatro-ciudades-solo, mas-destacado, prepara-tu-corazon, pon-tus-dones, acompana-cada-momento, cep-home e iglesia-peru-te. Su texto queda en el volcado de producción y en el respaldo.",
+    "«himno» y «subsidios-home» son secciones nuevas. Las demás reutilizan la clave que ya tenían para conservar su historial."
+  ]
+}

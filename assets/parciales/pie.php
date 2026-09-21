@@ -1,35 +1,38 @@
 <?php
 /**
- * Pie del sitio, común a todas las páginas.
+ * ============================================================================
+ *  Pie del sitio — rediseño 2026.
+ * ============================================================================
  *
- * @var string $raiz  prefijo hasta la raíz ('../' desde una subcarpeta)
+ *  El editable dibuja una banda dorada de 134 px con dos líneas de crédito.
+ *  Eso es el pie «simple», y es el que está puesto hoy en producción.
+ *
+ *  ── Cuánto pie se muestra ────────────────────────────────────────────────
+ *  Lo decide el ajuste `pie.modo` desde la intranet, igual que antes:
+ *
+ *    simple               la banda del editable: créditos y poco más
+ *    completo             encima, las cuatro columnas de enlaces y las redes
+ *    simple_en_internas   completo en la portada, simple en el resto
+ *
+ *  Ante la duda —base caída, ajuste sin valor— se muestra el simple: es la
+ *  banda que dibuja el diseño, y un pie de más nunca rompe una página.
+ *  (Antes el valor de reserva era «completo»; se cambió porque el diseño
+ *  nuevo tiene un pie propio y el completo es ahora la excepción.)
+ *
+ *  @var string $raiz    prefijo hasta la raíz del sitio
+ *  @var string $activa  clave de la página actual
  */
 
 $raiz = $raiz ?? './';
 $esc  = static fn ($v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
-/* ── Cuánto pie se muestra ────────────────────────────────────────────────
-   Lo decide el ajuste `pie.modo` desde la intranet:
-
-     completo             las cuatro columnas de enlaces y las redes
-     simple               sólo el copyright
-     simple_en_internas   completo en la portada, simple en el resto
-
-   Mientras la mayoría de las páginas no estén terminadas, un mapa del sitio
-   con veinte enlaces es un mapa de páginas a medio hacer. El copyright, en
-   cambio, tiene que estar siempre: es la única línea del pie que cumple una
-   función legal, no de navegación.
-
-   Ante la duda —base caída, ajuste sin valor— se muestra el pie completo: es
-   el comportamiento que tenía el sitio antes de que este ajuste existiera. */
-$modoPie = 'completo';
+$modoPie = 'simple';
 
 if (isset($sitio) && $sitio instanceof \Intranet\Publico\Sitio) {
     // Igual que en la cabecera: sin el try, una base que no responde cortaba
-    // la página en seco en lugar de caer al pie completo, que es lo que este
-    // archivo dice hacer «ante la duda».
+    // la página en seco en lugar de caer al valor de reserva.
     try {
-        $modoPie = (string) $sitio->catalogo()->ajuste('pie.modo', 'completo');
+        $modoPie = (string) $sitio->catalogo()->ajuste('pie.modo', 'simple');
     } catch (\Throwable $e) {
         error_log('[pie] no se pudo leer pie.modo: ' . $e->getMessage());
     }
@@ -42,20 +45,21 @@ $pieCompleto = $modoPie === 'completo'
 
 $columnas = [
     'Mapa del sitio' => [
-        ''         => 'Inicio',
-        'el-papa/' => 'El Papa',
-        'agenda/'  => 'Agenda',
-        'sedes/'   => 'Sedes',
-        'noticias/'=> 'Noticias',
+        ''                => 'Inicio',
+        'papa-leon-xiv/'  => 'Papa León XIV',
+        'agenda/'         => 'Agenda',
+        'sedes/'          => 'Sedes',
+        'noticias/'       => 'Noticias',
     ],
     'Para el peregrino' => [
         'guia-del-peregrino/' => 'Guía del peregrino',
-        'materiales/'         => 'Materiales de pastoral',
+        'subsidios/'          => 'Subsidios pastorales',
         'en-directo/'         => 'En directo',
-        '#desde-donde-estes'  => 'Desde donde estés',
+        'santos/'             => 'Santos del Perú',
     ],
     'Cómo ayudar' => [
         'voluntariado/'  => 'Voluntariado',
+        'participa/'     => 'Participa',
         'patrocinios/'   => 'Patrocinios',
         'donativo/'      => 'Donativo',
         'transparencia/' => 'Transparencia',
@@ -70,15 +74,25 @@ $columnas = [
         'cookies/'              => 'Cookies',
     ],
 ];
+
+/* Los enlaces sueltos de la banda: las páginas que el diseño no pone en el
+   menú pero a las que tiene que haber un camino. Si el pie va en modo
+   completo, sobran: ya están en las columnas. */
+$sueltos = [
+    'preguntas-frecuentes/' => 'Preguntas frecuentes',
+    'logo-y-lema/'          => 'Logo y lema',
+    'santos/'               => 'Santos del Perú',
+];
 ?>
-<footer class="pie<?= $pieCompleto ? '' : ' pie--simple' ?>">
-  <div class="contenedor">
+<footer class="site-footer<?= $pieCompleto ? ' site-footer--completo' : '' ?>">
+  <div class="container site-footer__inner">
+
     <?php if ($pieCompleto): ?>
-      <div class="pie__columnas">
+      <div class="pie-columnas">
         <?php foreach ($columnas as $titulo => $enlaces): ?>
-          <div class="pie__grupo" data-pie-grupo>
-            <button class="pie__titulo" type="button"><?= $esc($titulo) ?> <svg aria-hidden="true"><use href="#i-mas"/></svg></button>
-            <ul class="pie__lista">
+          <div class="pie-columnas__grupo" data-pie-grupo>
+            <button class="pie-columnas__titulo" type="button" aria-expanded="false"><?= $esc($titulo) ?></button>
+            <ul class="pie-columnas__lista">
               <?php foreach ($enlaces as $destino => $rotulo): ?>
                 <li><a href="<?= $esc($raiz . $destino) ?>"><?= $esc($rotulo) ?></a></li>
               <?php endforeach; ?>
@@ -89,17 +103,24 @@ $columnas = [
 
       <?php /* Sin cuentas oficiales todavía. Cinco iconos enlazando a «#» son
                cinco enlaces rotos: hasta que existan, esto es un rótulo. */ ?>
-      <div class="pie__redes pie__redes--pendiente" aria-label="Canales oficiales">
-        <span class="pie__redes-iconos" aria-hidden="true">
+      <p class="pie-redes" aria-label="Canales oficiales">
+        <span class="pie-redes__iconos" aria-hidden="true">
           <svg><use href="#i-facebook"/></svg><svg><use href="#i-instagram"/></svg><svg><use href="#i-x"/></svg><svg><use href="#i-youtube"/></svg><svg><use href="#i-tiktok"/></svg>
         </span>
-        <span class="estado">Canales oficiales · próximamente</span>
-      </div>
+        <span class="pie-redes__estado">Canales oficiales · próximamente</span>
+      </p>
     <?php endif; ?>
 
-    <div class="pie__base">
-      <p>leon14enperu.com · Viaje apostólico de Su Santidad el Papa León XIV al Perú, 11–16 de noviembre de 2026.</p>
-      <p>Retrato pontificio y escudo: Santa Sede. Fotografía: Santa Sede y cesiones.</p>
-    </div>
+    <p class="site-footer__legal">leon14enperu.com · Viaje apostólico de Su Santidad el Papa León XIV al Perú, 11–16 de noviembre de 2026.</p>
+
+    <?php if (!$pieCompleto): ?>
+      <nav class="site-footer__links" aria-label="Enlaces complementarios">
+        <?php foreach ($sueltos as $destino => $rotulo): ?>
+          <a href="<?= $esc($raiz . $destino) ?>"<?= rtrim($destino, '/') === ($activa ?? '') ? ' aria-current="page"' : '' ?>><?= $esc($rotulo) ?></a>
+        <?php endforeach; ?>
+      </nav>
+    <?php endif; ?>
+
+    <p class="site-footer__credits">Retrato pontificio y escudo: Santa Sede. Fotografía: Santa Sede y cesiones.</p>
   </div>
 </footer>

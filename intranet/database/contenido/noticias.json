@@ -1,0 +1,63 @@
+{
+  "pagina": {
+    "clave": "noticias",
+    "nombre": "Noticias",
+    "ruta": "/noticias/",
+    "titulo_seo": "Noticias · León XIV en el Perú",
+    "descripcion_seo": "Actualidad y comunicaciones oficiales rumbo a la Visita Apostólica del Papa León XIV al Perú, del 11 al 16 de noviembre de 2026.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Noticias",
+      "texto": "Actualidad y comunicaciones oficiales\nrumbo a la visita del Santo Padre.",
+      "imagen": "noticias/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "ultimas-noticias",
+      "nombre": "Últimas noticias",
+      "plantilla": "noticias",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "@bd",
+      "texto": "@bd",
+      "datos": { "detalle": true },
+      "bloques": "@bd"
+    },
+
+    {
+      "clave": "videos",
+      "nombre": "Vídeos",
+      "plantilla": "tarjetas_foto",
+      "orden": 30,
+      "activa": 1,
+      "titulo": "Videos",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "", "enlace_url": "" },
+        { "orden": 20, "titulo": "", "enlace_url": "" },
+        { "orden": 30, "titulo": "", "enlace_url": "" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "La cabecera no lleva rótulo: el editable sólo dibuja el título y el sumario de dos líneas, así que se vacía el «Actualizado el 13 de agosto de 2026» que traía la base. El sumario guarda el salto de línea del editable; la vista pone en seminegrita la primera línea.",
+    "«ultimas-noticias» conserva su rótulo, su título, su texto de entrada y sus tres piezas con «@bd»: son las noticias reales que ya están publicadas, con su slug y su página propia. El rediseño no pinta el encabezado de esa sección —la rejilla arranca directamente en la noticia destacada—, pero el texto se conserva para no perder el historial ni el trabajo de redacción.",
+    "«datos.detalle» tiene que seguir en true: es lo que autoriza a index.php a abrir /noticias/<slug>/ con views/detalle.php.",
+    "La PRIMERA noticia de «ultimas-noticias» es la destacada de la página: la de la foto grande y el titular a 48 px. Las demás van a la lista de la derecha. Se cambia el orden en el panel y cambia cuál manda.",
+    "«videos» es una sección nueva. Va con la plantilla «tarjetas_foto» porque es la que trae enlace e imagen por tarjeta; el enlace de cada tarjeta es el de YouTube y la vista le saca el identificador. Los tres huecos se quedan vacíos a propósito: la Conferencia Episcopal todavía no ha entregado los vídeos, y hasta entonces se ven los marcos negros del editable.",
+    "Se retiran dos secciones que el rediseño no pinta: «santa-sede-anuncia» (texto_apartados), cuyo contenido es hoy una de las piezas de «ultimas-noticias» con página propia, y «enterate-cuanto-haya» (texto_lectura), el aviso con formulario de suscripción, que el editable no dibuja. Su texto queda en el volcado de producción y en el respaldo."
+  ]
+}

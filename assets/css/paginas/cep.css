@@ -1,0 +1,236 @@
+/* =============================================================================
+   CEP — «La Iglesia en el Perú».
+   Medidas tomadas del editable CEP.ai (mesa de trabajo 1440 x 2587 px).
+   El editable no dibuja la cabecera: en la página, el contenido baja 76 px.
+   ========================================================================== */
+
+/* Fondo de página exacto del editable */
+body{background:#EBEBEB}
+
+/* Caja de composición: el contenido del editable va de x=110 a x=1330 */
+.cep-wrap{
+  width:100%;
+  max-width:calc(1220 * var(--u) + var(--gutter) * 2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){
+  .cep-wrap{max-width:calc(1220 * var(--u));padding-inline:0}
+}
+
+/* ------------------------------------------------------------------ HÉROE */
+.cep-hero{background:#8A3A12}
+.cep-hero .hero__media img{object-position:50% 42%}
+
+.cep-hero .hero__inner{
+  min-height:calc(582 * var(--u));
+  justify-content:flex-start;align-items:center;text-align:center;
+  gap:0;padding-block:0;padding-top:calc(369.08 * var(--u));
+}
+.cep-hero .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(85.44 * var(--u));line-height:calc(85.44 * var(--u));
+  color:#ECECEC;letter-spacing:-.0045em;
+}
+/* La bajada la escribe el panel y puede ser más larga que la del editable.
+   El editable la rompe en dos líneas de 848 y 622 px; sin tope se estiraría
+   de gutter a gutter —1392 px de renglón centrado— y dejaría de leerse como
+   un bloque. Con el ancho de su línea más larga conserva esa forma y
+   cualquier texto más largo cae a una línea más, que es lo correcto. */
+.cep-hero .hero__sub{
+  margin-top:calc(14.78 * var(--u));max-width:calc(852 * var(--u));
+  font-weight:300;font-size:calc(28 * var(--u));line-height:calc(33.6 * var(--u));
+  color:#FFFFFF;
+}
+.cep-hero .hero__sub strong{font-weight:600}
+
+/* -------------------------------------------- TITULARES DE SECCIÓN (50 px) */
+.cep-h{
+  font-family:"Neulis",sans-serif;font-weight:600;
+  font-size:calc(50 * var(--u));line-height:calc(55 * var(--u));
+  color:#1C1416;letter-spacing:-.006em;
+}
+.cep-h::after{
+  content:"";display:block;
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));
+  background:#E59F15;margin-top:calc(16.3 * var(--u));
+}
+
+/* ------------------------------------------ ¿QUIÉN ORGANIZA LA VISITA? */
+.cep-organiza{background:#EBEBEB;padding-top:calc(83.4 * var(--u))}
+
+/* Columna de texto (110 → 797,5) y foto (797,5 → 1330,5) */
+.cep-duo{
+  display:grid;grid-template-columns:calc(687.5 * var(--u)) calc(533 * var(--u));
+  margin-top:calc(34.6 * var(--u));
+}
+/* El editable rompe estas líneas a 636 px y deja 50 px de aire antes de la
+   foto. Los saltos del editable sólo están en el respaldo de la vista: el
+   texto del panel fluye, y sin tope llegaría hasta los 687,5 px de la
+   columna, pegándose a la fotografía. El tope lo mantiene a raya. */
+.cep-duo__texto p{
+  max-width:calc(637 * var(--u));
+  font-weight:300;font-size:calc(24 * var(--u));line-height:calc(30 * var(--u));
+  color:#1C1416;
+}
+.cep-duo__texto p+p{margin-top:calc(30 * var(--u))}
+.cep-duo__texto strong{font-weight:600}
+
+/* Foto recortada a 533 x 494,4 px, con la sombra difusa medida en el editable
+   (desplazada 6 / 6,7 px, difuminado 32 px, negro al 30 %). */
+.cep-foto{
+  width:calc(533 * var(--u));margin-top:calc(7.8 * var(--u));
+  background:#D8D8D8;
+  box-shadow:calc(6 * var(--u)) calc(6.7 * var(--u)) calc(32 * var(--u)) calc(-3.65 * var(--u)) rgba(0,0,0,.3);
+}
+.cep-foto picture{display:block}
+.cep-foto img{width:100%;height:auto;aspect-ratio:533 / 494.4;object-fit:cover}
+
+/* ---------------------------------------------- ¿QUIÉN ACOGE CADA SEDE? */
+.cep-sedes{background:#EBEBEB;padding-top:calc(66.1 * var(--u));padding-bottom:calc(83.2 * var(--u))}
+/* Misma razón que arriba: el editable corta la entradilla a 824 px. */
+.cep-sedes__lead{
+  margin-top:calc(34.6 * var(--u));max-width:calc(830 * var(--u));
+  font-weight:300;font-size:calc(24 * var(--u));line-height:calc(30 * var(--u));
+  color:#1C1416;
+}
+
+/* Tabla de jurisdicciones.
+   El editable traza un filete de 0,5 px #595959; el navegador no baja de 1 px,
+   así que se reproduce su peso real con la misma tinta al 47 %. */
+.cep-jurisdicciones{
+  margin-top:calc(50.6 * var(--u));
+  border-top:1px solid rgba(89,89,89,.47);
+}
+.cep-jurisdicciones .datalist__row{
+  grid-template-columns:calc(627 * var(--u)) minmax(0,1fr);
+  gap:0;align-items:center;
+  /* El editor puede añadir jurisdicciones: de la sexta en adelante no hay
+     medida en el editable, así que llevan el alto medio de las cinco. Sin
+     esto heredaban el relleno genérico de .datalist__row y la fila nueva
+     salía más alta que las de al lado. */
+  padding:calc(14.6 * var(--u)) 0 calc(15.7 * var(--u));
+  border-bottom:1px solid rgba(89,89,89,.47);
+}
+/* Cada fila conserva el alto exacto del editable */
+.cep-jurisdicciones .datalist__row:nth-child(1){padding:calc(14.57 * var(--u)) 0 calc(16.03 * var(--u))}
+.cep-jurisdicciones .datalist__row:nth-child(2){padding:calc(14.87 * var(--u)) 0 calc(15.93 * var(--u))}
+.cep-jurisdicciones .datalist__row:nth-child(3){padding:calc(14.17 * var(--u)) 0 calc(13.03 * var(--u))}
+.cep-jurisdicciones .datalist__row:nth-child(4){padding:calc(12.77 * var(--u)) 0 calc(16.13 * var(--u))}
+.cep-jurisdicciones .datalist__row:nth-child(5){padding:calc(15.77 * var(--u)) 0 calc(17.13 * var(--u))}
+
+.cep-jurisdicciones .datalist__key{font-size:inherit;color:inherit}
+.cep-jur__nombre{
+  display:block;font-weight:700;
+  font-size:calc(30.51 * var(--u));line-height:calc(32.3 * var(--u));
+  color:#E59F15;letter-spacing:-.0055em;
+}
+.cep-jur__nombre2{font-weight:400;font-size:calc(26 * var(--u))}
+.cep-jur__sub{
+  display:block;font-weight:300;
+  font-size:calc(23.09 * var(--u));line-height:calc(27.7 * var(--u));
+  color:#6E0B14;letter-spacing:-.0055em;
+}
+.cep-jurisdicciones .datalist__val{
+  width:calc(605 * var(--u));font-weight:300;
+  font-size:calc(23.09 * var(--u));line-height:calc(27.7 * var(--u));
+  color:#595959;letter-spacing:-.0055em;
+}
+.cep-jurisdicciones .datalist__val em{font-style:italic}
+
+/* Botón «Ir a Sedes» alineado al borde derecho de la caja */
+.cep-sedes__cta{display:flex;justify-content:flex-end;margin-top:calc(40.9 * var(--u))}
+.cep-btn{
+  min-width:0;min-height:0;padding:0;
+  width:calc(232.7 * var(--u));height:calc(44.6 * var(--u));
+  font-weight:500;font-size:calc(28.01 * var(--u));line-height:calc(30.81 * var(--u));
+  color:#ECECEC;
+}
+
+/* --------------------------------------------------------------------- PIE */
+/* En el editable los dos textos legales caen 7 px por debajo del centro. */
+.site-footer__inner{padding-top:calc(14.2 * var(--u))}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  /* Los saltos de línea son los del editable: solo valen en escritorio */
+  .cep-br{display:none}
+
+  .cep-hero .hero__inner{
+    min-height:clamp(360px,52vw,520px);
+    padding-block:clamp(72px,10vw,110px);
+    justify-content:center;
+  }
+  .cep-hero .hero__title{font-size:clamp(34px,5.9vw,72px);line-height:1.05}
+  .cep-hero .hero__sub{
+    margin-top:clamp(10px,1.5vw,18px);
+    font-size:clamp(17px,2.2vw,28px);line-height:1.25;max-width:36ch;
+  }
+
+  .cep-h{font-size:clamp(28px,4.3vw,50px);line-height:1.12}
+  .cep-h::after{width:clamp(56px,6vw,80px);height:4px;margin-top:clamp(12px,1.4vw,17px)}
+
+  .cep-organiza{padding-top:clamp(44px,6.5vw,84px)}
+  .cep-duo{
+    grid-template-columns:1fr;
+    row-gap:clamp(28px,4vw,48px);
+    margin-top:clamp(24px,3.4vw,40px);
+  }
+  /* Aquí la foto ya no está al lado, así que el tope de escritorio sobra:
+     con él, el texto se quedaría en media columna. */
+  .cep-duo__texto p{max-width:68ch;font-size:clamp(16px,2.1vw,24px);line-height:1.45}
+  .cep-duo__texto p+p{margin-top:1.1em}
+
+  /* Ninguna foto de contenido se recorta: pasa a ancho completo con su proporción */
+  .cep-foto{width:100%;max-width:533px;margin:0 auto;box-shadow:var(--shadow-soft)}
+  .cep-foto img{aspect-ratio:auto;object-fit:contain;height:auto}
+
+  .cep-sedes{padding-top:clamp(36px,5vw,64px);padding-bottom:clamp(48px,7vw,90px)}
+  .cep-sedes__lead{
+    margin-top:clamp(24px,3.4vw,40px);
+    font-size:clamp(16px,2.1vw,24px);line-height:1.45;max-width:68ch;
+  }
+
+  .cep-jurisdicciones{margin-top:clamp(28px,4vw,52px);border-top-width:1px}
+  .cep-jurisdicciones .datalist__row,
+  .cep-jurisdicciones .datalist__row:nth-child(1),
+  .cep-jurisdicciones .datalist__row:nth-child(2),
+  .cep-jurisdicciones .datalist__row:nth-child(3),
+  .cep-jurisdicciones .datalist__row:nth-child(4),
+  .cep-jurisdicciones .datalist__row:nth-child(5){
+    grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);
+    gap:8px clamp(20px,3vw,40px);
+    padding:clamp(16px,2.2vw,26px) 0;
+    align-items:start;border-bottom-width:1px;
+  }
+  .cep-jur__nombre{font-size:clamp(21px,2.7vw,31px);line-height:1.15}
+  .cep-jur__nombre2{font-size:clamp(18px,2.3vw,26px)}
+  .cep-jur__sub{font-size:clamp(15px,1.95vw,23px);line-height:1.3;margin-top:2px}
+  .cep-jurisdicciones .datalist__val{
+    width:100%;font-size:clamp(15px,1.95vw,23px);line-height:1.45;
+  }
+
+  .cep-sedes__cta{margin-top:clamp(28px,4vw,48px)}
+  .cep-btn{
+    width:auto;min-width:240px;height:auto;padding:.34em 1.4em;
+    font-size:clamp(17px,2.2vw,28px);line-height:1.2;
+  }
+
+  .site-footer__inner{padding-top:0}
+}
+
+@media (max-width:767px){
+  .cep-hero .hero__inner{min-height:clamp(340px,74vw,420px)}
+
+  .cep-jurisdicciones .datalist__row,
+  .cep-jurisdicciones .datalist__row:nth-child(1),
+  .cep-jurisdicciones .datalist__row:nth-child(2),
+  .cep-jurisdicciones .datalist__row:nth-child(3),
+  .cep-jurisdicciones .datalist__row:nth-child(4),
+  .cep-jurisdicciones .datalist__row:nth-child(5){
+    grid-template-columns:1fr;gap:6px;
+  }
+  .cep-jurisdicciones .datalist__val{margin-top:6px}
+
+  .cep-sedes__cta{justify-content:flex-start}
+  .cep-btn{width:100%;max-width:340px;min-width:0}
+}

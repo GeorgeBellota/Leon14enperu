@@ -1,0 +1,73 @@
+{
+  "pagina": {
+    "clave": "logo-y-lema",
+    "nombre": "Logo y lema",
+    "ruta": "/logo-y-lema/",
+    "titulo_seo": "Logo y lema · «Abramos el corazón» · León XIV en el Perú",
+    "descripcion_seo": "El logotipo y el lema «Abramos el corazón» de la Visita Apostólica del Papa León XIV al Perú: qué significa, cómo se diseñó, su color y sus versiones.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "marca",
+      "nombre": "Banda de la marca",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "titulo": "Abramos el corazón",
+      "imagen": "brand/logo-lockup-hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "que-significa",
+      "nombre": "¿Qué significa? · El lema",
+      "plantilla": "texto_lectura",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "El lema",
+      "titulo": "¿Qué significa?",
+      "texto": "<p>Lorem ipsum dolor sit amet consectetur <br>adipiscing elit primis at tortor maecenas.</p>",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "su-diseno",
+      "nombre": "Su diseño",
+      "plantilla": "texto_lectura",
+      "orden": 30,
+      "activa": 1,
+      "titulo": "Su diseño",
+      "texto": "<p>Lorem ipsum dolor sit amet <br>consectetur adipiscing elit <br>primis at tortor maeceprimis <br>at tortor maecenasnas.</p>",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "su-color",
+      "nombre": "Su color y sus versiones",
+      "plantilla": "tarjetas_foto",
+      "orden": 40,
+      "activa": 1,
+      "titulo": "Su color\ny sus versiones",
+      "texto": "<p>Lorem ipsum dolor sit amet consectetur adipiscing elit <br>primis at tortor maecenas.</p>",
+      "datos": {},
+      "bloques": [
+        { "orden": 10, "titulo": "Versión principal del logotipo, en rojo", "imagen": "brand/logo-lockup-rojo-alt" },
+        { "orden": 20, "titulo": "Versión del logotipo en dorado",          "imagen": "brand/logo-lockup-dorado" },
+        { "orden": 30, "titulo": "Versión del logotipo en negro",           "imagen": "brand/logo-lockup-negro" }
+      ]
+    }
+  ],
+
+  "notas": [
+    "PÁGINA NUEVA: no existía en la base, así que va entera. No hay nada que conservar y por eso no aparece ni un «@bd».",
+    "PENDIENTE DEL CLIENTE: los tres textos —«El lema», «Su diseño» y el cierre de «Su color y sus versiones»— son el «Lorem ipsum» del editable. Se cargan tal cual porque no hay texto real que conservar en la base; hay que pedir el definitivo antes de publicar la página.",
+    "El collage de «Su diseño» y el logotipo recortado de «El lema» NO son campos: son seis máscaras CSS sobre brand/logo-lockup-hero.png con el encuadre calibrado sobre ese dibujo. Cambiar la imagen de la banda no los cambia. Si algún día se rehace la marca hay que recalcular esos encuadres en assets/css/paginas/logo-y-lema.css.",
+    "El título de «Su color y sus versiones» lleva un salto de línea de verdad: el editable lo rompe después de «Su color». El salto que se escriba en el panel es el que se pinta.",
+    "En «Su color y sus versiones» el «Título» de cada bloque es la descripción del archivo para quien no ve la imagen; no se pinta debajo del logotipo. La página aguanta que se añada una cuarta versión o que se quite una."
+  ]
+}

@@ -1,0 +1,340 @@
+/* =============================================================================
+   FICHA — la página propia de una pieza (views/detalle.php)
+
+   Medidas tomadas del editable SEDES INDIVIDUALES.ai, mesa de 1440 x 2363,5 px.
+   Es la misma maqueta que ya se portó en paginas/sede.css; se trae aquí porque
+   _plantilla.php carga la hoja que se llama como la VISTA, y la vista de la
+   ficha es «detalle» —la misma para las seis colecciones: sedes, santos,
+   obispos, comisiones, noticias y notas de prensa—.
+
+   El editable no dibuja la cabecera del sitio, así que todo el contenido baja
+   76 px respecto a sus coordenadas.
+
+   Bandas del editable:  héroe 0–582 · cuerpo #EDEDED 582–2229 · pie 2229–2363,5
+   Las sombras de las tarjetas eran mapas de bits en el editable; aquí se
+   resuelven con box-shadow.
+
+   ── Lo que cambia respecto al editable, y por qué ─────────────────────────
+   El editable compone una ficha concreta —«Callao»— con su texto escrito a
+   mano. Aquí el texto lo escribe el panel y puede ser cualquiera: un titular
+   de una palabra o el de una noticia de cien caracteres. Todo lo que el
+   editable fija con un alto o un ancho exacto pasa a mínimo, y los cuerpos de
+   letra que sólo valen para una palabra se eligen por longitud. Cada uno de
+   esos cambios va comentado donde ocurre.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------- HÉROE */
+
+/* El editable fija 582 px de alto porque su titular cabe en un renglón. Del
+   panel puede llegar «Mons. Edinson Edgardo Farfán Córdova, OSA»: la banda
+   crece en lugar de recortar el titular. */
+.hero--sede{min-height:calc(582 * var(--u))}
+.hero--sede .hero__media img{object-position:center}
+
+/* El texto no está quemado en la foto: se compone aquí. El padding lateral
+   —que el editable no necesita— evita que un titular largo llegue al borde. */
+.hero--sede .hero__inner{
+  display:block;min-height:calc(582 * var(--u));height:auto;
+  padding:calc(341.2 * var(--u)) var(--gutter) calc(56 * var(--u));
+  text-align:center;gap:0;
+}
+.hero--sede .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:600;
+  font-size:calc(114 * var(--u));line-height:1;color:#FFFFFF;
+  max-width:calc(1100 * var(--u));margin-inline:auto;
+  overflow-wrap:break-word;
+}
+
+/* Cuerpo del titular y altura de entrada según lo que ocupe el texto.
+   La clase la pone la vista contando caracteres: el CSS no sabe medir texto y
+   los 114 px del editable sólo valen para «Callao». */
+.hero--sede--medio .hero__inner{padding-top:calc(300 * var(--u))}
+.hero--sede--medio .hero__title{font-size:clamp(34px,5vw,calc(72 * var(--u)))}
+.hero--sede--largo .hero__inner{padding-top:calc(252 * var(--u))}
+.hero--sede--largo .hero__title{font-size:clamp(28px,3.6vw,calc(52 * var(--u)))}
+.hero--sede--xl .hero__inner{padding-top:calc(206 * var(--u))}
+.hero--sede--xl .hero__title{font-size:clamp(24px,2.8vw,calc(40 * var(--u)));line-height:1.1}
+
+/* El pie de título del editable arranca en x=415,4 y no está centrado en la
+   mesa; ese desplazamiento sólo tiene sentido con SU frase, así que se queda
+   centrado y se le pone una medida de lectura: una bajada del panel puede ser
+   el doble de larga y a todo el ancho de 1440 px no se lee. */
+.hero--sede .hero__sub{
+  margin-top:calc(19.1 * var(--u));
+  max-width:calc(760 * var(--u));margin-inline:auto;
+  font-family:"Poppins",sans-serif;font-weight:300;
+  font-size:clamp(15px,1.53vw,22px);line-height:1.3;color:#FFFFFF;
+}
+.hero--sede .hero__sub em{font-style:italic;font-weight:600;color:#F6E35D}
+.hero--sede .hero__sub strong{font-weight:600}
+
+/* Héroe sin fotografía: las fichas de obispo, comisión o noticia no traen
+   portada y quedaría una banda granate con el texto abajo del todo. Sin foto
+   que respetar, el texto se centra y la banda se acorta. */
+.hero--sede--liso{min-height:calc(430 * var(--u))}
+.hero--sede--liso .hero__inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(430 * var(--u));
+  padding:calc(64 * var(--u)) var(--gutter);
+}
+
+/* Las migas no las dibuja el editable. Se conservan de la vista anterior: son
+   la única manera de volver a la colección desde un enlace compartido. */
+.sede-heroe__migas{
+  margin-top:calc(26 * var(--u));
+  font-size:clamp(12px,1.1vw,15.5px);color:rgba(255,255,255,.88);
+}
+.sede-heroe__migas ol{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;justify-content:center}
+.sede-heroe__migas li+li::before{content:"›";margin-right:.5em;opacity:.6}
+.sede-heroe__migas a{text-decoration:underline;opacity:.9}
+.sede-heroe__migas a:hover{opacity:1}
+
+/* ----------------------------------------------------------------- CUERPO */
+.sede-cuerpo{
+  background:var(--bg);
+  padding-top:calc(65 * var(--u));
+  padding-bottom:calc(112 * var(--u));
+}
+
+/* Caja de composición: 1440 - 2*130 = 1180 px. */
+.sede-in{width:calc(1180 * var(--u));max-width:100%;margin-inline:auto;position:relative;z-index:1}
+
+.sede-bloque{position:relative}
+.sede-bloque+.sede-bloque{margin-top:calc(80.7 * var(--u))}
+
+/* Resplandor suave del editable tras cada titular (centro 272,2 x filete+33,5). */
+.sede-bloque::before{
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  left:calc(162.245 * var(--u));top:calc(-76.53 * var(--u));
+  width:calc(220 * var(--u));height:calc(220 * var(--u));
+  background:radial-gradient(circle closest-side,rgba(255,255,255,.66) 0%,rgba(255,255,255,.30) 45%,rgba(255,255,255,0) 100%);
+}
+
+.sede-bloque__filete{
+  width:calc(61 * var(--u));height:calc(4 * var(--u));
+  background:var(--wine);margin-left:calc(-1.5 * var(--u));
+}
+.sede-bloque__cab{margin-top:calc(9.3 * var(--u))}
+.sede-bloque__cab--doble{
+  display:grid;grid-template-columns:calc(473.3 * var(--u)) minmax(0,1fr);
+  align-items:start;
+}
+.sede-bloque__h{
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(48 * var(--u));line-height:1;color:var(--wine);
+}
+.sede-bloque__nota{
+  font-family:"Poppins",sans-serif;font-weight:500;
+  font-size:calc(19 * var(--u));line-height:1.2;color:var(--wine);
+}
+
+/* ------------------------------------------------------- Texto de la ficha */
+/* Esto el editable no lo dibuja —su maqueta es la de una sede sin biografía—,
+   pero es el contenido de la página: la historia del santo, la nota de prensa
+   o la presentación de la sede. Se compone con la misma escala que el resto
+   del sitio y con medida de lectura. */
+.sede-texto{
+  margin-top:calc(22 * var(--u));
+  max-width:68ch;
+  font-family:"Poppins",sans-serif;font-weight:300;
+  font-size:var(--fs-base);line-height:1.5;color:var(--ink);
+}
+.sede-texto p+p{margin-top:1.1em}
+.sede-texto strong{font-weight:600}
+.sede-texto em{font-style:italic}
+.sede-texto a{color:var(--wine);text-decoration:underline}
+.sede-texto a:hover{text-decoration:none}
+.sede-texto ul,.sede-texto ol{margin-top:.9em;padding-left:1.25em;list-style:disc}
+.sede-texto ol{list-style:decimal}
+.sede-texto li+li{margin-top:.35em}
+.sede-texto h3{
+  margin-top:1.3em;font-family:"Neulis",sans-serif;font-weight:600;
+  font-size:var(--fs-h4);line-height:1.15;color:var(--wine);
+}
+.sede-texto blockquote{
+  margin-top:1.2em;padding-left:1em;border-left:3px solid var(--wine);
+  font-style:italic;
+}
+
+/* El aviso de «todavía no hay texto». No se pinta nunca si el panel tiene
+   contenido; está para que una ficha recién creada no quede muda. */
+.sede-vacio{
+  margin-top:calc(22 * var(--u));padding:clamp(20px,2.6vw,38px);
+  max-width:68ch;
+  background:rgba(255,255,255,.6);color:var(--grey-600);
+  font-size:var(--fs-sm);
+}
+
+/* ------------------------------------------------------------- Acciones */
+.sede-acciones{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:clamp(14px,1.8vw,26px);margin-top:clamp(24px,3vw,44px);
+}
+.sede-volver{
+  display:inline-flex;align-items:center;gap:.5em;
+  color:var(--wine);font-weight:500;font-size:var(--fs-sm);
+}
+.sede-volver::before{content:"←";line-height:1}
+.sede-volver:hover{text-decoration:underline}
+
+/* --------------------------------------------------------------- CARRUSEL */
+/* En el editable las fichas se salen por la derecha de la mesa: son carruseles.
+   Se desplazan con el dedo, con la rueda horizontal y con el teclado. */
+.sede-carrusel{
+  position:relative;z-index:1;
+  overflow-x:auto;overflow-y:hidden;
+  overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  scrollbar-width:none;-ms-overflow-style:none;
+  /* Espacio para que la sombra de las tarjetas no la recorte el scroll. */
+  padding-bottom:calc(16 * var(--u));
+  margin-top:calc(54.2 * var(--u));
+}
+.sede-carrusel::-webkit-scrollbar{display:none}
+.sede-carrusel__pista{
+  /* El editable alinea las tarjetas arriba porque todas dicen lo mismo. Con
+     titulares del panel cada una mide distinto, así que se estiran a la más
+     alta: una fila desigual parece un error de maqueta. */
+  display:flex;align-items:stretch;width:max-content;
+  gap:calc(47.25 * var(--u));
+  /* El editable mide 130 px desde el borde de una mesa de 1440. En una
+     pantalla más ancha eso dejaría las tarjetas a la izquierda de los
+     titulares: se calcula contra el ancho real para que el carrusel y la caja
+     de texto empiecen en la misma vertical en cualquier pantalla. */
+  padding-inline:max(calc(130 * var(--u)),calc((100% - 1180 * var(--u)) / 2));
+}
+.sede-carrusel>*{scroll-snap-align:start}
+
+/* ------------------------------------------------ Tarjeta de ficha hermana */
+/* Es la tarjeta «Nota de prensa» del editable: 257,3 x 355,8 px, recuadro
+   negro arriba, filete y dos líneas de texto. El alto pasa a mínimo porque el
+   titular llega del panel y puede ocupar tres renglones. */
+.sede-nota{
+  position:relative;display:flex;flex-direction:column;
+  flex:0 0 calc(257.3 * var(--u));
+  min-height:calc(355.8 * var(--u));
+  padding:calc(19.8 * var(--u)) calc(18.9 * var(--u)) calc(22 * var(--u)) calc(26 * var(--u));
+  background:#FFFFFF;border-radius:calc(24 * var(--u));
+  box-shadow:calc(6 * var(--u)) calc(6 * var(--u)) calc(12 * var(--u)) rgba(0,0,0,.4);
+  text-align:center;scroll-snap-align:start;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.sede-nota:hover{transform:translateY(calc(-3 * var(--u)))}
+.sede-nota:focus-within{outline:3px solid var(--wine);outline-offset:3px}
+
+.sede-nota__foto{
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  height:calc(147.9 * var(--u));flex:0 0 auto;
+  background:#000000;
+  border-radius:calc(24 * var(--u)) calc(24 * var(--u)) 0 0;
+  font-family:"Poppins",sans-serif;font-weight:600;
+  font-size:calc(35.27 * var(--u));line-height:1;color:#EEEEEE;
+}
+/* Cuando la ficha hermana sí tiene fotografía, ocupa el recuadro negro. */
+.sede-nota__foto picture,.sede-nota__foto img{position:absolute;inset:0}
+.sede-nota__foto img{width:100%;height:100%;object-fit:cover}
+/* Y cuando no la tiene, su inicial: el recuadro con la palabra «FOTO» del
+   editable es un marcador de maqueta, no algo que publicar. */
+.sede-nota__inicial{font-family:"Neulis",sans-serif;font-weight:700}
+
+.sede-nota__tit{
+  margin:calc(11.7 * var(--u)) auto 0;
+  border-top:calc(1 * var(--u)) solid #5B5B5B;
+  padding-top:calc(10.48 * var(--u));
+  font-family:"Poppins",sans-serif;font-weight:600;
+  font-size:calc(20.24 * var(--u));line-height:1.15;color:#000000;
+}
+/* El enlace del titular cubre la tarjeta entera: se pulsa en cualquier punto
+   y sigue habiendo un solo enlace por tarjeta para el lector de pantalla. */
+.sede-nota__tit a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.sede-nota__txt{
+  margin:calc(5.38 * var(--u)) auto 0;
+  font-family:"Poppins",sans-serif;font-weight:400;
+  font-size:calc(17.35 * var(--u));line-height:calc(20.8 * var(--u));color:#000000;
+}
+
+/* =========================================================== RESPONSIVE === */
+@media (max-width:1023px){
+  .hero--sede,.hero--sede--liso{min-height:clamp(340px,50vw,582px)}
+  .hero--sede .hero__inner,
+  .hero--sede--liso .hero__inner{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:clamp(340px,50vw,582px);height:auto;
+    max-width:calc(var(--container) + var(--gutter)*2);margin-inline:auto;
+    padding:clamp(56px,9vw,96px) var(--gutter);
+  }
+  .hero--sede .hero__title{font-size:clamp(46px,8.6vw,110px);max-width:none}
+  .hero--sede--medio .hero__title{font-size:clamp(34px,6vw,72px)}
+  .hero--sede--largo .hero__title{font-size:clamp(28px,4.4vw,52px)}
+  .hero--sede--xl .hero__title{font-size:clamp(24px,3.4vw,40px)}
+  .hero--sede .hero__sub{
+    margin-top:clamp(10px,1.7vw,20px);max-width:46ch;
+    font-size:clamp(16px,2.4vw,24px);
+  }
+  .sede-heroe__migas{margin-top:clamp(14px,2vw,22px)}
+
+  .sede-cuerpo{padding-block:clamp(40px,6vw,65px) clamp(52px,8vw,112px)}
+  .sede-in{width:100%;max-width:calc(var(--container) + var(--gutter)*2);padding-inline:var(--gutter)}
+
+  .sede-bloque::before{display:none}
+  .sede-bloque+.sede-bloque{margin-top:clamp(42px,6.2vw,81px)}
+
+  .sede-bloque__filete{width:clamp(44px,4.6vw,61px);height:4px;margin-left:0}
+  .sede-bloque__cab{margin-top:clamp(9px,1.2vw,14px)}
+  .sede-bloque__cab--doble{grid-template-columns:1fr;row-gap:clamp(12px,1.8vw,20px)}
+  .sede-bloque__h{font-size:clamp(27px,4.3vw,48px)}
+  .sede-bloque__nota{font-size:clamp(14px,1.9vw,19px);max-width:72ch}
+
+  .sede-texto{margin-top:clamp(16px,2.4vw,24px)}
+
+  /* El carrusel pasa a rejilla: ninguna tarjeta queda cortada. */
+  .sede-carrusel{overflow:visible;padding-bottom:0;margin-top:clamp(24px,3.8vw,55px)}
+  .sede-carrusel__pista{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:auto;
+    max-width:calc(var(--container) + var(--gutter)*2);margin-inline:auto;
+    padding-inline:var(--gutter);gap:clamp(18px,3vw,34px);
+  }
+
+  .sede-nota{
+    flex:initial;width:auto;min-height:0;
+    padding:clamp(12px,1.5vw,20px) clamp(11px,1.4vw,19px) clamp(20px,2.6vw,40px) clamp(13px,1.9vw,26px);
+    border-radius:clamp(12px,1.8vw,24px);
+    box-shadow:4px 5px 12px rgba(0,0,0,.34);
+  }
+  .sede-nota__foto{
+    height:auto;aspect-ratio:212.4 / 147.9;
+    border-radius:clamp(12px,1.8vw,24px) clamp(12px,1.8vw,24px) 0 0;
+    font-size:clamp(17px,2.5vw,35px);
+  }
+  .sede-nota__tit{
+    width:100%;margin-top:clamp(8px,1.1vw,12px);
+    border-top-width:1px;padding-top:clamp(6px,1vw,11px);
+    font-size:clamp(13px,1.5vw,20px);
+  }
+  .sede-nota__txt{
+    width:100%;margin-top:clamp(4px,.6vw,6px);
+    font-size:clamp(12px,1.3vw,17px);line-height:1.22;
+  }
+}
+
+@media (max-width:767px){
+  .sede-carrusel__pista{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sede-nota__foto{font-size:clamp(17px,3.6vw,26px)}
+  .sede-nota__tit{font-size:clamp(13px,2.2vw,17px)}
+  .sede-nota__txt{font-size:clamp(12px,2vw,15px)}
+}
+
+@media (max-width:479px){
+  .sede-carrusel__pista{grid-template-columns:1fr;max-width:320px}
+  .sede-nota__foto{font-size:24px}
+  .sede-nota__tit{font-size:16px}
+  .sede-nota__txt{font-size:14px}
+}
+
+/* --------------------------------------------------------------------- PIE */
+/* El editable no dibuja los enlaces del pie; van en una segunda fila, como en
+   el resto del sitio. Lo mismo que hace heredado.css, repetido aquí para que
+   la ficha no dependa del orden de las hojas. */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 clamp(14px,1.6vw,22px);order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}

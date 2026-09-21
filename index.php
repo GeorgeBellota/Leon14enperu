@@ -36,6 +36,28 @@ $esc = static fn ($v): string => htmlspecialchars((string) ($v ?? ''), ENT_QUOTE
 $peticion = $sitio->peticion();
 $ruta     = trim($peticion->ruta(), '/');
 
+// ── Direcciones que se mudaron ────────────────────────────────────────────
+//
+// El rediseño renombró tres páginas: /el-papa/ → /papa-leon-xiv/,
+// /tierra-de-santos/ → /santos/ y /materiales/ → /subsidios/. Las antiguas
+// llevan meses compartidas e indexadas, así que no se apagan: responden con
+// un 301 a la nueva, y el buscador traspasa el posicionamiento.
+//
+// Se comprueba el PRIMER tramo, no la ruta entera, para que las fichas de
+// detalle se muden con su sección: /materiales/guia-de-oracion/ acaba en
+// /subsidios/guia-de-oracion/ y no en un 404.
+if ($ruta !== '') {
+    $corte   = strpos($ruta, '/');
+    $primera = $corte === false ? $ruta : substr($ruta, 0, $corte);
+    $nueva   = Rutas::mudanza($primera);
+
+    if ($nueva !== null) {
+        $resto = $corte === false ? '' : substr($ruta, $corte);
+        header('Location: ' . $sitio->url($nueva . $resto . '/'), true, 301);
+        exit;
+    }
+}
+
 // ── La raíz ───────────────────────────────────────────────────────────────
 //
 // Qué se muestra en «/» lo decide el ajuste `sitio.pagina_inicio`, que se
@@ -162,10 +184,18 @@ $meta   = [];
 $pieza  = $destino['pieza'] ?? null;
 $padre  = $destino['padre'] ?? null;
 
-$archivoVista = __DIR__ . '/views/' . $destino['vista'] . '.php';
+/* El nombre de la vista se guarda aparte, ANTES de ejecutarla, porque la
+   plantilla lo necesita después para cargar assets/css/paginas/<vista>.css.
+   Vista y plantilla comparten ámbito con este archivo, así que una vista que
+   declare una variable llamada $destino —un nombre de lo más natural para una
+   función auxiliar— pisaba la ruta resuelta y la plantilla reventaba con
+   «Cannot use object of type Closure as array». Con el doble guión bajo queda
+   claro que la variable es del armazón y que una vista no debe tocarla. */
+$__vista      = (string) $destino['vista'];
+$archivoVista = __DIR__ . '/views/' . $__vista . '.php';
 
 if (!is_file($archivoVista)) {
-    error_log('[rutas] falta la vista: ' . $destino['vista']);
+    error_log('[rutas] falta la vista: ' . $__vista);
     http_response_code(500);
     echo '<!doctype html><meta charset="utf-8"><title>Error</title><h1>Error temporal</h1>';
     exit;

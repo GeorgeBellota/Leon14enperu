@@ -1,0 +1,293 @@
+/* =============================================================================
+   PRENSA — medidas tomadas del editable PRENSA.ai (mesa de trabajo 1440 x 2626).
+   El editable de las subpáginas no dibuja la cabecera del sitio: por eso todo el
+   contenido de esta página cae 76 px más abajo que en el editable.
+   Bandas del editable: héroe 0–582 · contenido #E9E9E9 582–2492 · pie 2492–2626.
+   ========================================================================== */
+
+/* --------------------------------------------------------------- Contenedor
+   El editable coloca el texto en x≈111–113 y cierra las cajas en x≈1330:
+   caja de 1218 px centrada en la mesa de 1440. */
+.pr-wrap{
+  width:100%;max-width:calc(1218 * var(--u) + var(--gutter) * 2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1440px){.pr-wrap{max-width:calc(1218 * var(--u));padding-inline:0}}
+
+.pr-cuerpo{background:#E9E9E9}
+
+/* Titular de sección con su regla dorada (60 px Neulis Bold + filete 79,4 x 5) */
+.pr-h2{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(60 * var(--u));
+  line-height:1;color:#1C1416;margin-left:calc(2 * var(--u));
+}
+.pr-h2::after{
+  content:"";display:block;
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));background:#E6A015;
+  margin-top:calc(12 * var(--u));margin-left:calc(-2.5 * var(--u));
+}
+
+/* ------------------------------------------------------------------- HÉROE
+   Banda de 582 px con la foto en duotono ya compuesta. Línea base del título
+   en y=480,6 y del subtítulo en y=528,7. */
+/* El texto lo escribe el panel: con un título de dos líneas la banda de 582
+   px se quedaría corta y el titular saldría por debajo de la foto. Por eso
+   la altura es MÍNIMA, no fija, y hay un respiro abajo. Con el texto del
+   editable (414,5 + 118,4 + 24 = 556,9) manda el mínimo y la banda mide
+   exactamente los 582 px de la mesa de trabajo: no cambia ni un píxel. */
+.pr-hero{min-height:calc(582 * var(--u));background:#8A5A0C}
+.pr-hero .hero__media img{object-position:50% 42%}
+.pr-hero .hero__inner{
+  height:auto;min-height:calc(582 * var(--u));justify-content:flex-start;gap:0;
+  padding:calc(414.5 * var(--u)) var(--gutter) calc(24 * var(--u));
+}
+.pr-hero .hero__title{
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(81.1 * var(--u));
+  line-height:1;color:#E9E9E9;
+}
+.pr-hero .hero__sub{
+  max-width:none;margin-top:calc(9.3 * var(--u));
+  font-size:calc(28 * var(--u));line-height:1;font-weight:300;color:#FFFFFF;
+}
+.pr-hero .hero__sub strong{font-weight:600}
+
+/* ------------------------------------------------------------ ACREDITACIÓN
+   Texto a la izquierda (x=113) y fotografía a la derecha (x=565,5 · 775x473). */
+.pr-acred{padding-top:calc(125 * var(--u))}
+.pr-acred__grid{
+  display:grid;grid-template-columns:calc(454.5 * var(--u)) minmax(0,1fr);
+  align-items:start;
+}
+/* El respiro de la derecha no está en el editable porque allí el texto es más
+   corto que su columna. Del panel puede llegar más largo y, sin este margen,
+   las líneas irían a tocar el borde de la fotografía: la columna mide 454,5
+   px y la foto empieza justo donde acaba. Con el texto del editable ninguna
+   línea llega a 428,5 px, así que no mueve ni un píxel. */
+.pr-acred__texto{margin-left:calc(2 * var(--u));padding-right:calc(28 * var(--u))}
+.pr-acred__kicker{
+  font-size:calc(25 * var(--u));font-weight:400;line-height:1;color:#5B5B5B;
+}
+.pr-acred .pr-h2{margin-top:calc(5.7 * var(--u));margin-left:0}
+.pr-acred__copy{
+  margin-top:calc(31.8 * var(--u));
+  font-size:calc(26 * var(--u));line-height:calc(31 * var(--u));
+  font-weight:300;color:#1C1416;
+}
+.pr-acred__copy strong{font-weight:600}
+/* El campo del panel admite varios párrafos; sin esto se pegarían, porque el
+   reset del sistema pone margin:0 en todos los <p>. */
+.pr-acred__copy p+p{margin-top:1.1em}
+
+.pr-acred__foto{
+  width:calc(775 * var(--u));margin-top:calc(4.5 * var(--u));
+  box-shadow:var(--shadow-soft);
+}
+.pr-acred__foto img{
+  width:100%;height:calc(473 * var(--u));object-fit:cover;object-position:50% 50%;
+}
+
+/* ------------------------------------------ USO DE IMÁGENES Y DEL ESCUDO
+   Filetes del editable en y=1387,9 / 1488,3 / 1588,3 / 1690,3 / 1789,3. */
+.pr-usos{padding-top:calc(76.2 * var(--u))}
+/* Entradilla opcional: el editable no la dibuja, pero la plantilla del panel
+   ofrece el campo y un texto escrito ahí no puede desaparecer. Sin texto,
+   esta regla no pinta nada. */
+.pr-usos__lead{
+  margin-top:calc(24 * var(--u));max-width:calc(912 * var(--u));
+  font-size:calc(23.09 * var(--u));line-height:calc(27.7 * var(--u));
+  font-weight:300;color:#595959;
+}
+.pr-usos__lead p+p{margin-top:1em}
+.pr-usos__lista{
+  --dl:calc(322 * var(--u)) minmax(0,1fr);
+  margin-top:calc(47.2 * var(--u));border-top:1px solid #A1A1A1;
+}
+/* Los apartados son bloques: el panel puede añadirlos, quitarlos y alargar su
+   texto. Las alturas del editable pasan de `height` a `min-height` —si no, un
+   texto de tres líneas se saldría de su fila— y las filas que se añadan a
+   partir de la quinta, que en el editable no existen, toman la altura media
+   de las cuatro dibujadas. */
+.pr-usos__lista .datalist__row{
+  gap:0;padding:0;border-bottom:1px solid #A1A1A1;align-items:start;
+  min-height:calc(100 * var(--u));
+}
+.pr-usos__lista .datalist__row:nth-child(1){min-height:calc(100.4 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(2){min-height:calc(100 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(3){min-height:calc(102 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(4){min-height:calc(99 * var(--u))}
+
+.pr-usos__lista .datalist__key{
+  font-family:"Poppins",sans-serif;font-weight:700;font-size:calc(30 * var(--u));
+  line-height:1;color:#E49E15;padding-top:calc(35.3 * var(--u));
+}
+.pr-usos__lista .datalist__val{
+  font-weight:300;font-size:calc(23.09 * var(--u));line-height:calc(27.7 * var(--u));
+  color:#595959;padding-top:calc(22.57 * var(--u));width:calc(912 * var(--u));
+}
+.pr-usos__lista .datalist__row:nth-child(2) .datalist__key,
+.pr-usos__lista .datalist__row:nth-child(3) .datalist__key{padding-top:calc(34.5 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(2) .datalist__val,
+.pr-usos__lista .datalist__row:nth-child(3) .datalist__val{padding-top:calc(21.77 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(4) .datalist__key{padding-top:calc(31.5 * var(--u))}
+.pr-usos__lista .datalist__row:nth-child(4) .datalist__val{padding-top:calc(35.47 * var(--u))}
+
+/* ---------------------------------------------------------------- CONTACTO
+   Botón de 272 x 50,8 centrado en la mesa (x=584, y=1863,1). */
+.pr-cta{padding-top:calc(72.8 * var(--u))}
+/* El rótulo del botón sale del panel. Con medidas fijas, «Contacto para
+   medios» se saldría de la caja, así que la caja es el MÍNIMO del editable y
+   crece con el texto. Con «Contacto» (151 px a cuerpo 31,99) manda el mínimo
+   y el botón mide los 272 x 50,8 de la mesa de trabajo. */
+.pr-cta__btn{
+  display:flex;margin-inline:auto;
+  width:fit-content;max-width:100%;min-width:calc(272 * var(--u));
+  min-height:calc(50.8 * var(--u));
+  padding:0 calc(16 * var(--u));font-size:calc(31.99 * var(--u));line-height:1.1;color:#EDEDED;
+}
+
+/* -------------------------------------------------------------- MULTIMEDIA
+   Tres marcos de 379,2 x 253,4 con 40,2 de separación (x=112,5 · y=2113,5). */
+.pr-multimedia{padding-top:calc(73.8 * var(--u));padding-bottom:calc(92.75 * var(--u))}
+.pr-multi__grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:calc(40.2 * var(--u));row-gap:calc(40.2 * var(--u));
+  margin-top:calc(48.8 * var(--u));
+}
+.pr-multi__marco{
+  aspect-ratio:379.2 / 253.4;background:#1C1416;
+  display:grid;place-items:center;overflow:hidden;
+}
+.pr-multi__ico{width:29.14%;height:auto}
+/* En el editable los marcos van vacíos, con el icono centrado. Cuando el
+   panel sube una fotografía, llena el marco entero conservando el encuadre
+   del editable (379,2 x 253,4). */
+.pr-multi__marco picture{display:block;width:100%;height:100%}
+.pr-multi__marco img{width:100%;height:100%;object-fit:cover}
+.pr-multi__pie{
+  margin-top:calc(12.7 * var(--u));margin-left:calc(1 * var(--u));
+  font-size:calc(19.65 * var(--u));line-height:1;font-weight:300;color:#595959;
+}
+
+/* --------------------------------------------------------------------- PIE
+   Banda de 134 px; las dos líneas legales van apiladas a la izquierda (x=111)
+   con las líneas base en y=2555,6 y 2582,6. */
+.site-footer{height:calc(134 * var(--u));min-height:0;align-items:flex-start}
+.site-footer__inner{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0;
+  padding-top:calc(48.19 * var(--u));
+  max-width:calc(1218 * var(--u) + var(--gutter) * 2);
+}
+@media (min-width:1440px){.site-footer__inner{max-width:calc(1218 * var(--u))}}
+.site-footer__legal{grid-column:1;grid-row:1}
+.site-footer__credits{grid-column:1;grid-row:2;margin-top:calc(5.56 * var(--u))}
+.site-footer__links{
+  grid-column:2;grid-row:1 / span 2;align-self:center;
+  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:calc(4 * var(--u)) calc(22 * var(--u));
+}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* =========================================================== RESPONSIVE ===
+   Requisito del cliente: en tablet y móvil ninguna imagen de contenido puede
+   recortarse ni deformarse. Por debajo de 1024 px las fotos pasan a
+   width:100% / height:auto y se anulan los saltos de línea de la maqueta. */
+@media (max-width:1023px){
+  /* Los <br> solo sirven para clavar el corte de línea del editable */
+  .pr-acred__copy br,
+  .pr-usos__lista .datalist__val br{display:none}
+
+  .pr-h2{
+    font-size:clamp(30px,5.2vw,56px);margin-left:0;
+    line-height:1.05;
+  }
+  .pr-h2::after{
+    width:clamp(52px,7vw,78px);height:4px;margin-top:clamp(10px,1.4vw,14px);margin-left:0;
+  }
+
+  .pr-hero{height:auto;min-height:clamp(380px,52vw,560px)}
+  .pr-hero .hero__inner{
+    height:auto;min-height:clamp(380px,52vw,560px);
+    justify-content:center;padding:clamp(64px,10vw,96px) var(--gutter);
+  }
+  .pr-hero .hero__title{font-size:clamp(44px,8.4vw,90px)}
+  .pr-hero .hero__sub{
+    font-size:clamp(17px,2.7vw,28px);line-height:1.25;
+    margin-top:clamp(10px,1.6vw,18px);max-width:40ch;
+  }
+
+  .pr-acred{padding-top:clamp(48px,7vw,86px)}
+  .pr-acred__grid{grid-template-columns:1fr;row-gap:clamp(26px,4vw,44px)}
+  .pr-acred__texto{margin-left:0;padding-right:0}
+  .pr-acred__kicker{font-size:clamp(14px,1.9vw,25px);letter-spacing:.02em}
+  .pr-acred .pr-h2{margin-top:clamp(8px,1.2vw,14px)}
+  .pr-acred__copy{
+    margin-top:clamp(18px,2.6vw,32px);
+    font-size:clamp(17px,2.3vw,26px);line-height:1.5;max-width:62ch;
+  }
+  .pr-acred__foto{width:100%;margin-top:0}
+  .pr-acred__foto img{height:auto;object-fit:fill}
+
+  .pr-usos{padding-top:clamp(44px,6.4vw,78px)}
+  .pr-usos__lead{
+    margin-top:clamp(14px,2vw,24px);max-width:none;
+    font-size:clamp(15px,2vw,23px);line-height:1.45;
+  }
+  .pr-usos__lista{--dl:minmax(0,1fr) minmax(0,1.9fr);margin-top:clamp(22px,3.2vw,46px)}
+  /* Aquí las filas viven de su contenido: se anula también la altura mínima
+     que clava el editable en el escritorio. */
+  .pr-usos__lista .datalist__row,
+  .pr-usos__lista .datalist__row:nth-child(1),
+  .pr-usos__lista .datalist__row:nth-child(2),
+  .pr-usos__lista .datalist__row:nth-child(3),
+  .pr-usos__lista .datalist__row:nth-child(4){
+    height:auto;min-height:0;padding:clamp(16px,2vw,24px) 0;gap:6px clamp(18px,3vw,38px);
+  }
+  .pr-usos__lista .datalist__key,
+  .pr-usos__lista .datalist__row:nth-child(2) .datalist__key,
+  .pr-usos__lista .datalist__row:nth-child(3) .datalist__key,
+  .pr-usos__lista .datalist__row:nth-child(4) .datalist__key{
+    padding-top:0;font-size:clamp(18px,2.5vw,30px);line-height:1.2;
+  }
+  .pr-usos__lista .datalist__val,
+  .pr-usos__lista .datalist__row:nth-child(2) .datalist__val,
+  .pr-usos__lista .datalist__row:nth-child(3) .datalist__val,
+  .pr-usos__lista .datalist__row:nth-child(4) .datalist__val{
+    padding-top:0;width:auto;font-size:clamp(15px,2vw,23px);line-height:1.45;
+  }
+
+  .pr-cta{padding-top:clamp(30px,4.4vw,56px)}
+  .pr-cta__btn{
+    width:fit-content;min-width:240px;max-width:100%;
+    height:auto;min-height:0;padding:.34em 1.4em;font-size:clamp(17px,2.4vw,32px);
+  }
+
+  .pr-multimedia{padding-top:clamp(44px,6.4vw,78px);padding-bottom:clamp(44px,6.4vw,84px)}
+  /* Dos marcos por fila; el tercero queda solo y se centra con la rejilla de 4
+     columnas (mismo recurso que las ciudades de la home). */
+  .pr-multi__grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    column-gap:clamp(14px,2.6vw,34px);row-gap:clamp(20px,3vw,38px);
+    margin-top:clamp(24px,3.6vw,46px);
+  }
+  .pr-multi__grid>li{grid-column:span 2}
+  .pr-multi__grid>li:last-child{grid-column:2 / span 2}
+  .pr-multi__pie{
+    margin-top:clamp(8px,1.2vw,14px);margin-left:0;
+    font-size:clamp(13px,1.7vw,20px);line-height:1.35;
+  }
+
+  .site-footer{height:auto;min-height:134px;align-items:center}
+  .site-footer__inner{
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+    padding-block:clamp(20px,3vw,30px);max-width:calc(var(--container) + var(--gutter) * 2);
+  }
+  .site-footer__legal,.site-footer__credits{margin-top:0}
+  .site-footer__links{justify-content:flex-start;gap:4px 22px;align-self:flex-start;order:3}
+}
+
+@media (max-width:767px){
+  .pr-multi__grid{grid-template-columns:1fr;max-width:420px;margin-inline:auto}
+  .pr-multi__grid>li,
+  .pr-multi__grid>li:last-child{grid-column:auto}
+  .pr-cta__btn{width:100%;max-width:340px}
+}

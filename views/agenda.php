@@ -1,327 +1,462 @@
 <?php
 /**
- * Vista de la página «agenda».
+ * ============================================================================
+ *  Agenda — «Días de encuentro». Rediseño 2026.
+ * ============================================================================
  *
- * Sólo el contenido. El <head>, la cabecera, el pie y los scripts los pone
- * views/_plantilla.php; el enrutado, index.php con Publico\Rutas.
+ *  Sólo el contenido. El <head>, la cabecera, el pie y los scripts los pone
+ *  views/_plantilla.php; el enrutado, index.php con Publico\Rutas.
  *
- * @var \Intranet\Publico\Sitio $sitio
- * @var callable $esc
+ *  Todo lo que se lee de la base lleva su texto de reserva: si MySQL no
+ *  responde, o si alguien vacía un campo en el panel, la página se pinta
+ *  igual. Una web sobre un viaje papal no puede quedarse muda porque falle
+ *  la base. La reserva es la del editable salvo en el cronograma, donde el
+ *  editable trae relleno y se usa el programa referencial de producción.
+ *
+ *  ── Cómo se organiza el cronograma ───────────────────────────────────────
+ *
+ *  El editable agrupa las jornadas POR SEDE: cada ciudad con su titular, su
+ *  fotografía y debajo los días que le tocan. La base, en cambio, guarda una
+ *  lista plana de jornadas (sección «itinerario», plantilla «jornadas»), y
+ *  cada jornada dice a qué ciudad pertenece en su título: «Lima · Llegada y
+ *  bienvenida oficial».
+ *
+ *  Así que la vista hace de costurera: coge las sedes de «cuatro-ventanas»
+ *  —nombre, fotografía y orden— y reparte entre ellas las jornadas por la
+ *  ciudad con la que empieza cada título. Una jornada cuya ciudad no figure
+ *  entre las sedes NO se pierde: se le abre su propio apartado al final.
+ *
+ *  ── Los horarios ─────────────────────────────────────────────────────────
+ *
+ *  El editable dibuja «XX:00 Hrs.» y «Lorem ipsum»: es relleno. Lo real son
+ *  las actividades que ya hay en la base, que todavía no tienen hora porque
+ *  la Santa Sede no ha publicado el programa. Por eso cada actividad se lee
+ *  entera y sólo se pinta la hora en granate si el texto empieza por una:
+ *  «12:00 Hrs. Llegada al Aeropuerto del Callao». El día que llegue el
+ *  programa oficial basta con escribir la hora delante en el panel.
+ *
+ *  Las medidas son las del editable AGENDA.ai (mesa de 1440 px). La hoja
+ *  assets/css/paginas/agenda.css las reproduce con la unidad --u.
+ *
+ *  @var \Intranet\Publico\Sitio $sitio
+ *  @var callable $esc
  */
 
 declare(strict_types=1);
 
 $meta = [
-    'titulo'      => 'Agenda del viaje apostólico de León XIV al Perú · Noviembre 2026',
-    'descripcion' => 'El programa detallado del viaje apostólico aún no es público. Aquí está el estado actual, las cuatro sedes, qué suele incluir un viaje apostólico y cómo se anunciará.',
-    'og_titulo'      => 'Agenda del viaje apostólico de León XIV al Perú',
-    'og_descripcion' => 'Estado actual del programa, las cuatro sedes y cómo se anunciará el itinerario oficial.',
-    'ruta'        => 'agenda/',
-    'og_imagen'   => 'assets/img/og/og-agenda.jpg',
-    'og_tipo'     => 'article',
-    'body_attr'   => 'data-phase="pre"',
-    'head_extra'  => '<script type="application/ld+json" nonce="' . $esc($sitio->nonce()) . '">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "inLanguage": "es",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "¿Cuándo se sabrá el programa del viaje apostólico al Perú?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No hay fecha anunciada. El programa detallado de un viaje apostólico lo publica la Oficina de Prensa de la Santa Sede, habitualmente algunas semanas antes del viaje, y la Conferencia Episcopal Peruana lo difunde en el país. En cuanto sea oficial se publicará en esta página." }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Habrá que inscribirse para asistir a los actos?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Por confirmar. Las condiciones de acceso a cada acto forman parte del programa oficial y todavía no se han publicado. No des por válida ninguna inscripción que no proceda de la Conferencia Episcopal Peruana o de tu diócesis." }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Las Misas del Papa León XIV tendrán entrada?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Por confirmar. En otros viajes apostólicos algunas celebraciones han sido de acceso libre y otras han requerido pase por razones de aforo y seguridad. La decisión corresponde a los organizadores y se anunciará con el programa." }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Se transmitirán los actos del viaje apostólico?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Los viajes apostólicos se transmiten habitualmente por los medios del Vaticano y por las emisoras y canales de la Iglesia en el país. Los enlaces concretos se publicarán en la sección Desde donde estés cuando existan." }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cómo llego a mi sede?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Las indicaciones de acceso, transporte y puntos de encuentro dependen de los recintos, que aún no se han anunciado. Se publicarán junto con el programa y con la guía del peregrino." }
-    }
-  ]
-}
-</script>',
+    'titulo'         => 'Agenda · León XIV en el Perú · 11–16 de noviembre de 2026',
+    'descripcion'    => 'Días de encuentro: cronograma del viaje apostólico del Papa León XIV al Perú '
+                      . 'en Lima y Callao, Chiclayo y Santa Cruz, Cusco y Pucallpa, del 11 al 16 de '
+                      . 'noviembre de 2026.',
+    'og_titulo'      => 'Agenda · León XIV en el Perú',
+    'og_descripcion' => 'El Papa León XIV estará en el Perú del 11 al 16 de noviembre de 2026.',
+    'ruta'           => 'agenda/',
+    'og_imagen'      => 'assets/img/og/og-agenda.jpg',
+    'og_tipo'        => 'article',
 ];
-?>
-<?php
-/* El contenido de esta página sale de la base y se edita desde el panel.
-   Cada lectura lleva su texto de reserva: si la base no responde, o si
-   alguien vacía un campo, la página se pinta con lo que decía antes.
-   Una web sobre un viaje papal no puede quedarse muda porque falle MySQL. */
+
 $paginaCms = $sitio->contenido('agenda');
 $secciones = $paginaCms['secciones'] ?? [];
 
-$campo = static fn (string $s, string $c, string $r = ''): string
+$campo   = static fn (string $s, string $c, string $r = ''): string
     => \Intranet\Publico\Sitio::campo($secciones, $s, $c, $r);
-$hay = static fn (string $s): bool
-    => \Intranet\Publico\Sitio::activa($secciones, $s);
+$bloques = static fn (string $s, array $r = []): array
+    => \Intranet\Publico\Sitio::bloques($secciones, $s, $r);
+
+/* ── Realce del texto del héroe ───────────────────────────────────────────
+   El editable parte la bajada antes de la fecha y pone «11 al 16 de
+   noviembre» en semibold. El campo del panel es texto plano —la plantilla
+   «cabecera_pagina» no admite HTML— y no vamos a imprimir sin escapar lo que
+   salga de un formulario. La convención es la de toda la vida: un salto de
+   línea donde se quiera partir y **asteriscos** para la negrita. Se escapa
+   PRIMERO y se marcan después las dos únicas cosas admitidas, así que del
+   panel no puede salir ninguna otra etiqueta. */
+$realce = static function (string $texto) use ($esc): string {
+    $html = $esc($texto);
+    $html = (string) preg_replace('/\*\*(.+?)\*\*/us', '<strong>$1</strong>', $html);
+
+    return nl2br($html, false);
+};
+
+/* ── Rótulos con interletraje del editable ───────────────────────────────
+   «Lima - Callao» se dibuja «L I M A   -   C A L L A O»: el espacio entre
+   letras es parte del texto, no un letter-spacing, porque el editable ajusta
+   además el interletraje en negativo. Separando cada carácter con un espacio
+   sale exactamente eso —el espacio entre palabras queda triple, como en el
+   editable— y las hojas de esta página lo conservan con «white-space:pre-wrap».
+
+   Si en el panel ya lo escriben espaciado, se deja tal cual: espaciarlo dos
+   veces lo dejaría el doble de ancho. */
+$espaciado = static function (string $texto): string {
+    $texto = trim($texto);
+
+    if ($texto === '') {
+        return '';
+    }
+
+    $palabras = preg_split('/\s+/u', $texto) ?: [];
+    $sueltas  = array_map(static fn (string $p): int => (int) mb_strlen($p, 'UTF-8'), $palabras);
+
+    if (count($palabras) > 1 && max($sueltas) === 1) {
+        return mb_strtoupper($texto, 'UTF-8');   // ya venía espaciado
+    }
+
+    $letras = preg_split('//u', mb_strtoupper($texto, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+    return implode(' ', $letras);
+};
+
+/* La primera parte de un nombre compuesto: de «Lima · Llegada y bienvenida»
+   y de «Lima - Callao» sale «Lima» en los dos casos. Es lo que empareja cada
+   jornada con su sede. */
+$primero = static function (string $texto): string {
+    $partes = preg_split('/\s*[·•–—\-,|:]\s*/u', trim($texto), 2) ?: [];
+
+    return trim((string) ($partes[0] ?? ''));
+};
+
+/* Esa primera parte, convertida en clave de filtro: «Lima» → «lima». Es la
+   que viaja en data-key y en data-filter, y la que resuelve assets/js/rediseno.js. */
+$clave = static function (string $texto) use ($primero): string {
+    $base = mb_strtolower($primero($texto), 'UTF-8');
+    $base = strtr($base, [
+        'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a',
+        'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+        'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+        'ñ' => 'n', 'ç' => 'c',
+    ]);
+
+    return trim((string) preg_replace('/[^a-z0-9]+/', '-', $base), '-');
+};
+
+/* ── La fecha de la jornada ──────────────────────────────────────────────
+   En la base es «11 de noviembre»; el editable la parte en un «11» grande y
+   un «NOV» debajo. Si el rótulo no trae día y mes reconocibles se pinta
+   entero en la línea pequeña: más vale una fecha rara que ninguna. */
+$fecha = static function (string $rotulo): array {
+    $rotulo = trim($rotulo);
+
+    /* Las tres primeras letras del mes bastan: los doce se distinguen por
+       ellas en español —ENE, FEB, MAR…— y así no hay tabla que mantener ni
+       forma escrita que se quede fuera («setiembre» sale SET, como aquí se
+       dice). */
+    if (preg_match('/^(\d{1,2})\s*(?:de\s+)?(\p{L}+)?/u', $rotulo, $m) === 1) {
+        $mes = isset($m[2]) ? mb_substr($m[2], 0, 3, 'UTF-8') : '';
+
+        return ['dia' => $m[1], 'mes' => mb_strtoupper($mes, 'UTF-8')];
+    }
+
+    return ['dia' => '', 'mes' => $rotulo];
+};
+
+/* ── Un acto del día ─────────────────────────────────────────────────────
+   «12:00 Hrs. Llegada al Aeropuerto del Callao» se parte en hora y acto; si
+   la actividad no empieza por una hora, se pinta entera como acto y la línea
+   granate no aparece. Mientras la Santa Sede no publique el programa, eso es
+   lo que hay en la base y es lo honrado: ninguna hora inventada. */
+$acto = static function (string $linea): array {
+    $linea = trim($linea);
+    $patron = '/^([0-9Xx]{1,2}\s*[:.h]\s*[0-9Xx]{2}\s*(?:hrs?|horas?|h)?\.?)\s*(?:[—–\-|·:]+\s*)?(.*)$/ui';
+
+    if (preg_match($patron, $linea, $m) === 1) {
+        return ['hora' => trim($m[1]), 'que' => trim($m[2])];
+    }
+
+    return ['hora' => '', 'que' => $linea];
+};
+
+/* ── Las sedes ───────────────────────────────────────────────────────────
+   Sección «cuatro-ventanas»: cada bloque es una ciudad del cronograma con su
+   nombre y su fotografía. El «texto» del bloque es la segunda sede, la que el
+   editable dibuja un cuerpo más pequeño («Chiclayo - Santa Cruz»).
+
+   La reserva es la del editable, con las fotos que la maqueta traía escritas:
+   mientras nadie las cambie en el panel se ven exactamente ésas. */
+$sedes = $bloques('cuatro-ventanas', [
+    ['titulo' => 'Lima - Callao', 'img' => 'p01', 'w' => 1084, 'h' => 626,
+     'alt' => 'Plaza Mayor de Lima con la Basílica Catedral y el Palacio Arzobispal'],
+    ['titulo' => 'Chiclayo', 'texto' => 'Santa Cruz', 'img' => 'p02', 'w' => 1084, 'h' => 626,
+     'alt' => 'Catedral Santa María de Chiclayo vista desde el parque principal'],
+    ['titulo' => 'Cusco', 'img' => 'p03', 'w' => 1084, 'h' => 626,
+     'alt' => 'Catedral del Cusco en la Plaza de Armas'],
+    ['titulo' => 'Pucallpa', 'img' => 'p04', 'w' => 1041, 'h' => 601,
+     'alt' => 'Catedral de Pucallpa con las banderas de la plaza central'],
+]);
+
+/* ── Las jornadas ────────────────────────────────────────────────────────
+   Sección «itinerario». La reserva NO es la del editable: allí las jornadas
+   son «XX:00 Hrs.» y «Lorem ipsum», y eso no puede salir publicado ni
+   aunque se caiga MySQL. Lo que va aquí es el programa referencial que hay
+   en producción, el mismo que pinta la base. Y sin horas, porque todavía no
+   las hay: la Santa Sede no ha publicado el programa oficial. */
+$jornadas = $bloques('itinerario', [
+    ['rotulo' => '11 de noviembre', 'titulo' => 'Lima · Llegada y bienvenida oficial',
+     'texto' => 'Llegada al Perú y primer mensaje al pueblo peruano.',
+     'datos' => ['actividades' => [
+         'Llegada del Santo Padre',
+         'Ceremonia de bienvenida',
+         'Encuentro con autoridades',
+         'Primer mensaje al pueblo peruano',
+     ]]],
+    ['rotulo' => '12 de noviembre', 'titulo' => 'Chiclayo · El reencuentro con una Iglesia que conoce',
+     'texto' => 'Chiclayo tiene una relación personal y pastoral muy fuerte con León XIV: '
+              . 'fue obispo de esta diócesis durante años.',
+     'datos' => ['actividades' => [
+         'Encuentro con la comunidad de Chiclayo',
+         'Celebración eucarística',
+         'Encuentro con sacerdotes, religiosos y agentes pastorales',
+         'Momento de cercanía con el pueblo',
+     ]]],
+    ['rotulo' => '13 de noviembre', 'titulo' => 'Pucallpa · Encuentro con la Amazonía',
+     'texto' => 'Encuentro con las comunidades amazónicas y los pueblos originarios.',
+     'datos' => ['actividades' => [
+         'Encuentro con comunidades amazónicas',
+         'Encuentro con representantes de pueblos originarios',
+         'Celebración o momento de oración',
+         'Mensaje sobre el cuidado de la casa común',
+     ]]],
+    ['rotulo' => '14 de noviembre', 'titulo' => 'Cusco · La fe que nace del encuentro',
+     'texto' => 'Cusco desde su identidad religiosa, cultural y andina.',
+     'datos' => ['actividades' => [
+         'Celebración eucarística',
+         'Encuentro con la comunidad eclesial',
+         'Encuentro con jóvenes y familias',
+         'Visita o momento de oración en un lugar significativo',
+     ]]],
+    ['rotulo' => '15 de noviembre', 'titulo' => 'Lima · Un encuentro con todo el Perú',
+     'texto' => 'La gran jornada del encuentro nacional.',
+     'datos' => ['actividades' => [
+         'Gran celebración eucarística',
+         'Encuentro con familias, jóvenes y diversos sectores',
+         'Mensaje del Santo Padre al pueblo peruano',
+         'Momento de oración y acción de gracias',
+     ]]],
+    ['rotulo' => '16 de noviembre', 'titulo' => 'Lima · Hasta pronto, Perú',
+     'texto' => 'Despedida y salida del Perú.',
+     'datos' => ['actividades' => [
+         'Encuentro de despedida',
+         'Mensaje final del Santo Padre',
+         'Ceremonia de despedida',
+         'Salida del Perú',
+     ]]],
+]);
+
+/* ── El reparto: una sede, sus jornadas ──────────────────────────────────── */
+$grupos = [];
+
+foreach ($sedes as $i => $sede) {
+    $nombre = trim((string) ($sede['titulo'] ?? ''));
+
+    if ($nombre === '') {
+        continue;
+    }
+
+    $suClave = $clave($nombre) ?: 'sede-' . ($i + 1);
+
+    /* Dos sedes que empiecen por la misma palabra darían la misma clave y la
+       segunda se comería a la primera. Se le añade su posición y así ninguna
+       desaparece; las jornadas de esa ciudad van a la primera, que es lo
+       razonable. */
+    if (isset($grupos[$suClave])) {
+        $suClave .= '-' . ($i + 1);
+    }
+
+    $grupos[$suClave] = [
+        'clave'    => $suClave,
+        'titulo'   => $nombre,
+        'segunda'  => trim((string) ($sede['texto'] ?? '')),
+        'sede'     => $sede,
+        'jornadas' => [],
+    ];
+}
+
+foreach ($jornadas as $jornada) {
+    $ciudad  = trim((string) ($jornada['titulo'] ?? ''));
+    $suClave = $clave($ciudad);
+
+    if ($suClave === '' || !isset($grupos[$suClave])) {
+        /* Ciudad que no figura entre las sedes: se le abre apartado propio en
+           lugar de dejar la jornada sin pintar. Sin foto, pero con su día. */
+        $suClave = $suClave !== '' ? $suClave : 'otras-jornadas';
+        $grupos[$suClave] ??= [
+            'clave'    => $suClave,
+            'titulo'   => $primero($ciudad) !== '' ? $primero($ciudad) : 'Otras jornadas',
+            'segunda'  => '',
+            'sede'     => [],
+            'jornadas' => [],
+        ];
+    }
+
+    $grupos[$suClave]['jornadas'][] = $jornada;
+}
 ?>
 
 <main id="contenido">
 
-<!-- ══════════════ CABECERA DE PÁGINA ══════════════ -->
-<header class="cabecera-pagina">
-  <div class="cabecera-pagina__media">
-    <?php /* ── La portada de esta página ──────────────────────────────
-         Sale del panel: Páginas → esta página → Cabecera. Se puede
-         elegir una foto para escritorio y otra para móvil.
-
-         Lo que va aquí abajo es el RESPALDO: la fotografía que la
-         página traía escrita a mano. Mientras nadie elija otra en el
-         panel se sigue viendo ésta, así que pasar la portada al
-         gestor no cambió el aspecto de nada el día del despliegue. */ ?>
+  <?php /* ═══════════════════════════════════════════════════════ HÉROE ════
+       Banda dorada oscura de 582 px con la foto en duotono, la insignia
+       «A G E N D A» sobre recuadro claro y el titular centrado. Todo sale de
+       Páginas → Agenda → Cabecera de página. */ ?>
+  <section class="hero hero--page agenda-hero">
+    <div class="hero__media">
       <?php ob_start(); ?>
       <picture>
-      <source type="image/webp" sizes="100vw" srcset="../assets/img/img-7.jpg 640w, ../assets/img/img-7.jpg 1024w, ../assets/img/img-7.jpg 1600w, ../assets/img/img-7.jpg 2200w">
-      <img src="../assets/img/img-7.jpg" sizes="100vw" srcset="../assets/img/img-7.jpg 640w, ../assets/img/img-7.jpg 1024w, ../assets/img/img-7.jpg 1600w, ../assets/img/img-7.jpg 2200w" width="2200" height="943" alt="Celebración solemne presidida por el Papa León XIV" loading="lazy" decoding="async">
-    </picture>
-      <?php $respaldoPortada = (string) ob_get_clean(); ?>
-      <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoPortada, ['sizes' => '100vw', 'prioridad' => true]) ?>
-  </div>
-  <div class="cabecera-pagina__contenido contenedor">
-    <div class="cabecera-pagina__bloque">
-    <span class="rotulo rotulo--claro"><?= $esc($campo('cabecera', 'rotulo', 'Agenda')) ?></span>
-    <h1 class="cabecera-pagina__titulo"><?= $esc($campo('cabecera', 'titulo', 'Los días del encuentro')) ?></h1>
-    <p class="cabecera-pagina__bajada"><?= $esc($campo('cabecera', 'texto', 'El Papa León XIV estará en el Perú del 11 al 16 de noviembre de 2026. El programa detallado todavía no es público: aquí está todo lo que sí se sabe, y nada de lo que no.')) ?></p>
-    <nav class="migas" aria-label="Migas de pan">
-      <ol>
-        <li><a href="<?= $esc($sitio->enlace('')) ?>">Inicio</a></li>
-        <li><span aria-current="page">Agenda</span></li>
-      </ol>
-    </nav>
+        <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/agenda/hero.webp')) ?>" type="image/webp">
+        <img src="<?= $esc($sitio->asset('assets/img/rediseno/agenda/hero.jpg')) ?>"
+             alt="El Papa León XIV saluda a una multitud de fieles que lo esperan con sus teléfonos en alto"
+             width="2880" height="1164" fetchpriority="high" decoding="async">
+      </picture>
+      <?php $respaldoHero = (string) ob_get_clean(); ?>
+      <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoHero, ['sizes' => '100vw', 'prioridad' => true]) ?>
     </div>
-  </div>
-</header>
 
-<!-- ══════════════ 1. ESTADO ACTUAL ══════════════ -->
-<section class="seccion" aria-labelledby="t-estado">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-7">
-        <header class="seccion__encabezado seccion__encabezado--mayor">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('sabe-hoy', 'rotulo', 'Actualizado el 13 de agosto de 2026')) ?></span>
-          <h2 class="titular--mayor" id="t-estado" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('sabe-hoy', 'titulo', 'Qué se sabe hoy')) ?></span></span></h2>
-        </header>
+    <div class="hero__inner">
+      <p class="hero__badge"><?= $esc($espaciado($campo('cabecera', 'rotulo', 'Agenda'))) ?></p>
+      <h1 class="hero__title"><?= $esc($campo('cabecera', 'titulo', 'Días de encuentro')) ?></h1>
+      <p class="hero__sub"><?= $realce($campo(
+          'cabecera',
+          'texto',
+          "El Papa León XIV estará en el Perú del\n**11 al 16 de noviembre** de 2026."
+      )) ?></p>
+    </div>
+  </section>
 
-        <div class="estado-actual" data-reveal="fade-rise">
-          <p class="estado-actual__frase">La agenda de la visita del Papa León XIV al Perú estará disponible próximamente.</p>
-          <p class="estado-actual__meta">
-            <span>Última actualización: 13 de agosto de 2026</span>
-            <span>Fuente: Conferencia Episcopal Peruana</span>
-          </p>
-        </div>
+  <?php /* ═════════════════════════════════════════════════ CRONOGRAMA ════
+       El cuerpo de la página: los filtros por ciudad y, debajo, cada sede con
+       su fotografía y sus jornadas. El editable no dibuja titular para esta
+       sección —lo hace el héroe—, así que el título de «itinerario» va oculto
+       y sirve de nombre accesible: quien navega con lector de pantalla oye de
+       qué es la lista antes de entrar en ella. */ ?>
+  <section class="agenda" aria-labelledby="t-agenda">
+    <div class="agenda__cont">
 
-        <div class="texto-lectura sep-m">
-          <!-- COPY PENDIENTE DE VALIDACIÓN -->
-          <p>Lo confirmado es el marco: seis días, cuatro sedes y un anuncio de la Santa Sede fechado el 5 de agosto de 2026. El viaje al Perú es la tercera etapa de la primera gira sudamericana del Santo Padre, después de Uruguay y Argentina.</p>
-          <p>Todo lo demás —horarios, recintos, aforos y actos concretos— sigue sin publicarse. En esta página no encontrarás ninguna hora que la Santa Sede no haya hecho oficial. Si ves circular un programa por redes sociales sin fuente, desconfía.</p>
-        </div>
+      <h2 class="visually-hidden" id="t-agenda"><?= $esc($campo('itinerario', 'titulo', 'El recorrido del Santo Padre')) ?></h2>
+
+      <?php /* Filtros por ciudad: los resuelve assets/js/rediseno.js emparejando
+               data-filter con data-key. Sin JavaScript se ven todas las sedes,
+               que es justo lo que hace falta. */ ?>
+      <div class="chips agenda__filtros" data-filter-group="ciudades" role="group"
+           aria-label="<?= $esc($campo('cuatro-ventanas', 'titulo', 'Filtrar el cronograma por ciudad')) ?>">
+        <button class="chip is-active" type="button" data-filter="all"><?= $esc($espaciado('Todas')) ?></button>
+        <?php foreach ($grupos as $grupo): ?>
+          <?php $rotuloSede = $grupo['titulo'] . ($grupo['segunda'] !== '' ? ' - ' . $grupo['segunda'] : ''); ?>
+          <button class="chip chip--<?= $esc($grupo['clave']) ?>" type="button"
+                  data-filter="<?= $esc($grupo['clave']) ?>"><?= $esc($espaciado($rotuloSede)) ?></button>
+        <?php endforeach; ?>
       </div>
+
+      <?php foreach ($grupos as $grupo): ?>
+        <article class="ag-sede ag-sede--<?= $esc($grupo['clave']) ?>"
+                 data-filter-item="ciudades" data-key="<?= $esc($grupo['clave']) ?>">
+
+          <h3 class="ag-sede__h"><?= $esc($espaciado($grupo['titulo'])) ?><?php
+            /* La segunda sede va un cuerpo más pequeño, como en el editable. */
+            if ($grupo['segunda'] !== ''): ?>   -   <span class="ag-sede__h--sm"><?= $esc($espaciado($grupo['segunda'])) ?></span><?php endif; ?></h3>
+
+          <?php
+          /* La fotografía de la ciudad. Sale del panel; mientras nadie elija
+             otra se ve la que traía la maqueta. */
+          ob_start();
+          if (!empty($grupo['sede']['img'])): ?>
+            <picture>
+              <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/agenda/' . $grupo['sede']['img'] . '.webp')) ?>" type="image/webp">
+              <img src="<?= $esc($sitio->asset('assets/img/rediseno/agenda/' . $grupo['sede']['img'] . '.jpg')) ?>"
+                   alt="<?= $esc((string) ($grupo['sede']['alt'] ?? '')) ?>"
+                   width="<?= (int) ($grupo['sede']['w'] ?? 1084) ?>" height="<?= (int) ($grupo['sede']['h'] ?? 626) ?>"
+                   loading="lazy" decoding="async">
+            </picture>
+          <?php endif;
+          $respaldoSede = (string) ob_get_clean();
+          $fotoSede     = $sitio->imagen($grupo['sede'], $respaldoSede, ['sizes' => '(min-width:1024px) 38vw, 100vw']);
+          ?>
+          <?php if ($fotoSede !== ''): ?>
+            <figure class="ag-sede__foto"><?= $fotoSede ?></figure>
+          <?php endif; ?>
+
+          <?php if ($grupo['jornadas'] !== []): ?>
+          <div class="ag-dias">
+            <?php foreach ($grupo['jornadas'] as $jornada): ?>
+              <?php
+              $rotulo = trim((string) ($jornada['rotulo'] ?? ''));
+              $dia    = $fecha($rotulo);
+
+              /* Las actividades del día. El panel las guarda como lista en la
+                 columna `datos`; según de dónde venga la fila puede llegar ya
+                 descodificada o todavía como texto JSON. */
+              $datos = $jornada['datos'] ?? [];
+              if (is_string($datos)) {
+                  $datos = json_decode($datos, true) ?: [];
+              }
+
+              $actividades = array_values(array_filter(array_map(
+                  static fn ($v): string => trim((string) $v),
+                  (array) (($datos['actividades'] ?? []) ?: [])
+              ), static fn (string $v): bool => $v !== ''));
+
+              /* Una jornada sin actividades no se queda en blanco: se pinta lo
+                 que sí tenga escrito, que para eso está en el panel. */
+              $cola = trim((string) preg_replace('/^[^·•–—|]*[·•–—|]\s*/u', '', (string) ($jornada['titulo'] ?? '')));
+              if ($actividades === []) {
+                  $unica = $cola !== '' ? $cola : trim((string) ($jornada['texto'] ?? ''));
+                  $actividades = $unica !== '' ? [$unica] : [];
+              }
+              ?>
+              <div class="timeline ag-dia">
+                <?php /* El «11 NOV» solo no dice gran cosa en voz alta: este
+                         titular oculto da a cada día su nombre completo. */ ?>
+                <h4 class="visually-hidden"><?= $esc(trim($rotulo . ($cola !== '' ? ' · ' . $cola : ''))) ?></h4>
+
+                <p class="timeline__day">
+                  <?php if ($dia['dia'] !== ''): ?><span class="timeline__num"><?= $esc($dia['dia']) ?></span><?php endif; ?>
+                  <?php if ($dia['mes'] !== ''): ?><span class="timeline__mon"><?= $esc($dia['mes']) ?></span><?php endif; ?>
+                </p>
+
+                <div class="timeline__items">
+                  <?php foreach ($actividades as $actividad): ?>
+                    <?php $a = $acto($actividad); ?>
+                    <div class="ag-acto">
+                      <?php if ($a['hora'] !== ''): ?>
+                        <p class="timeline__time"><?= $esc($a['hora']) ?></p>
+                      <?php endif; ?>
+                      <?php if ($a['que'] !== ''): ?>
+                        <p class="timeline__what"><?= $esc($a['que']) ?></p>
+                      <?php endif; ?>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
+
+        </article>
+      <?php endforeach; ?>
+
+      <?php /* ── La letra pequeña ─────────────────────────────────────────
+           El editable no la dibuja, y aun así va: el programa que se publica
+           aquí es REFERENCIAL hasta que la Santa Sede apruebe el oficial, y
+           esa advertencia ya estaba escrita en la base. Enseñar horas de un
+           viaje papal sin decir que no son definitivas induce a error, así
+           que se pinta al pie del cronograma, en cuerpo pequeño. */ ?>
+      <?php
+      /* La reserva importa más aquí que en ningún otro sitio: si la base no
+         responde, la página sigue enseñando el cronograma —lo tiene escrito
+         arriba— y no puede enseñarlo sin la advertencia. */
+      $advertencia = $campo(
+          'itinerario',
+          'texto',
+          '<p><strong>Programa referencial.</strong> Las fechas, actividades y lugares serán '
+        . 'reemplazados por el programa oficial cuando la Santa Sede lo apruebe y publique.</p>'
+      );
+      ?>
+      <?php if (trim(strip_tags($advertencia)) !== ''): ?>
+        <div class="agenda__nota"><?= $advertencia ?></div>
+      <?php endif; ?>
+
     </div>
-  </div>
-</section>
-
-<!-- ══════════════ 2. LAS CUATRO VENTANAS ══════════════ -->
-<section class="seccion" aria-labelledby="t-ventanas">
-  <div class="contenedor">
-    <header class="seccion__encabezado">
-      <hr class="seccion__filete" data-reveal="line-draw">
-      <span class="rotulo"><?= $esc($campo('cuatro-ventanas', 'rotulo', 'Cuatro jurisdicciones')) ?></span>
-      <h2 id="t-ventanas" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('cuatro-ventanas', 'titulo', 'Las cuatro ventanas')) ?></span></span></h2>
-      <!-- COPY PENDIENTE DE VALIDACIÓN -->
-      <p>El viaje ocupa seis días completos. El reparto de esos días entre las cuatro sedes no se ha publicado, así que cada ciudad figura con la ventana entera y en estado pendiente.</p>
-    </header>
-
-    <ul class="ventanas">
-      <li class="ventana" data-reveal="fade-rise">
-        <p class="ventana__sede">Lima</p>
-        <p class="ventana__franja">11–16 de noviembre de 2026</p>
-        <p><span class="estado">Programa por confirmar</span> <span class="solo-lectores">Arquidiócesis de Lima.</span></p>
-      </li>
-      <li class="ventana" data-reveal="fade-rise">
-        <p class="ventana__sede">Chiclayo</p>
-        <p class="ventana__franja">11–16 de noviembre de 2026</p>
-        <p><span class="estado">Programa por confirmar</span> <span class="solo-lectores">Diócesis de Chiclayo.</span></p>
-      </li>
-      <li class="ventana" data-reveal="fade-rise">
-        <p class="ventana__sede">Cusco</p>
-        <p class="ventana__franja">11–16 de noviembre de 2026</p>
-        <p><span class="estado">Programa por confirmar</span> <span class="solo-lectores">Arquidiócesis del Cusco.</span></p>
-      </li>
-      <li class="ventana" data-reveal="fade-rise">
-        <p class="ventana__sede">Pucallpa</p>
-        <p class="ventana__franja">11–16 de noviembre de 2026</p>
-        <p><span class="estado">Programa por confirmar</span> <span class="solo-lectores">Vicariato Apostólico de Pucallpa.</span></p>
-      </li>
-    </ul>
-
-    <p class="seccion__pie"><a class="enlace-flecha" href="<?= $esc($sitio->enlace('sedes/')) ?>">Conoce las cuatro sedes <svg aria-hidden="true"><use href="#i-flecha"/></svg></a></p>
-  </div>
-</section>
-
-<!-- ══════════════ 3. QUÉ SUELE INCLUIR UN VIAJE APOSTÓLICO ══════════════ -->
-<section class="seccion seccion--tinte" aria-labelledby="t-actos">
-  <div class="contenedor">
-    <header class="seccion__encabezado seccion__encabezado--mayor">
-      <hr class="seccion__filete" data-reveal="line-draw">
-      <span class="rotulo"><?= $esc($campo('suele-incluir-viaje', 'rotulo', 'No es el programa peruano')) ?></span>
-      <h2 class="titular--mayor" id="t-actos" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('suele-incluir-viaje', 'titulo', '¿Qué suele incluir un viaje apostólico?')) ?></span></span></h2>
-      <p><strong>Esto no es el programa peruano.</strong> Es la forma que suelen tomar los viajes apostólicos y sirve para hacerse una idea de qué esperar. Ninguno de estos actos está confirmado para el Perú.</p>
-    </header>
-
-    <ul class="actos">
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Ceremonia de bienvenida</h3>
-        <p class="acto__texto">Al aterrizar. Es breve, protocolaria y suele celebrarse en el propio aeropuerto.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Encuentro con las autoridades civiles y el cuerpo diplomático</h3>
-        <p class="acto__texto">El Santo Padre dirige un discurso sobre la vida del país que lo recibe. Es uno de los textos más citados de cada viaje.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Misa multitudinaria</h3>
-        <p class="acto__texto">El acto central. Se celebra al aire libre, en explanadas o parques capaces de acoger a mucha gente.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Encuentro con los jóvenes</h3>
-        <p class="acto__texto">Un momento propio, con un tono distinto al de las celebraciones litúrgicas.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Visita a una obra de caridad</h3>
-        <p class="acto__texto">Un hospital, una casa de acogida, una cárcel o una comunidad en dificultad. Suele ser el acto más discreto y el más recordado.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Encuentro con los obispos, el clero y la vida consagrada</h3>
-        <p class="acto__texto">A puerta cerrada o en una catedral, con quienes sostienen el día a día de la Iglesia local.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Oración mariana</h3>
-        <p class="acto__texto">Ante la advocación más querida del lugar. En el Perú hay muchas, y muy arraigadas.</p>
-      </li>
-      <li class="acto" data-reveal="fade-rise">
-        <h3 class="acto__titulo">Ceremonia de despedida</h3>
-        <p class="acto__texto">Cierra el viaje, de nuevo en el aeropuerto, antes del vuelo de regreso o del traslado a la siguiente etapa.</p>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- ══════════════ 4. CÓMO SE ANUNCIARÁ ══════════════ -->
-<section class="seccion" aria-labelledby="t-anuncio">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-7">
-        <header class="seccion__encabezado">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('como-cuando-anunciara', 'rotulo', 'Oficina de Prensa de la Santa Sede')) ?></span>
-          <h2 id="t-anuncio" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('como-cuando-anunciara', 'titulo', 'Cómo y cuándo se anunciará el programa')) ?></span></span></h2>
-        </header>
-
-        <div class="texto-lectura">
-          <!-- COPY PENDIENTE DE VALIDACIÓN -->
-          <p>El programa detallado de un viaje apostólico lo publica la <strong>Oficina de Prensa de la Santa Sede</strong>. Es la fuente primaria: hasta que un acto aparece ahí, no existe oficialmente. Suele difundirse algunas semanas antes del viaje, en un documento con cada acto, su hora local y su sede.</p>
-          <p>En el Perú, la <strong>Conferencia Episcopal Peruana</strong> difunde y adapta esa información: condiciones de acceso, transporte, puntos de encuentro y las indicaciones de cada diócesis. Las cuatro jurisdicciones implicadas —Lima, Chiclayo, Cusco y Pucallpa— publicarán además sus propias instrucciones.</p>
-          <p>Cuando eso ocurra, esta página cambiará el mismo día: cada acto con su hora, su sede y su forma de acceso. Si quieres enterarte sin tener que volver a mirar, déjanos tu correo.</p>
-        </div>
-
-        <div class="aviso sep-l" data-reveal="fade-rise">
-          <p class="aviso__titulo">Dónde mirar mientras tanto</p>
-          <p>Sala de prensa de la Santa Sede · Conferencia Episcopal Peruana · esta misma página. Cualquier otro canal es de segunda mano.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ 5. AVISO POR CORREO ══════════════ -->
-<section class="seccion" aria-labelledby="t-aviso">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-4 col-t-4 col-d-6">
-        <header class="seccion__encabezado">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('avisame-cuando-publique', 'rotulo', 'Aviso')) ?></span>
-          <h2 id="t-aviso">Avísame cuando se publique la agenda</h2>
-        </header>
-
-        <form class="pila" data-form="aviso" data-origen="agenda" action="#" method="post" novalidate>
-          <div class="campo">
-            <label class="campo__etiqueta" for="aviso-correo-agenda">Correo electrónico</label>
-            <input type="email" id="aviso-correo-agenda" name="correo" autocomplete="email" required data-valida="requerido correo" placeholder="tunombre@correo.com">
-          </div>
-          <label class="casilla">
-            <input type="checkbox" name="consentimiento" id="aviso-consentimiento-agenda" required>
-            <span class="casilla__texto">He leído y acepto la <a href="<?= $esc($sitio->enlace('privacidad/')) ?>"  >política de privacidad</a>. Usaremos tu correo únicamente para avisarte de la publicación del programa.</span>
-          </label>
-          <p class="trampa" aria-hidden="true"><label for="sitio-web-agenda">No rellenar</label><input type="text" id="sitio-web-agenda" name="sitio-web" tabindex="-1" autocomplete="off"></p>
-          <div><button class="btn btn--secundario" type="submit">Avísame</button></div>
-          <p data-mensaje role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ 6. PREGUNTAS FRECUENTES ══════════════ -->
-<section class="seccion" aria-labelledby="t-faq">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-8">
-        <header class="seccion__encabezado">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('mas-pregunta', 'rotulo', 'Cinco dudas')) ?></span>
-          <h2 id="t-faq" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('mas-pregunta', 'titulo', 'Lo que más se pregunta')) ?></span></span></h2>
-        </header>
-
-        <div class="acordeon" data-acordeon>
-          <div class="acordeon__item">
-            <h3><button class="acordeon__boton" type="button" aria-expanded="false" aria-controls="faq-1">¿Cuándo se sabrá el programa? <svg aria-hidden="true"><use href="#i-mas"/></svg></button></h3>
-            <div class="acordeon__panel" id="faq-1"><div>
-              <p>No hay fecha anunciada. El programa lo publica la Oficina de Prensa de la Santa Sede, habitualmente algunas semanas antes del viaje, y la Conferencia Episcopal Peruana lo difunde en el país. En cuanto sea oficial, estará aquí.</p>
-            </div></div>
-          </div>
-          <div class="acordeon__item">
-            <h3><button class="acordeon__boton" type="button" aria-expanded="false" aria-controls="faq-2">¿Habrá que inscribirse para asistir? <svg aria-hidden="true"><use href="#i-mas"/></svg></button></h3>
-            <div class="acordeon__panel" id="faq-2"><div>
-              <p><strong>Por confirmar.</strong> Las condiciones de acceso a cada acto forman parte del programa oficial y todavía no se han publicado. No des por válida ninguna inscripción que no proceda de la Conferencia Episcopal Peruana o de tu diócesis.</p>
-            </div></div>
-          </div>
-          <div class="acordeon__item">
-            <h3><button class="acordeon__boton" type="button" aria-expanded="false" aria-controls="faq-3">¿Las Misas tendrán entrada? <svg aria-hidden="true"><use href="#i-mas"/></svg></button></h3>
-            <div class="acordeon__panel" id="faq-3"><div>
-              <p><strong>Por confirmar.</strong> En otros viajes apostólicos algunas celebraciones han sido de acceso libre y otras han requerido pase por razones de aforo y seguridad. La decisión corresponde a los organizadores y se anunciará con el programa.</p>
-            </div></div>
-          </div>
-          <div class="acordeon__item">
-            <h3><button class="acordeon__boton" type="button" aria-expanded="false" aria-controls="faq-4">¿Se transmitirán los actos? <svg aria-hidden="true"><use href="#i-mas"/></svg></button></h3>
-            <div class="acordeon__panel" id="faq-4"><div>
-              <p>Los viajes apostólicos se transmiten habitualmente por los medios del Vaticano y por las emisoras y canales de la Iglesia en el país. Los enlaces concretos se publicarán en <a href="<?= $esc($sitio->enlace('#desde-donde-estes')) ?>">Desde donde estés</a> cuando existan.</p>
-            </div></div>
-          </div>
-          <div class="acordeon__item">
-            <h3><button class="acordeon__boton" type="button" aria-expanded="false" aria-controls="faq-5">¿Cómo llego a mi sede? <svg aria-hidden="true"><use href="#i-mas"/></svg></button></h3>
-            <div class="acordeon__panel" id="faq-5"><div>
-              <p>Las indicaciones de acceso, transporte y puntos de encuentro dependen de los recintos, que aún no se han anunciado. Se publicarán junto con el programa y con la guía del peregrino.</p>
-            </div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
 </main>

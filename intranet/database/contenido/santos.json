@@ -1,0 +1,96 @@
+{
+  "pagina": {
+    "clave": "santos",
+    "nombre": "Santos del Perú",
+    "ruta": "/santos/",
+    "titulo_seo": "Cinco Santos, un mismo corazón · Santos del Perú · León XIV en el Perú",
+    "descripcion_seo": "Los santos del Perú: cinco caminos distintos y una misma llamada, vivir la fe y hacerla visible en la vida cotidiana. Santa Rosa de Lima, San Martín de Porres, San Juan Macías, San Francisco Solano y Santo Toribio de Mogrovejo.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "",
+      "titulo": "Cinco Santos, un mismo corazón",
+      "texto": "Son cinco caminos distintos, pero una misma llamada: vivir la fe y hacerla visible en la vida cotidiana.",
+      "imagen": "santos/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "los-cinco-santos",
+      "nombre": "Los cinco santos",
+      "plantilla": "personas",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "@bd",
+      "texto": "@bd",
+      "datos": { "detalle": true },
+      "bloques": [
+        {
+          "orden": 10,
+          "slug": "santa-rosa-de-lima",
+          "titulo": "Santa Rosa de Lima",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "index/p02",
+          "datos": { "anios": "@bd", "resumen": "@bd" }
+        },
+        {
+          "orden": 20,
+          "slug": "san-martin-de-porres",
+          "titulo": "San Martín de Porres",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "index/p03",
+          "datos": { "anios": "@bd", "resumen": "@bd" }
+        },
+        {
+          "orden": 30,
+          "slug": "san-juan-macias",
+          "titulo": "San Juan Macías",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "index/p04",
+          "datos": { "anios": "@bd", "resumen": "@bd" }
+        },
+        {
+          "orden": 40,
+          "slug": "san-francisco-solano",
+          "titulo": "San Francisco Solano",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "index/p05",
+          "datos": { "anios": "@bd", "resumen": "@bd" }
+        },
+        {
+          "orden": 50,
+          "slug": "santo-toribio-de-mogrovejo",
+          "titulo": "Santo Toribio de Mogrovejo",
+          "rotulo": "@bd",
+          "texto": "@bd",
+          "imagen": "santos/p01",
+          "datos": { "anios": "@bd", "resumen": "@bd" }
+        }
+      ]
+    }
+  ],
+
+  "notas": [
+    "La página se llamaba «tierra-de-santos» y pasa a «santos». Las dos secciones que tenía —«cabecera» y «los-cinco-santos»— conservan su clave, así que no se pierde su contenido ni su historial, y /tierra-de-santos/ responde con un 301 desde Rutas::mudanzas(). No se retira ninguna sección.",
+    "El héroe estrena el texto del rediseño: el titular pasa de «Tierra de santos» a «Cinco Santos, un mismo corazón» y la bajada a la del editable. No van marcados «@bd» a propósito: aquí el editable no trae relleno, trae la redacción nueva que sustituye a la antigua.",
+    "El rótulo de la cabecera queda vacío: el héroe del rediseño no dibuja ninguno. El campo sigue en la plantilla por si algún día se quiere, pero hoy la página no lo pinta, así que se deja en blanco antes que guardar un texto que nadie vería. El antiguo «Cinco caminos de santidad» se pierde como rótulo; lo dice ya el titular nuevo.",
+    "Todo lo de «los-cinco-santos» va con «@bd»: el editable sólo llegó a componer la ficha de Santo Toribio, y la base tiene las cinco enteras —rótulo de virtudes, cuerpo de texto, años y resumen—. Es el texto real y no se toca.",
+    "Los retratos sí son nuevos: la sección no tenía imagen en ninguno de sus bloques. Santo Toribio estrena el óleo del editable (santos/p01) y los otros cuatro reutilizan los retratos que ya usa la portada (index/p02 a index/p05).",
+    "Santo Toribio tiene dos textos distintos: el de la base habla de los 300 años de su canonización y el del editable, de la cita de León XIV sobre «el Evangelio ofrecido en las periferias». Manda el de la base —va con «@bd»— y el del editable queda escrito como reserva en la vista, así que no se pierde ninguno de los dos.",
+    "La banda arena del editable llevaba una cita de León XIV con su fuente. La plantilla «personas» no tiene ningún par de campos para eso, así que la banda recoge lo que sí es de cada santo y está en la base: el resumen y los años. Si se quiere recuperar la cita como contenido editable hace falta añadir a «personas» dos claves de bloque —«cita» y «cita_fuente»—; no se tocan las plantillas desde aquí.",
+    "«datos.detalle» se conserva: es lo que hace que index.php resuelva /santos/<slug>/ contra views/detalle.php. Los cinco «slug» son los que ya estaban en la base y además sirven de ancla dentro de la página."
+  ]
+}

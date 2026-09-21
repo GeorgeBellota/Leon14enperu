@@ -34,8 +34,18 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
 
-<?php /* Los tokens salen del sitio público: una sola fuente de color y tipografía. */ ?>
-<link rel="stylesheet" href="<?= $e($c->urlSitio('assets/css/tokens.css')) ?>">
+<?php /* ── Los tokens del panel son SUYOS ──────────────────────────────────────
+         Antes se cargaban del sitio público (assets/css/tokens.css) para tener
+         una sola fuente de color y tipografía. Eso ató el panel a dos cosas
+         frágiles: que `url.sitio` estuviera bien puesto en la configuración
+         —si apuntaba a otra carpeta, el archivo daba 404 y el panel se veía
+         sin estilos— y que el sitio público no cambiara su sistema de diseño.
+
+         Con el rediseño de 2026 el sitio cambió de paleta y de tipografías,
+         así que el panel se queda con su propia copia. Es un archivo más, pero
+         el panel ya no se rompe por un ajuste del sitio ni por una limpieza
+         del CSS público. */ ?>
+<link rel="stylesheet" href="<?= $e($c->urlAsset('assets/css/panel-tokens.css')) ?>">
 <link rel="stylesheet" href="<?= $e($c->urlAsset('assets/css/panel.css')) ?>">
 <link rel="icon" href="<?= $e($c->urlSitio('favicon.svg')) ?>" type="image/svg+xml">
 </head>

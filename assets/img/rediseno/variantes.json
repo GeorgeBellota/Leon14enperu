@@ -1,0 +1,1311 @@
+{
+ "agenda": {
+  "hero": {
+   "ruta": "assets/img/rediseno/agenda/hero.jpg",
+   "base": "assets/img/rediseno/agenda/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 272679
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/agenda/p01.jpg",
+   "base": "assets/img/rediseno/agenda/p01",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1084,
+   "alto": 626,
+   "mime": "image/jpeg",
+   "peso": 161581
+  },
+  "p02": {
+   "ruta": "assets/img/rediseno/agenda/p02.jpg",
+   "base": "assets/img/rediseno/agenda/p02",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1084,
+   "alto": 626,
+   "mime": "image/jpeg",
+   "peso": 187402
+  },
+  "p03": {
+   "ruta": "assets/img/rediseno/agenda/p03.jpg",
+   "base": "assets/img/rediseno/agenda/p03",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1084,
+   "alto": 626,
+   "mime": "image/jpeg",
+   "peso": 188522
+  },
+  "p04": {
+   "ruta": "assets/img/rediseno/agenda/p04.jpg",
+   "base": "assets/img/rediseno/agenda/p04",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1041,
+   "alto": 601,
+   "mime": "image/jpeg",
+   "peso": 193474
+  }
+ },
+ "brand": {
+  "cep-simbolo-blanco": {
+   "ruta": "assets/img/rediseno/brand/cep-simbolo-blanco.png",
+   "base": "assets/img/rediseno/brand/cep-simbolo-blanco",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 600,
+   "alto": 625,
+   "mime": "image/png",
+   "peso": 93576
+  },
+  "escudo-color": {
+   "ruta": "assets/img/rediseno/brand/escudo-color.png",
+   "base": "assets/img/rediseno/brand/escudo-color",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1200,
+   "alto": 1674,
+   "mime": "image/png",
+   "peso": 423792
+  },
+  "logo-lockup-dorado": {
+   "ruta": "assets/img/rediseno/brand/logo-lockup-dorado.png",
+   "base": "assets/img/rediseno/brand/logo-lockup-dorado",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1552,
+   "alto": 1268,
+   "mime": "image/png",
+   "peso": 301266
+  },
+  "logo-lockup-hero": {
+   "ruta": "assets/img/rediseno/brand/logo-lockup-hero.png",
+   "base": "assets/img/rediseno/brand/logo-lockup-hero",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1600,
+   "alto": 1477,
+   "mime": "image/png",
+   "peso": 723874
+  },
+  "logo-lockup-negro": {
+   "ruta": "assets/img/rediseno/brand/logo-lockup-negro.png",
+   "base": "assets/img/rediseno/brand/logo-lockup-negro",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1556,
+   "alto": 1268,
+   "mime": "image/png",
+   "peso": 273231
+  },
+  "logo-lockup-rojo-alt": {
+   "ruta": "assets/img/rediseno/brand/logo-lockup-rojo-alt.png",
+   "base": "assets/img/rediseno/brand/logo-lockup-rojo-alt",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1552,
+   "alto": 1268,
+   "mime": "image/png",
+   "peso": 302405
+  },
+  "logo-lockup-rojo": {
+   "ruta": "assets/img/rediseno/brand/logo-lockup-rojo.png",
+   "base": "assets/img/rediseno/brand/logo-lockup-rojo",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1600,
+   "alto": 1313,
+   "mime": "image/png",
+   "peso": 652726
+  }
+ },
+ "cep": {
+  "hero": {
+   "ruta": "assets/img/rediseno/cep/hero.jpg",
+   "base": "assets/img/rediseno/cep/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 417983
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/cep/p01.jpg",
+   "base": "assets/img/rediseno/cep/p01",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1066,
+   "alto": 988,
+   "mime": "image/jpeg",
+   "peso": 176891
+  }
+ },
+ "contacto": {
+  "hero": {
+   "ruta": "assets/img/rediseno/contacto/hero.jpg",
+   "base": "assets/img/rediseno/contacto/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 141690
+  }
+ },
+ "index": {
+  "hero": {
+   "ruta": "assets/img/rediseno/index/hero.jpg",
+   "base": "assets/img/rediseno/index/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 932,
+   "mime": "image/jpeg",
+   "peso": 369225
+  },
+  "p00": {
+   "ruta": "assets/img/rediseno/index/p00.jpg",
+   "base": "assets/img/rediseno/index/p00",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1452,
+   "alto": 912,
+   "mime": "image/jpeg",
+   "peso": 503617
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/index/p01.png",
+   "base": "assets/img/rediseno/index/p01",
+   "anchos": [
+    480,
+    768,
+    1200
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 1511,
+   "alto": 1489,
+   "mime": "image/png",
+   "peso": 1887220
+  },
+  "p02": {
+   "ruta": "assets/img/rediseno/index/p02.jpg",
+   "base": "assets/img/rediseno/index/p02",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 491,
+   "alto": 761,
+   "mime": "image/jpeg",
+   "peso": 90809
+  },
+  "p03": {
+   "ruta": "assets/img/rediseno/index/p03.jpg",
+   "base": "assets/img/rediseno/index/p03",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 484,
+   "alto": 750,
+   "mime": "image/jpeg",
+   "peso": 64604
+  },
+  "p04": {
+   "ruta": "assets/img/rediseno/index/p04.jpg",
+   "base": "assets/img/rediseno/index/p04",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 491,
+   "alto": 734,
+   "mime": "image/jpeg",
+   "peso": 80077
+  },
+  "p05": {
+   "ruta": "assets/img/rediseno/index/p05.jpg",
+   "base": "assets/img/rediseno/index/p05",
+   "anchos": [
+    352
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 352,
+   "alto": 546,
+   "mime": "image/jpeg",
+   "peso": 42389
+  },
+  "p06": {
+   "ruta": "assets/img/rediseno/index/p06.jpg",
+   "base": "assets/img/rediseno/index/p06",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 491,
+   "alto": 761,
+   "mime": "image/jpeg",
+   "peso": 100365
+  },
+  "p08": {
+   "ruta": "assets/img/rediseno/index/p08.jpg",
+   "base": "assets/img/rediseno/index/p08",
+   "anchos": [
+    326
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 326,
+   "alto": 462,
+   "mime": "image/jpeg",
+   "peso": 19508
+  },
+  "p09": {
+   "ruta": "assets/img/rediseno/index/p09.jpg",
+   "base": "assets/img/rediseno/index/p09",
+   "anchos": [
+    331
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 331,
+   "alto": 469,
+   "mime": "image/jpeg",
+   "peso": 50946
+  },
+  "p10": {
+   "ruta": "assets/img/rediseno/index/p10.jpg",
+   "base": "assets/img/rediseno/index/p10",
+   "anchos": [
+    343
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 343,
+   "alto": 483,
+   "mime": "image/jpeg",
+   "peso": 47972
+  },
+  "p11": {
+   "ruta": "assets/img/rediseno/index/p11.jpg",
+   "base": "assets/img/rediseno/index/p11",
+   "anchos": [
+    336
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 336,
+   "alto": 475,
+   "mime": "image/jpeg",
+   "peso": 48855
+  },
+  "p12": {
+   "ruta": "assets/img/rediseno/index/p12.jpg",
+   "base": "assets/img/rediseno/index/p12",
+   "anchos": [
+    330
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 330,
+   "alto": 468,
+   "mime": "image/jpeg",
+   "peso": 71665
+  },
+  "p13": {
+   "ruta": "assets/img/rediseno/index/p13.jpg",
+   "base": "assets/img/rediseno/index/p13",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 835,
+   "alto": 767,
+   "mime": "image/jpeg",
+   "peso": 149896
+  },
+  "p14": {
+   "ruta": "assets/img/rediseno/index/p14.jpg",
+   "base": "assets/img/rediseno/index/p14",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 835,
+   "alto": 767,
+   "mime": "image/jpeg",
+   "peso": 125222
+  },
+  "p15": {
+   "ruta": "assets/img/rediseno/index/p15.jpg",
+   "base": "assets/img/rediseno/index/p15",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 835,
+   "alto": 767,
+   "mime": "image/jpeg",
+   "peso": 200150
+  },
+  "p16": {
+   "ruta": "assets/img/rediseno/index/p16.jpg",
+   "base": "assets/img/rediseno/index/p16",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 835,
+   "alto": 767,
+   "mime": "image/jpeg",
+   "peso": 186817
+  },
+  "p17": {
+   "ruta": "assets/img/rediseno/index/p17.jpg",
+   "base": "assets/img/rediseno/index/p17",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 826,
+   "alto": 759,
+   "mime": "image/jpeg",
+   "peso": 208736
+  }
+ },
+ "noticias": {
+  "hero": {
+   "ruta": "assets/img/rediseno/noticias/hero.jpg",
+   "base": "assets/img/rediseno/noticias/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 256561
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/noticias/p01.jpg",
+   "base": "assets/img/rediseno/noticias/p01",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1249,
+   "alto": 753,
+   "mime": "image/jpeg",
+   "peso": 118902
+  }
+ },
+ "papa-leon-xiv": {
+  "hero": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/hero.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 236426
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p01.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p01",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1162,
+   "alto": 755,
+   "mime": "image/jpeg",
+   "peso": 188904
+  },
+  "p02": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p02.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p02",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1164,
+   "alto": 778,
+   "mime": "image/jpeg",
+   "peso": 273190
+  },
+  "p03": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p03.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p03",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 982,
+   "alto": 930,
+   "mime": "image/jpeg",
+   "peso": 106132
+  },
+  "p04": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p04.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p04",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 784,
+   "alto": 841,
+   "mime": "image/jpeg",
+   "peso": 92161
+  },
+  "p05": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p05.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p05",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 726,
+   "alto": 458,
+   "mime": "image/jpeg",
+   "peso": 49570
+  },
+  "p06": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p06.png",
+   "base": "assets/img/rediseno/papa-leon-xiv/p06",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "png"
+   ],
+   "ancho": 835,
+   "alto": 1165,
+   "mime": "image/png",
+   "peso": 281476
+  },
+  "p07": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p07.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p07",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 816,
+   "alto": 1160,
+   "mime": "image/jpeg",
+   "peso": 101321
+  },
+  "p08": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p08.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p08",
+   "anchos": [
+    474
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 474,
+   "alto": 491,
+   "mime": "image/jpeg",
+   "peso": 34437
+  },
+  "p09": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p09.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p09",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 925,
+   "alto": 880,
+   "mime": "image/jpeg",
+   "peso": 103477
+  },
+  "p10": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p10.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p10",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 665,
+   "alto": 766,
+   "mime": "image/jpeg",
+   "peso": 77924
+  },
+  "p11": {
+   "ruta": "assets/img/rediseno/papa-leon-xiv/p11.jpg",
+   "base": "assets/img/rediseno/papa-leon-xiv/p11",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 778,
+   "alto": 732,
+   "mime": "image/jpeg",
+   "peso": 77053
+  }
+ },
+ "preguntas-frecuentes": {
+  "hero": {
+   "ruta": "assets/img/rediseno/preguntas-frecuentes/hero.jpg",
+   "base": "assets/img/rediseno/preguntas-frecuentes/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 373831
+  }
+ },
+ "prensa": {
+  "hero": {
+   "ruta": "assets/img/rediseno/prensa/hero.jpg",
+   "base": "assets/img/rediseno/prensa/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 334287
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/prensa/p01.jpg",
+   "base": "assets/img/rediseno/prensa/p01",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1550,
+   "alto": 946,
+   "mime": "image/jpeg",
+   "peso": 98407
+  }
+ },
+ "santos": {
+  "hero": {
+   "ruta": "assets/img/rediseno/santos/hero.jpg",
+   "base": "assets/img/rediseno/santos/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 558974
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/santos/p01.jpg",
+   "base": "assets/img/rediseno/santos/p01",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1010,
+   "alto": 1594,
+   "mime": "image/jpeg",
+   "peso": 420466
+  }
+ },
+ "sede": {
+  "hero": {
+   "ruta": "assets/img/rediseno/sede/hero.jpg",
+   "base": "assets/img/rediseno/sede/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 302531
+  }
+ },
+ "sedes": {
+  "hero": {
+   "ruta": "assets/img/rediseno/sedes/hero.jpg",
+   "base": "assets/img/rediseno/sedes/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 225175
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/sedes/p01.jpg",
+   "base": "assets/img/rediseno/sedes/p01",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 847,
+   "alto": 774,
+   "mime": "image/jpeg",
+   "peso": 147429
+  },
+  "p02": {
+   "ruta": "assets/img/rediseno/sedes/p02.jpg",
+   "base": "assets/img/rediseno/sedes/p02",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 956,
+   "alto": 640,
+   "mime": "image/jpeg",
+   "peso": 112807
+  },
+  "p03": {
+   "ruta": "assets/img/rediseno/sedes/p03.jpg",
+   "base": "assets/img/rediseno/sedes/p03",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 841,
+   "alto": 765,
+   "mime": "image/jpeg",
+   "peso": 117090
+  },
+  "p04": {
+   "ruta": "assets/img/rediseno/sedes/p04.jpg",
+   "base": "assets/img/rediseno/sedes/p04",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1010,
+   "alto": 556,
+   "mime": "image/jpeg",
+   "peso": 103663
+  },
+  "p05": {
+   "ruta": "assets/img/rediseno/sedes/p05.jpg",
+   "base": "assets/img/rediseno/sedes/p05",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1010,
+   "alto": 556,
+   "mime": "image/jpeg",
+   "peso": 51538
+  },
+  "p06": {
+   "ruta": "assets/img/rediseno/sedes/p06.jpg",
+   "base": "assets/img/rediseno/sedes/p06",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1010,
+   "alto": 578,
+   "mime": "image/jpeg",
+   "peso": 137598
+  },
+  "p07": {
+   "ruta": "assets/img/rediseno/sedes/p07.jpg",
+   "base": "assets/img/rediseno/sedes/p07",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 531,
+   "alto": 478,
+   "mime": "image/jpeg",
+   "peso": 54816
+  },
+  "p08": {
+   "ruta": "assets/img/rediseno/sedes/p08.jpg",
+   "base": "assets/img/rediseno/sedes/p08",
+   "anchos": [
+    480,
+    768
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 804,
+   "alto": 1237,
+   "mime": "image/jpeg",
+   "peso": 142342
+  },
+  "p09": {
+   "ruta": "assets/img/rediseno/sedes/p09.jpg",
+   "base": "assets/img/rediseno/sedes/p09",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1056,
+   "alto": 884,
+   "mime": "image/jpeg",
+   "peso": 273898
+  },
+  "p10": {
+   "ruta": "assets/img/rediseno/sedes/p10.jpg",
+   "base": "assets/img/rediseno/sedes/p10",
+   "anchos": [
+    378
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 378,
+   "alto": 375,
+   "mime": "image/jpeg",
+   "peso": 45494
+  },
+  "p11": {
+   "ruta": "assets/img/rediseno/sedes/p11.jpg",
+   "base": "assets/img/rediseno/sedes/p11",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 674,
+   "alto": 864,
+   "mime": "image/jpeg",
+   "peso": 65480
+  },
+  "p12": {
+   "ruta": "assets/img/rediseno/sedes/p12.jpg",
+   "base": "assets/img/rediseno/sedes/p12",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 679,
+   "alto": 970,
+   "mime": "image/jpeg",
+   "peso": 112780
+  },
+  "p13": {
+   "ruta": "assets/img/rediseno/sedes/p13.jpg",
+   "base": "assets/img/rediseno/sedes/p13",
+   "anchos": [
+    480
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 623,
+   "alto": 1015,
+   "mime": "image/jpeg",
+   "peso": 121261
+  },
+  "p14": {
+   "ruta": "assets/img/rediseno/sedes/p14.jpg",
+   "base": "assets/img/rediseno/sedes/p14",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1194,
+   "alto": 568,
+   "mime": "image/jpeg",
+   "peso": 247550
+  }
+ },
+ "subsidios": {
+  "hero": {
+   "ruta": "assets/img/rediseno/subsidios/hero.jpg",
+   "base": "assets/img/rediseno/subsidios/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 199630
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/subsidios/p01.jpg",
+   "base": "assets/img/rediseno/subsidios/p01",
+   "anchos": [
+    397
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 397,
+   "alto": 563,
+   "mime": "image/jpeg",
+   "peso": 25644
+  },
+  "p02": {
+   "ruta": "assets/img/rediseno/subsidios/p02.jpg",
+   "base": "assets/img/rediseno/subsidios/p02",
+   "anchos": [
+    399
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 399,
+   "alto": 565,
+   "mime": "image/jpeg",
+   "peso": 67084
+  },
+  "p03": {
+   "ruta": "assets/img/rediseno/subsidios/p03.jpg",
+   "base": "assets/img/rediseno/subsidios/p03",
+   "anchos": [
+    400
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 400,
+   "alto": 563,
+   "mime": "image/jpeg",
+   "peso": 60164
+  },
+  "p04": {
+   "ruta": "assets/img/rediseno/subsidios/p04.jpg",
+   "base": "assets/img/rediseno/subsidios/p04",
+   "anchos": [
+    398
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 398,
+   "alto": 563,
+   "mime": "image/jpeg",
+   "peso": 63821
+  },
+  "p05": {
+   "ruta": "assets/img/rediseno/subsidios/p05.jpg",
+   "base": "assets/img/rediseno/subsidios/p05",
+   "anchos": [
+    396
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 396,
+   "alto": 561,
+   "mime": "image/jpeg",
+   "peso": 94510
+  },
+  "p06": {
+   "ruta": "assets/img/rediseno/subsidios/p06.jpg",
+   "base": "assets/img/rediseno/subsidios/p06",
+   "anchos": [
+    480,
+    768,
+    1024
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 1198,
+   "alto": 674,
+   "mime": "image/jpeg",
+   "peso": 149630
+  }
+ },
+ "voluntariado": {
+  "hero": {
+   "ruta": "assets/img/rediseno/voluntariado/hero.jpg",
+   "base": "assets/img/rediseno/voluntariado/hero",
+   "anchos": [
+    480,
+    768,
+    1024,
+    1440,
+    1920,
+    2560
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 2880,
+   "alto": 1164,
+   "mime": "image/jpeg",
+   "peso": 379086
+  },
+  "p01": {
+   "ruta": "assets/img/rediseno/voluntariado/p01.jpg",
+   "base": "assets/img/rediseno/voluntariado/p01",
+   "anchos": [
+    454
+   ],
+   "formatos": [
+    "webp",
+    "jpg"
+   ],
+   "ancho": 454,
+   "alto": 499,
+   "mime": "image/jpeg",
+   "peso": 23783
+  }
+ }
+}

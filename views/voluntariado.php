@@ -1,12 +1,34 @@
 <?php
 /**
- * Vista de la página «voluntariado».
+ * ============================================================================
+ *  Voluntariado «Los amigos de León» — rediseño 2026.
+ * ============================================================================
  *
- * Sólo el contenido. El <head>, la cabecera, el pie y los scripts los pone
- * views/_plantilla.php; el enrutado, index.php con Publico\Rutas.
+ *  Sólo el contenido. El <head>, la cabecera, el pie y los scripts los pone
+ *  views/_plantilla.php; el enrutado, index.php con Publico\Rutas.
  *
- * @var \Intranet\Publico\Sitio $sitio
- * @var callable $esc
+ *  ── Qué cambió y qué NO ──────────────────────────────────────────────────
+ *
+ *  Cambia el envoltorio: el héroe duotono, los tres pasos, la rejilla de seis
+ *  servicios con sus iconos, el proceso de selección y el recuadro rosado
+ *  «Ten a mano». Las medidas son las del editable «PÁG VOLUNTARIADO.ai» (mesa
+ *  de 1440 px) y las reproduce assets/css/paginas/voluntariado.css con la
+ *  unidad --u.
+ *
+ *  NO cambia el formulario. Ni una clase, ni un name, ni un data-*: es el
+ *  marcado que maneja assets/js/form.js y del que dependen 37.428 fichas de
+ *  voluntario. Se ha copiado tal cual, con la lógica que lo rodea —el testigo
+ *  firmado, los errores, lo ya tecleado y los ajustes voluntariado.abierto y
+ *  voluntariado.cerrado_texto—. Lo único que se movió de sitio es el recuadro
+ *  «Ten a mano», que en el diseño nuevo va DEBAJO del formulario y no encima.
+ *
+ *  Todo lo que se lee de la base lleva su texto de reserva: si MySQL no
+ *  responde, o si alguien vacía un campo en el panel, la página se pinta con
+ *  lo que dice el editable. Una web que recoge inscripciones no puede quedarse
+ *  muda porque falle la base.
+ *
+ *  @var \Intranet\Publico\Sitio $sitio
+ *  @var callable $esc
  */
 
 declare(strict_types=1);
@@ -247,159 +269,309 @@ $meta = [
     // ella, y tiene su propio panel flotante hacia el formulario.
     'barra_fija'  => false,
     'head_extra'     => '<noscript><style>[data-adelante],[data-atras],.progreso{display:none}</style></noscript>',
-    'scripts'     => ['assets/vendor/flatpickr.min.js', 'assets/vendor/flatpickr-es.js', 'assets/js/ancla-form.js'],
+    /* form.js FALTABA en esta lista y sin él la página perdía todo lo que
+       hace el formulario por dentro: los dos pasos, la validación al vuelo,
+       las sugerencias de provincia y distrito, el calendario de flatpickr y
+       el envío sin recargar. Se enviaba igual —el formulario funciona sin
+       JavaScript, ésa es la red de seguridad— pero de golpe y sin avisos.
+       Además, el guardián de versión del pie no encontraba window.L14.version
+       y recargaba la página una vez por sesión buscándolo.
+       Va antes que arranque.js, que es quien llama a su init(): la plantilla
+       imprime estos scripts justo ahí. */
+    'scripts'     => [
+        'assets/vendor/flatpickr.min.js',
+        'assets/vendor/flatpickr-es.js',
+        'assets/js/form.js',
+        'assets/js/ancla-form.js',
+    ],
     'css'         => ['assets/vendor/flatpickr.min.css'],
 ];
+
+/* ── Los iconos de los seis servicios ─────────────────────────────────────
+   El editable dibuja un cuadrado dorado con un símbolo blanco dentro, uno
+   distinto por servicio. No están en el sprite general —allí los mismos
+   símbolos van en trazo fino y sin fondo—, así que se escriben aquí.
+
+   Se buscan por la clave de icono que trae cada servicio del catálogo, no
+   por su posición: si mañana se reordenan los servicios en el panel, cada
+   uno conserva su dibujo. Y si alguien añade un servicio con una clave que
+   no esté en esta lista, la tarjeta se pinta igual con el símbolo del sprite
+   sobre el mismo cuadrado dorado. Una clave nueva no rompe la rejilla. */
+$cuadroDorado = '<rect x="0" y="0" width="65" height="65" rx="8.5" fill="#E6A015"/>';
+
+$iconosServicio = [
+    'i-resguardo' => '<g fill="none" stroke="#EAEAEA" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">'
+        . '<path d="M32.5 13.4c-3 3.2-8 4.9-14.6 4.9v14.4c0 9.9 6.4 15.9 14.6 18.8 8.2-2.9 14.6-8.9 14.6-18.8V18.3c-6.6 0-11.6-1.7-14.6-4.9Z"/>'
+        . '<path d="M25.2 33.6l5.1 5.1 9.5-11" stroke-width="3.6"/></g>',
+
+    'i-acogida' => '<g fill="none" stroke="#EAEAEA" stroke-width="3.2" stroke-linecap="round">'
+        . '<circle cx="32.5" cy="26.4" r="8.4"/><circle cx="16.8" cy="29.8" r="5.4"/><circle cx="48.2" cy="29.8" r="5.4"/>'
+        . '<path d="M21.4 47.3a11.6 11.6 0 0 1 22.2 0"/><path d="M10.4 45.1a9.2 9.2 0 0 1 12.4-6.6"/>'
+        . '<path d="M42.2 38.5a9.2 9.2 0 0 1 12.4 6.6"/></g>',
+
+    'i-comunicacion' => '<path fill="#EAEAEA" d="M26.6 19.4c.6-1.5 2-2.5 3.6-2.5h4.6c1.6 0 3 1 3.6 2.5l.8 2h3.6c3.3 0 6 2.7 6 6v15.2c0 3.3-2.7 6-6 6H22.2c-3.3 0-6-2.7-6-6V27.4c0-3.3 2.7-6 6-6h3.6l.8-2Z"/>'
+        . '<circle cx="32.5" cy="35.1" r="8.1" fill="none" stroke="#E6A015" stroke-width="3.2"/>',
+
+    'i-logistica' => '<g fill="none" stroke="#EAEAEA" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round">'
+        . '<path d="M32.5 13.6 48 22v17.1l-15.5 8.4L17 39.1V22Z"/><path d="M17 22l15.5 8.4L48 22"/>'
+        . '<path d="M32.5 30.4v17.1"/></g>',
+
+    'i-auxilios' => '<path fill="none" stroke="#EAEAEA" stroke-width="3.4" stroke-linejoin="round" d="M24.4 21.9v-4.3h16.2v4.3"/>'
+        . '<rect x="15.9" y="21.9" width="33.2" height="27.2" rx="5" fill="#EAEAEA"/>'
+        . '<path fill="#E6A015" d="M30 26.8h5v5.8h5.8v5H35v5.8h-5v-5.8h-5.8v-5H30Z"/>',
+
+    'i-traduccion' => '<circle cx="32.5" cy="32.5" r="20" fill="#EAEAEA"/>'
+        . '<g fill="none" stroke="#E6A015" stroke-width="3.2" stroke-linecap="round">'
+        . '<ellipse cx="32.5" cy="32.5" rx="8.2" ry="19.9"/><path d="M13.2 32.5h38.6"/>'
+        . '<path d="M17.1 20.9c4.4 2.6 9.7 4 15.4 4s11-1.4 15.4-4"/>'
+        . '<path d="M17.1 44.1c4.4-2.6 9.7-4 15.4-4s11 1.4 15.4 4"/></g>',
+];
+
+/* El nombre del servicio se guarda en el catálogo como «Servicio de resguardo
+   y orden», en minúscula, porque así se lee en el desplegable del formulario
+   («Elige uno → Servicio de resguardo y orden»). En la tarjeta va sin el
+   prefijo y con mayúscula inicial, como en el editable. mb_convert_case sobre
+   la primera letra y no ucfirst: «Órden» o «Ámbito» empiezan por una letra de
+   dos bytes y ucfirst() la partiría por la mitad. */
+$tituloServicio = static function (string $nombre): string {
+    $limpio = trim((string) preg_replace('/^Servicio de\s+/iu', '', $nombre));
+
+    if ($limpio === '') {
+        return '';
+    }
+
+    return mb_strtoupper(mb_substr($limpio, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($limpio, 1, null, 'UTF-8');
+};
 ?>
 <main id="contenido">
 
-<!-- ══════════════ CABECERA DE PÁGINA ══════════════ -->
-<header class="cabecera-pagina">
-  <div class="cabecera-pagina__media">
-    <?php /* ── La portada de esta página ──────────────────────────────
-         Sale del panel: Páginas → esta página → Cabecera. Se puede
-         elegir una foto para escritorio y otra para móvil.
+<?php /* ═══════════════════════════════════════════════════════════ HÉROE ══
+     La banda duotono de 582 px con el titular encima. La fotografía sale del
+     panel (Páginas → Voluntariado → Cabecera de página); el <picture> de aquí
+     abajo es el RESPALDO, la que la página trae escrita. Mientras nadie elija
+     otra en el panel se sigue viendo ésta.
 
-         Lo que va aquí abajo es el RESPALDO: la fotografía que la
-         página traía escrita a mano. Mientras nadie elija otra en el
-         panel se sigue viendo ésta, así que pasar la portada al
-         gestor no cambió el aspecto de nada el día del despliegue. */ ?>
-      <?php ob_start(); ?>
-      <picture>
-      <source type="image/webp" sizes="100vw" srcset="../assets/img/fotos/cab-voluntariado-640.webp 640w, ../assets/img/fotos/cab-voluntariado-1024.webp 1024w, ../assets/img/fotos/cab-voluntariado-1600.webp 1600w, ../assets/img/fotos/cab-voluntariado-1920.webp 1920w">
-      <?php /* Es la imagen más grande y visible al cargar: eager y prioridad
-               alta. Con loading="lazy" el navegador la pedía tarde y la
-               cabecera aparecía en blanco durante el primer segundo. */ ?>
-      <img src="../assets/img/fotos/cab-voluntariado-1024.jpg" sizes="100vw" srcset="../assets/img/fotos/cab-voluntariado-640.jpg 640w, ../assets/img/fotos/cab-voluntariado-1024.jpg 1024w, ../assets/img/fotos/cab-voluntariado-1600.jpg 1600w, ../assets/img/fotos/cab-voluntariado-1920.jpg 1920w" width="1920" height="823" alt="Jóvenes acompañan la cruz peregrina en una procesión" fetchpriority="high" decoding="async">
+     El rótulo («Voluntariado») no es un antetítulo suelto: va dentro de la
+     bajada, en cursiva amarilla y seguido de un punto, tal como lo compone el
+     editable. */ ?>
+<section class="hero hero--page vol-hero">
+  <div class="hero__media">
+    <?php ob_start(); ?>
+    <picture>
+      <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/voluntariado/hero.webp')) ?>" type="image/webp">
+      <img src="<?= $esc($sitio->asset('assets/img/rediseno/voluntariado/hero.jpg')) ?>"
+           alt="Grupo de jóvenes voluntarios sonriendo, en duotono naranja y verde"
+           width="2880" height="1164" fetchpriority="high" decoding="async">
     </picture>
-      <?php $respaldoPortada = (string) ob_get_clean(); ?>
-      <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoPortada, ['sizes' => '100vw', 'prioridad' => true]) ?>
+    <?php $respaldoHero = (string) ob_get_clean(); ?>
+    <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoHero, ['sizes' => '100vw', 'prioridad' => true]) ?>
   </div>
-  <div class="cabecera-pagina__contenido contenedor">
-    <div class="cabecera-pagina__bloque">
-      <span class="rotulo rotulo--claro"><?= $esc($campo('cabecera', 'rotulo', 'Voluntariado')) ?></span>
-      <h1 class="cabecera-pagina__titulo"><?= $esc($campo('cabecera', 'titulo', 'Los amigos de León')) ?></h1>
-      <p class="cabecera-pagina__bajada"><?= $esc($campo('cabecera', 'texto', 'La visita del Santo Padre al Perú será una experiencia inolvidable, y queremos vivirla sirviendo, acogiendo y haciendo comunidad.')) ?></p>
-      <nav class="migas" aria-label="Migas de pan">
-        <ol>
-          <li><a href="<?= $esc($sitio->enlace('')) ?>">Inicio</a></li>
-          <li><span aria-current="page">Voluntariado</span></li>
-        </ol>
-      </nav>
-    </div>
+
+  <div class="hero__inner vol-hero__inner">
+    <h1 class="vol-hero__title"><?= $esc($campo('cabecera', 'titulo', 'Los amigos de León')) ?></h1>
+
+    <?php
+    $rotuloHero = $campo('cabecera', 'rotulo', 'Voluntariado');
+    $bajadaHero = $campo(
+        'cabecera',
+        'texto',
+        '<strong>Si tienes entre 18 y 45 años</strong> participa como voluntario en la Visita del '
+        . 'Papa León XIV. Una experiencia para <strong>servir, acoger y hacer comunidad</strong>.'
+    );
+    ?>
+    <p class="vol-hero__sub"><?php
+      if ($rotuloHero !== '') {
+          echo '<em class="vol-hero__kicker">' . $esc($rotuloHero) . '</em>. ';
+      }
+      echo $rico($bajadaHero);
+    ?></p>
   </div>
-</header>
+</section>
 
-<?php if ($hay('resumen')): ?>
-<!-- ══════════════ EN TREINTA SEGUNDOS ══════════════ -->
-<section class="seccion seccion--tinte seccion--pastel beforeTop" id="resumen" aria-labelledby="t-resumen">
-  <div class="contenedor">
-    <header class="seccion__encabezado">
-      <hr class="seccion__filete" data-reveal="line-draw">
-      <span class="rotulo"><?= $esc($campo('resumen', 'rotulo', 'En treinta segundos')) ?></span>
-      <h2 id="t-resumen" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('resumen', 'titulo', 'Cómo se es voluntario')) ?></span></span></h2>
-    </header>
+<div class="vol-marco">
 
-    <ol class="resumen-pasos">
-      <?php foreach ($bloques('resumen') as $i => $b): ?>
-        <li class="resumen-paso" data-reveal="fade-rise"<?= $i ? ' data-reveal-delay="' . number_format($i * 0.07, 2, '.', '') . '"' : '' ?>>
-          <span class="resumen-paso__num indice"><?= $esc(str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)) ?></span>
-          <span class="resumen-paso__titulo"><?= $esc($b['titulo']) ?></span>
-          <span class="resumen-paso__texto"><?= $esc($b['texto']) ?></span>
+  <?php if ($hay('resumen')): ?>
+  <?php /* ══════════════════════════════════════════════ LOS TRES PASOS ══
+       Tres tarjetas con borde y sombra. El número («Paso 1») lo pone el
+       orden, no el panel: así reordenar los pasos no obliga a renumerarlos
+       a mano, que es justo donde se quedan los «Paso 2 · Paso 2». */ ?>
+  <?php
+  $pasos = $bloques('resumen', [
+      ['titulo' => 'Eliges tu servicio',       'texto' => 'Son seis servicios. No importa tu profesión o el tiempo que puedas dar. Todos son bienvenidos.', 'enlace_texto' => 'Ver los seis',     'enlace_url' => '#servicios'],
+      ['titulo' => 'Rellenas el formulario',   'texto' => 'Es la Fase 01 y el único paso que se hace por internet. Solo cinco minutos.',                    'enlace_texto' => 'Ir al formulario', 'enlace_url' => '#inscripcion'],
+      ['titulo' => 'La organización te escribe', 'texto' => 'Validación de documentos y, más adelante, acreditación y credenciales.',                        'enlace_texto' => 'Ver el proceso',   'enlace_url' => '#proceso'],
+  ]);
+  ?>
+  <section class="vol-pasos" id="resumen" aria-labelledby="t-pasos">
+    <?php $rotuloPasos = $campo('resumen', 'rotulo'); ?>
+    <?php if ($rotuloPasos !== ''): ?><p class="vol-rotulo"><?= $esc($rotuloPasos) ?></p><?php endif; ?>
+    <h2 class="vol-h2" id="t-pasos"><?= $esc($campo('resumen', 'titulo', '¡Quiero ser voluntario!')) ?></h2>
+    <p class="vol-regla" aria-hidden="true"></p>
+
+    <ol class="vol-pasos__grid">
+      <?php foreach ($pasos as $i => $b): ?>
+        <li class="vol-paso">
+          <p class="vol-paso__num">Paso <?= (int) $i + 1 ?></p>
+          <h3 class="vol-paso__tit"><?= $esc((string) ($b['titulo'] ?? '')) ?></h3>
+          <p class="vol-paso__txt"><?= $rico($b['texto'] ?? '') ?></p>
           <?php if (!empty($b['enlace_url'])): ?>
-            <a class="resumen-paso__ir" href="<?= $esc($b['enlace_url']) ?>"><?= $esc($b['enlace_texto'] ?: 'Ver más') ?> <svg aria-hidden="true"><use href="#i-flecha"/></svg></a>
+            <a class="vol-paso__cta" href="<?= $esc((string) $b['enlace_url']) ?>"><?= $esc((string) ($b['enlace_texto'] ?? '') ?: 'Ver más') ?></a>
           <?php endif; ?>
         </li>
       <?php endforeach; ?>
     </ol>
-  </div>
-</section>
-<?php endif; ?>
+  </section>
+  <?php endif; ?>
 
-<?php if ($hay('servicios')): ?>
-<!-- ══════════════ LOS SEIS SERVICIOS ══════════════
-     Las tarjetas salen de la tabla `servicios`, que es la MISMA que llena el
-     <select> del formulario. Si estuvieran duplicadas, un día la tarjeta diría
-     una cosa y la opción del desplegable otra. -->
-<section class="seccion" id="servicios" aria-labelledby="t-servicios">
-  <div class="contenedor">
-    <header class="seccion__encabezado seccion__encabezado--mayor">
-      <hr class="seccion__filete" data-reveal="line-draw">
-      <span class="rotulo"><?= $esc($campo('servicios', 'rotulo', 'Seis servicios')) ?></span>
-      <h2 class="titular--mayor" id="t-servicios" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('servicios', 'titulo', 'Hay un lugar para cada talento y cada corazón')) ?></span></span></h2>
-      <p><?= $esc($campo('servicios', 'texto', 'Necesitamos voluntarios en los siguientes servicios:')) ?></p>
-    </header>
+  <?php if ($hay('servicios')): ?>
+  <?php /* ════════════════════════════════════════════ LOS SEIS SERVICIOS ══
+       Las tarjetas salen de la tabla `servicios`, que es la MISMA que llena
+       el <select> del formulario. Si estuvieran duplicadas, un día la
+       tarjeta diría una cosa y la opción del desplegable otra.
 
-    <div class="reticula">
+       De la sección del panel salen sólo el marco: el titular y, más abajo,
+       las líneas de cierre y el botón. */ ?>
+  <section class="vol-servicios" id="servicios" aria-labelledby="t-servicios">
+    <?php $rotuloServ = $campo('servicios', 'rotulo'); ?>
+    <?php if ($rotuloServ !== ''): ?><p class="vol-rotulo"><?= $esc($rotuloServ) ?></p><?php endif; ?>
+    <h2 class="vol-h2" id="t-servicios"><?= $esc($campo('servicios', 'titulo', 'Un lugar para cada talento')) ?></h2>
+    <p class="vol-regla" aria-hidden="true"></p>
+
+    <?php $entradaServ = $campo('servicios', 'texto'); ?>
+    <?php if ($entradaServ !== ''): ?><div class="vol-intro"><?= $rico($entradaServ) ?></div><?php endif; ?>
+
+    <ul class="vol-serv__grid">
       <?php foreach ($servicios as $i => $s): ?>
-        <article class="servicio col-m-4 col-t-3 col-d-4" data-reveal="fade-rise"<?= $i ? ' data-reveal-delay="' . number_format($i * 0.06, 2, '.', '') . '"' : '' ?>>
-          <svg class="servicio__icono" aria-hidden="true"><use href="#<?= $esc($s['icono'] ?: 'i-corazon') ?>"/></svg>
-          <h3 class="servicio__titulo"><?= $esc(preg_replace('/^Servicio de /iu', '', (string) $s['nombre'])) ?></h3>
-          <p class="servicio__texto"><?= $esc($s['descripcion']) ?></p>
-        </article>
-      <?php endforeach; ?>
-    </div>
-
-    <div class="seccion__pie cierre-servicios" data-reveal="fade-rise" style="text-align: center;">
-      <svg class="ornamento" aria-hidden="true"><use href="#i-corazon"/></svg>
-      <?php foreach ((array) $dato('servicios', 'cierre', []) as $linea): ?>
-        <p><?= $esc($linea) ?></p>
-      <?php endforeach; ?>
-      <p class="cierre-servicios__grito"><?= $esc($dato('servicios', 'grito', '¡El Perú te necesita!')) ?></p>
-      <?php if ($abierto): ?>
-        <p class="sep-m"><a class="btn btn--primario" href="<?= $esc($dato('servicios', 'boton_url', '#inscripcion')) ?>"><?= $esc($dato('servicios', 'boton_texto', 'Inscríbete ahora')) ?></a></p>
-      <?php endif; ?>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
-<?php if ($hay('proceso')): ?>
-<!-- ══════════════ LAS TRES FASES ══════════════ -->
-<section class="seccion seccion--tinte" id="proceso" aria-labelledby="t-fases">
-  <div class="contenedor">
-    <header class="seccion__encabezado">
-      <hr class="seccion__filete" data-reveal="line-draw">
-      <span class="rotulo"><?= $esc($campo('proceso', 'rotulo', 'Tres fases')) ?></span>
-      <h2 id="t-fases" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('proceso', 'titulo', 'Conoce el proceso de selección')) ?></span></span></h2>
-      <p><?= $esc($campo('proceso', 'texto', 'Tres fases, en este orden. La numeración de aquí abajo no es adorno: marca una secuencia real.')) ?></p>
-    </header>
-
-    <ol class="fases">
-      <?php foreach ($bloques('proceso') as $i => $b): ?>
-        <li class="fase" data-reveal="fade-rise">
-          <p class="fase__numero"><?= $esc($b['rotulo'] ?: str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)) ?></p>
-          <div>
-            <h3 class="fase__titulo"><?= $esc($b['titulo']) ?></h3>
-            <p class="fase__texto"><?= $rico($b['texto']) ?></p>
-            <?php $vinetas = $b['datos']['vinetas'] ?? []; ?>
-            <?php if ($vinetas !== []): ?>
-              <ul class="fase__lista">
-                <?php foreach ($vinetas as $v): ?>
-                  <li><?= $rico($v) ?></li>
-                <?php endforeach; ?>
-              </ul>
-            <?php endif; ?>
+        <?php
+        $clave  = (string) ($s['icono'] ?? '');
+        $clave  = $clave !== '' && !str_starts_with($clave, 'i-') ? 'i-' . $clave : $clave;
+        /* El respaldo usa el símbolo del sprite (viewBox de 24) centrado y
+           escalado dentro del cuadrado de 65. Los símbolos pintan con
+           currentColor, así que el color se da con `style`, no con `stroke`. */
+        $dibujo = $iconosServicio[$clave]
+            ?? '<g transform="translate(10 10) scale(1.875)" style="color:#EAEAEA">'
+             . '<use href="#' . $esc($clave !== '' ? $clave : 'i-corazon') . '" width="24" height="24"/></g>';
+        ?>
+        <li class="vol-serv">
+          <div class="vol-serv__head">
+            <svg class="vol-serv__ico" viewBox="0 0 65 65" width="65" height="65" aria-hidden="true" focusable="false"><?= $cuadroDorado . $dibujo ?></svg>
+            <h3 class="vol-serv__tit"><?= $esc($tituloServicio((string) ($s['nombre'] ?? ''))) ?></h3>
           </div>
+          <?php /* El editable mide un ancho distinto para el texto de cada
+                   tarjeta; de la séptima en adelante se usa el de la columna
+                   entera, que es lo que hay. */ ?>
+          <p class="vol-serv__txt<?= $i < 6 ? ' vol-serv__txt--' . ((int) $i + 1) : '' ?>"><?= $esc((string) ($s['descripcion'] ?? '')) ?></p>
         </li>
       <?php endforeach; ?>
-    </ol>
-  </div>
-</section>
-<?php endif; ?>
+    </ul>
+  </section>
 
-<!-- ══════════════ FORMULARIO — FASE 01 ══════════════ -->
-<section class="seccion" id="inscripcion" aria-labelledby="t-inscripcion">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-4 col-t-6 col-d-8">
+  <?php /* ═══════════════════════════════════════════════════ INVITACIÓN ══
+       El cierre de la rejilla: la cita en cursiva granate, dos líneas de
+       texto y el botón. Todo sale de «Los seis servicios» → datos. */ ?>
+  <?php
+  $cierre = (array) $dato('servicios', 'cierre', [
+      'Seis servicios, una sola misión: servir con alegría.',
+      'Porque encontrarnos con el Santo Padre también significa poner nuestros dones al servicio de los demás.',
+      '¿Te animas a ser parte de esta experiencia?',
+  ]);
+  $cierre = array_values(array_filter(array_map('strval', $cierre), static fn (string $l): bool => trim($l) !== ''));
+  $grito  = (string) $dato('servicios', 'grito', '');
+  ?>
+  <?php if ($cierre !== [] || $grito !== '' || $abierto): ?>
+  <section class="vol-cita" aria-label="Invitación">
+    <?php foreach ($cierre as $n => $linea): ?>
+      <?php if ($n === 0): ?>
+        <p class="vol-cita__quote">«<?= $esc(trim($linea, '«» ')) ?>»</p>
+      <?php else: ?>
+        <p class="vol-cita__txt<?= $n > 1 ? ' vol-cita__txt--2' : '' ?>"><?= $esc($linea) ?></p>
+      <?php endif; ?>
+    <?php endforeach; ?>
 
-        <header class="seccion__encabezado seccion__encabezado--mayor">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('inscripcion', 'rotulo', 'Solo esta fase se hace por internet')) ?></span>
-          <h2 class="titular--mayor" id="t-inscripcion" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('inscripcion', 'titulo', 'Inscríbete como voluntario')) ?></span></span></h2>
-        </header>
+    <?php if ($grito !== ''): ?>
+      <p class="vol-cita__txt vol-cita__grito"><?= $esc($grito) ?></p>
+    <?php endif; ?>
 
+    <?php /* Con la convocatoria cerrada no se ofrece el botón: llevaría a un
+             formulario que ya no acepta a nadie. */ ?>
+    <?php if ($abierto): ?>
+      <p class="vol-cita__accion"><a class="vol-cta" href="<?= $esc((string) $dato('servicios', 'boton_url', '#inscripcion')) ?>"><?= $esc((string) $dato('servicios', 'boton_texto', 'Inscríbete ahora')) ?></a></p>
+    <?php endif; ?>
+  </section>
+  <?php endif; ?>
+  <?php endif; ?>
+
+  <?php /* ═════════════════════════════════ PROCESO DE SELECCIÓN + FORMULARIO ══
+       Dos columnas: a la izquierda las tres fases; a la derecha el formulario
+       de verdad y, debajo, el recuadro «Ten a mano».
+
+       El editable dibuja aquí un pantallazo del formulario. Lo que va en su
+       lugar es el formulario en funcionamiento, con el mismo ancho de columna
+       (558 px del editable) y sobre el mismo panel claro.
+
+       La sección se pinta SIEMPRE, aunque «Las tres fases» esté apagada en el
+       panel: si el formulario dependiera de esa casilla, apagar un texto
+       cerraría la inscripción sin que nadie lo pretendiera. */ ?>
+  <?php
+  $fases = $bloques('proceso', [
+      ['rotulo' => '1', 'titulo' => 'Inscripción', 'texto' => '<strong>Rellenas el formulario</strong> de esta página con tus datos, la jurisdicción en la que quieres servir y el servicio que prefieres. Es el único paso que se hace por internet.', 'datos' => ['vinetas' => ['Nombres y apellidos, DNI y fecha de nacimiento', 'Dirección completa, correo electrónico y número telefónico', 'Talla de polo y contacto de emergencia', 'Jurisdicción y servicio']]],
+      ['rotulo' => '2', 'titulo' => 'Validación',  'texto' => 'Se solicitarán algunos documentos adicionales. <strong>Nada de esto se sube a esta web:</strong> la organización te indicará por qué canal entregarlos.', 'datos' => ['vinetas' => ['Carta de recomendación de sacerdote, religioso(a) u obispo', 'Certificado Único Laboral (documento oficial, gratuito y digital emitido por el Ministerio de Trabajo y Promoción del Empleo)', 'Entrevista personal (según necesidad)', 'Evaluación psicológica (cuando sea posible)']]],
+      ['rotulo' => '3', 'titulo' => 'Acreditación', 'texto' => '<strong>El último paso</strong>, ya cerca de la visita.', 'datos' => ['vinetas' => ['Confirmación oficial', 'Asignación de área de servicio', 'Entrega de credenciales']]],
+  ]);
+  $conFases = $hay('proceso') && $fases !== [];
+  ?>
+  <section class="vol-proceso" id="proceso" aria-labelledby="<?= $conFases ? 't-proceso' : 't-inscripcion' ?>">
+    <?php if ($conFases): ?>
+      <?php $rotuloProc = $campo('proceso', 'rotulo'); ?>
+      <?php if ($rotuloProc !== ''): ?><p class="vol-rotulo"><?= $esc($rotuloProc) ?></p><?php endif; ?>
+      <h2 class="vol-h2" id="t-proceso"><?= $esc($campo('proceso', 'titulo', 'Proceso de selección')) ?></h2>
+      <p class="vol-regla" aria-hidden="true"></p>
+
+      <?php $entradaProc = $campo('proceso', 'texto'); ?>
+      <?php if ($entradaProc !== ''): ?><div class="vol-intro"><?= $rico($entradaProc) ?></div><?php endif; ?>
+    <?php endif; ?>
+
+    <div class="vol-proceso__grid<?= $conFases ? '' : ' vol-proceso__grid--sola' ?>">
+
+      <?php if ($conFases): ?>
+      <ol class="vol-proceso__pasos">
+        <?php $ultima = count($fases) - 1; ?>
+        <?php foreach ($fases as $i => $b): ?>
+          <?php $vinetas = (array) ($b['datos']['vinetas'] ?? []); ?>
+          <li class="vol-fase<?= $i === 1 ? ' vol-fase--2' : ($i >= 2 ? ' vol-fase--3' : '') ?>">
+            <p class="vol-fase__num" aria-hidden="true"><?= $esc((string) ($b['rotulo'] ?? '') ?: (string) ((int) $i + 1)) ?></p>
+            <div class="vol-fase__cuerpo">
+              <h3 class="vol-fase__tit"><?= $esc((string) ($b['titulo'] ?? '')) ?></h3>
+              <p class="vol-fase__txt"><?= $rico($b['texto'] ?? '') ?></p>
+              <?php if ($vinetas !== []): ?>
+                <ul class="vol-lista">
+                  <?php foreach ($vinetas as $v): ?>
+                    <?php /* El punto va escrito, como en el editable, y oculto
+                             al lector de pantalla: la lista ya se anuncia como
+                             lista y «viñeta, viñeta, viñeta» sobra. */ ?>
+                    <li><span aria-hidden="true">•</span> <?= $rico($v) ?></li>
+                  <?php endforeach; ?>
+                </ul>
+              <?php endif; ?>
+            </div>
+            <p class="vol-sep<?= $i === $ultima ? ' vol-sep--corta' : '' ?>" aria-hidden="true"></p>
+          </li>
+        <?php endforeach; ?>
+      </ol>
+      <?php endif; ?>
+
+      <div class="vol-proceso__aside" id="inscripcion">
+        <h2 class="visually-hidden" id="t-inscripcion"><?= $esc($campo('inscripcion', 'titulo', 'Inscríbete como voluntario')) ?></h2>
+
+        <?php /* ╔═══════════════════════════════════════════════════════════╗
+                 ║  A PARTIR DE AQUÍ, EL FORMULARIO. NO SE TOCA.             ║
+                 ║  Copiado tal cual de la versión anterior de esta vista:   ║
+                 ║  las clases, los name, los data-* y el orden de los       ║
+                 ║  campos son el contrato con assets/js/form.js y con las   ║
+                 ║  37.428 inscripciones que ya hay en la base. Lo único que ║
+                 ║  cambia es el recuadro «Ten a mano», que ahora va debajo  ║
+                 ║  del formulario y con las clases del diseño nuevo.        ║
+                 ╚═══════════════════════════════════════════════════════════╝ */ ?>
         <?php if ($confirmado !== null): ?>
 
           <?php /* Llegada desde el redirect posterior al envío correcto. */ ?>
@@ -440,24 +612,6 @@ $meta = [
           </div>
 
         <?php else: ?>
-
-          <?php /* Los datos que pide la Fase 01, enumerados ANTES del formulario.
-                   Quien los reúne primero lo rellena de un tirón; quien no, lo
-                   abandona a mitad buscando el DNI. */ ?>
-          <?php $tenAMano = (array) $dato('inscripcion', 'ten_a_mano', []); ?>
-          <?php if ($tenAMano !== []): ?>
-            <div class="ten-a-mano" data-reveal="fade-rise">
-              <p class="ten-a-mano__titulo"><svg aria-hidden="true"><use href="#i-check"/></svg> <?= $esc($dato('inscripcion', 'ten_a_mano_titulo', 'Ten a mano')) ?></p>
-              <ul class="ten-a-mano__lista">
-                <?php foreach ($tenAMano as $item): ?>
-                  <li><?= $rico($item) ?></li>
-                <?php endforeach; ?>
-              </ul>
-              <?php if ($dato('inscripcion', 'nota')): ?>
-                <p class="ten-a-mano__nota"><?= $esc($dato('inscripcion', 'nota')) ?></p>
-              <?php endif; ?>
-            </div>
-          <?php endif; ?>
 
           <?php /* A partir de 1280px este contenedor se despega del documento y
                    acompaña el scroll en su propio carril (pages.css, «El
@@ -869,33 +1023,90 @@ $meta = [
           </div>
           </div><!-- /.form-fijo -->
 
+          <?php /* ══════════════ TEN A MANO ══════════════
+                   El recuadro rosado con lo que hay que reunir antes de
+                   empezar. Es el mismo contenido de siempre —«Formulario de
+                   inscripción» → datos— con el marcado del diseño nuevo, y
+                   ahora va DEBAJO del formulario, que es donde lo pone el
+                   editable. Quien lo lee antes lo rellena de un tirón; quien
+                   no, lo abandona a mitad buscando el DNI. */ ?>
+          <?php
+          /* Con su lista de reserva, como todo lo que sale de la base: si
+             MySQL no responde, el recuadro sigue diciendo qué hay que reunir
+             antes de empezar. Es el texto del editable. */
+          $tenAMano = (array) $dato('inscripcion', 'ten_a_mano', [
+              'Tu <strong>DNI</strong>, ocho dígitos',
+              'Tu <strong>nombre completo</strong>',
+              'Tu <strong>fecha de nacimiento</strong>',
+              'Tu <strong>departamento, provincia y distrito</strong>',
+              'Tu <strong>dirección</strong>: calle o avenida y número',
+              'Tu <strong>correo electrónico</strong> y tu <strong>número telefónico</strong>',
+              'Tu <strong>talla de polo</strong>: S, M, L, XL o XXL',
+              'La <strong>jurisdicción</strong> en la que quieres servir',
+              'El <strong>servicio</strong> que prefieres, de los seis',
+          ]);
+          $notaMano = (string) $dato(
+              'inscripcion',
+              'nota',
+              'El contacto de emergencia es opcional: puedes darlo más adelante. '
+              . 'Y si te interrumpen, lo que hayas escrito se guarda en este navegador.'
+          );
+          ?>
+          <?php if ($tenAMano !== []): ?>
+            <aside class="vol-mano">
+              <p class="vol-mano__cab">
+                <svg class="vol-mano__ico" viewBox="0 0 45 45" width="45" height="45" aria-hidden="true" focusable="false">
+                  <g fill="none" stroke="#6E0B14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M40.9 14.1A20.8 20.8 0 1 1 32.9 4.5"/>
+                    <path d="M10.4 18.5 21.7 35.4 41.1 2.6" stroke-width="6.4"/>
+                  </g>
+                </svg>
+                <span class="vol-mano__tit"><?= $esc((string) $dato('inscripcion', 'ten_a_mano_titulo', 'Ten a mano')) ?></span>
+              </p>
+              <ul class="vol-mano__lista">
+                <?php foreach ($tenAMano as $item): ?>
+                  <li><span aria-hidden="true">•</span> <?= $rico($item) ?></li>
+                <?php endforeach; ?>
+              </ul>
+              <?php if ($notaMano !== ''): ?>
+                <p class="vol-mano__nota"><?= $esc($notaMano) ?></p>
+              <?php endif; ?>
+            </aside>
+          <?php endif; ?>
+
         <?php endif; ?>
+        <?php /* ── Fin del bloque copiado ────────────────────────────────── */ ?>
 
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<?php if ($hay('despues')): ?>
-<!-- ══════════════ DESPUÉS DE ENVIAR ══════════════ -->
-<section class="seccion seccion--tinte" id="despues" aria-labelledby="t-despues">
-  <div class="contenedor">
-    <div class="reticula">
-      <div class="col-m-5 col-t-7 col-d-8">
-        <header class="seccion__encabezado">
-          <hr class="seccion__filete" data-reveal="line-draw">
-          <span class="rotulo"><?= $esc($campo('despues', 'rotulo', 'Después de enviar')) ?></span>
-          <h2 id="t-despues" data-reveal="mask-lines"><span class="linea"><span><?= $esc($campo('despues', 'titulo', 'Y entonces, ¿qué pasa?')) ?></span></span></h2>
-        </header>
+  <?php if ($hay('despues')): ?>
+  <?php /* ═══════════════════════════════════════════════════ QUÉ PROCEDE ══
+       El cierre de la página: a quién escribir y qué pasa después de enviar.
+       El texto llega del panel como HTML, así que no puede traer clases: los
+       estilos de la hoja se cuelgan de las etiquetas (h3 para el titulillo
+       granate, p para los párrafos). */ ?>
+  <section class="vol-procede" id="despues" aria-labelledby="t-procede">
+    <h2 class="vol-procede__h" id="t-procede"><?= $esc($campo('despues', 'titulo', '¿Qué procede?')) ?></h2>
+    <p class="vol-regla vol-regla--izq" aria-hidden="true"></p>
 
-        <div class="texto-lectura">
-          <?= $rico($campo('despues', 'texto', '<p>Enviar el formulario no es quedar seleccionado: a partir de aquí la organización te busca a ti.</p>')) ?>
-        </div>
-      </div>
+    <div class="vol-procede__cuerpo">
+      <?= $rico($campo(
+          'despues',
+          'texto',
+          '<h3>Consultas sobre el voluntariado.</h3>'
+          . '<p>Enviar el formulario no es quedar seleccionado, y tampoco hace falta que hagas nada más por '
+          . 'tu cuenta: a partir de aquí la organización te busca a ti.</p>'
+          . '<p>Para consultas o dudas relacionadas con el voluntariado para la visita del papa León XIV al '
+          . 'Perú 2026, puedes escribir a <a href="mailto:comunica.laicosyjuventud@iglesiacatolica.org.pe">'
+          . 'comunica.laicosyjuventud@iglesiacatolica.org.pe</a></p>'
+      )) ?>
     </div>
-  </div>
-</section>
-<?php endif; ?>
+  </section>
+  <?php endif; ?>
+
+</div><!-- /.vol-marco -->
 
 </main>
 

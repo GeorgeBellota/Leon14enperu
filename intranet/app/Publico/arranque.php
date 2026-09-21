@@ -114,23 +114,24 @@ if (!headers_sent()) {
     $imagenExtra  = '';
     $marcoExtra   = '';
 
-    /* ── El directo abre el marco, y sólo mientras haya transmisión ───────
+    /* ── El marco de los vídeos ───────────────────────────────────────────
      *
-     * Hoy no existe una directiva `frame-src`, así que manda `default-src
-     * 'self'` y un iframe de YouTube no llega ni a pedirse: el navegador lo
-     * rechaza antes. Para que el reproductor funcione hay que declararla.
+     * Sin una directiva `frame-src` manda `default-src 'self'` y un iframe de
+     * YouTube no llega ni a pedirse: el navegador lo rechaza antes.
      *
-     * Se declara SÓLO cuando hay un vídeo configurado en el panel, y vuelve
-     * a desaparecer al vaciar el campo. El dominio es el de privacidad
-     * mejorada: cuenta la visualización igual y no pone cookies de
-     * publicidad mientras nadie pulse play.
+     * Antes se declaraba sólo mientras hubiera transmisión configurada en el
+     * panel, porque el único vídeo del sitio era el directo. Con el rediseño
+     * hay tarjetas de vídeo fijas en «Noticias» y en «Multimedia», que el
+     * editor rellena pegando el enlace en el panel: si la directiva dependiera
+     * del directo, esos reproductores quedarían bloqueados sin que nada lo
+     * explicara. Se declara siempre.
      *
-     * Aun así el reproductor no se carga al abrir la página: hace falta
-     * pulsar. Ver assets/parciales/directo.php.
+     * El dominio sigue siendo el de privacidad mejorada: cuenta la
+     * visualización igual y no pone cookies de publicidad mientras nadie
+     * pulse play. Y ningún reproductor se carga al abrir la página: hace
+     * falta pulsar. Ver assets/parciales/directo.php y assets/js/rediseno.js.
      */
-    if ($sitio->emite()) {
-        $marcoExtra = " https://www.youtube-nocookie.com";
-    }
+    $marcoExtra = ' https://www.youtube-nocookie.com';
 
     if ($sitio->mide()) {
         $medicion = $sitio->medicion();
@@ -153,8 +154,10 @@ if (!headers_sent()) {
         "Content-Security-Policy: "
         . "default-src 'self'; "
         . "script-src 'self' 'nonce-{$nonce}'{$scriptExtra}; "
-        . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-        . "font-src 'self' https://fonts.gstatic.com; "
+        /* El rediseño sirve sus tipografías desde assets/fonts/: ya no se
+           pide nada a Google Fonts, así que los dos dominios sobran. */
+        . "style-src 'self' 'unsafe-inline'; "
+        . "font-src 'self'; "
         . "img-src 'self' data:{$imagenExtra}; "
         . "connect-src 'self'{$conectaExtra}; "
         . "frame-src 'self'{$marcoExtra}; "

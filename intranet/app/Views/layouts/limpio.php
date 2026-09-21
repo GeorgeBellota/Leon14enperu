@@ -23,7 +23,10 @@ $e = static fn ($v) => View::e($v);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
 
-<link rel="stylesheet" href="<?= $e($c->urlSitio('assets/css/tokens.css')) ?>">
+<?php /* Los tokens del panel son suyos y no del sitio público: así no se ve
+         sin estilos si `url.sitio` apunta a otro sitio ni si cambia el diseño
+         público. Ver la nota larga en layouts/panel.php. */ ?>
+<link rel="stylesheet" href="<?= $e($c->urlAsset('assets/css/panel-tokens.css')) ?>">
 <link rel="stylesheet" href="<?= $e($c->urlAsset('assets/css/panel.css')) ?>">
 <link rel="icon" href="<?= $e($c->urlSitio('favicon.svg')) ?>" type="image/svg+xml">
 </head>

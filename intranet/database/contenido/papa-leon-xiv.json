@@ -1,0 +1,212 @@
+{
+  "pagina": {
+    "clave": "papa-leon-xiv",
+    "nombre": "Papa León XIV",
+    "ruta": "/papa-leon-xiv/",
+    "titulo_seo": "Papa León XIV · El regreso de nuestro Pastor",
+    "descripcion_seo": "Quién es el Papa León XIV: Robert Francis Prevost, primer Papa de la Orden de San Agustín y primer Papa nacido en Estados Unidos con nacionalidad peruana. Su historia, su escudo y su magisterio.",
+    "activa": 1
+  },
+
+  "secciones": [
+    {
+      "clave": "cabecera",
+      "nombre": "Cabecera de página",
+      "plantilla": "cabecera_pagina",
+      "orden": 10,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "El *regreso* de",
+      "texto": "nuestro Pastor",
+      "imagen": "papa-leon-xiv/hero",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "quien-leon-xiv",
+      "nombre": "Quién es León XIV",
+      "plantilla": "texto_apartados",
+      "orden": 20,
+      "activa": 1,
+      "rotulo": "@bd",
+      "titulo": "¿Quién es León XIV?",
+      "texto": "<p><strong>Primer Papa perteneciente a la Orden de San Agustín y <br>primer Papa nacido en Estados Unidos y con nacionalidad <br>peruana</strong>. Fue elegido el 8 de mayo de 2025, en la tarde del <br>segundo día del cónclave, y tomó el nombre de León XIV.</p>",
+      "imagen": "papa-leon-xiv/p07",
+      "datos": {},
+      "bloques": [
+        { "orden": 10,  "titulo": "NOMBRE",                "texto": "Robert Francis Prevost, O.S.A." },
+        { "orden": 20,  "titulo": "NACIMIENTO",            "texto": "14 de septiembre de 1955,\nChicago, Estados Unidos (Illinois)" },
+        { "orden": 30,  "titulo": "NACIONALIDAD",          "texto": "Estadounidense y peruano\npor naturalización" },
+        { "orden": 40,  "titulo": "ORDEN RELIGIOSA",       "texto": "Orden de San Agustín\nPrimera profesión: 1978\nVotos solemnes: 1981" },
+        { "orden": 50,  "titulo": "ORDENACIÓN SACERDOTAL", "texto": "19 de junio de 1982, Roma" },
+        { "orden": 60,  "titulo": "MISIÓN EN EL PERÚ",     "texto": "Chulucanas, Trujillo, Chiclayo\ny Callao, desde 1985" },
+        { "orden": 70,  "titulo": "OBISPO DE CHICLAYO",    "texto": "2015 – 2023" },
+        { "orden": 80,  "titulo": "ELECCIÓN COMO PAPA",    "texto": "8 de mayo de 2025" },
+        { "orden": 90,  "titulo": "NOMBRE PONTIFICIO",     "texto": "León XIV" },
+        { "orden": 100, "titulo": "LEMA EPISCOPAL",        "texto": "<em>In Illo uno unum</em>" }
+      ]
+    },
+
+    {
+      "clave": "raices-vocacion-agustiniana",
+      "nombre": "Etapa 1955–1984 · Raíces y vocación agustiniana",
+      "plantilla": "tarjetas_foto",
+      "orden": 30,
+      "activa": 1,
+      "rotulo": "1955 - 1984",
+      "titulo": "Raíces y vocación\nagustiniana",
+      "texto": "",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "imagen": "papa-leon-xiv/p11",
+          "texto": "<p><strong>Robert Francis Prevost</strong> nació en Chicago, Estados Unidos, <br>el 14 de septiembre de 1955. Es el menor de los tres hijos <br>de Louis Marius Prevost y Mildred Agnes Martínez. Sus <br>hermanos son Louis Martín y John Joseph.</p><p>Realizó sus estudios primarios en la Saint Mary School of <br>the Assumption y luego estudió en la Saint Augustine <br>Seminary High School, en Holland, Michigan, donde se <br>graduó en 1973. Ese mismo año ingresó a la Universidad <br>de Villanova, en Filadelfia, donde obtuvo en 1977 la <br>licenciatura en Matemáticas y cursó estudios de Filosofía.</p>"
+        },
+        {
+          "orden": 20,
+          "imagen": "papa-leon-xiv/p08",
+          "texto": "<p>El 1 de septiembre de 1977 <strong>ingresó al noviciado de la Orden de <br>San Agustín</strong>, en Saint Louis, perteneciente a la Provincia del <br>Medio Oeste de Nuestra Madre del Buen Consejo. <strong class=\"pl-negro\">Emitió sus <br>votos temporales</strong> el 2 de septiembre de 1978 y, mientras <br>continuaba su formación teológica en la Catholic Theological <br>Union de Chicago, obtuvo allí la licenciatura en Teología y <br><strong>realizó su profesión religiosa definitiva</strong> en 1981.</p><p>En septiembre de 1981 <strong>fue enviado a Roma para estudiar <br>Derecho Canónico</strong> en la Pontificia Universidad de Santo <br>Tomás de Aquino (Angelicum), residiendo en el Colegio <br>Internacional Santa Mónica. Fue ordenado diácono el 10 de <br>septiembre de 1981, en la parroquia Santa Clara de Montefalco, <br>en Grosse Pointe Park, diócesis de Detroit. El 19 de junio de 1982 <br>recibió la ordenación sacerdotal en la capilla de Santa <br>Mónica. En 1984 obtuvo la licenciatura en Derecho Canónico.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "misionero-formador-peru",
+      "nombre": "Etapa 1985–1999 · Misionero y formador en el Perú",
+      "plantilla": "tarjetas_foto",
+      "orden": 40,
+      "activa": 1,
+      "rotulo": "1985 – 1999",
+      "titulo": "Misionero y\nformador en el Perú",
+      "texto": "<strong>«Patrística»</strong>: Estudio de los Padres de la Iglesia.",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "imagen": "papa-leon-xiv/p09",
+          "texto": "<p>En 1984 obtuvo la licenciatura en Derecho Canónico y, al <br>año siguiente, mientras preparaba su tesis doctoral, fue <br>enviado a la misión agustiniana de <strong>Chulucanas, en la <br>región Piura.</strong> Allí permaneció un año, como vicepárroco <br>de la Catedral de la Sagrada Familia y canciller de la <br>entonces Prelatura Territorial de Chulucanas.</p><p>En 1985 defendió su tesis doctoral sobre <strong>el papel del <br>prior local en la Orden de San Agustín</strong>, publicada dos <br>años después. En 1987 regresó a Estados Unidos, donde <br>fue nombrado director de Vocaciones y director de <br>Misiones de su provincia agustiniana, con residencia en <br>Olympia Fields.</p>"
+        },
+        {
+          "orden": 20,
+          "imagen": "papa-leon-xiv/p10",
+          "texto": "<p>En 1988 volvió al Perú, esta vez a la <strong>misión agustiniana <br>de Trujillo</strong>, para dirigir la primera casa de formación <br>conjunta de los vicariatos agustinianos de Chulucanas, <br>Iquitos y Apurímac. Allí fue prior de la comunidad <br>(1988–1992), director de Formación (1988–1998) y <br>maestro de profesos (1993–1998).</p><p>En la <strong>Arquidiócesis de Trujillo</strong> fue director de Estudios y <br>rector interino del Seminario Mayor San Carlos y San <br>Marcelo, donde enseñó Derecho Canónico, Teología <br>Moral y <strong class=\"t-wine\">*Patrística</strong>. También ejerció como vicario judicial <br>y miembro del Colegio de Consultores de Trujillo.</p><p>En el ámbito pastoral, fue párroco de <strong>Nuestra Señora <br>Madre de la Iglesia</strong>, hoy parroquia Santa Rita de Casia <br>(1988–1999), y administrador de <strong>Nuestra Señora de <br>Montserrat </strong>(1992–1999). En 1998 fue elegido prior <br>provincial de la Provincia del Medio Oeste de Nuestra <br>Madre del Buen Consejo y regresó a Estados Unidos el 8 <br>de marzo de 1999 para iniciar su mandato.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "prior-general-obispo",
+      "nombre": "Etapa 1999–2023 · De prior general a obispo de Chiclayo",
+      "plantilla": "tarjetas_foto",
+      "orden": 50,
+      "activa": 1,
+      "rotulo": "1999 – 2023",
+      "titulo": "De prior general a obispo de Chiclayo",
+      "texto": "",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "imagen": "papa-leon-xiv/p01",
+          "texto": "<p>En 1999 inició su mandato como prior provincial de <br>la Provincia del Medio Oeste de Nuestra Madre del <br>Buen Consejo, con sede en Chicago. En el Capítulo <br>General de 2001 fue elegido <strong>prior general de la <br>Orden de San Agustín</strong> y, en 2007, fue confirmado <br>para un segundo mandato de seis años.</p><p>Al concluir su servicio en 2013, regresó a su <br>provincia en Chicago, donde fue director de <br>Formación en el convento de San Agustín, <br>además de primer consejero y vicario provincial. <br>El 3 de noviembre de 2014, el papa Francisco lo <br>nombró <strong>administrador apostólico de la diócesis <br>de Chiclayo y obispo titular de Sufar</strong>. Tomó <br>posesión de la diócesis el 7 de noviembre y recibió <br>la ordenación episcopal el 12 de diciembre, en la <br>catedral de Santa María, en la fiesta de Nuestra <br>Señora de Guadalupe. El 26 de septiembre de 2015 <br>fue nombrado obispo de Chiclayo.</p><p>En marzo de 2018 fue elegido <strong>segundo <br>vicepresidente de la Conferencia Episcopal <br>Peruana</strong>, donde también integró el Consejo <br>Económico y presidió la Comisión Episcopal de <br>Cultura y Educación, y fue miembro de la <br>Comisión de la Protección del Menor. En abril de <br>2020 fue nombrado como administrador <br>apostólico de la diócesis del Callao.</p>"
+        },
+        {
+          "orden": 20,
+          "imagen": "papa-leon-xiv/p02",
+          "texto": ""
+        },
+        {
+          "orden": 30,
+          "imagen": "papa-leon-xiv/p03",
+          "texto": "<p>El 30 de enero de 2023 fue llamado a Roma por <br>el papa Francisco para asumir como <strong>Prefecto <br>del Dicasterio para los Obispos y Presidente <br>de la Pontificia Comisión para América Latina</strong>, <br>dejando así su servicio pastoral en el Perú. Ese <br>mismo año, la Conferencia Episcopal Peruana <br>le otorgó la <strong>Medalla de Oro de Santo Toribio de <br>Mogrovejo</strong>, en reconocimiento a su servicio a la <br>Iglesia en el Perú, y la Universidad Católica <br>Santo Toribio de Mogrovejo (USAT), de Chiclayo, <br>le concedió el <strong>doctorado honoris causa en <br>Derecho</strong>. En noviembre de 2023, la Pontificia <br>Universidad Católica del Perú (PUCP) entregó la <br>medalla de Honor R.P. Jorge Dintilhac SS.CC. a <br>Robert Prevost en reconocimiento a su <br>trayectoria pastoral, su vínculo con la <br>comunidad universitaria y <strong>su labor como <br>miembro de la Asamblea Universitaria</strong> de la <br>PUCP entre 2017 y 2023.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "chiclayo-pontificado",
+      "nombre": "Etapa 2023–hoy · De Chiclayo al pontificado",
+      "plantilla": "tarjetas_foto",
+      "orden": 60,
+      "activa": 1,
+      "rotulo": "2023 – Hoy",
+      "titulo": "De Chiclayo al pontificado",
+      "texto": "<strong>«Prefecto»</strong>: Responsable del Dicasterio de la Santa Sede.",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "imagen": "papa-leon-xiv/p04",
+          "texto": "<p>El 30 de enero de 2023, el papa Francisco lo llamó <br>a Roma como <strong class=\"t-wine\">*Prefecto</strong><strong> del Dicasterio para los <br>Obispos</strong> y Presidente de la Pontificia Comisión <br>para América Latina, elevándolo a la dignidad de <br>arzobispo. El 30 de septiembre de ese mismo año <br>fue nombrado cardenal, con la diaconía de Santa <br>Mónica, de la que tomó posesión el 28 de enero <br>de 2024.</p><p>El 6 de febrero de 2025, el papa Francisco lo <br>promovió al <strong>orden de los cardenales obispos</strong>, <br>asignándole el título de la Iglesia suburbicaria de <br>Albano. Durante la última hospitalización del Papa <br>Francisco, presidió el 3 de marzo el Rosario por la <br>salud del Pontífice en la Plaza de San Pedro.</p>"
+        },
+        {
+          "orden": 20,
+          "imagen": "papa-leon-xiv/p05",
+          "texto": "<p>El cónclave comenzó el 7 de mayo de 2025. Al <br>día siguiente, 8 de mayo, fue elegido Papa y <br>tomó el nombre de <strong>León XIV</strong>. Es <strong>el 267.º <br>Pontífice</strong>, el primero procedente de los <br>Estados Unidos de América y el primero <br>perteneciente a la Orden de San Agustín. El 18 <br>de mayo presidió la celebración eucarística <br>de inicio de su ministerio petrino.</p>"
+        }
+      ]
+    },
+
+    {
+      "clave": "escudo-lema",
+      "nombre": "Heráldica · El escudo y el lema",
+      "plantilla": "texto_lectura",
+      "orden": 70,
+      "activa": 1,
+      "rotulo": "Heráldica",
+      "titulo": "El escudo y el lema",
+      "texto": "<p>El escudo está dividido diagonalmente en dos sectores. La parte <br>superior tiene fondo azul y presenta un lirio blanco. La inferior, <br>sobre fondo claro, lleva la imagen que recuerda a la Orden de <br>San Agustín: un libro cerrado sobre el que descansa un corazón <br>traspasado por una flecha.</p><p>Esa imagen evoca la conversión de San Agustín, que él mismo <br>explicó con las palabras <em>«Vulnerasti cor meum verbo tuo»</em>: has <br>traspasado mi corazón con tu Palabra.</p><p>El lema, <em class=\"pl-em-fuerte\">«In Illo uno unum»</em>, procede de un sermón de San <br>Agustín, la Exposición del Salmo 127, y significa que aunque los <br>cristianos seamos muchos, en el único Cristo somos uno. León <br>XIV confirmó en lo esencial el escudo y el lema que había <br>elegido para su consagración episcopal en Chiclayo.</p>",
+      "imagen": "papa-leon-xiv/p06",
+      "datos": {},
+      "bloques": []
+    },
+
+    {
+      "clave": "magisterio-hasta-hoy",
+      "nombre": "Documentos · Su magisterio hasta hoy",
+      "plantilla": "noticias",
+      "orden": 80,
+      "activa": 1,
+      "rotulo": "Documentos",
+      "titulo": "Su magisterio hasta hoy",
+      "texto": "<p>Los documentos que marcan el inicio de su pontificado y <br>expresan las principales líneas de su magisterio. El contenido <br>completo puede consultarse en la web de la Santa Sede.</p>",
+      "datos": {},
+      "bloques": [
+        {
+          "orden": 10,
+          "titulo": "Dilexi te",
+          "texto": "<p><cite>Dilexi te</cite><strong> («Te he amado»)</strong> es su primera <br>exhortación apostólica y uno de los primeros <br>grandes documentos de su pontificado. En <br>ella, León XIV reflexiona sobre el amor de <br>Dios hacia los pobres y el compromiso de la <br>Iglesia con ellos.</p>",
+          "enlace_texto": "Texto completo",
+          "enlace_url": "noticias/",
+          "datos": {
+            "fecha": "4 de octubre de 2025",
+            "fuente": "Exhortación Apostólica"
+          }
+        },
+        {
+          "orden": 20,
+          "titulo": "Magnifica humanitas",
+          "texto": "<p><cite>Magnifica humanitas</cite> es la primera <br>encíclica de León XIV. Reflexiona sobre la <br>protección de la persona y su dignidad en <br>la era de la inteligencia artificial, así como <br>sobre sus implicaciones para la vida social.</p>",
+          "enlace_texto": "Texto completo",
+          "enlace_url": "noticias/",
+          "datos": {
+            "fecha": "Firma: 15 de mayo de 2026 | Publicación: 25 de mayo de 2026",
+            "fuente": "Carta Encíclica"
+          }
+        }
+      ]
+    }
+  ],
+
+  "notas": [
+    "La página se llamaba «el-papa». La migración renombra la clave a «papa-leon-xiv» y conserva las OCHO claves de sección que ya tenía: ninguna se retira. Lo que cambia es la plantilla de casi todas, porque el rediseño pide campos que «texto_lectura» no tiene.",
+    "«cabecera»: el titular del héroe va en dos líneas de distinto grosor, así que ocupa dos campos —«Título» es la primera línea y «Texto de entrada» la segunda—, igual que las láminas del carrusel de la portada. Los asteriscos de «El *regreso* de» marcan la palabra dorada. El rótulo se deja como está en la base («267.º sucesor de Pedro»): las versalitas las pone la hoja de estilos. Se pierde la bajada antigua de la cabecera («Robert Francis Prevost llegó a Chulucanas en 1985…»), porque el rediseño no dibuja bajada en esta página; queda en el volcado de producción y en el respaldo.",
+    "«quien-leon-xiv» pasa a «texto_apartados»: el titular y la entradilla son los campos de la sección, la fotografía es la imagen de la sección y cada fila de la ficha de datos es un apartado —el título es la etiqueta y el texto, el dato, con sus saltos de línea—. El rótulo «En breve» se conserva aunque el rediseño no lo pinte.",
+    "Las cuatro etapas pasan a «tarjetas_foto»: el año es el rótulo, el titular es el título y cada pasaje de texto con su fotografía es una tarjeta. El campo «Texto» de la sección es la nota al pie en cursiva granate (««Patrística»: Estudio de los Padres de la Iglesia»), que sólo tienen las etapas 2 y 4. En la etapa de 1999–2023 la segunda tarjeta lleva sólo fotografía, porque en el editable la asamblea de obispos va sola.",
+    "«magisterio-hasta-hoy» pasa a «noticias»: cada documento es un bloque con su fecha y su tipo. El tipo se guarda en el campo «Fuente» del bloque. Una fecha con dos renglones —firma y publicación— se escribe en una sola línea separando los dos con una barra vertical: «Firma: 15 de mayo de 2026 | Publicación: 25 de mayo de 2026».",
+    "Los dos botones «Texto completo» apuntan de momento a /noticias/, que es lo que hace la maqueta. Cuando la Santa Sede publique las direcciones de «Dilexi te» y «Magnifica humanitas» se pegan en el campo «Destino del enlace» de cada bloque; la vista acepta tanto una ruta interna como una dirección completa con https://.",
+    "Todas las imágenes son las del rediseño, en assets/img/rediseno/papa-leon-xiv/. La del héroe es la única que se carga con prioridad."
+  ]
+}

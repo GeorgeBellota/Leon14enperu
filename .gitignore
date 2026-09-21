@@ -38,9 +38,15 @@ intranet/config/config.*.local.php
 #                 contenido del sitio y diez fichas de voluntario INVENTADAS;
 #                 las 35 000 reales no salen de producción.
 #   ubigeo.sql    departamentos, provincias y distritos del Perú
+#   operaciones-*/ el guion para aplicar una migración a mano: comprobaciones
+#                 antes y después, el respaldo y la vuelta atrás. No llevan
+#                 datos dentro: son SELECT y copias de tabla a tabla. Van
+#                 aparte de migrations/ a propósito, porque migrate.php aplica
+#                 TODO lo que encuentra ahí y esto no se debe aplicar solo.
 *.sql
 !intranet/database/migrations/*.sql
 !intranet/database/instalacion/*.sql
+!intranet/database/operaciones-*/*.sql
 !ubigeo.sql
 
 # Inscripciones que el formulario guardó cifradas cuando la base no respondía.
@@ -136,6 +142,13 @@ ACTA-DE-ENTREGA-SIMPLIFICADA.*
 #
 # robots.txt es la excepción y no es documentación: el sitio lo sirve y el
 # vhost lo declara. Si sale del repositorio, deja de desplegarse.
+#
+# database/contenido/README.md es la otra. No cuenta cómo está montado el
+# servidor: explica el formato de los .json que están AQUÍ, en el repositorio,
+# y en particular qué significa el marcador «@bd» y cómo se resuelve. Ese
+# detalle ya costó una pérdida de texto en la base por no estar escrito al
+# lado de los archivos que lo usan.
 *.md
 *.txt
 !robots.txt
+!intranet/database/contenido/README.md
