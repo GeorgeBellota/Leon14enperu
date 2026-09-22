@@ -222,7 +222,15 @@ $cabeceras = implode("\r\n", [
 
 linea('··', 'Enviando a ' . implode(', ', $aQuien) . '…');
 
-$ok = @mail(implode(', ', $aQuien), mb_encode_mimeheader($asunto, 'UTF-8'), $cuerpo, $cabeceras, '-f' . $remitente);
+$ok = @mail(
+    implode(', ', $aQuien),
+    mb_encode_mimeheader($asunto, 'UTF-8'),
+    quoted_printable_encode(str_replace("
+", "
+", $cuerpo)),
+    $cabeceras,
+    '-f' . $remitente
+);
 
 if ($ok) {
     linea('OK', 'El servidor de correo ACEPTÓ el mensaje. Marca: ' . $marca);

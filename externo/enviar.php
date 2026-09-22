@@ -170,6 +170,40 @@ $sinSaltos = static fn (string $v): string => trim((string) preg_replace('/[\r\n
 $asunto = mb_substr($sinSaltos($asunto), 0, 200);
 $cuerpo = mb_substr($cuerpo, 0, 20000);
 
+/* ── El pie del aviso ─────────────────────────────────────────────────────
+   Un correo de 171 bytes con una direccion ajena dentro y cuatro etiquetas
+   con dos puntos es, literalmente, la forma de un volcado de formulario: lo
+   que buscan las reglas que aqui puntuaron. Este cierre lo convierte en un
+   aviso con remite, que es lo que es.
+
+   Va aqui y no en la plantilla del panel a proposito: la plantilla es para el
+   contenido, y esto tiene que estar SIEMPRE, lo escriba quien lo escriba. */
+$pie = "
+
+-- 
+"
+     . "Aviso automatico del formulario de contacto de leon14enperu.com,
+"
+     . "el sitio oficial de la Visita Apostolica de Su Santidad el Papa
+"
+     . "Leon XIV al Peru, del 11 al 16 de noviembre de 2026.
+"
+     . "Conferencia Episcopal Peruana.
+";
+
+if (!str_contains($cuerpo, 'leon14enperu.com')) {
+    $cuerpo .= $pie;
+} else {
+    /* Ya lo nombra la plantilla: se añade sólo la firma, sin repetir. */
+    $cuerpo .= "
+
+-- 
+Aviso automatico del formulario de contacto."
+             . "
+Conferencia Episcopal Peruana.
+";
+}
+
 $responderA       = $sinSaltos((string) ($datos['responder_a'] ?? ''));
 $responderANombre = mb_substr($sinSaltos((string) ($datos['responder_a_nombre'] ?? '')), 0, 120);
 
@@ -184,11 +218,42 @@ if ($responderA !== '' && filter_var($responderA, FILTER_VALIDATE_EMAIL) === fal
 $remitente = (string) ($config['remitente'] ?? ('no-responder@' . ($_SERVER['HTTP_HOST'] ?? 'localhost')));
 $nombre    = (string) ($config['remitente_nombre'] ?? 'Formulario web');
 
+/* ── Las cabeceras, con lo que espera un correo transaccional ─────────────
+   Cada una de estas responde a algo concreto del informe de rechazo que dio
+   el antispam de salida:
+
+    · Message-ID con el dominio DEL REMITENTE. Exim lo generaba con el del
+      servidor —caroni.tepuyserver.net— mientras el From decía
+      iglobalgroup.net.pe. Esa discordancia la miran varias reglas, y aquí
+      salia como HEADER_MISMATCH.
+
+    · Date propia y en formato RFC. La ponía Exim, pero un correo legítimo la
+      trae desde el programa que lo compone.
+
+    · X-Mailer. Su ausencia la anotaba MISSING_XM_UA. Vale 0 puntos, pero es
+      de lo que mira el clasificador bayesiano para decidir si algo parece
+      escrito por un programa serio o por un guion de spam.
+
+    · Auto-Submitted, del RFC 3834. Dice «esto es un aviso generado por un
+      sistema, no correo masivo ni una respuesta». Es la etiqueta correcta
+      para lo que esto es, y evita que nadie le conteste con un automático.
+
+    · quoted-printable en vez de 8bit. Con 8bit el texto con tildes viaja en
+      crudo y depende de que todos los saltos del camino lo admitan; si uno
+      no, el mensaje se degrada o se rechaza. quoted-printable lo entiende
+      todo el mundo desde hace treinta años. */
+$idMensaje = bin2hex(random_bytes(12)) . '.' . time()
+           . '@' . (substr(strrchr($remitente, '@') ?: '@localhost', 1));
+
 $cabeceras = [
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
+    'Date: ' . date('r'),
+    'Message-ID: <' . $idMensaje . '>',
     'From: ' . mb_encode_mimeheader($nombre, 'UTF-8') . ' <' . $remitente . '>',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
+    'Auto-Submitted: auto-generated',
+    'X-Mailer: Formulario de contacto de leon14enperu.com',
 ];
 
 /* El Responder-a sólo si config.php lo permite. Ver ahí el porqué: un
