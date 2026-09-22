@@ -272,3 +272,20 @@ a.canal__val:hover{color:var(--wine);text-decoration:underline}
   .canal{gap:0 8px}
   .canal__ico{margin-top:2px}
 }
+
+/* ── El envío del formulario ──────────────────────────────────────────────
+   Tres estados: vacío, enviado y con problema. El color lo pone la clase de
+   error; el aviso en sí ya existía para el caso «no está conectado». */
+.contacto__aviso--error{color:var(--wine)}
+
+/* El campo que falta o está mal. Marco granate, no sólo el texto de abajo:
+   en un formulario de cinco campos hay que ver DÓNDE está el problema sin
+   leerlo todo. */
+.field__control--error{border-color:var(--wine)}
+.contacto__error{
+  margin-top:.35em;font-size:.9em;line-height:1.35;color:var(--wine);
+}
+
+/* La trampa para robots. Fuera de la pantalla y no «display:none»: algunos
+   robots se saltan lo que está oculto del todo, y así la rellenan. */
+.trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}

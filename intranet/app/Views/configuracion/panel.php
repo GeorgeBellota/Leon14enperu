@@ -335,6 +335,66 @@ $estaVisible = static fn (string $clave): bool => in_array($clave, $visibles, tr
     </div>
   </section>
 
+  <!-- ── Correo del formulario de contacto ── -->
+  <section class="tarjeta sep-l">
+    <header class="tarjeta__cabecera"><h2>Correo de contacto</h2></header>
+
+    <p class="vacio">
+      Quien envía los mensajes del formulario de <strong>Contacto</strong> no es este
+      servidor, sino un pequeño archivo alojado en el cPanel. Desde aquí el correo o no
+      sale o acaba en la carpeta de spam: la dirección del servidor no tiene reputación
+      y el dominio no la respalda desde esta máquina.
+    </p>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="contacto_api_url">Dirección de la API</label>
+      <input type="url" id="contacto_api_url" name="contacto_api_url"
+             value="<?= $e($contactoUrl) ?>"
+             placeholder="https://tu-cpanel.com/externo/enviar.php">
+      <p class="campo__ayuda">
+        Tiene que empezar por <strong>https://</strong>. Por ahí viaja el token, y en
+        una dirección sin cifrar lo leería cualquiera en el camino.
+        <strong>Si la dejas vacía, el formulario no envía nada</strong> y le dice a
+        quien escriba que use los correos directos.
+      </p>
+    </div>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="contacto_api_token">Token</label>
+      <input type="text" id="contacto_api_token" name="contacto_api_token"
+             value="<?= $e($contactoToken) ?>" autocomplete="off" spellcheck="false">
+      <p class="campo__ayuda">
+        El mismo que pusiste en <code>externo/config.php</code> del cPanel. Si no
+        coinciden, la API rechaza el envío y el mensaje no sale.
+      </p>
+    </div>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="contacto_asunto">Asunto del aviso</label>
+      <input type="text" id="contacto_asunto" name="contacto_asunto"
+             value="<?= $e($contactoAsunto) ?>">
+      <p class="campo__ayuda">El asunto con el que llega el correo al buzón.</p>
+    </div>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="contacto_plantilla">Cuerpo del aviso</label>
+      <textarea id="contacto_plantilla" name="contacto_plantilla" rows="10"><?= $e($contactoPlantilla) ?></textarea>
+      <p class="campo__ayuda">
+        Los marcadores se sustituyen por lo que escriba la persona:
+        <code>{nombre}</code>, <code>{correo}</code>, <code>{motivo}</code>,
+        <code>{mensaje}</code> y <code>{fecha}</code>. Valen también en el asunto.
+        Se envía como texto plano; las etiquetas HTML no se interpretan.
+      </p>
+    </div>
+
+    <p class="campo__ayuda sep-m">
+      La dirección que recibe los mensajes <strong>no se pone aquí</strong>, sino en el
+      <code>config.php</code> del cPanel. Es a propósito: si el destinatario viajara
+      con cada envío, quien consiguiera el token podría mandar correo a donde quisiera
+      firmado con tu dominio.
+    </p>
+  </section>
+
   <div class="barra-guardar">
     <button class="btn btn--primario" type="submit">Guardar</button>
   </div>

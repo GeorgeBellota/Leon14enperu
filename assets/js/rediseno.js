@@ -338,10 +338,13 @@
           if (!valid && ok) { field.focus(); ok = false; }
         });
         if (!ok) { e.preventDefault(); return; }
-        e.preventDefault();
-        var note = $("[data-form-note]", form);
-        if (note) { note.hidden = false; note.textContent = "Gracias. Hemos recibido tu mensaje."; }
-        form.reset();
+        /* Y ya está: el formulario se envía de verdad.
+           Aquí había un e.preventDefault() seguido de «Gracias. Hemos recibido
+           tu mensaje» y un form.reset(). Es decir: se paraba el envío, se le
+           decía a la persona que su mensaje había llegado y se le borraba lo
+           escrito. No llegaba a ninguna parte. Ahora el POST va al servidor,
+           que lo manda por la API de correo y responde con lo que de verdad
+           haya pasado. */
       });
     });
   }

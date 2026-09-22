@@ -25,6 +25,24 @@ use Intranet\Publico\Menu;
 final class ConfiguracionController extends Controller
 {
     /**
+     * El cuerpo del aviso de contacto, cuando nadie ha escrito uno propio.
+     *
+     * Se guarda igual que lo escriba quien administre: los {marcadores} los
+     * sustituye Publico\Contacto al enviar.
+     */
+    private const PLANTILLA_CONTACTO = <<<'TEXTO'
+        Nuevo mensaje desde leon14enperu.com
+
+        Nombre:  {nombre}
+        Correo:  {correo}
+        Motivo:  {motivo}
+        Fecha:   {fecha}
+
+        Mensaje:
+        {mensaje}
+        TEXTO;
+
+    /**
      * Las páginas que pueden aparecer en el menú, con su rótulo.
      *
      * Delega en Publico\Menu, que es de donde lee también la cabecera del
@@ -93,6 +111,13 @@ final class ConfiguracionController extends Controller
             'pixel'       => (string) $ajustes->leer('analitica.pixel', ''),
             'directo'     => (string) $ajustes->leer('directo.youtube', ''),
             'directoTitulo' => (string) $ajustes->leer('directo.titulo', ''),
+
+            /* El correo del formulario de contacto. Quien envía de verdad es
+               una API en el cPanel: desde el VPS, mail() acaba en spam. */
+            'contactoUrl'       => (string) $ajustes->leer('contacto.api_url', ''),
+            'contactoToken'     => (string) $ajustes->leer('contacto.api_token', ''),
+            'contactoAsunto'    => (string) $ajustes->leer('contacto.asunto', 'Contacto web · {motivo}'),
+            'contactoPlantilla' => (string) $ajustes->leer('contacto.plantilla', self::PLANTILLA_CONTACTO),
 
             // El logotipo se pregunta al disco, no a un ajuste: así, si alguien
             // lo borra por FTP, el panel enseña la verdad y no un recuerdo.
@@ -271,6 +296,25 @@ final class ConfiguracionController extends Controller
 
         $directoTitulo = mb_substr($directoTitulo, 0, 120);
 
+        /* ── El correo de contacto ──────────────────────────────────────
+           La dirección tiene que ser https: por ahí viaja el token en una
+           cabecera, y en claro lo leería cualquiera en el camino. Si no lo
+           es, se descarta el valor entero en vez de guardar algo que
+           filtraría el token en cada envío. */
+        $contactoUrl = trim($peticion->texto('contacto_api_url', ''));
+
+        if ($contactoUrl !== '' && !preg_match('~^https://~i', $contactoUrl)) {
+            $this->conError(
+                'La dirección de la API de correo tiene que empezar por «https://»: por ahí '
+                . 'viaja el token y en claro lo leería cualquiera.',
+                '/configuracion'
+            );
+        }
+
+        $contactoToken     = trim($peticion->texto('contacto_api_token', ''));
+        $contactoAsunto    = mb_substr(trim($peticion->texto('contacto_asunto', '')), 0, 200);
+        $contactoPlantilla = mb_substr(trim($peticion->texto('contacto_plantilla', '')), 0, 4000);
+
         $ajustes->escribir('sitio.pagina_inicio', $inicio);
         /* Siempre la lista explícita, aunque estén todas marcadas. Antes, en
            ese caso se guardaba vacío para que una página nueva entrara sola en
@@ -287,6 +331,10 @@ final class ConfiguracionController extends Controller
         $ajustes->escribir('analitica.pixel', $pixel);
         $ajustes->escribir('directo.youtube', $directo);
         $ajustes->escribir('directo.titulo', $directoTitulo);
+        $ajustes->escribir('contacto.api_url', $contactoUrl);
+        $ajustes->escribir('contacto.api_token', $contactoToken);
+        $ajustes->escribir('contacto.asunto', $contactoAsunto);
+        $ajustes->escribir('contacto.plantilla', $contactoPlantilla);
 
         Auditoria::registrar($this->c, 'editar', 'ajustes', null, [
             'pagina_inicio' => $inicio,

@@ -167,3 +167,10 @@ documentacion/ultima-solicitud.pdf
 *.txt
 !robots.txt
 !intranet/database/contenido/README.md
+
+# ── EL TOKEN DE LA API DE CORREO ────────────────────────────────────────────
+# externo/config.php lleva el token compartido y el buzón de destino. Viaja
+# en el repositorio su gemelo sin secretos, config.ejemplo.php, que es el que
+# se copia y se rellena en el cPanel.
+externo/config.php
+externo/registro.log

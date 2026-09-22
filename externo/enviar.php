@@ -1,0 +1,223 @@
+<?php
+/**
+ * ============================================================================
+ *  API de correo del formulario de contacto
+ * ============================================================================
+ *
+ *  Vive en el cPanel, no en el VPS. La razón es simple: en un VPS recién
+ *  montado, mail() o no sale o llega a la carpeta de spam, porque la IP no
+ *  tiene reputación ni el dominio registros que la respalden. El cPanel ya
+ *  tiene todo eso resuelto, así que el VPS le pide a este archivo que envíe.
+ *
+ *  ── Cómo se usa ──────────────────────────────────────────────────────────
+ *
+ *  POST con cuerpo JSON y la cabecera del token:
+ *
+ *      POST /externo/enviar.php
+ *      X-Token: <el token de config.php>
+ *      Content-Type: application/json
+ *
+ *      {
+ *        "asunto":  "Contacto web · Voluntariado",
+ *        "cuerpo":  "Nombre: ...\nCorreo: ...\n\nMensaje...",
+ *        "responder_a":        "quien@escribio.com",
+ *        "responder_a_nombre": "Nombre de quien escribió"
+ *      }
+ *
+ *  Responde siempre JSON:
+ *
+ *      { "ok": true }
+ *      { "ok": false, "error": "motivo en una línea" }
+ *
+ *  ── Lo que NO acepta, a propósito ────────────────────────────────────────
+ *
+ *  El destinatario. Lo fija config.php. Si viajara en la petición, el token
+ *  filtrado convertiría esto en una máquina de mandar correo a cualquier
+ *  parte firmada con tu dominio.
+ *
+ *  Tampoco acepta HTML: el cuerpo se envía como texto plano. Un correo con
+ *  HTML que viene de un formulario público es una puerta que no hace falta
+ *  abrir, y el aviso se lee igual de bien en texto.
+ *
+ *  ── Instalación ──────────────────────────────────────────────────────────
+ *
+ *   1. Sube esta carpeta al cPanel, por ejemplo a public_html/externo/.
+ *   2. Copia config.ejemplo.php a config.php y rellénalo.
+ *   3. Comprueba que responde:
+ *
+ *        curl -i -X POST https://TU-CPANEL/externo/enviar.php \
+ *             -H "X-Token: EL-TOKEN" -H "Content-Type: application/json" \
+ *             -d '{"asunto":"Prueba","cuerpo":"Funciona."}'
+ *
+ *      Debe devolver {"ok":true} y llegarte el correo.
+ */
+
+declare(strict_types=1);
+
+header('Content-Type: application/json; charset=utf-8');
+header('X-Content-Type-Options: nosniff');
+/* Esto no lo consume un navegador, lo consume el servidor del sitio. Sin
+   permiso de origen cruzado, una página ajena no puede llamarlo desde el
+   navegador de nadie aunque conociera el token. */
+header('Access-Control-Allow-Origin: null');
+
+/** Responde y termina. El código HTTP importa: el sitio lo mira. */
+function responder(int $codigo, array $cuerpo): never
+{
+    http_response_code($codigo);
+    echo json_encode($cuerpo, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/** Anota una línea en el registro. Nunca interrumpe el envío. */
+function anotar(string $archivo, string $texto): void
+{
+    @file_put_contents(
+        $archivo,
+        sprintf("[%s] %s  %s\n", date('c'), $_SERVER['REMOTE_ADDR'] ?? '-', $texto),
+        FILE_APPEND | LOCK_EX
+    );
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    responder(405, ['ok' => false, 'error' => 'Sólo se admite POST.']);
+}
+
+$config = @include __DIR__ . '/config.php';
+
+if (!is_array($config) || ($config['token'] ?? '') === '' || str_starts_with((string) $config['token'], 'PON-AQUI')) {
+    responder(500, ['ok' => false, 'error' => 'La API no está configurada.']);
+}
+
+$registro = (string) ($config['registro'] ?? __DIR__ . '/registro.log');
+
+/* ── El token ─────────────────────────────────────────────────────────────
+   hash_equals y no «===»: comparar cadenas con == devuelve antes cuando los
+   primeros caracteres no coinciden, y midiendo esos tiempos se puede llegar a
+   adivinar el token carácter a carácter. hash_equals tarda lo mismo siempre. */
+$token = (string) ($_SERVER['HTTP_X_TOKEN'] ?? '');
+
+if ($token === '' || !hash_equals((string) $config['token'], $token)) {
+    anotar($registro, 'RECHAZADO token incorrecto');
+    /* 401 y no 403: el sitio distingue «no me dejaron» de «falló el envío». */
+    responder(401, ['ok' => false, 'error' => 'Token no válido.']);
+}
+
+/* ── El origen ────────────────────────────────────────────────────────────
+   Una comprobación más, no la principal: una cabecera se falsea. Sirve para
+   que una llamada despistada desde otro sitio no pase sin dejar rastro. */
+$origenes = (array) ($config['origenes'] ?? []);
+$origen   = (string) ($_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? '');
+
+if ($origenes !== [] && $origen !== '') {
+    $vale = false;
+
+    foreach ($origenes as $permitido) {
+        if (str_starts_with($origen, (string) $permitido)) {
+            $vale = true;
+            break;
+        }
+    }
+
+    if (!$vale) {
+        anotar($registro, 'RECHAZADO origen ' . $origen);
+        responder(403, ['ok' => false, 'error' => 'Origen no admitido.']);
+    }
+}
+
+/* ── El tope por IP ───────────────────────────────────────────────────────
+   Un contador por hora en un archivo. No es infalible —detrás de Cloudflare
+   muchos visitantes comparten IP—, por eso el tope es holgado: frena a un
+   robot insistente sin estorbar a nadie. */
+$tope = (int) ($config['tope_por_hora'] ?? 10);
+
+if ($tope > 0) {
+    $ip      = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    $marca   = sys_get_temp_dir() . '/api-correo-' . md5($ip . date('YmdH')) . '.cnt';
+    $cuantos = (int) @file_get_contents($marca);
+
+    if ($cuantos >= $tope) {
+        anotar($registro, 'RECHAZADO tope por hora');
+        responder(429, ['ok' => false, 'error' => 'Demasiados envíos seguidos. Inténtalo más tarde.']);
+    }
+
+    @file_put_contents($marca, (string) ($cuantos + 1), LOCK_EX);
+}
+
+/* ── El cuerpo ────────────────────────────────────────────────────────────
+   Se lee de php://input y no de $_POST porque llega como JSON. El tope de
+   tamaño evita que alguien intente atragantar al servidor con un megabyte. */
+$crudo = (string) file_get_contents('php://input', false, null, 0, 64 * 1024);
+$datos = json_decode($crudo, true);
+
+if (!is_array($datos)) {
+    responder(400, ['ok' => false, 'error' => 'El cuerpo no es JSON válido.']);
+}
+
+$asunto = trim((string) ($datos['asunto'] ?? ''));
+$cuerpo = trim((string) ($datos['cuerpo'] ?? ''));
+
+if ($asunto === '' || $cuerpo === '') {
+    responder(400, ['ok' => false, 'error' => 'Faltan el asunto o el cuerpo.']);
+}
+
+/* ── Inyección de cabeceras ───────────────────────────────────────────────
+   Un salto de línea dentro del asunto o del Responder-a permite añadir
+   cabeceras propias —un Bcc, por ejemplo— y convertir esto en un relé de
+   spam. Se cortan los saltos ANTES de construir nada. */
+$sinSaltos = static fn (string $v): string => trim((string) preg_replace('/[\r\n]+/', ' ', $v));
+
+$asunto = mb_substr($sinSaltos($asunto), 0, 200);
+$cuerpo = mb_substr($cuerpo, 0, 20000);
+
+$responderA       = $sinSaltos((string) ($datos['responder_a'] ?? ''));
+$responderANombre = mb_substr($sinSaltos((string) ($datos['responder_a_nombre'] ?? '')), 0, 120);
+
+if ($responderA !== '' && filter_var($responderA, FILTER_VALIDATE_EMAIL) === false) {
+    $responderA = '';
+}
+
+/* ── El envío ─────────────────────────────────────────────────────────────
+   El remitente es del dominio del cPanel; la dirección de quien escribió va
+   en Responder-a, que es donde de verdad sirve: se le contesta pulsando
+   «Responder» y el correo sale bien firmado. */
+$remitente = (string) ($config['remitente'] ?? ('no-responder@' . ($_SERVER['HTTP_HOST'] ?? 'localhost')));
+$nombre    = (string) ($config['remitente_nombre'] ?? 'Formulario web');
+
+$cabeceras = [
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    'From: ' . mb_encode_mimeheader($nombre, 'UTF-8') . ' <' . $remitente . '>',
+];
+
+if ($responderA !== '') {
+    $cabeceras[] = $responderANombre !== ''
+        ? 'Reply-To: ' . mb_encode_mimeheader($responderANombre, 'UTF-8') . ' <' . $responderA . '>'
+        : 'Reply-To: ' . $responderA;
+}
+
+$destinos = array_filter((array) ($config['destino'] ?? []));
+
+if ($destinos === []) {
+    responder(500, ['ok' => false, 'error' => 'No hay destinatario configurado.']);
+}
+
+/* El «-f» le dice al servidor de correo quién es el remitente de sobre. Sin
+   él, muchos cPanel firman con el usuario del sistema y el correo acaba en
+   spam. */
+$enviado = @mail(
+    implode(', ', $destinos),
+    mb_encode_mimeheader($asunto, 'UTF-8'),
+    $cuerpo,
+    implode("\r\n", $cabeceras),
+    '-f' . $remitente
+);
+
+if (!$enviado) {
+    anotar($registro, 'FALLO al enviar · ' . $asunto);
+    responder(502, ['ok' => false, 'error' => 'El servidor de correo no aceptó el mensaje.']);
+}
+
+anotar($registro, 'ENVIADO · ' . $asunto);
+responder(200, ['ok' => true]);

@@ -1,0 +1,18 @@
+# El cPanel corre Apache: aquí sí valen los .htaccess.
+#
+# Lo único que se sirve de esta carpeta es enviar.php. Todo lo demás queda
+# fuera del alcance del navegador: config.php lleva el token y registro.log,
+# las direcciones de quien escribe.
+<FilesMatch "\.(php)$">
+  Require all denied
+</FilesMatch>
+
+<Files "enviar.php">
+  Require all granted
+</Files>
+
+<FilesMatch "\.(log|md|txt|ejemplo\.php)$">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

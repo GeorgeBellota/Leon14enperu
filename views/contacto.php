@@ -15,8 +15,10 @@
  *  Las medidas son las del editable CONTACTO.ai (mesa de 1440 px). La hoja
  *  assets/css/paginas/contacto.css las reproduce con la unidad --u.
  *
- *  ⚠ EL FORMULARIO NO TIENE ENVÍO EN SERVIDOR. Véase el comentario grande
- *    junto al <form>: hoy sólo valida en el navegador.
+ *  El formulario SÍ se envía: el POST lo atiende esta misma vista y el correo
+ *  lo manda Publico\Contacto a través de una API alojada en el cPanel. Desde
+ *  el VPS, mail() no es fiable. Se configura en Configuración -> Correo de
+ *  contacto; sin configurar, el formulario lo dice y ofrece los correos.
  *
  *  @var \Intranet\Publico\Sitio $sitio
  *  @var callable $esc
@@ -99,12 +101,55 @@ $iconoCanal = static function (string $nombre): string {
     };
 };
 
-/* ── Si alguien envía el formulario sin JavaScript ────────────────────────
-   No hay nada al otro lado (véase el comentario del <form>), así que en vez
-   de recargar la página en silencio —y dejar a la persona creyendo que su
-   mensaje salió— se le dice la verdad y se le ofrecen los correos de abajo.
-   Cuando exista el envío de verdad, esta rama se sustituye por él. */
+/* ── El envío ─────────────────────────────────────────────────────────────
+   El formulario manda su POST a esta misma página, igual que el de
+   voluntariado: el sitio público tiene un solo punto de entrada y la vista
+   atiende lo suyo.
+
+   Quien envía el correo NO es este servidor. Desde el VPS, mail() o no sale o
+   cae en spam, así que Publico\Contacto se lo pide a una API alojada en el
+   cPanel, que sí tiene el dominio y la reputación de su lado. La dirección y
+   el token se configuran en Configuración → Correo de contacto.
+
+   Tres resultados posibles, y los tres se le dicen a quien escribió:
+     · enviado      la API confirmó el correo.
+     · con errores  faltan campos; se repintan con lo que ya había escrito.
+     · no salió     la API falló o no está configurada. Se ofrecen los
+                    correos directos de abajo, que es la vía que sí funciona. */
+$testigoContacto = null;
+
+try {
+    $testigoContacto = (new \Intranet\Publico\Token((string) $sitio->config('app.clave', '')))->generar();
+} catch (\Throwable $e) {
+    error_log('[contacto] no se pudo generar el testigo: ' . $e->getMessage());
+}
+
 $envioIntentado = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
+$envioHecho     = false;
+$erroresForm    = [];
+$falloEnvio     = '';
+$anteriorForm   = [];
+
+if ($envioIntentado) {
+    $contacto = new \Intranet\Publico\Contacto($sitio);
+
+    $anteriorForm = [
+        'nombre'  => (string) ($_POST['nombre']  ?? ''),
+        'correo'  => (string) ($_POST['correo']  ?? ''),
+        'motivo'  => (string) ($_POST['motivo']  ?? ''),
+        'mensaje' => (string) ($_POST['mensaje'] ?? ''),
+    ];
+
+    $envioHecho  = $contacto->enviar($_POST);
+    $erroresForm = $contacto->errores();
+    $falloEnvio  = $contacto->fallo();
+
+    /* Si salió, se limpia lo escrito: el formulario vuelve a estar vacío y
+       nadie reenvía el mismo mensaje por recargar la página. */
+    if ($envioHecho) {
+        $anteriorForm = [];
+    }
+}
 ?>
 
 <main id="contenido">
@@ -179,43 +224,60 @@ $envioIntentado = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
       ?>
 
       <?php /* ══════════════════════════════════════════════════════════════
-           ⚠ ESTE FORMULARIO TODAVÍA NO SE ENVÍA A NINGUNA PARTE.
+           EL ENVÍO, Y POR QUÉ NO SALE DE ESTE SERVIDOR
            ══════════════════════════════════════════════════════════════
-           En el proyecto NO existe el lado servidor: no hay controlador que
-           reciba este POST, ni tabla donde guardarlo, ni aviso por correo.
-           Lo único que hay hoy es la validación en el navegador que activa
-           `data-validate` (assets/js/rediseno.js), que además impide el
-           envío y enseña un acuse en el párrafo [data-form-note].
+           El POST lo atiende esta misma vista —arriba, junto a $envioHecho—
+           y el correo lo manda Publico\Contacto pidiéndoselo a una API
+           alojada en el cPanel.
 
-           Queda así a propósito, para no inventarse un buzón que nadie lee.
-           Para terminarlo hacen falta cuatro cosas:
-             1. una ruta que atienda el POST de /contacto/;
-             2. token CSRF y campo trampa contra el envío automático;
-             3. guardado y/o aviso por correo al buzón que decida la CEP;
-             4. sustituir el acuse de rediseno.js por el de verdad, porque
-                hoy dice «Hemos recibido tu mensaje» sin haber recibido nada.
-           Mientras tanto, la vía real de contacto son los correos de
-           «Canales directos», justo debajo.
+           No es un capricho: desde el VPS, mail() o no sale o cae en la
+           carpeta de spam, porque la dirección del servidor no tiene
+           reputación y el dominio no la respalda desde ahí. El cPanel sí
+           tiene eso resuelto.
 
-           El `action` apunta a la propia página para que, sin JavaScript, el
-           envío no se pierda en una dirección que no existe. */ ?>
+           Se configura en Configuración → Correo de contacto: dirección de
+           la API, token, asunto y cuerpo. Sin configurar, el formulario no
+           miente: dice que no está conectado y ofrece los correos de abajo.
+
+           El `action` apunta a la propia página: un solo punto de entrada,
+           como el formulario de voluntariado. */ ?>
       <form class="contacto__form" data-validate method="post"
             action="<?= $esc($sitio->enlace('contacto/')) ?>">
 
+        <?php /* Testigo firmado con la clave de la aplicación: ata el envío a
+                 esta página y a esta sesión. Mismo mecanismo que el
+                 formulario de voluntariado. */ ?>
+        <?php if ($testigoContacto !== null): ?>
+          <input type="hidden" name="_testigo" value="<?= $esc($testigoContacto) ?>">
+        <?php endif; ?>
+
+        <?php /* La trampa: ningún humano la ve y casi todo robot la rellena.
+                 Si llega con algo, el envío se descarta en silencio. */ ?>
+        <p class="trampa" aria-hidden="true">
+          <label for="sitio-web">No rellenar</label>
+          <input type="text" id="sitio-web" name="sitio-web" tabindex="-1" autocomplete="off">
+        </p>
+
         <div class="field">
           <label class="field__label" for="nombre">Nombre y apellidos *</label>
-          <input class="field__control" type="text" id="nombre" name="nombre" autocomplete="name" required>
+          <input class="field__control<?= isset($erroresForm['nombre']) ? ' field__control--error' : '' ?>"
+                 type="text" id="nombre" name="nombre" autocomplete="name" required
+                 value="<?= $esc($anteriorForm['nombre'] ?? '') ?>">
+          <?php if (isset($erroresForm['nombre'])): ?><p class="contacto__error"><?= $esc($erroresForm['nombre']) ?></p><?php endif; ?>
         </div>
 
         <div class="field contacto__field--2">
           <label class="field__label" for="correo">Correo electrónico *</label>
-          <input class="field__control" type="email" id="correo" name="correo" autocomplete="email" required>
+          <input class="field__control<?= isset($erroresForm['correo']) ? ' field__control--error' : '' ?>"
+                 type="email" id="correo" name="correo" autocomplete="email" required
+                 value="<?= $esc($anteriorForm['correo'] ?? '') ?>">
+          <?php if (isset($erroresForm['correo'])): ?><p class="contacto__error"><?= $esc($erroresForm['correo']) ?></p><?php endif; ?>
         </div>
 
         <div class="field contacto__field--3">
           <label class="field__label" for="motivo">Motivo *</label>
           <select class="field__control" id="motivo" name="motivo" required>
-            <option value="" selected>Elige uno</option>
+            <option value=""<?= ($anteriorForm['motivo'] ?? '') === '' ? ' selected' : '' ?>>Elige uno</option>
             <?php foreach ($motivos as $m): ?>
               <?php
               $etiqueta = trim((string) ($m['titulo'] ?? ''));
@@ -228,14 +290,16 @@ $envioIntentado = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
                  rótulo del bloque y, si está vacío, la propia etiqueta. */
               $valor = trim((string) ($m['rotulo'] ?? '')) ?: $etiqueta;
               ?>
-              <option value="<?= $esc($valor) ?>"><?= $esc($etiqueta) ?></option>
+              <option value="<?= $esc($valor) ?>"<?= ($anteriorForm['motivo'] ?? '') === $valor ? ' selected' : '' ?>><?= $esc($etiqueta) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
 
         <div class="field contacto__field--4">
           <label class="field__label" for="mensaje">Tu mensaje *</label>
-          <textarea class="field__control" id="mensaje" name="mensaje" rows="10" required></textarea>
+          <textarea class="field__control<?= isset($erroresForm['mensaje']) ? ' field__control--error' : '' ?>"
+                    id="mensaje" name="mensaje" rows="10" required><?= $esc($anteriorForm['mensaje'] ?? '') ?></textarea>
+          <?php if (isset($erroresForm['mensaje'])): ?><p class="contacto__error"><?= $esc($erroresForm['mensaje']) ?></p><?php endif; ?>
         </div>
 
         <?php /* El enlace a la política de privacidad va dentro de la
@@ -251,11 +315,26 @@ $envioIntentado = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
         <?php /* rediseno.js escribe aquí el acuse al validar. Si la página
                  llega por POST —alguien envió sin JavaScript— se pinta ya
                  visible con la verdad, que es que el envío no está montado. */ ?>
-        <p class="contacto__aviso" data-form-note role="status"<?= $envioIntentado ? '' : ' hidden' ?>>
-          <?= $envioIntentado
-              ? 'Este formulario todavía no está conectado: tu mensaje no se ha enviado. '
-                . 'Escríbenos, por favor, a uno de los correos de aquí abajo.'
-              : '' ?>
+        <?php
+        /* role="status" y no "alert": se anuncia sin interrumpir lo que la
+           persona esté haciendo. Cuando el envío falla se añade la clase de
+           error, que es lo que le da el color. */
+        $avisoTexto = '';
+        $avisoClase = '';
+
+        if ($envioHecho) {
+            $avisoTexto = 'Gracias. Hemos recibido tu mensaje y te responderemos al correo que nos dejaste.';
+        } elseif ($envioIntentado && $erroresForm !== []) {
+            $avisoTexto = 'Revisa los campos marcados y vuelve a enviarlo.';
+            $avisoClase = ' contacto__aviso--error';
+        } elseif ($envioIntentado) {
+            $avisoTexto = ($falloEnvio !== '' ? $falloEnvio . ' ' : '')
+                        . 'Escríbenos, por favor, a uno de los correos de aquí abajo.';
+            $avisoClase = ' contacto__aviso--error';
+        }
+        ?>
+        <p class="contacto__aviso<?= $avisoClase ?>" data-form-note role="status"<?= $avisoTexto !== '' ? '' : ' hidden' ?>>
+          <?= $esc($avisoTexto) ?>
         </p>
       </form>
 
