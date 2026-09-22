@@ -70,6 +70,21 @@ return [
         'https://www.leon14enperu.com',
     ],
 
+    /* ── ¿Se pone la direccion del visitante en Responder-a? ──────────────
+       Con «true» respondes al mensaje con un clic. Comodo, pero es la señal
+       que mas puntua en los antispam de salida: un Responder-a de Gmail sobre
+       un From de otro dominio es el patron exacto de un formulario
+       secuestrado para reenviar spam. Aqui costo un rechazo con 21,78 puntos
+       —el umbral suele estar en 5— y ni un mensaje entregado.
+
+       Con «false» el correo sale limpio y la direccion de quien escribe viaja
+       en el cuerpo, donde la pone la plantilla del panel con {correo}. Se
+       responde copiandola: un paso mas, pero los mensajes llegan.
+
+       Si el hosting mete el dominio en su lista blanca, se puede volver a
+       poner en «true». */
+    'responder_al_visitante' => false,
+
     /* Tope por IP y hora. Un formulario de contacto legítimo no manda diez
        mensajes seguidos; un robot con el token, sí. */
     'tope_por_hora' => 10,

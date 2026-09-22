@@ -191,7 +191,11 @@ $cabeceras = [
     'From: ' . mb_encode_mimeheader($nombre, 'UTF-8') . ' <' . $remitente . '>',
 ];
 
-if ($responderA !== '') {
+/* El Responder-a sólo si config.php lo permite. Ver ahí el porqué: un
+   Responder-a de un correo gratuito sobre un From de otro dominio es lo que
+   más puntúa en los antispam de salida, y aquí costó que no llegara ni un
+   mensaje. La dirección del visitante va igualmente en el cuerpo. */
+if ($responderA !== '' && ($config['responder_al_visitante'] ?? false) === true) {
     $cabeceras[] = $responderANombre !== ''
         ? 'Reply-To: ' . mb_encode_mimeheader($responderANombre, 'UTF-8') . ' <' . $responderA . '>'
         : 'Reply-To: ' . $responderA;
