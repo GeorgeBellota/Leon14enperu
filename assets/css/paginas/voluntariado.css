@@ -647,3 +647,88 @@
 .consent-legal__info p{margin:0 0 .38em}
 .consent-legal__info p:last-child{margin-bottom:0}
 
+
+/* ── «Ten a mano» como cajón lateral ──────────────────────────────────────
+   El editable lo dibuja debajo del formulario, y ahí sigue en pantallas
+   estrechas. En escritorio no funcionaba: el formulario enseña un paso cada
+   vez, así que el recuadro caía justo detrás de los primeros campos y lo
+   partía en dos —se escribía el DNI y aparecía una caja rosa enorme antes de
+   terminar—.
+
+   Pegado al lateral acompaña sin estorbar, y se pliega para quien no lo
+   necesita. El estado lo recuerda assets/js/ten-a-mano.js en el navegador.
+
+   Sin JavaScript el botón no se pinta y esto se queda tal cual estaba. */
+@media (min-width:1024px){
+  .vol-mano{
+    position:fixed;z-index:60;
+    right:0;top:50%;transform:translateY(-50%);
+    width:calc(392 * var(--u));min-height:0;overflow-y:auto;
+    /* Centrado a media altura, pero nunca tan alto como para subir por
+       detras de la cabecera, que es pegajosa y ocupa los primeros 115 px.
+       Restando 260 px el borde de arriba se queda en 130 como minimo, sea
+       cual sea la altura de la pantalla; si el contenido no cabe, rueda. */
+    max-height:min(78vh, calc(100vh - 260px));
+    margin:0;padding:calc(22 * var(--u)) calc(22 * var(--u)) calc(20 * var(--u));
+    border-radius:calc(14 * var(--u)) 0 0 calc(14 * var(--u));
+    box-shadow:calc(-4 * var(--u)) 0 calc(22 * var(--u)) rgba(0,0,0,.14);
+    transition:transform .3s cubic-bezier(.22,.61,.36,1);
+  }
+  /* El icono y el titular van en posición absoluta en el editable, con
+     coordenadas pensadas para un recuadro de 558 px de ancho. En el cajón
+     estorban: vuelven al flujo, en una fila. */
+  .vol-mano__ico{position:static;width:calc(30 * var(--u));height:calc(30 * var(--u))}
+  .vol-mano__tit{position:static;font-size:calc(25 * var(--u))}
+  .vol-mano__cab{
+    height:auto;display:flex;align-items:center;gap:calc(10 * var(--u));
+    margin-bottom:calc(12 * var(--u));padding-right:calc(72 * var(--u));
+  }
+
+  /* La lista y la nota traen 495 px fijos del editable, mas anchos que el
+     cajon: el texto se salia por la derecha y quedaba cortado contra el borde
+     de la pantalla. Aqui mandan el ancho del cajon y el cuerpo mas contenido
+     que pide una columna estrecha. */
+  .vol-mano__lista,
+  .vol-mano__nota{width:100%;font-size:calc(18 * var(--u));line-height:calc(23 * var(--u))}
+  .vol-mano__nota{margin-top:calc(15 * var(--u))}
+
+  .vol-mano__plegar{
+    position:absolute;top:calc(14 * var(--u));right:calc(16 * var(--u));
+    display:inline-flex;align-items:center;gap:calc(6 * var(--u));
+    padding:calc(4 * var(--u)) calc(10 * var(--u));
+    border:1px solid var(--wine);border-radius:999px;background:none;
+    color:var(--wine);font-size:calc(16 * var(--u));line-height:1.4;cursor:pointer;
+  }
+  .vol-mano__plegar:hover{background:var(--wine);color:#F0D3D3}
+  .vol-mano__plegar-ico{
+    width:0;height:0;
+    border-top:calc(5 * var(--u)) solid transparent;
+    border-bottom:calc(5 * var(--u)) solid transparent;
+    border-left:calc(6 * var(--u)) solid currentColor;
+    transition:transform .2s ease;
+  }
+
+  /* Plegado: se va casi entero fuera de la pantalla y deja asomando el
+     titular, que es el asidero para volver a abrirlo.
+
+     234 es el ancho del cajon (392) menos lo que debe asomar (158). Va en
+     unidades y no en «calc(100% - …)» porque asi se lee de un vistazo contra
+     el ancho de arriba, sin tener que resolver a que se refiere el 100%. */
+  .vol-mano--plegado{transform:translateY(-50%) translateX(calc(234 * var(--u)))}
+  .vol-mano--plegado .vol-mano__cuerpo{display:none}
+  .vol-mano--plegado .vol-mano__plegar-ico{transform:rotate(180deg)}
+
+  /* Plegado, el titular sale cortado contra el borde de la pantalla y el boton
+     —anclado a la derecha del cajon— se iba fuera del todo: no quedaba nada
+     que pulsar para volver a abrirlo. Asi que plegado manda el boton: el
+     titular se retira y el boton vuelve al flujo, o sea al borde izquierdo del
+     cajon, que es justo lo que asoma. Es el boton el que dice «Ten a mano». */
+  .vol-mano--plegado .vol-mano__cab{display:none}
+  .vol-mano--plegado .vol-mano__plegar{position:static}
+}
+
+/* A partir de aquí la ventana ya no da para un cajón al lado sin taparle el
+   formulario a nadie. Vuelve a su sitio de siempre. */
+@media (max-width:1023px){
+  .vol-mano__plegar{display:none}
+}

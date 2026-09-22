@@ -283,6 +283,7 @@ $meta = [
         'assets/vendor/flatpickr-es.js',
         'assets/js/form.js',
         'assets/js/ancla-form.js',
+        'assets/js/ten-a-mano.js',
     ],
     'css'         => ['assets/vendor/flatpickr.min.css'],
 ];
@@ -1093,7 +1094,29 @@ $tituloServicio = static function (string $nombre): string {
           );
           ?>
           <?php if ($tenAMano !== []): ?>
-            <aside class="vol-mano">
+            <?php /* ── El recuadro «Ten a mano» ──────────────────────────
+                     En el editable va debajo del formulario, y ahí se queda en
+                     pantallas estrechas. Pero en escritorio el formulario sólo
+                     enseña un paso cada vez, así que el recuadro caía justo
+                     detrás de los primeros campos y partía el formulario en
+                     dos: se rellenaba el DNI y aparecía una caja rosa enorme
+                     antes de terminar.
+
+                     En escritorio pasa a ser un cajón pegado al lateral, que
+                     se pliega. Así acompaña sin estorbar y deja el formulario
+                     entero para lo suyo. El estado se recuerda en el
+                     navegador: quien lo cierra no se lo encuentra abierto en
+                     cada paso. */ ?>
+            <aside class="vol-mano" data-mano>
+              <?php /* El botón sólo tiene sentido con JavaScript: es él quien
+                       pliega. Sin JS no se pinta y el recuadro se queda como
+                       estaba, debajo del formulario y siempre visible. */ ?>
+              <button class="vol-mano__plegar" type="button" data-mano-plegar hidden
+                      aria-expanded="true" aria-controls="ten-a-mano-cuerpo">
+                <span class="vol-mano__plegar-txt">Ocultar</span>
+                <span class="vol-mano__plegar-ico" aria-hidden="true"></span>
+              </button>
+
               <p class="vol-mano__cab">
                 <svg class="vol-mano__ico" viewBox="0 0 45 45" width="45" height="45" aria-hidden="true" focusable="false">
                   <g fill="none" stroke="#6E0B14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -1103,14 +1126,17 @@ $tituloServicio = static function (string $nombre): string {
                 </svg>
                 <span class="vol-mano__tit"><?= $esc((string) $dato('inscripcion', 'ten_a_mano_titulo', 'Ten a mano')) ?></span>
               </p>
-              <ul class="vol-mano__lista">
-                <?php foreach ($tenAMano as $item): ?>
-                  <li><span aria-hidden="true">•</span> <?= $rico($item) ?></li>
-                <?php endforeach; ?>
-              </ul>
-              <?php if ($notaMano !== ''): ?>
-                <p class="vol-mano__nota"><?= $esc($notaMano) ?></p>
-              <?php endif; ?>
+
+              <div class="vol-mano__cuerpo" id="ten-a-mano-cuerpo">
+                <ul class="vol-mano__lista">
+                  <?php foreach ($tenAMano as $item): ?>
+                    <li><span aria-hidden="true">•</span> <?= $rico($item) ?></li>
+                  <?php endforeach; ?>
+                </ul>
+                <?php if ($notaMano !== ''): ?>
+                  <p class="vol-mano__nota"><?= $esc($notaMano) ?></p>
+                <?php endif; ?>
+              </div>
             </aside>
           <?php endif; ?>
 
