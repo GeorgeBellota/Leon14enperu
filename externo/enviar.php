@@ -214,10 +214,24 @@ $enviado = @mail(
     '-f' . $remitente
 );
 
+$rastro = sprintf('de %s para %s · %s', $remitente, implode(',', $destinos), $asunto);
+
 if (!$enviado) {
-    anotar($registro, 'FALLO al enviar · ' . $asunto);
+    anotar($registro, 'FALLO al entregar al servidor de correo · ' . $rastro);
     responder(502, ['ok' => false, 'error' => 'El servidor de correo no aceptó el mensaje.']);
 }
 
-anotar($registro, 'ENVIADO · ' . $asunto);
+/* ── «ACEPTADO», no «ENVIADO» ─────────────────────────────────────────────
+   mail() devuelve cierto en cuanto el Exim del servidor se hace cargo del
+   mensaje. Lo que pase después —que el destinatario lo rechace— ocurre más
+   tarde y aquí no se sabe.
+
+   La distincion no es pedante: paso de verdad. El remitente era del dominio
+   del sitio, cuyo DMARC esta en «p=reject» con alineacion estricta y cuyo SPF
+   no autoriza a este servidor. Gmail lo descartaba sin dejarlo ni en spam, y
+   este registro decia «ENVIADO». Que ponga «ACEPTADO» y con qué remitente
+   ahorra esa media hora de buscar donde no era.
+
+   Para saber si llegó de verdad: cPanel -> Correo -> Rastrear entrega. */
+anotar($registro, 'ACEPTADO por el servidor de correo · ' . $rastro);
 responder(200, ['ok' => true]);

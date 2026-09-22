@@ -18,10 +18,25 @@
  *      Configuración → Correo de contacto.
  *
  *   2. Pon en «destino» el buzón que debe recibir los mensajes.
- *   3. Pon en «remitente» una dirección REAL del dominio del cPanel. No vale
- *      poner la del visitante: los servidores rechazan o marcan como spam un
- *      correo que dice venir de un dominio que no es el que lo envía. La
- *      dirección del visitante va en Responder-a, que es donde sirve.
+ *   3. Pon en «remitente» una dirección del DOMINIO DE ESTE CPANEL. Ni la del
+ *      visitante ni una de leon14enperu.com.
+ *
+ *      Esto no es una recomendación: es lo que hace que el correo llegue.
+ *      leon14enperu.com tiene el correo en Google Workspace y publica
+ *
+ *          SPF    v=spf1 include:_spf.google.com include:zohomail.com ~all
+ *          DMARC  v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s
+ *
+ *      Es decir: sólo Google y Zoho pueden firmar como ese dominio, la
+ *      alineación es estricta y lo que no cuadre se RECHAZA. Un correo que
+ *      salga de este cPanel diciendo venir de leon14enperu.com lo descarta
+ *      Gmail sin dejarlo siquiera en spam. Ya pasó: el registro decía
+ *      «ACEPTADO» y no llegaba nada.
+ *
+ *      Con el remitente del dominio del cPanel, su propio SPF autoriza a esta
+ *      IP y el mensaje entra. El nombre visible puede seguir diciendo «León
+ *      XIV en el Perú», y la dirección de quien escribe va en Responder-a,
+ *      que es donde sirve: se le contesta con un clic.
  *
  *  ── Por qué el destino se decide AQUÍ y no lo manda la web ───────────────
  *
@@ -42,8 +57,9 @@ return [
         'contacto@leon14enperu.com',
     ],
 
-    /* Quién los firma. Tiene que existir en el dominio del cPanel. */
-    'remitente'        => 'no-responder@leon14enperu.com',
+    /* Quién los firma. DEL DOMINIO DE ESTE CPANEL, no de leon14enperu.com:
+       ese dominio tiene DMARC en «reject» y rechazaría el correo. */
+    'remitente'        => 'no-responder@EL-DOMINIO-DE-TU-CPANEL.com',
     'remitente_nombre' => 'León XIV en el Perú',
 
     /* Sólo se atienden peticiones que digan venir de aquí. Es una barrera
