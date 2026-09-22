@@ -160,12 +160,38 @@ $fecha = static function (string $rotulo): array {
 $acto = static function (string $linea): array {
     $linea = trim($linea);
     $patron = '/^([0-9Xx]{1,2}\s*[:.h]\s*[0-9Xx]{2}\s*(?:hrs?|horas?|h)?\.?)\s*(?:[—–\-|·:]+\s*)?(.*)$/ui';
+    $hora = '';
+    $que  = $linea;
 
     if (preg_match($patron, $linea, $m) === 1) {
-        return ['hora' => trim($m[1]), 'que' => trim($m[2])];
+        $hora = trim($m[1]);
+        $que  = trim($m[2]);
     }
 
-    return ['hora' => '', 'que' => $linea];
+    /* ── La coletilla en cursiva ──────────────────────────────────────────
+       El programa oficial cierra muchas actividades diciendo qué hará el
+       Papa —«Discurso del Santo Padre.», «Homilía del Santo Padre.»,
+       «Ángelus.»— y el editable las dibuja en cursiva, separadas del resto.
+
+       Se reconocen aquí, con una lista CERRADA, y no se admite HTML desde el
+       panel: la cursiva la decide este código, no lo que alguien escriba en
+       el gestor. Una actividad que no acabe en una de estas fórmulas se
+       pinta entera como hasta ahora. */
+    $nota = '';
+    $formulas = 'Discurso|Homilía|Homilia|Saludo|Ángelus|Angelus|Palabras|Mensaje';
+
+    if (preg_match('/^(.*?[^\s])[\s.]*\(?((?:' . $formulas . ')(?:\s+del\s+Santo\s+Padre)?)\)?\.?$/ui', $que, $n) === 1) {
+        $resto = rtrim(trim($n[1]), '.,;');
+
+        /* Sólo si queda actividad delante: «Ángelus.» a secas es la
+           actividad entera, no la coletilla de nada. */
+        if ($resto !== '') {
+            $que  = $resto . '.';
+            $nota = trim($n[2]) . '.';
+        }
+    }
+
+    return ['hora' => $hora, 'que' => $que, 'nota' => $nota];
 };
 
 /* ── Las sedes ───────────────────────────────────────────────────────────
@@ -422,7 +448,7 @@ foreach ($jornadas as $jornada) {
                         <p class="timeline__time"><?= $esc($a['hora']) ?></p>
                       <?php endif; ?>
                       <?php if ($a['que'] !== ''): ?>
-                        <p class="timeline__what"><?= $esc($a['que']) ?></p>
+                        <p class="timeline__what"><?= $esc($a['que']) ?><?php if (($a['nota'] ?? '') !== ''): ?> <em class="ag-acto__nota"><?= $esc($a['nota']) ?></em><?php endif; ?></p>
                       <?php endif; ?>
                     </div>
                   <?php endforeach; ?>

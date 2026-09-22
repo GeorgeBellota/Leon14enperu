@@ -221,3 +221,9 @@
   .ag-dia .timeline__mon{display:inline-block}
   .ag-dia .timeline__items{padding-left:16px}
 }
+
+/* La coletilla del programa oficial —«Discurso del Santo Padre.»,
+   «Homilía del Santo Padre.», «Ángelus.»— en cursiva, como el editable. La
+   reconoce views/agenda.php con una lista cerrada de fórmulas; desde el panel
+   no se puede meter HTML, así que la cursiva no la decide quien escribe. */
+.ag-acto__nota{font-style:italic}
