@@ -227,3 +227,9 @@
    reconoce views/agenda.php con una lista cerrada de fórmulas; desde el panel
    no se puede meter HTML, así que la cursiva no la decide quien escribe. */
 .ag-acto__nota{font-style:italic}
+
+/* Lo que se marque con **dos asteriscos** en una actividad: granate y
+   semibold, que es como el editable destaca dentro de un párrafo. Va sólo
+   en el itinerario; el mismo <strong> en otras partes de la página conserva
+   su color. */
+.ag-dia .timeline__what strong{color:var(--wine);font-weight:600}

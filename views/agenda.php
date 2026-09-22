@@ -76,6 +76,15 @@ $realce = static function (string $texto) use ($esc): string {
     $html = $esc($texto);
     $html = (string) preg_replace('/\*\*(.+?)\*\*/us', '<strong>$1</strong>', $html);
 
+    /* Y un <br> escrito a mano en el panel. Hace falta en las actividades del
+       itinerario: ahí cada línea del campo es UNA actividad distinta, así que
+       dar al Intro no parte el renglón, crea otra actividad. Escribiendo
+       «<br>» se parte donde se quiera dentro de la misma.
+
+       Se destapa sólo esa secuencia exacta, ya escapada. Cualquier otra
+       etiqueta sigue saliendo como texto: del panel no puede venir HTML. */
+    $html = str_replace(['&lt;br&gt;', '&lt;br/&gt;', '&lt;br /&gt;'], '<br>', $html);
+
     return nl2br($html, false);
 };
 
@@ -448,7 +457,13 @@ foreach ($jornadas as $jornada) {
                         <p class="timeline__time"><?= $esc($a['hora']) ?></p>
                       <?php endif; ?>
                       <?php if ($a['que'] !== ''): ?>
-                        <p class="timeline__what"><?= $esc($a['que']) ?><?php if (($a['nota'] ?? '') !== ''): ?> <em class="ag-acto__nota"><?= $esc($a['nota']) ?></em><?php endif; ?></p>
+                        <?php /* $realce y no $esc: la misma convención que la
+                                 bajada del héroe. **Dos asteriscos** destacan
+                                 un trozo y «<br>» parte el renglón. Escapa
+                                 primero y destapa después sólo esas dos cosas,
+                                 así que del panel no sale ninguna otra
+                                 etiqueta. */ ?>
+                        <p class="timeline__what"><?= $realce($a['que']) ?><?php if (($a['nota'] ?? '') !== ''): ?> <em class="ag-acto__nota"><?= $esc($a['nota']) ?></em><?php endif; ?></p>
                       <?php endif; ?>
                     </div>
                   <?php endforeach; ?>
@@ -468,15 +483,25 @@ foreach ($jornadas as $jornada) {
            viaje papal sin decir que no son definitivas induce a error, así
            que se pinta al pie del cronograma, en cuerpo pequeño. */ ?>
       <?php
-      /* La reserva importa más aquí que en ningún otro sitio: si la base no
+      /* ── El aviso, y por qué no usa $campo() ──────────────────────────────
+         La reserva importa aquí más que en ningún otro sitio: si la base no
          responde, la página sigue enseñando el cronograma —lo tiene escrito
-         arriba— y no puede enseñarlo sin la advertencia. */
-      $advertencia = $campo(
-          'itinerario',
-          'texto',
-          '<p><strong>Programa referencial.</strong> Las fechas, actividades y lugares serán '
-        . 'reemplazados por el programa oficial cuando la Santa Sede lo apruebe y publique.</p>'
-      );
+         arriba— y no puede enseñarlo sin advertir de que es referencial.
+
+         Pero $campo() devuelve la reserva también cuando el campo está VACÍO,
+         y eso hacía imposible quitar el aviso: se borraba en el panel y volvía
+         solo en la siguiente visita. Desde que el programa es el oficial, ese
+         aviso ya no es cierto y hay que poder retirarlo.
+
+         Así que se distingue una cosa de la otra: si la sección llegó de la
+         base, manda lo que diga su campo, aunque esté vacío. La reserva sólo
+         entra cuando NO llegó, que es justo el caso que se quería cubrir. */
+      $reservaAviso = '<p><strong>Programa referencial.</strong> Las fechas, actividades y lugares serán '
+                    . 'reemplazados por el programa oficial cuando la Santa Sede lo apruebe y publique.</p>';
+
+      $advertencia = isset($secciones['itinerario'])
+          ? (string) ($secciones['itinerario']['texto'] ?? '')
+          : $reservaAviso;
       ?>
       <?php if (trim(strip_tags($advertencia)) !== ''): ?>
         <div class="agenda__nota"><?= $advertencia ?></div>
