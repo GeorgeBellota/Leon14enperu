@@ -18,6 +18,18 @@
  *      php probar.php                      al destino de config.php
  *      php probar.php otro@ejemplo.com     a donde tú digas
  *
+ *  Y para averiguar POR QUÉ un mensaje del formulario no pasa cuando la
+ *  prueba sí —que es lo que pasó—, se puede imitar el mensaje real pieza a
+ *  pieza. El filtro antispam de salida del hosting rechaza por el CONTENIDO,
+ *  no por la configuración, así que hay que ir quitando partes hasta ver cuál
+ *  es la que le molesta:
+ *
+ *      php probar.php micorreo@x.com formulario   el mensaje tal cual sale
+ *      php probar.php micorreo@x.com sin-replyto  igual, sin Responder-a
+ *      php probar.php micorreo@x.com sin-cuerpo   con el cuerpo de la prueba
+ *
+ *  El que pase es el que señala al culpable.
+ *
  *  O desde el navegador, si no hay SSH. Pide el token, el mismo de config.php:
  *
  *      https://TU-CPANEL/externo/probar.php?token=EL-TOKEN
