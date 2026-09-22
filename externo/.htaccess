@@ -11,6 +11,12 @@
   Require all granted
 </Files>
 
+# probar.php pide el token por la URL antes de enseñar nada, asi que puede
+# servirse. Aun asi: borralo del servidor cuando termines la puesta en marcha.
+<Files "probar.php">
+  Require all granted
+</Files>
+
 <FilesMatch "\.(log|md|txt|ejemplo\.php)$">
   Require all denied
 </FilesMatch>
