@@ -606,3 +606,44 @@
   /* En 390 px la franja sólo da para el titular y el botón. */
   .ancla-form__rotulo,.ancla-form__dato{display:none}
 }
+
+/* ── El consentimiento: la información y la declaración, separadas ─────────
+   Iban pegadas en un solo bloque de texto dentro de la etiqueta de la
+   casilla: 116 palabras seguidas que, en la columna de 530 px del
+   formulario, levantaban un muro de 750 px de alto. El formulario quedaba
+   aplastado debajo y había que bajar el zoom del navegador para verlo.
+
+   Ahora la caja la pone este contenedor y la casilla de dentro va desnuda:
+
+    · «__info» es lo que dice el gestor —quién trata los datos, la ley, a
+      quién se transfieren, cuánto se conservan—. En pantallas anchas va a
+      dos columnas y un punto más pequeña. Entera: ni se recorta ni se
+      esconde detrás de un desplegable.
+    · la declaración se queda junto a la casilla y a tamaño normal, porque
+      es lo que se está aceptando al marcarla.
+
+   Por debajo de 1024 px vuelve a una sola columna: a dos, cada renglón
+   tendría menos de treinta caracteres y sería peor de leer que largo. */
+.consent-legal{
+  background:rgba(255,255,255,.5);border:1px solid var(--line);
+  padding:clamp(12px,1.5vw,20px);
+}
+.consent-legal:hover{border-color:var(--wine)}
+/* La casilla ya no dibuja su propio marco: el marco es el de fuera. */
+.consent-legal .casilla{background:none;border:0;padding:0}
+
+/* El tamaño se ancla a --fs-base y NO a «em». Al sacar el texto de
+   .casilla__texto —que fijaba var(--fs-base)— este bloque pasó a heredar los
+   30 px del contenedor del formulario: con «.94em» salía a 28 px y la caja se
+   iba a 1689 px de alto, el triple del problema que venía a resolver. */
+.consent-legal__info{
+  font-size:calc(var(--fs-base) * .94);line-height:1.45;color:var(--grey-700);
+  margin-bottom:clamp(8px,.9vw,13px);
+}
+/* Separación corta: son párrafos del mismo aviso, no apartados distintos.
+   Con más aire, en las pantallas medias —donde el formulario ya ocupa todo
+   el ancho— la caja salía más alta que antes de separarlos, y el arreglo
+   habría empeorado justo lo que venía a mejorar. */
+.consent-legal__info p{margin:0 0 .38em}
+.consent-legal__info p:last-child{margin-bottom:0}
+

@@ -976,13 +976,53 @@ $tituloServicio = static function (string $nombre): string {
                          campo editable evita que un cambio de contenido la debilite sin
                          que nadie se dé cuenta: «he leído la política» no es lo mismo que
                          autorizar el tratamiento y la transferencia de los datos. */ ?>
-                <label class="casilla<?= isset($errores['consentimiento']) ? ' campo--error' : '' ?>">
-                  <input type="checkbox" id="consentimiento" name="consentimiento" value="1" required<?= !empty($anterior['consentimiento']) ? ' checked' : '' ?>>
-                  <span class="casilla__texto">
-                    <?= $rico($dato('inscripcion', 'consentimiento', 'Autorizo el tratamiento de mis datos personales para gestionar mi inscripción como voluntario.')) ?>
-                    <a href="<?= $esc($sitio->enlace('privacidad/')) ?>">Ver Política de Privacidad completa</a>. He leído la información proporcionada y autorizo el tratamiento y transferencia de mis datos personales para las finalidades indicadas. *
-                  </span>
-                </label>
+                <?php
+                /* ── Dos textos, no uno ───────────────────────────────────
+                   Aquí conviven cosas distintas y hasta ahora iban pegadas en
+                   un único bloque de texto plano dentro de la etiqueta:
+
+                     · la INFORMACIÓN: quién trata los datos, bajo qué ley, a
+                       quién se transfieren y cuánto se conservan. Sale del
+                       panel y son unas ochenta palabras.
+                     · la DECLARACIÓN: la frase que la persona autoriza al
+                       marcar la casilla. Veintitantas palabras.
+
+                   Juntas formaban un muro de 750 px en una columna de 530, y
+                   eso es lo que aplastaba el formulario. Separadas, la
+                   información puede ir a dos columnas y en cuerpo menor
+                   —sigue entera, no se recorta ni se esconde— y la
+                   declaración se queda al lado de la casilla, a tamaño
+                   normal, que es lo que de verdad se está aceptando.
+
+                   Y hay una razón que no se ve: dentro de la <label>, TODO
+                   ese texto era el nombre de la casilla. Un lector de
+                   pantalla leía las ciento dieciséis palabras cada vez que
+                   llegaba a ella. Fuera de la etiqueta y enlazada con
+                   aria-describedby, la casilla se anuncia con su declaración
+                   y la información se ofrece como descripción. */
+                $lineasConsentimiento = preg_split(
+                    '/\R+/u',
+                    (string) $dato('inscripcion', 'consentimiento', ''),
+                    -1,
+                    PREG_SPLIT_NO_EMPTY
+                ) ?: [];
+                ?>
+                <div class="consent-legal<?= isset($errores['consentimiento']) ? ' campo--error' : '' ?>">
+                  <?php if ($lineasConsentimiento !== []): ?>
+                    <div class="consent-legal__info" id="consent-legal-info">
+                      <?php foreach ($lineasConsentimiento as $linea): ?>
+                        <p><?= $rico($linea) ?></p>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
+
+                  <label class="casilla">
+                    <input type="checkbox" id="consentimiento" name="consentimiento" value="1" required<?= !empty($anterior['consentimiento']) ? ' checked' : '' ?><?= $lineasConsentimiento !== [] ? ' aria-describedby="consent-legal-info"' : '' ?>>
+                    <span class="casilla__texto">
+                      <a href="<?= $esc($sitio->enlace('privacidad/')) ?>">Ver Política de Privacidad completa</a>. He leído la información proporcionada y autorizo el tratamiento y transferencia de mis datos personales para las finalidades indicadas. *
+                    </span>
+                  </label>
+                </div>
                 <?php if (isset($errores['consentimiento'])): ?><p class="campo__error" role="alert"><?= $esc($errores['consentimiento']) ?></p><?php endif; ?>
               </div>
             </fieldset>
