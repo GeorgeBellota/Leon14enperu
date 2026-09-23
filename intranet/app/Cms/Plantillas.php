@@ -528,6 +528,56 @@ final class Plantillas
                 ],
                 'datos'   => [],
             ],
+            /* ── Acreditación de prensa ──────────────────────────────
+               El editable de septiembre de 2026 parte lo que era UN texto en
+               varios trámites, cada uno con su estado. Y los estados cambian
+               solos con el calendario: lo que hoy es «proceso no habilitado»
+               en octubre será «habilitado», y al día siguiente del viaje
+               sobrará. Por eso cada trámite es un bloque: se añade, se quita,
+               se reordena y se apaga desde el panel, sin tocar la página.
+
+               El rótulo lleva DOS cosas separadas por una barra —la palabra
+               fija y el estado— porque así lo dibuja el editable: la primera
+               en dorado, el resto en gris. */
+            'prensa_acreditacion' => [
+                'nombre'  => 'Acreditación de prensa',
+                'ayuda'   => 'Un trámite por ficha. Cada uno lleva su estado, su titular, su '
+                           . 'explicación y su fotografía; van uno debajo de otro, separados '
+                           . 'por una línea. El titular de la sección no se pinta: manda el de '
+                           . 'cada ficha. · EN EL RÓTULO van dos cosas separadas por una barra: '
+                           . '«ACREDITACIÓN / PROCESO HABILITADO». La primera sale en dorado y '
+                           . 'la segunda en gris. · EN EL TEXTO se puede dar formato sin saber '
+                           . 'HTML: **entre dos asteriscos** sale en negrita, una línea que '
+                           . 'empiece por guion y espacio entra en la lista, una línea en blanco '
+                           . 'abre un párrafo nuevo y [así se escribe](contacto/) un enlace —el '
+                           . 'texto entre corchetes y el destino entre paréntesis—. Los correos '
+                           . 'se enlazan solos.',
+                'campos'  => ['rotulo', 'titulo', 'texto_html'],
+                'bloques' => [
+                    'nombre' => 'Trámite',
+                    'plural' => 'Trámites',
+                    'campos' => ['rotulo', 'titulo_lineas', 'texto', 'imagen', 'imagen_movil'],
+                    'datos'  => [
+                        'subtitulo' => [
+                            'etiqueta' => 'Subtítulo',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Opcional. La línea en dorado que va bajo el titular, como '
+                                        . '«Medios de Comunicación Nacionales e Internacionales». '
+                                        . 'Si la dejas vacía, no se pinta.',
+                        ],
+                        'foto' => [
+                            'etiqueta' => 'Dónde va la fotografía',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Vacío = a la derecha del texto, que es lo normal. Escribe '
+                                        . '«abajo» para ponerla ancha debajo, como en «Vuelo Papal». '
+                                        . 'Sin fotografía elegida no se pinta hueco ninguno.',
+                        ],
+                    ],
+                    'maximo' => 8,
+                ],
+                'datos'   => [],
+            ],
+
             'texto_lectura' => [
                 'nombre'  => 'Texto de lectura',
                 'ayuda'   => 'Un bloque de párrafos. Admite <p>, <strong> y enlaces.',

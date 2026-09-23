@@ -128,7 +128,11 @@ $e = static fn ($v) => View::e($v);
   <?php foreach ($def['datos'] ?? [] as $clave => $defDato): ?>
     <div class="campo">
       <label class="campo__etiqueta"><?= $e($defDato['etiqueta']) ?></label>
-      <textarea name="bloques[<?= $e($i) ?>][datos][<?= $e($clave) ?>]" rows="4"><?php
+      <?php /* Una caja de cuatro renglones para un campo de una línea —dónde va
+               la fotografía, un subtítulo— invita a escribir un párrafo donde
+               cabe una palabra. La altura la dice el tipo. */ ?>
+      <textarea name="bloques[<?= $e($i) ?>][datos][<?= $e($clave) ?>]"
+                rows="<?= $defDato['tipo'] === 'texto' ? 2 : 4 ?>"><?php
         /* El valor por defecto era un array vacío para todos los campos, no
            sólo para las listas. En un campo de texto sin rellenar, ese array
            se convertía a cadena: PHP avisaba —«Array to string conversion»— y
@@ -142,6 +146,12 @@ $e = static fn ($v) => View::e($v);
       ?></textarea>
       <?php if ($defDato['tipo'] === 'lista'): ?>
         <p class="campo__ayuda">Un elemento por línea.</p>
+      <?php elseif (($defDato['ayuda'] ?? '') !== ''): ?>
+        <?php /* La plantilla puede explicar para qué sirve el campo, igual que
+                 hace con los de la sección. Se declaraba y no se pintaba en
+                 ninguna parte, así que quien abría la ficha tenía que adivinar
+                 qué se escribe en «Dónde va la fotografía». */ ?>
+        <p class="campo__ayuda"><?= $defDato['ayuda'] /* la ayuda es texto nuestro, no del usuario */ ?></p>
       <?php endif; ?>
     </div>
   <?php endforeach; ?>

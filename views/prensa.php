@@ -62,6 +62,119 @@ $hay     = static fn (string $s): bool
 $hayContenido = $secciones !== [];
 $pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
 
+/* ── El texto de cada trámite ─────────────────────────────────────────────
+   El campo del panel es texto plano y así se queda: lo que llega de un
+   formulario no se imprime sin escapar. Se escapa PRIMERO y después se
+   destapan sólo las marcas que el editable necesita, ya escapadas, así que
+   del panel no puede salir ninguna otra etiqueta.
+
+     **negrita**         lo que el editable pone en semibold
+     [texto](destino)    un enlace, con la misma regla de destinos que los
+                         botones: «contacto/» cuelga de la raíz del sitio y
+                         lo de fuera se abre en otra pestaña
+     - al principio      una línea de la lista con guion
+     línea en blanco     un párrafo nuevo
+
+   Y los correos sueltos se enlazan solos. En esta página hay uno —el de la
+   Cancillería, que es a donde se manda la acreditación— y es justo lo que
+   el lector va a querer pulsar desde el teléfono. */
+$rico = static function (string $linea) use ($esc, $sitio): string {
+    $html = $esc($linea);
+
+    /* Primero los enlaces escritos, que son los únicos que traen destino. */
+    $html = (string) preg_replace_callback(
+        '/\[([^\]]+)\]\(([^)\s]+)\)/u',
+        static function (array $trozo) use ($sitio): string {
+            $adonde = $sitio->enlaceDelPanel(
+                html_entity_decode($trozo[2], ENT_QUOTES, 'UTF-8')
+            );
+
+            /* Sin destino no hay enlace, pero el texto no se pierde: se pinta
+               tal cual. Un enlace que no lleva a ninguna parte es peor que
+               una frase corriente. */
+            if ($adonde === '') {
+                return $trozo[1];
+            }
+
+            return '<a href="' . htmlspecialchars($adonde, ENT_QUOTES, 'UTF-8') . '"'
+                 . ($sitio->esExterno($adonde) ? ' target="_blank" rel="noopener noreferrer"' : '')
+                 . '>' . $trozo[1] . '</a>';
+        },
+        $html
+    ) ?: $html;
+
+    /* Después los correos sueltos. Van detrás de los enlaces escritos para no
+       volver a enlazar los que acaban de quedar dentro de un href o de un
+       rótulo: por eso se descartan los precedidos de «:» y de «>». */
+    $html = (string) preg_replace(
+        '/(?<![:>])\b([\w.+-]+@[\w-]+(?:\.[\w-]+)+)\b/u',
+        '<a href="mailto:$1">$1</a>',
+        $html
+    ) ?: $html;
+
+    /* Y la negrita al final, para que pueda envolver un enlace ya hecho: el
+       correo de la Cancillería va en semibold en el editable. */
+    return (string) preg_replace('/\*\*(.+?)\*\*/us', '<strong>$1</strong>', $html) ?: $html;
+};
+
+$cuerpo = static function (string $texto) use ($rico): string {
+    $texto = trim(str_replace(["\r\n", "\r"], "\n", $texto));
+
+    if ($texto === '') {
+        return '';
+    }
+
+    $html    = '';
+    $parrafo = [];
+    $lista   = [];
+
+    $volcar = static function (array &$parrafo, array &$lista, string &$html) use ($rico): void {
+        if ($parrafo !== []) {
+            $html   .= '<p>' . implode('<br>', array_map($rico, $parrafo)) . '</p>';
+            $parrafo = [];
+        }
+
+        if ($lista !== []) {
+            $html .= '<ul class="pr-tramite__items"><li>'
+                   . implode('</li><li>', array_map($rico, $lista))
+                   . '</li></ul>';
+            $lista = [];
+        }
+    };
+
+    foreach (explode("\n", $texto) as $linea) {
+        $linea = trim($linea);
+
+        if ($linea === '') {
+            $volcar($parrafo, $lista, $html);
+
+            continue;
+        }
+
+        /* Guion al principio —del teclado o tipográfico, que es lo que pega
+           un copiar y pegar desde Word— y la línea entra en la lista. */
+        if (preg_match('/^[-\x{2013}\x{2014}]\s+(.*)$/u', $linea, $trozo) === 1) {
+            if ($parrafo !== []) {
+                $volcar($parrafo, $lista, $html);
+            }
+
+            $lista[] = $trozo[1];
+
+            continue;
+        }
+
+        if ($lista !== []) {
+            $volcar($parrafo, $lista, $html);
+        }
+
+        $parrafo[] = $linea;
+    }
+
+    $volcar($parrafo, $lista, $html);
+
+    return $html;
+};
+
 /* ── Destinos que vienen del panel ────────────────────────────────────────
    En el panel los destinos se escriben cortos («contacto/»). Desde /prensa/
    un enlace relativo apuntaría a /prensa/contacto/, que no existe, así que
@@ -132,48 +245,115 @@ ob_start(); ?>
   <?php /* Todo el cuerpo va sobre la banda gris #E9E9E9 del editable. */ ?>
   <div class="pr-cuerpo">
 
+    <?php /* La fotografía que dibuja el editable para el primer trámite. Se
+             prepara aquí, fuera del bucle, porque dentro sólo la usa el
+             primero: los otros dos esperan a que alguien las suba. */ ?>
+    <?php ob_start(); ?>
+      <picture>
+        <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/prensa/p01.webp')) ?>" type="image/webp">
+        <img src="<?= $esc($sitio->asset('assets/img/rediseno/prensa/p01.jpg')) ?>"
+             alt="Una periodista consulta en su teléfono la página oficial de la visita del Papa León XIV"
+             width="1550" height="946" loading="lazy" decoding="async">
+      </picture>
+    <?php $respaldoFoto = (string) ob_get_clean(); ?>
+
     <?php /* ═════════════════════════════════════════════ ACREDITACIÓN ════
-         Texto a la izquierda y fotografía a la derecha. El rótulo es el
-         estado del trámite («PROCESO AÚN NO HABILITADO»): se edita en el
-         panel, que es donde habrá que cambiarlo el día que se abra. */ ?>
+         El editable de septiembre de 2026 parte lo que era UN texto en
+         varios trámites, uno debajo de otro y separados por una línea. Cada
+         uno lleva su estado en el rótulo, su titular, su explicación y su
+         fotografía, y es un bloque del panel: se añaden, se quitan, se
+         reordenan y se apagan sin tocar esta página.
+
+         Y falta hace, porque los estados caducan con el calendario. Lo que
+         hoy dice «proceso no habilitado» lo dirá habilitado en octubre, el
+         plazo del correo vence el 28 de septiembre y después del viaje
+         sobrarán los tres. Nada de esto debería necesitar un despliegue.
+
+         El respaldo de abajo no es adorno: si MySQL no responde no llega
+         ninguna sección, y la página tiene que salir igualmente con lo que
+         dibuja el editable. */ ?>
     <?php if ($pinta('como-acreditarse')): ?>
-    <section class="pr-acred" aria-labelledby="t-acreditacion">
-      <div class="pr-wrap pr-acred__grid">
+    <?php
+    $tramites = $bloques('como-acreditarse', [
+        [
+            'rotulo' => 'ACREDITACIÓN / PROCESO HABILITADO',
+            'titulo' => "Dirigido a la Prensa para la\nVisita del Santo Padre al Perú",
+            'datos'  => ['subtitulo' => 'Medios de Comunicación Nacionales e Internacionales'],
+            'texto'  => "El **Ministerio de Relaciones Exteriores** informa que ya se encuentra abierta la acreditación de medios de comunicación para la Visita Apostólica de Su Santidad el papa León XIV al Perú, la cual es válida para todo el territorio nacional.\n\nLos medios de comunicación interesados deberán enviar, **hasta el lunes 28 de septiembre a las 23:59 horas**, un correo electrónico a **prensa@rree.gob.pe** indicando:\n\n- Nombre completo\n- Tipo y número de documento de identidad\n- Teléfono celular\n- Dirección de correo electrónico de su coordinador de enlace",
+        ],
+        [
+            'rotulo' => 'ACREDITACIÓN / PROCESO HABILITADO',
+            'titulo' => 'Vuelo Papal',
+            'datos'  => ['foto' => 'abajo'],
+            'texto'  => "A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](#).",
+        ],
+        [
+            'rotulo' => 'ACREDITACIÓN / PROCESO NO HABILITADO',
+            'titulo' => "Señal oficial para\nmedios de comunicación",
+            'texto'  => "El **Instituto Nacional de Radio y Televisión del Perú (IRTP)** acreditará a los medios de comunicación que deseen acceder a la señal de transmisión de la visita del Santo Padre, del 11 al 16 de noviembre. La señal se proporcionará limpia, sin logotipos, banners, cintillos ni otros elementos gráficos.\n\nPara acceder a ella, cada medio deberá acreditarse y completar el formulario correspondiente, indicando las especificaciones técnicas que requiera. El enlace al formulario **estará disponible en la página del IRTP del 19 al 31 de octubre**.",
+        ],
+    ]);
+    ?>
+    <section class="pr-acred" aria-label="<?= $esc($campo('como-acreditarse', 'titulo', 'Acreditación')) ?>">
+      <div class="pr-wrap">
+        <?php /* El editable no dibuja entradilla para esta banda, pero la
+                 plantilla del panel ofrece el campo. Si alguien escribe ahí,
+                 se pinta; sin texto no ocupa nada. Lo que NO puede pasar es
+                 que se escriba y desaparezca sin avisar. */ ?>
+        <?php $entradaAcred = $campo('como-acreditarse', 'texto', ''); ?>
+        <?php if ($entradaAcred !== ''): ?>
+          <div class="pr-acred__lead"><?= $entradaAcred ?></div>
+        <?php endif; ?>
 
-        <div class="pr-acred__texto">
-          <?php $estado = $campo('como-acreditarse', 'rotulo', 'PROCESO AÚN NO HABILITADO'); ?>
-          <?php if ($estado !== ''): ?>
-            <p class="pr-acred__kicker"><?= $esc($estado) ?></p>
-          <?php endif; ?>
-
-          <h2 class="pr-h2" id="t-acreditacion"><?= $esc($campo('como-acreditarse', 'titulo', 'Acreditación')) ?></h2>
-
+        <?php foreach ($tramites as $n => $tramite): ?>
           <?php
-          /* Campo con formato: admite <p>, <strong> y <br>, ya limpiados por
-             HtmlSeguro al guardarse. Los <br> del respaldo clavan el corte de
-             línea del editable; por debajo de 1024 px la hoja los oculta y el
-             texto vuelve a fluir. */
-          $copia = $campo('como-acreditarse', 'texto', '');
+          /* `datos` llega como texto JSON desde MySQL y ya como arreglo
+             cuando es el respaldo de aquí arriba. */
+          $suyos = $tramite['datos'] ?? null;
+          $suyos = is_string($suyos) ? json_decode($suyos, true) : $suyos;
+          $suyos = is_array($suyos) ? $suyos : [];
+
+          $abajo     = strcasecmp(trim((string) ($suyos['foto'] ?? '')), 'abajo') === 0;
+          $subtitulo = trim((string) ($suyos['subtitulo'] ?? ''));
+
+          /* El rótulo trae dos cosas separadas por una barra: la palabra fija
+             en dorado y el estado del trámite en gris. Si alguien escribe uno
+             sin barra, se pinta entero en dorado y ya está. */
+          $piezas = preg_split('~\s*/\s*~u', trim((string) ($tramite['rotulo'] ?? '')), 2);
+          $piezas = $piezas ?: [''];
+
+          /* La fotografía es opcional: la del editable sólo existe para el
+             primer trámite, y los otros dos esperan a que alguien las suba
+             desde el panel. Sin foto, el texto se queda con todo el ancho en
+             lugar de dejar un hueco gris. */
+          $foto = $sitio->imagen($tramite, $n === 0 ? $respaldoFoto : '', [
+              'sizes' => $abajo ? '(min-width:1024px) 85vw, 100vw' : '(min-width:1024px) 42vw, 100vw',
+          ]);
           ?>
-          <?php if ($copia !== ''): ?>
-            <div class="pr-acred__copy"><?= $copia ?></div>
-          <?php else: ?>
-            <p class="pr-acred__copy">El <strong>Ministerio de Relaciones <br>Exteriores</strong> estará a cargo <br>del proceso de acreditación <br>de prensa. La fecha de inicio <br>y los requisitos se <br><strong>comunicarán <br>oportunamente a través de <br>los canales oficiales: </strong>página <br>web de la Cancillería y la <br>web oficial de la visita del <br>Papa León XIV.</p>
-          <?php endif; ?>
-        </div>
+          <article class="pr-tramite<?= $abajo ? ' pr-tramite--abajo' : '' ?><?= $foto === '' ? ' pr-tramite--sinfoto' : '' ?>">
 
-        <figure class="pr-acred__foto">
-          <?php ob_start(); ?>
-          <picture>
-            <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/prensa/p01.webp')) ?>" type="image/webp">
-            <img src="<?= $esc($sitio->asset('assets/img/rediseno/prensa/p01.jpg')) ?>"
-                 alt="Una periodista consulta en su teléfono la página oficial de la visita del Papa León XIV"
-                 width="1550" height="946" loading="lazy" decoding="async">
-          </picture>
-          <?php $respaldoFoto = (string) ob_get_clean(); ?>
-          <?= $sitio->imagen($secciones['como-acreditarse'] ?? [], $respaldoFoto, ['sizes' => '(min-width:1024px) 54vw, 100vw']) ?>
-        </figure>
+            <div class="pr-tramite__texto">
+              <?php if ($piezas[0] !== ''): ?>
+                <p class="pr-tramite__kicker">
+                  <b><?= $esc($piezas[0]) ?></b><?php if (isset($piezas[1]) && $piezas[1] !== ''): ?> / <span><?= $esc($piezas[1]) ?></span><?php endif; ?>
+                </p>
+              <?php endif; ?>
 
+              <h2 class="pr-tramite__h"><?= nl2br($esc((string) ($tramite['titulo'] ?? ''))) ?></h2>
+
+              <?php if ($subtitulo !== ''): ?>
+                <p class="pr-tramite__sub"><?= $esc($subtitulo) ?></p>
+              <?php endif; ?>
+
+              <div class="pr-tramite__copy"><?= $cuerpo((string) ($tramite['texto'] ?? '')) ?></div>
+            </div>
+
+            <?php if ($foto !== ''): ?>
+              <figure class="pr-tramite__foto"><?= $foto ?></figure>
+            <?php endif; ?>
+
+          </article>
+        <?php endforeach; ?>
       </div>
     </section>
     <?php endif; ?>
