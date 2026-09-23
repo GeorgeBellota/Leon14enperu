@@ -285,7 +285,7 @@ ob_start(); ?>
             'rotulo' => 'ACREDITACIÓN / PROCESO HABILITADO',
             'titulo' => 'Vuelo Papal',
             'datos'  => ['foto' => 'abajo'],
-            'texto'  => "A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](#).",
+            'texto'  => "A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](https://press.vatican.va/content/salastampa/es/accrediti/pubblico/accredito.html).",
         ],
         [
             'rotulo' => 'ACREDITACIÓN / PROCESO NO HABILITADO',

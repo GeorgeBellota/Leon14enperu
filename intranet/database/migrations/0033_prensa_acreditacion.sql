@@ -27,15 +27,18 @@
 --
 --  ── Lo que hay que rellenar a mano después ───────────────────────────────
 --
---    · El destino de «inscríbete aquí» en el Vuelo Papal. El PDF de la Santa
---      Sede dice «inscríbete aquí» pero no da la dirección, así que queda
---      escrito como [inscríbete aquí](#) y no lleva a ninguna parte. Se
---      cambia el «#» por la dirección buena en Páginas → Prensa →
---      Acreditación → Vuelo Papal.
 --    · Las fotografías del segundo y el tercer trámite —el avión y la sala de
 --      control—, que no están en el repositorio. Se suben desde el panel, en
 --      el campo «Imagen» de cada bloque. Sin ellas el texto ocupa el ancho
 --      entero, que se ve bien; no queda ningún hueco gris.
+--
+--  «Inscríbete aquí», en el Vuelo Papal, apunta al sistema de acreditación de
+--  la Oficina de Prensa de la Santa Sede:
+--
+--    https://press.vatican.va/content/salastampa/es/accrediti/pubblico/accredito.html
+--
+--  Es de fuera, así que se abre en otra pestaña. Si cambia, se cambia desde el
+--  panel: está escrito dentro del texto del bloque, no en el código.
 --
 --  ── Qué NO toca ──────────────────────────────────────────────────────────
 --
@@ -79,7 +82,7 @@ FROM (
   SELECT 20 AS orden,
          'ACREDITACIÓN / PROCESO HABILITADO' AS rotulo,
          'Vuelo Papal' AS titulo,
-         'A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](#).' AS texto,
+         'A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](https://press.vatican.va/content/salastampa/es/accrediti/pubblico/accredito.html).' AS texto,
          '{"foto": "abajo"}' AS datos
   UNION ALL
   SELECT 30 AS orden,
