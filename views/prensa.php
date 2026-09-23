@@ -62,6 +62,32 @@ $hay     = static fn (string $s): bool
 $hayContenido = $secciones !== [];
 $pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
 
+/* ── Todo enlace de Prensa abre en otra pestaña ───────────────────────────
+   Lo pidió el cliente, y en una página de prensa se defiende: quien la lee
+   está recogiendo destinos —la acreditación de la Santa Sede, el programa,
+   el formulario del IRTP— y no quiere perder de vista la página de la que
+   los saca. En otra página no lo haría: sacar al visitante de su pestaña
+   sin avisarle va contra lo que espera.
+
+   Vive aquí, en un solo sitio, para que sea UNA regla y no cinco repetidas:
+   la usan los enlaces escritos en el texto de los trámites, los titulares de
+   «Uso de imágenes y del escudo» y los botones del pie.
+
+   Se quedan fuera «mailto:» y «tel:»: ahí no se abre una página sino el
+   programa de correo o el marcador del teléfono, y de propina una pestaña
+   en blanco que el visitante tiene que cerrar.
+
+   El «noreferrer» sólo va en los destinos de fuera. Añadirlo a un enlace de
+   este mismo sitio le esconde a la web de dónde viene su propia visita. */
+$nuevaPestana = static function (string $destino) use ($sitio): string {
+    if (preg_match('~^(?:mailto|tel):~i', $destino) === 1) {
+        return '';
+    }
+
+    return ' target="_blank" rel="noopener'
+         . ($sitio->esExterno($destino) ? ' noreferrer' : '') . '"';
+};
+
 /* ── El texto de cada trámite ─────────────────────────────────────────────
    El campo del panel es texto plano y así se queda: lo que llega de un
    formulario no se imprime sin escapar. Se escapa PRIMERO y después se
@@ -78,13 +104,13 @@ $pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
    Y los correos sueltos se enlazan solos. En esta página hay uno —el de la
    Cancillería, que es a donde se manda la acreditación— y es justo lo que
    el lector va a querer pulsar desde el teléfono. */
-$rico = static function (string $linea) use ($esc, $sitio): string {
+$rico = static function (string $linea) use ($esc, $sitio, $nuevaPestana): string {
     $html = $esc($linea);
 
     /* Primero los enlaces escritos, que son los únicos que traen destino. */
     $html = (string) preg_replace_callback(
         '/\[([^\]]+)\]\(([^)\s]+)\)/u',
-        static function (array $trozo) use ($sitio): string {
+        static function (array $trozo) use ($sitio, $nuevaPestana): string {
             $adonde = $sitio->enlaceDelPanel(
                 html_entity_decode($trozo[2], ENT_QUOTES, 'UTF-8')
             );
@@ -97,7 +123,7 @@ $rico = static function (string $linea) use ($esc, $sitio): string {
             }
 
             return '<a href="' . htmlspecialchars($adonde, ENT_QUOTES, 'UTF-8') . '"'
-                 . ($sitio->esExterno($adonde) ? ' target="_blank" rel="noopener noreferrer"' : '')
+                 . $nuevaPestana($adonde)
                  . '>' . $trozo[1] . '</a>';
         },
         $html
@@ -278,22 +304,28 @@ ob_start(); ?>
         [
             'rotulo' => 'ACREDITACIÓN / PROCESO HABILITADO',
             'titulo' => "Dirigido a la Prensa para la\nVisita del Santo Padre al Perú",
-            'datos'  => ['subtitulo' => 'Medios de Comunicación Nacionales e Internacionales'],
+            'datos'  => ['ancla' => 'acreditacion-medios', 'subtitulo' => 'Medios de Comunicación Nacionales e Internacionales'],
             'texto'  => "El **Ministerio de Relaciones Exteriores** informa que ya se encuentra abierta la acreditación de medios de comunicación para la Visita Apostólica de Su Santidad el papa León XIV al Perú, la cual es válida para todo el territorio nacional.\n\nLos medios de comunicación interesados deberán enviar, **hasta el lunes 28 de septiembre a las 23:59 horas**, un correo electrónico a **prensa@rree.gob.pe** indicando:\n\n- Nombre completo\n- Tipo y número de documento de identidad\n- Teléfono celular\n- Dirección de correo electrónico de su coordinador de enlace",
         ],
         [
             'rotulo' => 'ACREDITACIÓN / PROCESO HABILITADO',
             'titulo' => 'Vuelo Papal',
-            'datos'  => ['foto' => 'abajo'],
+            'datos'  => ['ancla' => 'vuelo-papal', 'foto' => 'abajo'],
             'texto'  => "A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](https://press.vatican.va/content/salastampa/es/accrediti/pubblico/accredito.html).",
         ],
         [
             'rotulo' => 'ACREDITACIÓN / PROCESO NO HABILITADO',
             'titulo' => "Señal oficial para\nmedios de comunicación",
+            'datos'  => ['ancla' => 'senal-oficial'],
             'texto'  => "El **Instituto Nacional de Radio y Televisión del Perú (IRTP)** acreditará a los medios de comunicación que deseen acceder a la señal de transmisión de la visita del Santo Padre, del 11 al 16 de noviembre. La señal se proporcionará limpia, sin logotipos, banners, cintillos ni otros elementos gráficos.\n\nPara acceder a ella, cada medio deberá acreditarse y completar el formulario correspondiente, indicando las especificaciones técnicas que requiera. El enlace al formulario **estará disponible en la página del IRTP del 19 al 31 de octubre**.",
         ],
     ]);
     ?>
+    <?php /* Las anclas que ya se han repartido. Dos trámites con el mismo
+             titular darían el mismo id calculado, y un id repetido hace que
+             el salto lleve siempre al primero. Al segundo se le añade un
+             número. */ ?>
+    <?php $anclasDadas = []; ?>
     <section class="pr-acred" aria-label="<?= $esc($campo('como-acreditarse', 'titulo', 'Acreditación')) ?>">
       <div class="pr-wrap">
         <?php /* El editable no dibuja entradilla para esta banda, pero la
@@ -316,6 +348,34 @@ ob_start(); ?>
           $abajo     = strcasecmp(trim((string) ($suyos['foto'] ?? '')), 'abajo') === 0;
           $subtitulo = trim((string) ($suyos['subtitulo'] ?? ''));
 
+          /* ── El ancla con la que se entra desde fuera ──────────────────
+             Manda la que se escriba en el panel. Si está vacía se calcula
+             del titular, que da anclas legibles sin pedir nada a nadie;
+             pero entonces cambia con el titular, y un banner que apuntara
+             aquí dejaría de funcionar sin que nadie se entere. Por eso la
+             ayuda del panel pide escribirla en cuanto algo enlace.
+
+             Ojo con Slug::normalizar(): a una cadena vacía le responde
+             «pieza», no vacío. Por eso se mira el texto ANTES de
+             normalizarlo; si no, los tres trámites salían con las anclas
+             «pieza», «pieza-2» y «pieza-3». */
+          $escrita = trim((string) ($suyos['ancla'] ?? ''));
+          $deTitulo = trim((string) ($tramite['titulo'] ?? ''));
+
+          $ancla = $escrita !== '' ? \Intranet\Cms\Slug::normalizar($escrita)
+                 : ($deTitulo !== '' ? \Intranet\Cms\Slug::normalizar($deTitulo) : '');
+
+          if ($ancla !== '') {
+              $base = $ancla;
+              $n2   = 2;
+
+              while (isset($anclasDadas[$ancla])) {
+                  $ancla = $base . '-' . $n2++;
+              }
+
+              $anclasDadas[$ancla] = true;
+          }
+
           /* El rótulo trae dos cosas separadas por una barra: la palabra fija
              en dorado y el estado del trámite en gris. Si alguien escribe uno
              sin barra, se pinta entero en dorado y ya está. */
@@ -330,7 +390,7 @@ ob_start(); ?>
               'sizes' => $abajo ? '(min-width:1024px) 85vw, 100vw' : '(min-width:1024px) 42vw, 100vw',
           ]);
           ?>
-          <article class="pr-tramite<?= $abajo ? ' pr-tramite--abajo' : '' ?><?= $foto === '' ? ' pr-tramite--sinfoto' : '' ?>">
+          <article<?= $ancla !== '' ? ' id="' . $esc($ancla) . '"' : '' ?> class="pr-tramite<?= $abajo ? ' pr-tramite--abajo' : '' ?><?= $foto === '' ? ' pr-tramite--sinfoto' : '' ?>">
 
             <?php /* La cabecera ocupa TODO el ancho, no la columna del texto.
                      No es un capricho de maqueta: «Visita del Santo Padre al
@@ -405,7 +465,7 @@ ob_start(); ?>
             <div class="datalist__row">
               <dt class="datalist__key">
                 <?php if ($destinoAp !== ''): ?>
-                  <a href="<?= $esc($destinoAp) ?>"<?= $sitio->esExterno($destinoAp) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>><?= $esc((string) ($apartado['titulo'] ?? '')) ?></a>
+                  <a href="<?= $esc($destinoAp) ?>"<?= $nuevaPestana($destinoAp) ?>><?= $esc((string) ($apartado['titulo'] ?? '')) ?></a>
                 <?php else: ?>
                   <?= $esc((string) ($apartado['titulo'] ?? '')) ?>
                 <?php endif; ?>
@@ -469,7 +529,7 @@ ob_start(); ?>
           $conIcono   = is_array($datosBoton)
               && strcasecmp(trim((string) ($datosBoton['icono'] ?? '')), 'descarga') === 0;
           ?>
-          <a class="btn pr-cta__btn<?= $conIcono ? ' pr-cta__btn--descarga' : '' ?>" href="<?= $esc($destino) ?>"<?= $sitio->esExterno($destino) ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>
+          <a class="btn pr-cta__btn<?= $conIcono ? ' pr-cta__btn--descarga' : '' ?>" href="<?= $esc($destino) ?>"<?= $nuevaPestana($destino) ?>>
             <?php if ($conIcono): ?>
               <svg class="ico-baja" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M12 1.2v16.6M7.4 13.2 12 17.8l4.6-4.6" fill="none" stroke="currentColor"

@@ -113,6 +113,20 @@
   border-top:1px solid #A1A1A1;
 }
 
+/* ── Dónde se para la página al entrar por un ancla ─────────────────────
+   Cada trámite lleva su id para que un banner pueda apuntar a
+   «/prensa/#vuelo-papal».
+
+   Esto es SÓLO el aire de más. El sistema ya pone «scroll-padding-top:90px»
+   en el html y con eso la cabecera pegajosa —76 px, 70 en teléfono— queda
+   fuera; lo que falta es que el bloque no empiece pegado a ella. Y los dos
+   valores SE SUMAN: puestos los 124 que parecían hacer falta, el salto
+   dejaba el rótulo a 263 px del borde y el trámite caía a media pantalla.
+
+   Va en píxeles y no en unidades porque la cabecera tampoco encoge con la
+   pantalla: con «--u» el aire se evaporaba justo donde más falta hace. */
+.pr-tramite{scroll-margin-top:32px}
+
 .pr-tramite__cab{margin-left:calc(2 * var(--u))}
 
 /* El rótulo lleva dos tonos: la palabra fija en dorado y el estado en gris.
@@ -392,6 +406,10 @@
   .pr-tramite+.pr-tramite{
     margin-top:clamp(30px,4.4vw,48px);padding-top:clamp(28px,4vw,44px);
   }
+  /* En teléfono un poco más: la pantalla es corta y el bloque pegado al
+     borde de arriba no se lee como un principio, se lee como que llegaste
+     tarde. */
+  .pr-tramite{scroll-margin-top:44px}
   .pr-tramite__cab{margin-left:0}
   .pr-tramite__cab::after{
     width:clamp(52px,7vw,78px);height:4px;

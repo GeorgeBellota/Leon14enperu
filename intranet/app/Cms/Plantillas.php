@@ -565,6 +565,17 @@ final class Plantillas
                                         . '«Medios de Comunicación Nacionales e Internacionales». '
                                         . 'Si la dejas vacía, no se pinta.',
                         ],
+                        'ancla' => [
+                            'etiqueta' => 'Nombre del ancla',
+                            'tipo'     => 'texto',
+                            'ayuda'    => 'Para enlazar desde fuera directamente a este trámite: '
+                                        . 'con «vuelo-papal» aquí, la dirección «/prensa/#vuelo-papal» '
+                                        . 'abre la página ya colocada en él. Es lo que usan los '
+                                        . 'banners. Sólo minúsculas, números y guiones. Si lo dejas '
+                                        . 'vacío se calcula del titular, pero entonces cambia si '
+                                        . 'cambias el titular, y los enlaces que ya hubiera dejarían '
+                                        . 'de funcionar: cuando un banner apunte aquí, escríbelo.',
+                        ],
                         'foto' => [
                             'etiqueta' => 'Dónde va la fotografía',
                             'tipo'     => 'texto',

@@ -25,6 +25,17 @@
 --  para que el panel ofrezca los campos de cada trámite: el estado, el titular
 --  con sus renglones, el subtítulo dorado, la fotografía y dónde va.
 --
+--  ── Las anclas, para enlazar desde un banner ─────────────────────────────
+--
+--    /prensa/#acreditacion-medios    el primero
+--    /prensa/#vuelo-papal            el segundo
+--    /prensa/#senal-oficial          el tercero
+--
+--  Van escritas a mano y no calculadas del titular a propósito: calculadas
+--  cambiarían el día que alguien retoque el titular, y el banner dejaría de
+--  funcionar sin que nadie se entere. Se editan en el panel, campo «Nombre
+--  del ancla» de cada ficha.
+--
 --  ── Lo que hay que rellenar a mano después ───────────────────────────────
 --
 --    · Las fotografías del segundo y el tercer trámite —el avión y la sala de
@@ -77,18 +88,18 @@ FROM (
          'ACREDITACIÓN / PROCESO HABILITADO' AS rotulo,
          'Dirigido a la Prensa para la\nVisita del Santo Padre al Perú' AS titulo,
          'El **Ministerio de Relaciones Exteriores** informa que ya se encuentra abierta la acreditación de medios de comunicación para la Visita Apostólica de Su Santidad el papa León XIV al Perú, la cual es válida para todo el territorio nacional.\n\nLos medios de comunicación interesados deberán enviar, **hasta el lunes 28 de septiembre a las 23:59 horas**, un correo electrónico a **prensa@rree.gob.pe** indicando:\n\n- Nombre completo\n- Tipo y número de documento de identidad\n- Teléfono celular\n- Dirección de correo electrónico de su coordinador de enlace' AS texto,
-         '{"subtitulo": "Medios de Comunicación Nacionales e Internacionales"}' AS datos
+         '{"ancla": "acreditacion-medios", "subtitulo": "Medios de Comunicación Nacionales e Internacionales"}' AS datos
   UNION ALL
   SELECT 20 AS orden,
          'ACREDITACIÓN / PROCESO HABILITADO' AS rotulo,
          'Vuelo Papal' AS titulo,
          'A los periodistas que deseen acreditarse **para hacer todo el recorrido del Viaje Apostólico de Su Santidad el Papa León XIV a Uruguay, Argentina y Perú**.\n\nEsta acreditación se solicita a la Oficina de Prensa correspondiente, a través de un sistema de acreditación online.\n\nPara más información [inscríbete aquí](https://press.vatican.va/content/salastampa/es/accrediti/pubblico/accredito.html).' AS texto,
-         '{"foto": "abajo"}' AS datos
+         '{"ancla": "vuelo-papal", "foto": "abajo"}' AS datos
   UNION ALL
   SELECT 30 AS orden,
          'ACREDITACIÓN / PROCESO NO HABILITADO' AS rotulo,
          'Señal oficial para\nmedios de comunicación' AS titulo,
          'El **Instituto Nacional de Radio y Televisión del Perú (IRTP)** acreditará a los medios de comunicación que deseen acceder a la señal de transmisión de la visita del Santo Padre, del 11 al 16 de noviembre. La señal se proporcionará limpia, sin logotipos, banners, cintillos ni otros elementos gráficos.\n\nPara acceder a ella, cada medio deberá acreditarse y completar el formulario correspondiente, indicando las especificaciones técnicas que requiera. El enlace al formulario **estará disponible en la página del IRTP del 19 al 31 de octubre**.' AS texto,
-         '{}' AS datos
+         '{"ancla": "senal-oficial"}' AS datos
 ) AS v
 WHERE @sec IS NOT NULL;
