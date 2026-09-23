@@ -17,6 +17,7 @@ namespace Intranet\Controllers;
 use Intranet\Core\Auditoria;
 use Intranet\Core\Controller;
 use Intranet\Core\ErrorDeNegocio;
+use Intranet\Core\Favicon;
 use Intranet\Core\Logotipo;
 use Intranet\Core\Request;
 use Intranet\Models\Ajuste;
@@ -122,6 +123,11 @@ final class ConfiguracionController extends Controller
             // El logotipo se pregunta al disco, no a un ajuste: así, si alguien
             // lo borra por FTP, el panel enseña la verdad y no un recuerdo.
             'logotipo'  => (new Logotipo())->actual(),
+
+            /* El icono de la pestaña, que es cosa aparte del logotipo: uno se
+               ve dentro de la página y el otro fuera, a 16 píxeles. Igual que
+               el logotipo, se pregunta al disco y no a un ajuste. */
+            'favicon'   => (new Favicon())->actual(),
             'rutaSitio' => rtrim((string) $this->c->config('url.sitio', ''), '/') . '/',
         ]);
     }
@@ -221,6 +227,25 @@ final class ConfiguracionController extends Controller
         } elseif ($peticion->texto('logotipo_borrar', '') !== '') {
             $logotipo->borrar();
             $cambioLogo = 'retirado';
+        }
+
+        // ── Favicon ─────────────────────────────────────────────────────
+        // Mismo trato y por el mismo motivo: si el icono se rechaza, el envío
+        // se corta con su motivo antes de escribir nada.
+        $favicon = new Favicon();
+        $cambioFavicon = 'sin cambios';
+
+        $iconoSubido = $_FILES['favicon'] ?? null;
+
+        if (is_array($iconoSubido) && (int) ($iconoSubido['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            try {
+                $cambioFavicon = 'nuevo: ' . $favicon->guardar($iconoSubido);
+            } catch (ErrorDeNegocio $e) {
+                $this->conError($e->getMessage(), '/configuracion');
+            }
+        } elseif ($peticion->texto('favicon_borrar', '') !== '') {
+            $favicon->borrar();
+            $cambioFavicon = 'retirado';
         }
 
         /* ── Medición ──────────────────────────────────────────────────────
@@ -345,6 +370,7 @@ final class ConfiguracionController extends Controller
             'viaje_fin'     => $finViaje,
             'fase'          => $fase,
             'logotipo'      => $cambioLogo,
+            'favicon'       => $cambioFavicon,
         ]);
 
         $this->conExito('Configuración guardada. Los cambios ya se ven en la web.', '/configuracion');

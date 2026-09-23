@@ -335,6 +335,57 @@ $estaVisible = static fn (string $clave): bool => in_array($clave, $visibles, tr
     </div>
   </section>
 
+  <?php /* ── Icono de la pestaña ─────────────────────────────────────────
+           Tarjeta aparte del logotipo a propósito: son dos decisiones
+           distintas. El logotipo se ve dentro de la página y puede llevar
+           letra; el icono se ve fuera, en la pestaña, a 16 píxeles, donde
+           una palabra es una mancha. Cambiar uno no cambia el otro. */ ?>
+  <section class="tarjeta sep-l">
+    <h2 class="tarjeta__titulo">Icono de la pestaña</h2>
+    <p class="campo__ayuda">
+      El dibujito que sale en la pestaña del navegador, en los marcadores y en
+      el acceso directo del teléfono. Si no subes ninguno se usa el que trae el
+      sitio: una <strong>cruz latina sobre campo rojo</strong>.
+    </p>
+
+    <?php if ($favicon !== null): ?>
+      <div class="logotipo-actual sep-m">
+        <img src="<?= $e($rutaSitio . $favicon) ?>" alt="Icono actual"
+             style="width:48px;height:48px;object-fit:contain;background:#FFF;border:1px solid #D8D8D8;border-radius:6px;padding:4px">
+        <label class="opcion sep-s">
+          <input type="checkbox" name="favicon_borrar" value="1">
+          <span>
+            <strong>Quitar el icono</strong>
+            <span class="opcion__nota">Vuelve el que trae el sitio, la cruz sobre campo rojo.</span>
+          </span>
+        </label>
+      </div>
+    <?php endif; ?>
+
+    <div class="campo sep-m">
+      <label class="campo__etiqueta" for="favicon">
+        <?= $favicon !== null ? 'Sustituir por otro icono' : 'Subir un icono' ?>
+      </label>
+      <input type="file" id="favicon" name="favicon"
+             accept="image/svg+xml,image/png,image/x-icon,image/vnd.microsoft.icon,image/webp">
+      <p class="campo__ayuda">
+        SVG, PNG, ICO o WEBP, hasta 512 KB. Lo mejor es un <strong>SVG</strong>,
+        que se ve nítido a cualquier tamaño; si no, un PNG cuadrado de 512 × 512
+        con fondo transparente.
+      </p>
+      <p class="campo__ayuda">
+        <strong>Que se lea a 16 píxeles</strong>, que es el tamaño al que se ve de
+        verdad. Una forma sencilla funciona; un logotipo con letra pequeña se
+        convierte en una mancha.
+      </p>
+      <p class="campo__ayuda campo__ayuda--aviso">
+        No uses el escudo pontificio ni sus elementos: son símbolos heráldicos del
+        Santo Padre y su uso no está aprobado. Es lo mismo que esta web le pide a
+        los medios en la página de Prensa.
+      </p>
+    </div>
+  </section>
+
   <!-- ── Correo del formulario de contacto ── -->
   <section class="tarjeta sep-l">
     <header class="tarjeta__cabecera"><h2>Correo de contacto</h2></header>

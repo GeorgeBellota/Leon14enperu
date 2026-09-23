@@ -102,8 +102,28 @@ if ($vistaActual !== '') {
 <meta name="twitter:image" content="<?= $esc($sitio->url($ogImagen)) ?>">
 <meta name="theme-color" content="#6E0B14">
 
-<link rel="icon" href="<?= $esc($sitio->asset('favicon.svg')) ?>" type="image/svg+xml">
-<link rel="apple-touch-icon" href="<?= $esc($sitio->asset('favicon.svg')) ?>">
+<?php /* ── El icono de la pestaña ──────────────────────────────────────────
+         Se puede cambiar desde Configuración → Icono de la pestaña. Mientras
+         no haya ninguno subido se sirve el favicon.svg de la raíz, que dibuja
+         una cruz latina sobre campo rojo; ese archivo lleva dentro por qué no
+         lleva el escudo pontificio.
+
+         Se pregunta al DISCO, no a un ajuste guardado: si alguien borra el
+         archivo por FTP, la web vuelve sola al de la raíz en lugar de pintar
+         un icono roto en todas las páginas.
+
+         El «apple-touch-icon» no admite SVG —iOS lo ignora y pone una captura
+         de la página en su lugar—, así que sólo se declara cuando el icono
+         subido es de píxeles. */ ?>
+<?php
+$iconoSubido = (new \Intranet\Core\Favicon())->actual();
+$icono       = $iconoSubido ?? 'favicon.svg';
+$iconoMime   = \Intranet\Core\Favicon::mime($icono);
+?>
+<link rel="icon" href="<?= $esc($sitio->asset($icono)) ?>" type="<?= $esc($iconoMime) ?>">
+<?php if ($iconoSubido !== null && $iconoMime !== 'image/svg+xml'): ?>
+  <link rel="apple-touch-icon" href="<?= $esc($sitio->asset($iconoSubido)) ?>">
+<?php endif; ?>
 
 <?php /* Las dos familias que aparecen en cada página: se precargan para que el
          titular y el texto no parpadeen. Las demás variantes las pide el CSS

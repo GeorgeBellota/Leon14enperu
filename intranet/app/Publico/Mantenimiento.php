@@ -178,11 +178,18 @@ final class Mantenimiento
 
         $sitio = rtrim((string) $this->c->config('url.sitio', ''), '/');
 
+        /* El mismo icono que el resto del sitio. Esta pantalla se arma a mano,
+           sin la plantilla, así que hay que preguntarlo aquí también: si no,
+           quien cambiara el icono desde el panel lo vería cambiado en todas
+           partes menos justo cuando la web está en mantenimiento. */
+        $icono = (new \Intranet\Core\Favicon())->actual() ?? 'favicon.svg';
+
         echo '<!doctype html><html lang="es"><head><meta charset="utf-8">'
            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
            . '<meta name="robots" content="noindex">'
            . '<title>' . $e($titulo) . ' · León XIV en el Perú</title>'
-           . '<link rel="icon" href="' . $e($sitio) . '/favicon.svg" type="image/svg+xml">'
+           . '<link rel="icon" href="' . $e($sitio . '/' . $icono) . '" type="'
+           . $e(\Intranet\Core\Favicon::mime($icono)) . '">'
            . '<link rel="preconnect" href="https://fonts.googleapis.com">'
            . '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
            . '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400&display=swap">'
