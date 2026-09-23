@@ -104,24 +104,16 @@
 }
 .pr-acred__lead p+p{margin-top:1em}
 
-.pr-tramite{
-  display:grid;grid-template-columns:calc(620 * var(--u)) minmax(0,1fr);
-  column-gap:calc(28 * var(--u));align-items:start;
-}
-/* El filete que separa un trámite del siguiente. En el primero no va: encima
-   sólo tiene el héroe. */
+/* Cada trámite: la cabecera a todo el ancho y, debajo, el cuerpo en dos
+   columnas. La cabecera no cabe en la columna del texto —«Visita del Santo
+   Padre al Perú» pide unos 900 px y la columna mide 620—, y en el editable
+   tampoco está ahí: manda de lado a lado y el filete dorado la cierra. */
 .pr-tramite+.pr-tramite{
   margin-top:calc(54 * var(--u));padding-top:calc(48 * var(--u));
   border-top:1px solid #A1A1A1;
 }
-/* Fotografía ancha debajo del texto. El texto pasa a ocupar las dos columnas
-   y la fotografía se cuelga de la fila siguiente. */
-.pr-tramite--abajo{grid-template-columns:minmax(0,1fr);row-gap:calc(30 * var(--u))}
-/* Y sin fotografía elegida no se deja hueco: el texto se queda con el ancho
-   entero en lugar de con media página en gris. */
-.pr-tramite--sinfoto{grid-template-columns:minmax(0,1fr)}
 
-.pr-tramite__texto{margin-left:calc(2 * var(--u))}
+.pr-tramite__cab{margin-left:calc(2 * var(--u))}
 
 /* El rótulo lleva dos tonos: la palabra fija en dorado y el estado en gris.
    Se parte por la barra en la vista, así que aquí sólo hay que pintarlos. */
@@ -132,22 +124,40 @@
 .pr-tramite__kicker b{color:#E49E15;font-weight:600}
 
 .pr-tramite__h{
-  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(38 * var(--u));
-  line-height:calc(44 * var(--u));color:#1C1416;
-  margin-top:calc(11 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(56 * var(--u));
+  line-height:calc(64 * var(--u));color:#1C1416;
+  margin-top:calc(10 * var(--u));
 }
-/* El subtítulo dorado, que sólo lleva el primer trámite. El editable lo pone
-   en un renglón: «Medios de Comunicación Nacionales e Internacionales» pide
-   604 px de los 618 de la columna, así que entra justo. Si alguien escribe
-   uno más largo pasa a dos renglones, que también se lee. */
+/* El subtítulo dorado, que sólo lleva el primer trámite. A todo el ancho entra
+   en un renglón de sobra; si alguien escribe uno muy largo, pasa a dos. */
 .pr-tramite__sub{
-  margin-top:calc(6 * var(--u));
-  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(22 * var(--u));
-  line-height:calc(27 * var(--u));color:#E49E15;
+  margin-top:calc(1 * var(--u));
+  font-family:"Neulis",sans-serif;font-weight:700;font-size:calc(31 * var(--u));
+  line-height:calc(37 * var(--u));color:#E49E15;
+}
+/* El mismo filete dorado que cierra los titulares de sección, con sus
+   medidas: cierra la cabecera y separa del cuerpo. */
+.pr-tramite__cab::after{
+  content:"";display:block;
+  width:calc(79.4 * var(--u));height:calc(5 * var(--u));background:#E6A015;
+  margin-top:calc(14 * var(--u));margin-left:calc(-2.5 * var(--u));
 }
 
+.pr-tramite__cuerpo{
+  display:grid;grid-template-columns:calc(620 * var(--u)) minmax(0,1fr);
+  column-gap:calc(44 * var(--u));align-items:stretch;
+  margin-top:calc(30 * var(--u));
+}
+/* Fotografía ancha debajo del texto, que es «Vuelo Papal». */
+.pr-tramite--abajo .pr-tramite__cuerpo{
+  grid-template-columns:minmax(0,1fr);row-gap:calc(30 * var(--u));
+}
+/* Y sin fotografía elegida no se deja hueco: el texto se queda con el ancho
+   entero en lugar de con media página en gris. */
+.pr-tramite--sinfoto .pr-tramite__cuerpo{grid-template-columns:minmax(0,1fr)}
+
 .pr-tramite__copy{
-  margin-top:calc(22 * var(--u));
+  margin-left:calc(2 * var(--u));
   font-size:calc(23 * var(--u));line-height:calc(29 * var(--u));
   font-weight:300;color:#1C1416;
 }
@@ -168,15 +178,21 @@
   padding-left:calc(14 * var(--u));text-indent:calc(-14 * var(--u));
 }
 .pr-tramite__items li::before{content:"- ";color:#5B5B5B}
-.pr-tramite__items li+li{margin-top:calc(4 * var(--u))}
+.pr-tramite__items li+li{margin-top:calc(9 * var(--u))}
 
-.pr-tramite__foto{box-shadow:var(--shadow-soft);align-self:start}
+/* La fotografía acompaña al texto de arriba abajo. Se estira con la columna
+   en lugar de llevar un alto fijo, porque el texto sale del panel y puede
+   crecer: con una medida clavada, un párrafo de más dejaba la foto corta y un
+   hueco gris debajo. El mínimo es para que no quede achatada si alguien deja
+   el texto en dos líneas. */
+.pr-tramite__foto{box-shadow:var(--shadow-soft);align-self:stretch}
 .pr-tramite__foto img{
-  width:100%;height:calc(330 * var(--u));object-fit:cover;object-position:50% 50%;
+  width:100%;height:100%;min-height:calc(420 * var(--u));
+  object-fit:cover;object-position:50% 50%;
 }
-/* La ancha de «Vuelo Papal» es más baja en proporción: ocupa los 1218 px de
-   la caja y en la mesa mide 413 de alto. */
-.pr-tramite--abajo .pr-tramite__foto img{height:calc(413 * var(--u))}
+/* La ancha de «Vuelo Papal» sí lleva medida: no tiene columna con la que
+   estirarse, porque ocupa el ancho entero. */
+.pr-tramite--abajo .pr-tramite__foto img{height:calc(413 * var(--u));min-height:0}
 
 /* ------------------------------------------ USO DE IMÁGENES Y DEL ESCUDO
    Filetes del editable en y=1387,9 / 1488,3 / 1588,3 / 1690,3 / 1789,3. */
@@ -365,26 +381,34 @@
   }
 
   /* Una sola columna: el texto arriba y la fotografía debajo, sea cual sea
-     la disposición que tenga en escritorio. Y las fotos sin recortar, que es
-     el requisito del cliente para tablet y móvil. */
-  .pr-tramite{grid-template-columns:1fr;row-gap:clamp(22px,3.4vw,38px)}
-  .pr-tramite--abajo{row-gap:clamp(22px,3.4vw,38px)}
+     la disposición que tenga en escritorio. Y las fotos sin recortar ni
+     deformar, que es el requisito del cliente para tablet y móvil: por eso
+     aquí se les quita el alto y el recorte que llevan en escritorio. */
+  .pr-tramite__cuerpo,
+  .pr-tramite--abajo .pr-tramite__cuerpo{
+    grid-template-columns:1fr;row-gap:clamp(22px,3.4vw,38px);
+    margin-top:clamp(16px,2.4vw,26px);
+  }
   .pr-tramite+.pr-tramite{
     margin-top:clamp(30px,4.4vw,48px);padding-top:clamp(28px,4vw,44px);
   }
-  .pr-tramite__texto{margin-left:0}
+  .pr-tramite__cab{margin-left:0}
+  .pr-tramite__cab::after{
+    width:clamp(52px,7vw,78px);height:4px;
+    margin-top:clamp(10px,1.4vw,14px);margin-left:0;
+  }
   .pr-tramite__kicker{font-size:clamp(13px,1.8vw,22px);letter-spacing:.02em}
   .pr-tramite__h{
-    font-size:clamp(26px,4.2vw,38px);line-height:1.1;margin-top:clamp(8px,1.2vw,12px);
+    font-size:clamp(27px,4.6vw,56px);line-height:1.1;margin-top:clamp(8px,1.2vw,12px);
   }
-  .pr-tramite__sub{font-size:clamp(16px,2.2vw,24px);line-height:1.22;margin-top:clamp(6px,.8vw,9px)}
+  .pr-tramite__sub{font-size:clamp(17px,2.6vw,31px);line-height:1.22;margin-top:clamp(3px,.4vw,5px)}
   .pr-tramite__copy{
-    margin-top:clamp(14px,2.2vw,24px);
+    margin-left:0;
     font-size:clamp(16px,2.2vw,23px);line-height:1.5;max-width:62ch;
   }
   .pr-tramite__items li{padding-left:14px;text-indent:-14px}
   .pr-tramite__foto img,
-  .pr-tramite--abajo .pr-tramite__foto img{height:auto;object-fit:fill}
+  .pr-tramite--abajo .pr-tramite__foto img{height:auto;min-height:0;object-fit:fill}
 
   .pr-usos{padding-top:clamp(44px,6.4vw,78px)}
   .pr-usos__lead{

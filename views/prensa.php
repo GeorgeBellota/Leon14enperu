@@ -332,7 +332,13 @@ ob_start(); ?>
           ?>
           <article class="pr-tramite<?= $abajo ? ' pr-tramite--abajo' : '' ?><?= $foto === '' ? ' pr-tramite--sinfoto' : '' ?>">
 
-            <div class="pr-tramite__texto">
+            <?php /* La cabecera ocupa TODO el ancho, no la columna del texto.
+                     No es un capricho de maqueta: «Visita del Santo Padre al
+                     Perú» pide unos 900 px y la columna mide 620, así que
+                     metida ahí se partía en cuatro renglones en lugar de los
+                     dos que marca el editable. El filete dorado cierra la
+                     cabecera y abre el cuerpo. */ ?>
+            <header class="pr-tramite__cab">
               <?php if ($piezas[0] !== ''): ?>
                 <p class="pr-tramite__kicker">
                   <b><?= $esc($piezas[0]) ?></b><?php if (isset($piezas[1]) && $piezas[1] !== ''): ?> / <span><?= $esc($piezas[1]) ?></span><?php endif; ?>
@@ -344,13 +350,15 @@ ob_start(); ?>
               <?php if ($subtitulo !== ''): ?>
                 <p class="pr-tramite__sub"><?= $esc($subtitulo) ?></p>
               <?php endif; ?>
+            </header>
 
+            <div class="pr-tramite__cuerpo">
               <div class="pr-tramite__copy"><?= $cuerpo((string) ($tramite['texto'] ?? '')) ?></div>
-            </div>
 
-            <?php if ($foto !== ''): ?>
-              <figure class="pr-tramite__foto"><?= $foto ?></figure>
-            <?php endif; ?>
+              <?php if ($foto !== ''): ?>
+                <figure class="pr-tramite__foto"><?= $foto ?></figure>
+              <?php endif; ?>
+            </div>
 
           </article>
         <?php endforeach; ?>
