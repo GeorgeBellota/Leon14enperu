@@ -64,8 +64,12 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
        botón pasan a ser de cada lámina.
 
        El reparto lo decide «datos.diseno» del bloque:
-         (vacío)     la composición de siempre, con el botón «En directo».
-         «programa»  la lámina «Preparémonos», con el botón dorado de descarga.
+         (vacío)         la composición de siempre, con el botón «En directo».
+         «programa»      la lámina «Preparémonos», con el botón dorado de descarga.
+         «preparemonos»  la misma lámina según SLIDES PÁG HOME.ai (sept. 2026):
+                         calendario corregido y el brillo del botón.
+         «senal»         «Señal Oficial» del IRTP: fondo claro, sin botón, con
+                         la línea de acreditaciones.
 
        Quien no elija foto en el panel hereda la de la primera lámina, que es
        justo lo que hacían las tres antes de este cambio. */ ?>
@@ -96,13 +100,32 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         /* El respaldo —lo que se ve si MySQL no responde— también es propio de
            cada lámina: la de «Preparémonos» no puede caer en la fotografía del
            papamóvil, que es la que ilustra otra frase. */
-        $esPrograma = $disenoDe($lamina) === 'programa';
-        $archivo = $esPrograma ? 'hero-programa' : 'hero';
-        $alt = $esPrograma
-            ? 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV'
-            : 'El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú';
+        $disenoFoto = $disenoDe($lamina);
+        $esSenal    = $disenoFoto === 'senal';
+        /* «preparemonos» es la misma composición que «programa»: comparte con
+           ella el encuadre y la veladura de móvil. */
+        $esPrograma = $disenoFoto === 'programa' || $disenoFoto === 'preparemonos';
+        $archivo = [
+            'programa'     => 'hero-programa',
+            'preparemonos' => 'hero-preparemonos',
+            'senal'        => 'hero-senal',
+        ][$disenoFoto] ?? 'hero';
+        $alt = match (true) {
+            $esSenal    => 'El logotipo del IRTP junto al Papa León XIV, que saluda con la mano en alto',
+            $esPrograma => 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV',
+            default     => 'El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú',
+        };
         ob_start(); ?>
         <picture>
+          <?php /* La composición apaisada de «Señal Oficial» no cabe en una
+                   columna: por debajo de 1024 px se sirve sólo el recorte del
+                   Papa, y el logotipo y los textos van en el flujo. */ ?>
+          <?php if ($esSenal): ?>
+            <source media="(max-width: 1023px)" type="image/webp"
+                    srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero-senal-movil.webp')) ?>">
+            <source media="(max-width: 1023px)"
+                    srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero-senal-movil.png')) ?>">
+          <?php endif; ?>
           <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.webp')) ?>" type="image/webp">
           <img src="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.jpg')) ?>"
                alt="<?= $esc($alt) ?>" width="2880" height="932"
@@ -111,13 +134,23 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         <?php $respaldoHero = (string) ob_get_clean(); ?>
         <?php /* Sólo la primera fotografía se anuncia. Las otras acompañan a un
                  titular que ya lo dice todo, y leerlas seguidas sería ruido. */ ?>
-        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
+        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $esSenal ? ' hero-home__foto--senal' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
              data-slide-foto<?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
-          <?= $sitio->imagen(
-              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma ? [] : $primera),
+          <?php
+          $fotoHtml = $sitio->imagen(
+              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma || $esSenal ? [] : $primera),
               $respaldoHero,
               ['sizes' => '100vw', 'prioridad' => $i === 0]
-          ) ?>
+          );
+          /* En «Señal Oficial» la imagen para móvil (el Papa recortado) se usa
+             también en tableta, hasta 1023 px: la composición apaisada no cabe
+             en la columna. Se ajusta aquí, sólo para esta lámina, y no en
+             Sitio::imagen(), que comparte todo el sitio. */
+          if ($esSenal) {
+              $fotoHtml = str_replace('media="(max-width: 767px)"', 'media="(max-width: 1023px)"', $fotoHtml);
+          }
+          echo $fotoHtml;
+          ?>
         </div>
       <?php endforeach; ?>
     </div>
@@ -132,27 +165,71 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         <?php foreach ($laminas as $i => $lamina): ?>
           <?php
           $diseno = $disenoDe($lamina);
+          $conDescarga = $diseno === 'programa' || $diseno === 'preparemonos';
           $rotulo = (string) ($lamina['enlace_texto'] ?? '')
-              ?: ($diseno === 'programa' ? 'Programa Oficial' : 'En directo');
+              ?: ($conDescarga ? 'Programa Oficial' : ($diseno === 'senal' ? 'Acreditaciones' : 'En directo'));
           $url = (string) ($lamina['enlace_url'] ?? '')
-              ?: $sitio->enlace($diseno === 'programa' ? 'agenda/' : 'en-directo/');
+              ?: $sitio->enlace($conDescarga ? 'agenda/' : ($diseno === 'senal' ? 'prensa/#senal-oficial' : 'en-directo/'));
           $Etiqueta = $i === 0 ? 'h1' : 'p';
           ?>
           <div class="hero-home__slide<?= $i === 0 ? ' is-active' : '' ?>"
                data-slide<?= $diseno !== '' ? ' data-diseno="' . $esc($diseno) . '"' : '' ?><?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
+          <?php if ($diseno === 'senal'): ?>
+            <?php
+            /* ── «Señal Oficial» (SLIDES PÁG HOME.ai, lámina 3) ────────────
+               El logotipo del IRTP y el Papa vienen dentro de la imagen de la
+               lámina; aquí sólo van los textos. Todo cuelga de un escenario
+               de 1440 × 466 centrado, así que las letras no se separan de lo
+               que está dibujado en la imagen ni en una pantalla más ancha que
+               el editable.
+
+               La bajada y la nota admiten saltos de línea desde el panel: el
+               editable los pone a mano, y el corte forma parte del diseño. */
+            $nota = $lamina['datos'] ?? null;
+            $nota = is_string($nota) ? json_decode($nota, true) : $nota;
+            $nota = is_array($nota) ? trim((string) ($nota['nota'] ?? '')) : '';
+            $conSaltos = static fn (string $v): string => nl2br($esc(trim($v)), false);
+            ?>
+            <div class="hero-home__escena">
+              <img class="hero-home__irtp" src="<?= $esc($sitio->asset('assets/img/rediseno/index/irtp.png')) ?>"
+                   alt="IRTP" width="361" height="240" loading="lazy" decoding="async">
+              <<?= $Etiqueta ?> class="hero-home__title">
+                <span class="hero-home__t1"><?= $esc((string) ($lamina['titulo'] ?? '')) ?></span>
+                <span class="hero-home__t2"><?= $conSaltos((string) ($lamina['texto'] ?? '')) ?></span>
+              </<?= $Etiqueta ?>>
+              <p class="hero-home__nota">
+                <?php /* El trazo es el del editable, pasado a px de la mesa: un círculo
+                         abierto arriba a la derecha, por donde sale la marca. */ ?>
+                <svg class="ico-check" viewBox="0 0 33.4 33.48" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M33.40 17.04C33.33 20.66 32.15 23.87 29.88 26.67C27.31 29.84 24.05 31.93 20.04 32.78C16.76 33.48 13.56 33.10 10.47 31.83C8.40 30.98 6.55 29.79 5.01 28.16C2.62 25.64 1.13 22.66 0.64 19.21C0 14.73 1.23 10.75 3.96 7.21C6.09 4.44 8.78 2.41 12.14 1.37C16.55 0 20.86 0.25 25.05 2.24C25.29 2.35 25.52 2.47 25.74 2.61C26.11 2.85 26.13 3.18 25.86 3.52C25.30 4.28 24.86 4.52 23.73 3.96C22.13 3.15 20.40 2.76 18.60 2.63C15.70 2.43 12.92 2.92 10.38 4.34C6.45 6.54 3.82 9.80 2.79 14.22C2.14 16.99 2.49 19.71 3.62 22.31C5.64 26.94 9.23 29.69 14.15 30.65C18.42 31.48 22.25 30.34 25.63 27.68C28.57 25.36 30.36 22.31 31.02 18.62C31.46 16.14 31.10 13.71 30.17 11.37C29.91 10.71 29.58 10.07 29.26 9.43C29.08 9.08 29.06 8.76 29.31 8.44C29.48 8.21 29.64 7.98 29.76 7.73C29.97 7.28 30.51 7.37 30.71 7.68C30.88 7.94 31.05 8.22 31.20 8.50C32.35 10.58 33.07 12.79 33.30 15.15C33.36 15.78 33.37 16.41 33.40 17.04Z"/>
+                  <path fill="currentColor" d="M16.03 20.24C17.24 17.50 18.85 15.07 20.52 12.68C22.75 9.46 25.26 6.45 27.95 3.60C28.34 3.19 28.77 2.80 29.22 2.45C29.64 2.12 30.16 2.16 30.52 2.47C30.86 2.76 30.98 3.29 30.71 3.73C30.23 4.49 29.72 5.24 29.18 5.96C26.02 10.16 23.12 14.51 20.78 19.22C19.79 21.20 18.77 23.17 17.76 25.14C17.68 25.30 17.61 25.45 17.55 25.61C17.30 26.28 16.81 26.64 16.11 26.69C15.42 26.73 14.90 26.44 14.57 25.84C14.12 25.03 13.69 24.20 13.24 23.38C12.23 21.52 11.03 19.78 9.77 18.07C9.13 17.19 8.54 16.28 7.94 15.36C7.68 14.97 7.55 14.53 7.75 14.06C8.04 13.36 8.77 13.05 9.47 13.35C10.26 13.68 10.96 14.15 11.62 14.69C13.35 16.11 14.66 17.88 15.78 19.81C15.86 19.93 15.93 20.06 16.03 20.24Z"/>
+                </svg>
+                <span><a class="hero-home__acredita" href="<?= $esc($url) ?>"><?= $esc($rotulo) ?></a><?= $nota !== '' ? ' ' . $conSaltos($nota) : '' ?></span>
+              </p>
+            </div>
+          <?php else: ?>
             <<?= $Etiqueta ?> class="hero-home__title">
               <span class="hero-home__t1"><?= $esc((string) ($lamina['titulo'] ?? '')) ?></span>
               <span class="hero-home__t2"><?= $esc((string) ($lamina['texto'] ?? '')) ?></span>
             </<?= $Etiqueta ?>>
 
-            <?php if ($diseno === 'programa'): ?>
+            <?php if ($conDescarga): ?>
               <a class="btn hero-home__programa" href="<?= $esc($url) ?>">
+                <?php if ($diseno === 'preparemonos'): ?>
+                <?php /* El icono tal cual lo dibuja el editable: dos piezas rellenas,
+                         la bandeja y la flecha, en px de la mesa. */ ?>
+                <svg class="ico-baja" viewBox="0 0 22.075 22.074" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M2.28 19.79C8.13 19.79 13.94 19.79 19.79 19.79C19.79 19.69 19.79 19.60 19.79 19.51C19.79 16.70 19.79 13.90 19.79 11.09C19.79 10.45 20.22 9.96 20.82 9.90C21.48 9.84 22.06 10.35 22.07 11.04C22.08 11.89 22.07 12.75 22.07 13.60C22.07 15.74 22.07 17.88 22.07 20.02C22.07 21.28 21.28 22.07 20.02 22.07C14.03 22.07 8.04 22.07 2.05 22.07C0.80 22.07 0.00 21.28 0.00 20.02C0.00 17.04 0.00 14.06 0.00 11.08C0.00 10.27 0.73 9.71 1.49 9.95C1.97 10.10 2.28 10.54 2.28 11.09C2.29 12.78 2.28 14.47 2.28 16.16C2.28 17.27 2.28 18.39 2.28 19.51C2.28 19.60 2.28 19.68 2.28 19.79Z"/>
+                  <path fill="currentColor" d="M9.89 13.60C9.89 13.45 9.89 13.37 9.89 13.28C9.89 9.26 9.89 5.24 9.89 1.22C9.89 0.52 10.38 0.00 11.04 0.00C11.64 0.00 12.13 0.47 12.17 1.07C12.18 1.16 12.18 1.26 12.18 1.35C12.18 5.33 12.18 9.31 12.18 13.29C12.18 13.38 12.18 13.46 12.18 13.59C12.26 13.51 12.32 13.46 12.37 13.41C13.09 12.69 13.80 11.97 14.53 11.26C15.16 10.65 16.18 10.90 16.42 11.72C16.56 12.18 16.44 12.58 16.10 12.92C15.35 13.67 14.60 14.42 13.85 15.17C13.21 15.80 12.58 16.44 11.94 17.07C11.36 17.65 10.72 17.66 10.14 17.08C8.74 15.69 7.35 14.30 5.97 12.91C5.32 12.26 5.55 11.23 6.39 10.98C6.85 10.83 7.25 10.96 7.59 11.30C8.28 12.00 8.98 12.70 9.69 13.40C9.74 13.45 9.80 13.51 9.89 13.60Z"/>
+                </svg>
+                <?php else: ?>
                 <svg class="ico-baja" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M12 1.2v16.6M7.4 13.2 12 17.8l4.6-4.6" fill="none" stroke="currentColor"
                         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M1.2 11.7v11.1h21.6V11.7" fill="none" stroke="currentColor"
                         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
+                <?php endif; ?>
                 <span><?= $esc($rotulo) ?></span>
               </a>
             <?php else: ?>
@@ -165,6 +242,7 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
                 <span><?= $esc($rotulo) ?></span>
               </a>
             <?php endif; ?>
+          <?php endif; ?>
           </div>
         <?php endforeach; ?>
       </div>

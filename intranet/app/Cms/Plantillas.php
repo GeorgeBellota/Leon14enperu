@@ -139,6 +139,17 @@ final class Plantillas
                                         . 'flecha de descarga a la derecha en lugar del granate «En '
                                         . 'directo» de la izquierda. Con ella la fotografía y el botón '
                                         . 'salen de la lámina, no de la primera. · '
+                                        . '«preparemonos» = la misma lámina tal como la trae el editable '
+                                        . 'de septiembre de 2026 (SLIDES PÁG HOME): el calendario de la '
+                                        . 'fotografía ya corregido y el brillo del botón. · '
+                                        . '«senal» = «Señal Oficial» del IRTP: fondo blanco, titular en '
+                                        . 'dorado, la bajada en dos renglones (usa un salto de línea en '
+                                        . '«Texto») y, debajo, una línea con un check en la que el texto '
+                                        . 'del enlace va subrayado y enlazado, seguido de la «Nota». No '
+                                        . 'lleva botón. La imagen es la lámina entera sin los textos '
+                                        . '(logotipo y Papa ya dibujados, 2880 × 932); la imagen para '
+                                        . 'móvil es el Papa recortado sobre transparente, y se usa hasta '
+                                        . 'la tableta. · '
                                         . 'Vacío = diseño partido, con el texto en el panel de color '
                                         . 'al lado de la imagen. Es el único que admite el retrato del '
                                         . 'Santo Padre, que no puede llevar velo ni degradado encima. · '
@@ -178,6 +189,14 @@ final class Plantillas
                                         . 'usa un salto de línea para abrir un segundo renglón. '
                                         . 'En móvil esta hilera no se muestra: la banda de texto sólo da '
                                         . 'para el rótulo, el titular y un botón.',
+                        ],
+                        'nota' => [
+                            'etiqueta' => 'Nota tras el enlace',
+                            'tipo'     => 'area',
+                            'ayuda'    => 'Sólo para las láminas «senal». El texto que sigue al enlace '
+                                        . 'subrayado en la línea del check: «de acceso a la señal oficial '
+                                        . 'sin logos ni…». Un salto de línea parte el renglón en '
+                                        . 'escritorio, como en el editable; en el móvil no se aplica.',
                         ],
                         'segundo_boton' => [
                             'etiqueta' => 'Segundo botón',

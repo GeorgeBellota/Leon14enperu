@@ -110,6 +110,150 @@
 .hero-home__programa:hover{background-color:#F2CA1D;color:var(--wine)}
 .ico-baja{width:calc(22.1 * var(--u));height:calc(22.1 * var(--u));flex:0 0 auto}
 
+/* ── Láminas de SLIDES PÁG HOME.ai (septiembre de 2026) ─────────────────────
+   Dos láminas nuevas que se suman a las de siempre sin tocarlas. Medidas del
+   editable pasadas a px de la mesa de 1440 × 465 (el documento las dibuja a
+   1899.68 × 613.44; 1 px = 1.31922 unidades).
+
+   El «top» de cada texto sale de su línea base, no de la caja: el navegador
+   coloca la base a (alto de línea − (asc + desc) · cuerpo) / 2 + asc · cuerpo
+   del borde de la caja, con asc/desc = .970/.335 en Neulis y 1.050/.350 en
+   Poppins (métricas «typo», que Poppins pide usar).
+
+   Todo va dentro de un «min-width»: en la columna de móvil mandan las reglas
+   generales de más abajo, sin tener que deshacer una a una estas medidas. */
+@media (min-width:1024px){
+  /* «Preparémonos» · lámina 2. La misma composición que «programa»; cambian el
+     calendario de la fotografía y tres cosas que el editable sí tiene:
+
+       titular      bases en y 248.82 y 302.78 (antes quedaban medio px arriba)
+       botón        Poppins Medium 25.73, icono de 22.08 a 6.29 del texto
+       brillo       elipse blanca con degradado radial, en «superponer» al 68 %,
+                    centrada en (1198.86, 311.04) con radios 85.83 × 77.20;
+                    el rectángulo del botón la recorta. */
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__title{
+    right:calc(101.125 * var(--u));top:calc(201.824 * var(--u));line-height:.92;
+  }
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__t1{
+    font-weight:700;font-size:calc(60.823 * var(--u));color:var(--gold);
+  }
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__t2{
+    font-weight:500;font-size:calc(58.297 * var(--u));color:#EEEEEE;
+  }
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__programa{
+    right:calc(101.125 * var(--u));top:calc(329.679 * var(--u));
+    width:calc(271.875 * var(--u));height:calc(40.021 * var(--u));min-width:0;
+    padding:0 0 0 calc(.6 * var(--u));gap:calc(6.29 * var(--u));
+    font-size:calc(25.728 * var(--u));line-height:1;
+    overflow:hidden;isolation:isolate;
+  }
+  /* El contenido flexible queda centrado; el editable sube 0.53 px el icono
+     respecto del centro exacto, y el texto se corrige con lo medido en Chrome
+     a 1440 px (redondea a píxel entero el ascendente de la fuente). */
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__programa span{
+    position:relative;top:calc(.294 * var(--u));
+  }
+  .hero-home__slide[data-diseno="preparemonos"] .ico-baja{
+    width:calc(22.075 * var(--u));height:calc(22.074 * var(--u));
+    position:relative;top:calc(-.527 * var(--u));
+  }
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__programa::after{
+    content:"";position:absolute;pointer-events:none;
+    left:calc(46.027 * var(--u));top:calc(-95.847 * var(--u));
+    width:calc(171.66 * var(--u));height:calc(154.408 * var(--u));
+    background:radial-gradient(closest-side,#FFFFFF,rgba(255,255,255,0));
+    mix-blend-mode:overlay;opacity:.68;
+  }
+
+  /* «Señal Oficial» · lámina 3. El logotipo del IRTP y el Papa van dibujados
+     en la imagen; los textos se ponen encima en un escenario de 1440 × 466
+     centrado, el mismo recuadro que ocupa la imagen. Así nada se descuadra
+     cuando la ventana es más ancha que el editable (--u no pasa de 1 px) ni
+     cuando la barra de desplazamiento resta unos píxeles al ancho.
+
+       «Señal Oficial»   Neulis Bold 61.885, #E7A115, x 441.88, base 217.89
+       bajada            Poppins Regular 31.001, #1C1416, x 443.97,
+                         bases 254.07 y 287.06
+       check             33.40 × 33.48 en (148.53, 359.03), #6E0B14
+       nota              Poppins Light 22 / 27, x 191.35, base 382.82;
+                         «Acreditaciones» en #6E0B14, subrayado de 0.758
+                         de x 192 a 354 en y 388.5 */
+  .hero-home__foto--senal{background:#FFFFFF}
+  .hero-home__foto--senal picture{
+    left:50%;right:auto;width:calc(1440 * var(--u));margin-left:calc(-720 * var(--u));
+  }
+  .hero-home__escena{
+    position:absolute;top:0;bottom:0;left:50%;
+    width:calc(1440 * var(--u));margin-left:calc(-720 * var(--u));
+  }
+  .hero-home__irtp{display:none}
+  .hero-home__slide[data-diseno="senal"] .hero-home__title{
+    right:auto;left:calc(441.876 * var(--u));top:calc(167.89 * var(--u));
+    width:auto;text-align:left;white-space:nowrap;
+  }
+  .hero-home__slide[data-diseno="senal"] .hero-home__t1{
+    font-weight:700;font-size:calc(61.885 * var(--u));line-height:1;color:var(--gold);
+  }
+  .hero-home__slide[data-diseno="senal"] .hero-home__t2{
+    margin:calc(-2.707 * var(--u)) 0 0 calc(2.092 * var(--u));
+    font-family:"Poppins",sans-serif;font-weight:400;
+    font-size:calc(31.001 * var(--u));line-height:calc(32.987 * var(--u));color:#1C1416;
+  }
+  .hero-home__nota{
+    position:absolute;left:calc(148.526 * var(--u));top:calc(359.034 * var(--u));margin:0;
+    font-family:"Poppins",sans-serif;font-weight:300;
+    font-size:calc(22 * var(--u));line-height:calc(27 * var(--u));color:#1C1416;
+    white-space:nowrap;
+  }
+  .ico-check{
+    display:block;width:calc(33.399 * var(--u));height:calc(33.478 * var(--u));color:#6E0B14;
+  }
+  .hero-home__nota span{
+    position:absolute;left:calc(42.825 * var(--u));top:calc(2.805 * var(--u));
+  }
+  /* El subrayado es un fondo y no un «text-decoration»: así su grosor y su
+     altura son los del editable y no los que decida la fuente. La caja de un
+     elemento en línea empieza un ascendente (23 px, redondeado) por encima de
+     la base, de modo que la raya (base + 5.68) cae a 28.30 de su borde; y
+     termina 0.86 px antes que la palabra, como en el editable. */
+  .hero-home__acredita{
+    color:#6E0B14;text-decoration:none;
+    background:linear-gradient(currentColor,currentColor) no-repeat;
+    background-size:calc(100% - 1.508 * var(--u)) calc(.758 * var(--u));
+    background-position:calc(.649 * var(--u)) calc(28.297 * var(--u));
+  }
+  .hero-home__acredita:hover{color:var(--wine)}
+}
+
+/* Sobre el blanco de «Señal Oficial» sobran el emblema en negativo de la CEP
+   —el editable no lo pone— y el mando claro, que no se vería. El mando además
+   baja 14 px: en su sitio de siempre la flecha izquierda tapaba el final de
+   «comunicación.», el segundo renglón de la nota. */
+.hero-home__escudo{transition:opacity .68s var(--ease-suave)}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-home__escudo{opacity:0}
+@media (min-width:1024px){
+  .hero-home__nav{transition:transform .68s var(--ease-suave)}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-home__nav{
+    transform:translateY(calc(14 * var(--u)));
+  }
+}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-home__arrow{
+  background:rgba(255,255,255,.72);border-color:rgba(28,20,22,.28);color:#1C1416;
+  box-shadow:0 calc(2 * var(--u)) calc(10 * var(--u)) rgba(28,20,22,.16);
+}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-home__arrow:hover{
+  background:var(--gold);border-color:var(--gold);color:var(--wine);
+}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-dot__track{
+  background:rgba(28,20,22,.2);box-shadow:none;
+}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-dot:hover .hero-dot__track{
+  background:rgba(28,20,22,.36);
+}
+.hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-dot.is-active .hero-dot__track{
+  background:rgba(28,20,22,.16);
+}
+
 /* ------------------------------------------------ MANDO DEL CARRUSEL (hero) */
 /* El editable dibuja tres pastillas negras de 47×32 solapadas 4 px. Sobre la
    fotografía se leían como un bloque duro y el salto de negro a blanco no
@@ -607,4 +751,41 @@
   .subsi:last-child{max-width:100%}
   .santos-grid{grid-template-columns:1fr;max-width:300px;margin-inline:auto}
   .santo:last-child{max-width:100%}
+}
+
+/* ── Láminas de SLIDES PÁG HOME.ai en la columna de móvil y tableta ─────────
+   El editable sólo trae la versión ancha. «Preparémonos» se porta igual que
+   «programa». «Señal Oficial» no puede apoyarse en su imagen apaisada —el
+   logotipo y el Papa quedarían diminutos o recortados—, así que aquí la foto
+   es el Papa recortado (la «imagen para móvil» de la lámina) en la esquina de
+   abajo, y el logotipo del IRTP sube a la columna, encima del titular. */
+@media (max-width:1023px){
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__title{top:auto;line-height:.9}
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__t1{font-weight:700;color:var(--gold);font-size:clamp(32px,6vw,58px)}
+  .hero-home__slide[data-diseno="preparemonos"] .hero-home__t2{font-weight:500;color:#EEEEEE;font-size:clamp(31px,5.8vw,56px)}
+
+  .hero--home::after{transition:opacity .68s var(--ease-suave)}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="senal"])::after{opacity:0}
+  .hero-home__foto--senal{background:#FFFFFF}
+  .hero-home__foto--senal picture{inset:auto 0 0 auto;width:min(46%,430px)}
+  .hero--home .hero-home__foto--senal img{height:auto;object-fit:contain;object-position:right bottom}
+
+  .hero-home__irtp{display:block;width:clamp(104px,17vw,170px);height:auto;margin-bottom:clamp(16px,2.6vw,26px)}
+  .hero-home__slide[data-diseno="senal"] .hero-home__title{line-height:1}
+  .hero-home__slide[data-diseno="senal"] .hero-home__t1{
+    font-weight:700;color:var(--gold);font-size:clamp(34px,6.2vw,60px);
+  }
+  .hero-home__slide[data-diseno="senal"] .hero-home__t2{
+    margin-top:.28em;font-family:"Poppins",sans-serif;font-weight:400;
+    font-size:clamp(17px,3vw,30px);line-height:1.08;color:#1C1416;
+  }
+  .hero-home__nota{
+    display:flex;align-items:flex-start;gap:.55em;max-width:min(60%,420px);
+    margin:clamp(16px,2.6vw,26px) 0 0;
+    font-family:"Poppins",sans-serif;font-weight:300;
+    font-size:clamp(14px,2vw,19px);line-height:1.25;color:#1C1416;
+  }
+  .ico-check{flex:0 0 auto;width:1.5em;height:1.5em;margin-top:-.08em;color:#6E0B14}
+  .hero-home__nota br{display:none}
+  .hero-home__acredita{color:#6E0B14;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 }
