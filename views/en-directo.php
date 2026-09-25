@@ -32,6 +32,18 @@ $campo = static fn (string $s, string $c, string $r = ''): string
     => \Intranet\Publico\Sitio::campo($secciones, $s, $c, $r);
 $hay = static fn (string $s): bool
     => \Intranet\Publico\Sitio::activa($secciones, $s);
+
+/* ── Apagar una sección sí; quedarse en blanco, no ────────────────────────
+   Una sección que el panel apaga no llega en $secciones y no se pinta. Pero
+   «no llega» no siempre significa «apagada»: si la base no responde no llega
+   NINGUNA, y entonces la página tiene que salir entera con sus textos de
+   reserva.
+
+   Hasta ahora estas tres secciones se pintaban a pelo, sin preguntar: daba
+   igual lo que dijera el interruptor del panel, salían siempre. Es el mismo
+   fallo que tenía Prensa y se arregla igual. */
+$hayContenido = $secciones !== [];
+$pinta        = static fn (string $s): bool => !$hayContenido || $hay($s);
 ?>
 
 <main id="contenido">
@@ -75,6 +87,7 @@ $hay = static fn (string $s): bool
          se queda exactamente como está hoy. */ ?>
 <?php require dirname(__DIR__) . '/assets/parciales/directo.php'; ?>
 
+<?php if ($pinta('todavia-enlaces')): ?>
 <section class="seccion" aria-labelledby="t-directo">
   <div class="contenedor"><div class="reticula"><div class="col-m-4 col-t-6 col-d-7">
     <header class="seccion__encabezado seccion__encabezado--mayor">
@@ -94,6 +107,9 @@ $hay = static fn (string $s): bool
   </div></div></div>
 </section>
 
+<?php endif; ?>
+
+<?php if ($pinta('tres-maneras-seguirlo')): ?>
 <section class="seccion seccion--tinte seccion--pastel-acento" aria-labelledby="t-como-seguir">
   <div class="contenedor">
     <header class="seccion__encabezado seccion__encabezado--mayor">
@@ -118,6 +134,9 @@ $hay = static fn (string $s): bool
   </div>
 </section>
 
+<?php endif; ?>
+
+<?php if ($pinta('avisame-cuando-haya')): ?>
 <section class="seccion" aria-labelledby="t-aviso-dir">
   <div class="contenedor"><div class="reticula"><div class="col-m-4 col-t-4 col-d-6">
     <header class="seccion__encabezado">
@@ -142,4 +161,5 @@ $hay = static fn (string $s): bool
         </form>
   </div></div></div>
 </section>
+<?php endif; ?>
 </main>

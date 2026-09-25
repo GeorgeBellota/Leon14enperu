@@ -431,23 +431,57 @@ body.sin-scroll{overflow:hidden}
 .seccion--directo{background:var(--ink);color:#EDEDED}
 .seccion--directo .titular--mayor{color:#EDEDED}
 .seccion--directo .rotulo{color:var(--gold)}
-.directo{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;margin-top:clamp(18px,2.4vw,32px)}
-.directo__portada{width:100%;height:100%;object-fit:cover;opacity:.85}
+/* ── El cartel del directo, antes de pulsar ─────────────────────────────
+   Estas reglas estaban escritas para cuando la portada era un <img>: un
+   «object-fit:cover» y un «opacity:.85» sobre la foto, con el play dibujado
+   aparte como un círculo con borde. Hoy el marcado es un <button> que ES el
+   reproductor —se alcanza con el tabulador y un lector de pantalla dice qué
+   hace—, y aquellas reglas le caían encima sin sentido: «object-fit» no
+   pinta nada en un botón, el fondo se quedaba en el gris de fábrica del
+   navegador y el círculo se sumaba al triángulo del SVG, así que salían DOS
+   iconos de play, uno encima del otro, sobre una caja gris deslavada.
+
+   Hay reglas correctas para este marcado en components.css, pero esa hoja no
+   la carga ninguna página: es de un diseño anterior. Así que van aquí, que
+   es lo que esta página sí lee. */
+.directo{
+  position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+  background:#1C1416;margin-top:clamp(18px,2.4vw,32px);
+}
+.directo__portada{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(12px,1.4vw,20px);padding:clamp(20px,3vw,40px);
+  border:0;cursor:pointer;font:inherit;text-align:center;
+  color:#F2EFEA;
+  /* Un granate muy oscuro en lugar del negro plano: es el color de la casa y
+     hace que el rojo del play destaque sin parecer un vídeo roto. */
+  background:radial-gradient(120% 120% at 50% 45%, #3A1016 0%, #1C1416 70%);
+}
+.directo__portada:hover{background:radial-gradient(120% 120% at 50% 45%, #4A141C 0%, #1C1416 70%)}
+
+/* El play es el SVG del marcado. Nada de círculos ni triángulos dibujados
+   por CSS: eso era del cartel viejo y aquí salía duplicado. */
 .directo__play{
-  position:absolute;inset:0;margin:auto;width:clamp(64px,6vw,92px);height:clamp(64px,6vw,92px);
-  border:3px solid #fff;border-radius:50%;background:rgba(0,0,0,.35);cursor:pointer;
-  display:grid;place-items:center;
+  display:block;color:#FF0000;line-height:0;
+  transition:transform .18s ease;
 }
-.directo__play::after{
-  content:"";border-left:clamp(18px,1.8vw,26px) solid #fff;
-  border-top:clamp(11px,1.1vw,16px) solid transparent;
-  border-bottom:clamp(11px,1.1vw,16px) solid transparent;margin-left:.3em;
+.directo__play svg{width:clamp(56px,5.4vw,78px);height:auto;display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
+.directo__portada:hover .directo__play,
+.directo__portada:focus-visible .directo__play{transform:scale(1.08)}
+@media (prefers-reduced-motion:reduce){.directo__play{transition:none}}
+
+.directo__pie{
+  display:grid;gap:6px;max-width:46ch;margin:0;
+  font-size:clamp(15px,1.5vw,19px);font-weight:600;line-height:1.35;opacity:1;
 }
-.directo__play:hover{background:rgba(0,0,0,.55)}
-.directo--abierto .directo__play,.directo--abierto .directo__portada{display:none}
+/* Decirlo ANTES de que pase, no después: quien pulsa sabe que va a conectarse
+   con YouTube. Ese aviso es lo que convierte el clic en consentimiento. */
+.directo__nota{font-size:var(--fs-sm);font-weight:300;opacity:.72;line-height:1.45}
+
+.directo--abierto .directo__portada{display:none}
 .directo iframe{width:100%;height:100%;border:0;display:block}
-.directo__pie{margin-top:.8em;font-size:var(--fs-sm);opacity:.8}
-.directo__nota{font-size:var(--fs-sm);opacity:.8}
+.directo__sinjs{margin-top:.8em;font-size:var(--fs-sm)}
 .directo__sinjs{padding:1em;text-align:center}
 
 /* ========================================================================= */
