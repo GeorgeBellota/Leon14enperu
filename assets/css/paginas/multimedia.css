@@ -18,6 +18,75 @@
    entera, que es donde de verdad se mira.
    =========================================================================== */
 
+/* ── El héroe ─────────────────────────────────────────────────────────────
+   La banda del editable: 582 px con la fotografía en duotono, el titular
+   grande abajo a la izquierda y la bajada debajo. Es exactamente el mismo
+   tratamiento que la de Prensa, así que se copian sus medidas en lugar de
+   inventar otras parecidas que acabarían descuadradas entre sí.
+
+   Y se copia también la corrección de más de 1440: «--u» se congela en 1 px
+   a partir de ahí, así que la banda se queda en 582 de alto mientras la
+   ventana sigue ensanchando, y «cover» ampliaba la composición cortándole un
+   8 % por arriba y un 11 % por abajo. En unidades de contenedor la banda
+   recupera su proporción y la composición es la misma a cualquier ancho.
+   «cqw» y no «vw» porque «vw» incluye la barra de desplazamiento y dejaría
+   la altura un 1 % larga, que es justo el recorte que se quiere evitar. */
+.mm-hero { min-height: calc(582 * var(--u)); background: #8A5A0C; container-type: inline-size; }
+
+.mm-hero .hero__media img { object-position: 50% 50%; }
+
+.mm-hero .hero__inner {
+  height: auto;
+  min-height: calc(582 * var(--u));
+  justify-content: flex-start;
+  gap: 0;
+  padding: calc(414.5 * var(--u)) var(--gutter) calc(24 * var(--u));
+}
+
+.mm-hero .hero__title {
+  font-family: "Neulis", sans-serif;
+  font-weight: 700;
+  font-size: calc(81.1 * var(--u));
+  line-height: 1;
+  color: #E9E9E9;
+}
+
+.mm-hero .hero__sub {
+  max-width: none;
+  margin-top: calc(9.3 * var(--u));
+  font-size: calc(28 * var(--u));
+  line-height: 1;
+  font-weight: 300;
+  color: #FFFFFF;
+}
+
+@media (min-width: 1440px) {
+  .mm-hero { min-height: 0; }
+  .mm-hero .hero__inner {
+    min-height: 40.41667cqw;
+    padding-top: 28.78472cqw;
+    padding-bottom: 1.66667cqw;
+  }
+  .mm-hero .hero__title { font-size: 5.63194cqw; }
+  .mm-hero .hero__sub { margin-top: .64583cqw; font-size: 1.94444cqw; }
+}
+
+@media (max-width: 1023px) {
+  .mm-hero { height: auto; min-height: clamp(380px, 52vw, 560px); }
+  .mm-hero .hero__inner {
+    height: auto;
+    min-height: clamp(380px, 52vw, 560px);
+    justify-content: center;
+    padding: clamp(64px, 10vw, 96px) var(--gutter);
+  }
+  .mm-hero .hero__title { font-size: clamp(44px, 8.4vw, 90px); }
+  .mm-hero .hero__sub {
+    font-size: clamp(17px, 2.7vw, 28px);
+    line-height: 1.25;
+    margin-top: clamp(10px, 1.6vw, 18px);
+  }
+}
+
 .mm-wrap {
   width: 100%;
   max-width: calc(1218 * var(--u) + var(--gutter) * 2);
