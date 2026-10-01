@@ -109,7 +109,35 @@ if ($ruta === '') {
         $slug   = substr($ruta, $corte + 1);
         $pagina = Rutas::resolver($padre);
 
-        if ($pagina !== null && $slug !== '') {
+        /* -- Una noticia ---------------------------------------------
+           Las noticias dejaron de ser bloques: viven en su propia tabla,
+           con fecha de verdad, cuerpo con imagenes y SEO. Asi que el camino
+           de abajo -buscar el slug entre las piezas de una seccion- ya no
+           las encuentra, y sin esta rama /noticias/lo-que-sea/ devolveria
+           404 para todas.
+
+           Va ANTES que el camino general: si algun dia quedara un bloque
+           viejo con el mismo slug, manda la tabla, que es lo que edita el
+           gestor nuevo. */
+        if ($pagina !== null && $slug !== '' && $pagina['clave'] === 'noticias') {
+            try {
+                $modeloN = new \Intranet\Models\Noticia($sitio->contenedor());
+                $laNoticia = $modeloN->porSlug($slug);
+
+                if ($laNoticia !== null) {
+                    $destino = [
+                        'clave'   => 'noticias',
+                        'vista'   => 'noticia',
+                        'padre'   => (new \Intranet\Models\Pagina($sitio->contenedor()))->porClave('noticias'),
+                        'noticia' => $laNoticia,
+                    ];
+                }
+            } catch (Throwable $e) {
+                error_log('[rutas] no se pudo resolver la noticia: ' . $e->getMessage());
+            }
+        }
+
+        if ($destino === null && $pagina !== null && $slug !== '') {
             try {
                 $modelo = new \Intranet\Models\Pagina($sitio->contenedor());
                 $pieza  = $modelo->piezaPorSlug($pagina['clave'], $slug);
@@ -183,6 +211,10 @@ $meta   = [];
 /* Sólo la tiene la vista de detalle: es la pieza que se pidió por su slug. */
 $pieza  = $destino['pieza'] ?? null;
 $padre  = $destino['padre'] ?? null;
+
+/* Y esta solo la vista de una noticia, que tiene tabla propia y no pasa por
+   el mecanismo de piezas. */
+$noticia = $destino['noticia'] ?? null;
 
 /* El nombre de la vista se guarda aparte, ANTES de ejecutarla, porque la
    plantilla lo necesita después para cargar assets/css/paginas/<vista>.css.

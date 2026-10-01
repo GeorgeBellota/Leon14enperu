@@ -157,10 +157,6 @@ final class NoticiaController extends Controller
             Auditoria::registrar($this->c, 'crear', 'noticias', $id, ['titulo' => $titular]);
         }
 
-        if ($peticion->casilla('destacada')) {
-            $modelo->destacar($id);
-        }
-
         $this->conExito(
             $datos['estado'] === 'publicada'
                 ? 'Noticia publicada.'

@@ -196,15 +196,15 @@ $v = static fn (string $campo, string $porDefecto = ''): string
       </label>
     </div>
 
-    <div class="campo casilla sep-m">
-      <label>
-        <input type="checkbox" name="destacada" value="1" <?= (int) $v('destacada', '0') === 1 ? 'checked' : '' ?>>
-        Destacar: ocupa el hueco grande de la izquierda
-      </label>
-      <p class="campo__ayuda">
-        Sólo puede haber una. Al marcar ésta, se desmarca la que estuviera.
-      </p>
-    </div>
+    <?php /* Aquí había una casilla de «destacar» para fijar una noticia en el
+             hueco grande. Se quitó: el cliente pidió «orden cronológico
+             descendente», y fijar una a mano permite volver a poner una de
+             agosto por encima de una de octubre, que es el desorden del que
+             se quejaba. La grande es siempre la más reciente. */ ?>
+    <p class="campo__ayuda">
+      La noticia más reciente ocupa sola el hueco grande del listado. No hay
+      que marcar nada: lo decide la fecha.
+    </p>
 
     <p>
       <button class="btn btn--primario" type="submit">Guardar</button>

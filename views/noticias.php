@@ -1,32 +1,29 @@
 <?php
 /**
  * ============================================================================
- *  Noticias — rediseño 2026.
+ *  Noticias — el listado.
  * ============================================================================
  *
- *  Sólo el contenido. El <head>, la cabecera, el pie y los scripts los pone
- *  views/_plantilla.php; el enrutado, index.php con Publico\Rutas.
+ *  Responde a lo que escribió el cliente:
  *
- *  Todo lo que se lee de la base lleva su texto de reserva: si MySQL no
- *  responde, o si alguien vacía un campo en el panel, la página se pinta con
- *  lo que dice el editable. Una web sobre un viaje papal no puede quedarse
- *  muda porque falle la base.
+ *    «deben mostrarse en orden cronológico descendente, desde la más
+ *     reciente hasta la más antigua»
+ *        Lo hace la consulta, porque la fecha ya es una DATE. Antes era texto
+ *        libre y el orden lo decidían las flechas del panel.
  *
- *  ── Cómo se reparten las noticias ────────────────────────────────────────
+ *    «cada publicación debe presentar únicamente un extracto del contenido,
+ *     permitiendo al usuario acceder a la nota completa»
+ *        Extracto y «Ver más» a su página propia, /noticias/{slug}/.
  *
- *  El editable dibuja UNA noticia destacada —foto grande, titular a 48 px— y
- *  a su derecha una lista de noticias separadas por filetes. En el panel eso
- *  es una sola sección, «Últimas noticias»: la PRIMERA de la lista es la
- *  destacada y las demás van a la columna de la derecha. Así el editor
- *  decide cuál manda simplemente subiéndola con las flechas, sin tener que
- *  entender que hay dos sitios distintos donde escribir una noticia.
+ *    «no se muestran los títulos ni las portadas de los videos»
+ *        Los trae el servidor de YouTube al pegar el enlace, y la portada se
+ *        guarda en la biblioteca. Aquí sólo se pintan.
  *
- *  Cada noticia tiene su propia página: la abre views/detalle.php a partir
- *  del `slug` del bloque, porque la sección está marcada con «detalle» en su
- *  columna `datos`. El botón «Ver más» lleva ahí.
+ *  ── La paginación ───────────────────────────────────────────────────────
  *
- *  Las medidas son las del editable NOTICIAS.ai (mesa de 1440 px). La hoja
- *  assets/css/paginas/noticias.css las reproduce con la unidad --u.
+ *  Con enlaces de verdad, no con JavaScript. Cada página tiene su dirección,
+ *  se puede compartir, Google la indexa y el botón «atrás» funciona. Es lo
+ *  que se espera de un listado de noticias.
  *
  *  @var \Intranet\Publico\Sitio $sitio
  *  @var callable $esc
@@ -34,274 +31,258 @@
 
 declare(strict_types=1);
 
-$meta = [
-    'titulo'      => 'Noticias · León XIV en el Perú',
-    'descripcion' => 'Actualidad y comunicaciones oficiales rumbo a la Visita Apostólica del '
-                   . 'Papa León XIV al Perú, del 11 al 16 de noviembre de 2026.',
-    'ruta'        => 'noticias/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
-    'og_tipo'     => 'website',
-];
-
 $paginaCms = $sitio->contenido('noticias');
 $secciones = $paginaCms['secciones'] ?? [];
 
-$campo   = static fn (string $s, string $c, string $r = ''): string
+$campo = static fn (string $s, string $c, string $r = ''): string
     => \Intranet\Publico\Sitio::campo($secciones, $s, $c, $r);
-$bloques = static fn (string $s, array $r = []): array
-    => \Intranet\Publico\Sitio::bloques($secciones, $s, $r);
 
-/* El texto de un sumario llega del panel como texto llano. Se escapa y se
-   respetan los saltos de línea que haya escrito el editor: es lo único que
-   tiene para separar ideas en un campo sin formato. */
-$parrafo = static fn (string $t): string => nl2br($esc($t), false);
+$modelo = new \Intranet\Models\Noticia($sitio->contenedor());
 
-/**
- * El destino de un enlace escrito en el panel.
- *
- * Si es una dirección completa («https://…»), un ancla o un correo, se
- * respeta tal cual. Si es un camino del propio sitio —«sedes/»— se pasa por
- * Sitio::enlace(), porque el sitio no cuelga siempre de la raíz del dominio
- * y un enlace relativo se rompería según desde qué página se pinte.
- *
- * ── Ojo con los nombres de variable ──────────────────────────────────────
- * La vista se ejecuta en el mismo ámbito que index.php y que la plantilla
- * común, así que aquí NO se puede usar cualquier nombre: `$destino`, por
- * ejemplo, es la ruta resuelta que después lee _plantilla.php para saber qué
- * hoja de estilos cargar. Pisarlo deja la página en blanco con un error.
- */
-$aEnlace = static function (string $url) use ($sitio): string {
-    $url = trim($url);
+/* La página pedida. Se valida aquí: lo que llega por la URL no entra en una
+   consulta sin pasar por (int), y el modelo ya recorta a la última página si
+   alguien escribe un número de más. */
+$nPagina = max(1, (int) ($_GET['pagina'] ?? 1));
+$listado = $modelo->publicadas($nPagina);
+$videos  = $modelo->videos();
 
-    if ($url === '' || $url === '#') {
+$meta = [
+    'titulo'      => $nPagina > 1
+        ? 'Noticias · página ' . $nPagina . ' · Viaje de León XIV al Perú'
+        : 'Noticias · Viaje de León XIV al Perú',
+    'descripcion' => 'Actualidad y comunicaciones oficiales sobre la Visita Apostólica '
+                   . 'del Papa León XIV al Perú.',
+    'ruta'        => 'noticias/',
+    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
+    'og_tipo'     => 'website',
+    'scripts'     => ['assets/js/noticias.js'],
+];
+
+/** «28 de septiembre de 2026». */
+$dia = static function (?string $iso): string {
+    if ($iso === null || $iso === '') {
         return '';
     }
 
-    return preg_match('~^(?:[a-z][a-z0-9+.-]*:|//|/|#)~i', $url) === 1
-        ? $url
-        : $sitio->enlace($url);
+    $meses = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    [$a, $m, $d] = array_map('intval', explode('-', $iso));
+
+    return $d . ' de ' . ($meses[$m] ?? '') . ' de ' . $a;
 };
 
-/**
- * A dónde lleva el «Ver más» de una noticia.
- *
- * Primero su página propia, la que abre views/detalle.php con el slug. Si la
- * pieza no tiene slug —todavía no se le ha escrito el cuerpo— se cae al
- * enlace que traiga el bloque. Si no hay ni una cosa ni la otra, devuelve
- * cadena vacía y el botón no se pinta: mejor sin botón que con un botón que
- * no va a ninguna parte.
- */
-$destinoNoticia = static function (array $n) use ($sitio, $aEnlace): string {
-    $slug = trim((string) ($n['slug'] ?? ''));
+/* ── La grande de la izquierda ────────────────────────────────────────────
+   Es siempre LA MÁS RECIENTE, que es la primera de la lista porque la
+   consulta ya viene ordenada.
 
-    if ($slug !== '') {
-        return $sitio->enlace('noticias/' . $slug . '/');
-    }
+   Hubo una versión con una marca de «destacada» para fijar una a mano, y se
+   quitó: el cliente pidió expresamente «orden cronológico descendente», y una
+   marca manual permite volver a poner una noticia de agosto por encima de una
+   de octubre, que es exactamente el desorden del que se quejaba. La columna
+   sigue en la base por si algún día hace falta otra cosa, pero no decide
+   nada aquí.
 
-    return $aEnlace((string) ($n['enlace_url'] ?? ''));
-};
+   Sólo en la primera página: en la segunda no hay «lo más reciente» que
+   destacar, y repetirla sería enseñar dos veces la misma noticia. */
+$filas     = $listado['filas'];
+$destacada = null;
 
-/**
- * El identificador de YouTube que hay dentro de lo que se pegue en el panel.
- *
- * Se guarda el IDENTIFICADOR, nunca el <iframe>: es la misma regla que sigue
- * Sitio::directo() para la transmisión en directo. Aquí se admite además el
- * enlace entero —que es lo que copia cualquiera desde el navegador— y se le
- * saca el identificador. Si no cuadra con el formato, se devuelve vacío y la
- * tarjeta se queda como el marco negro del editable, sin reproductor.
- */
-$idVideo = static function (string $valor): string {
-    $valor = trim($valor);
+if ($nPagina === 1 && $filas !== []) {
+    $destacada = array_shift($filas);
+    $filas     = array_values($filas);
+}
 
-    if ($valor === '') {
-        return '';
-    }
-
-    if (preg_match('~^[A-Za-z0-9_-]{11}$~', $valor) === 1) {
-        return $valor;
-    }
-
-    return preg_match('~(?:youtu\.be/|[?&]v=|/embed/|/shorts/|/live/)([A-Za-z0-9_-]{11})~', $valor, $m) === 1
-        ? $m[1]
-        : '';
-};
+$tope = \Intranet\Models\Noticia::VIDEOS_VISIBLES;
 ?>
 
 <main id="contenido">
 
-  <?php /* ═══════════════════════════════════════════════════════ HÉROE ════
-       La banda duotono de 582 px con el título y el sumario centrados. La
-       fotografía se cambia en Páginas → Noticias → Cabecera de página; lo
-       que va de respaldo es la del editable.
-
-       El sumario son dos líneas de peso distinto. Del panel llega un solo
-       texto: la PRIMERA línea va en seminegrita y el resto en fina, que es
-       como lo compone el editable. */ ?>
-  <?php
-  $sumario = $campo('cabecera', 'texto', "Actualidad y comunicaciones oficiales\nrumbo a la visita del Santo Padre.");
-  $lineas  = preg_split('/\R/u', $sumario) ?: [$sumario];
-  $primera = trim((string) array_shift($lineas));
-  $resto   = trim(implode(' ', array_map('trim', $lineas)));
-  ?>
-  <section class="hero hero--page hero--noticias">
+  <section class="hero hero--page nt-hero">
     <div class="hero__media">
       <?php ob_start(); ?>
       <picture>
-        <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/noticias/hero.webp')) ?>" type="image/webp">
-        <img src="<?= $esc($sitio->asset('assets/img/rediseno/noticias/hero.jpg')) ?>"
-             alt="El Papa León XIV acompañado por obispos y cardenales"
-             width="2880" height="1164" fetchpriority="high" decoding="async">
+        <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/prensa/hero.webp')) ?>" type="image/webp">
+        <img src="<?= $esc($sitio->asset('assets/img/rediseno/prensa/hero.jpg')) ?>"
+             alt="" width="2880" height="1164" fetchpriority="high" decoding="async">
       </picture>
       <?php $respaldoHero = (string) ob_get_clean(); ?>
       <?= $sitio->imagen($secciones['cabecera'] ?? [], $respaldoHero, ['sizes' => '100vw', 'prioridad' => true]) ?>
     </div>
 
-    <div class="container hero__inner">
+    <div class="hero__inner">
       <h1 class="hero__title"><?= $esc($campo('cabecera', 'titulo', 'Noticias')) ?></h1>
-      <?php if ($primera !== ''): ?>
-        <p class="hero__sub">
-          <strong><?= $esc($primera) ?> </strong><?php if ($resto !== ''): ?><br class="br-esc"><?= $esc($resto) ?><?php endif; ?>
-        </p>
-      <?php endif; ?>
+      <p class="hero__sub"><?= $esc($campo('cabecera', 'texto',
+          'Actualidad y comunicaciones oficiales rumbo a la visita del Santo Padre.')) ?></p>
     </div>
   </section>
 
-  <?php /* ═══════════════════════════════════════ NOTICIAS Y VÍDEOS ════════
-       Las dos cosas comparten la banda gris y la caja de composición de
-       1219,5 px del editable, así que van dentro de la misma sección. */ ?>
-  <section class="noticias" aria-label="Noticias del viaje apostólico">
-    <div class="noticias__wrap">
+  <div class="nt-cuerpo">
 
-      <?php
-      /* La lista completa. La reserva es, literalmente, lo que dibuja el
-         editable: una destacada y tres noticias más. */
-      $todas = $bloques('ultimas-noticias', [
-          [
-              'titulo'     => 'Papa León XIV envía saludos al pueblo peruano',
-              'enlace_url' => 'papa-leon-xiv/',
-              'datos'      => ['fecha' => '15 de septiembre de 2026'],
-              /* El único sumario con seminegrita dentro. Como el campo del
-                 panel es texto llano, el matiz sólo se conserva mientras
-                 mande la reserva; en cuanto haya texto en la base se pinta
-                 escapado, sin formato. */
-              'respaldo_html' => 'El Santo Padre estará en el país del <strong>11 al 16 de <br class="br-esc">noviembre</strong>, en la tercera etapa de su primera gira <br class="br-esc">sudamericana, después de Uruguay y Argentina. El <br class="br-esc">anuncio no incluyó el programa detallado, que se dará <br class="br-esc">a conocer a su debido tiempo.',
-          ],
-          [
-              'titulo'     => 'Lima, Chiclayo, Cusco y Pucallpa serán las sedes de la visita',
-              'texto'      => 'Cuatro ciudades que representan la costa, la sierra y la selva, y la diócesis que el Santo Padre pastoreó durante ocho años.',
-              'enlace_url' => 'sedes/',
-              'datos'      => ['fecha' => 'Fecha por confirmar'],
-          ],
-          [
-              'titulo'     => 'Abierta la convocatoria de voluntariado «Los amigos de León»',
-              'texto'      => 'Seis servicios y tres fases de selección para quienes quieran acompañar la visita desde dentro.',
-              'enlace_url' => 'voluntariado/',
-              'datos'      => ['fecha' => 'Fecha por confirmar'],
-          ],
-          [
-              'titulo'     => 'El programa del viaje se publicará más adelante',
-              'texto'      => 'La Oficina de Prensa de la Santa Sede dará a conocer el programa detallado a su debido tiempo.',
-              'enlace_url' => 'agenda/',
-              'datos'      => ['fecha' => 'Fecha por confirmar'],
-          ],
-      ]);
+    <?php if ($filas === [] && $destacada === null): ?>
+      <section class="nt-wrap">
+        <h2 class="nt-h2">Todavía no hay noticias</h2>
+        <p class="nt-vacio">Aquí se publicarán las comunicaciones oficiales sobre la visita.</p>
+      </section>
 
-      $destacada = array_shift($todas) ?? [];
-      $urlDest   = $destinoNoticia($destacada);
-      $textoDest = trim((string) ($destacada['texto'] ?? ''));
-      ?>
+    <?php else: ?>
+      <section class="nt-wrap" aria-label="Noticias">
 
-      <div class="noticias__grid">
+        <div class="nt-reja">
 
-        <?php /* ── La noticia destacada, con la foto grande a la izquierda ── */ ?>
-        <article class="destacada">
-          <p class="destacada__foto">
-            <?php ob_start(); ?>
-            <picture>
-              <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/noticias/p01.webp')) ?>" type="image/webp">
-              <img src="<?= $esc($sitio->asset('assets/img/rediseno/noticias/p01.jpg')) ?>"
-                   alt="El Papa León XIV durante una celebración litúrgica"
-                   width="1249" height="753" loading="lazy" decoding="async">
-            </picture>
-            <?php $respaldoFoto = (string) ob_get_clean(); ?>
-            <?= $sitio->imagen($destacada, $respaldoFoto, ['sizes' => '(min-width:1024px) 48vw, 100vw']) ?>
-          </p>
+          <?php if ($destacada !== null): ?>
+            <?php /* La grande de la izquierda. Es un <article> con su enlace
+                     al final y no una tarjeta entera pulsable: así el titular
+                     se puede seleccionar y copiar, y quien navega con teclado
+                     llega a UN enlace, no a tres que van al mismo sitio. */ ?>
+            <article class="nt-grande">
+              <?php if (($destacada['imagen_ruta'] ?? null) !== null): ?>
+                <a class="nt-grande__foto" href="<?= $esc($sitio->enlace('noticias/' . $destacada['slug'] . '/')) ?>" tabindex="-1" aria-hidden="true">
+                  <?= $sitio->imagen($destacada, '', ['sizes' => '(min-width:1024px) 46vw, 92vw']) ?>
+                </a>
+              <?php endif; ?>
 
-          <p class="destacada__fecha"><?= $esc((string) ($destacada['datos']['fecha'] ?? 'Fecha por confirmar')) ?></p>
-          <h2 class="destacada__titulo"><?= $esc((string) ($destacada['titulo'] ?? '')) ?></h2>
+              <p class="nt-fecha"><?= $esc($dia($destacada['fecha'])) ?></p>
 
-          <p class="destacada__texto">
-            <?= $textoDest !== '' ? $parrafo($textoDest) : (string) ($destacada['respaldo_html'] ?? '') ?>
-          </p>
+              <h2 class="nt-grande__h">
+                <a href="<?= $esc($sitio->enlace('noticias/' . $destacada['slug'] . '/')) ?>"><?= $esc($destacada['titulo']) ?></a>
+              </h2>
 
-          <?php /* El botón es una pieza de tamaño fijo del editable —165 × 39,2 px—,
-                   así que su texto no se edita: lo que se edita es a dónde lleva. */ ?>
-          <?php if ($urlDest !== ''): ?>
-            <a class="btn destacada__mas" href="<?= $esc($urlDest) ?>"<?= preg_match('~^https?://~i', $urlDest) === 1 ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>Ver más</a>
+              <p class="nt-extracto"><?= $esc(\Intranet\Models\Noticia::extracto($destacada, 200)) ?></p>
+
+              <p class="nt-mas">
+                <a class="btn nt-mas__btn" href="<?= $esc($sitio->enlace('noticias/' . $destacada['slug'] . '/')) ?>">
+                  Ver más<span class="visually-hidden"> sobre <?= $esc($destacada['titulo']) ?></span>
+                </a>
+              </p>
+            </article>
           <?php endif; ?>
-        </article>
 
-        <?php /* ── El resto, en lista, separadas por filetes ──────────────── */ ?>
-        <?php if ($todas !== []): ?>
-          <ol class="noticias__lista">
-            <?php foreach ($todas as $n): ?>
-              <?php
-              $url   = $destinoNoticia($n);
-              $texto = trim((string) ($n['texto'] ?? ''));
-              ?>
-              <li class="noticia">
-                <p class="noticia__fecha"><?= $esc((string) ($n['datos']['fecha'] ?? 'Fecha por confirmar')) ?></p>
-                <h2 class="noticia__titulo"><?= $esc((string) ($n['titulo'] ?? '')) ?></h2>
-                <?php if ($texto !== ''): ?>
-                  <p class="noticia__texto"><?= $parrafo($texto) ?></p>
-                <?php endif; ?>
-                <?php if ($url !== ''): ?>
-                  <a class="btn noticia__mas" href="<?= $esc($url) ?>"<?= preg_match('~^https?://~i', $url) === 1 ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>Ver más</a>
+          <div class="nt-columna">
+            <?php foreach ($filas as $n): ?>
+              <article class="nt-item">
+                <p class="nt-fecha"><?= $esc($dia($n['fecha'])) ?></p>
+
+                <h2 class="nt-item__h">
+                  <a href="<?= $esc($sitio->enlace('noticias/' . $n['slug'] . '/')) ?>"><?= $esc($n['titulo']) ?></a>
+                </h2>
+
+                <p class="nt-extracto"><?= $esc(\Intranet\Models\Noticia::extracto($n, 150)) ?></p>
+
+                <p class="nt-mas">
+                  <a class="btn nt-mas__btn" href="<?= $esc($sitio->enlace('noticias/' . $n['slug'] . '/')) ?>">
+                    Ver más<span class="visually-hidden"> sobre <?= $esc($n['titulo']) ?></span>
+                  </a>
+                </p>
+              </article>
+            <?php endforeach; ?>
+          </div>
+
+        </div>
+
+        <?php /* ── Paginación ──────────────────────────────────────────────
+                 Enlaces de verdad: cada página tiene su dirección, se puede
+                 compartir y el botón «atrás» funciona. */ ?>
+        <?php if ((int) $listado['paginas'] > 1): ?>
+          <nav class="nt-paginas" aria-label="Páginas de noticias">
+            <?php if ($nPagina > 1): ?>
+              <a class="nt-pagina nt-pagina--flecha"
+                 href="<?= $esc($sitio->enlace('noticias/' . ($nPagina - 1 > 1 ? '?pagina=' . ($nPagina - 1) : ''))) ?>"
+                 rel="prev">‹ Anteriores</a>
+            <?php endif; ?>
+
+            <?php for ($p = 1; $p <= (int) $listado['paginas']; $p++): ?>
+              <a class="nt-pagina<?= $p === (int) $listado['pagina'] ? ' is-activa' : '' ?>"
+                 href="<?= $esc($sitio->enlace('noticias/' . ($p > 1 ? '?pagina=' . $p : ''))) ?>"
+                 <?= $p === (int) $listado['pagina'] ? 'aria-current="page"' : '' ?>><?= $p ?></a>
+            <?php endfor; ?>
+
+            <?php if ($nPagina < (int) $listado['paginas']): ?>
+              <a class="nt-pagina nt-pagina--flecha"
+                 href="<?= $esc($sitio->enlace('noticias/?pagina=' . ($nPagina + 1))) ?>"
+                 rel="next">Siguientes ›</a>
+            <?php endif; ?>
+          </nav>
+        <?php endif; ?>
+
+      </section>
+    <?php endif; ?>
+
+    <?php /* ═══════════════════════════════════════════════════════ VÍDEOS ══
+         Cuadrícula de tres. Se ven los seis primeros y el resto aparece al
+         pulsar «Ver más vídeos»: los demás ya están en el HTML pero ocultos,
+         así que sin JavaScript se ven TODOS, que es la respuesta correcta
+         —el botón esconde, no trae—.
+
+         La portada y el título los trajo el servidor de YouTube al pegar el
+         enlace, y la portada vive en nuestra biblioteca: el navegador del
+         visitante no habla con Google hasta que pulsa el vídeo. */ ?>
+    <?php if ($videos !== []): ?>
+      <section class="nt-videos" aria-labelledby="t-videos" data-videos>
+        <div class="nt-wrap">
+          <h2 class="nt-h2" id="t-videos"><?= $esc($campo('videos', 'titulo', 'Vídeos')) ?></h2>
+
+          <ul class="nt-vreja">
+            <?php foreach ($videos as $i => $v): ?>
+              <li class="nt-video<?= $i >= $tope ? ' nt-video--extra' : '' ?>" <?= $i >= $tope ? 'data-extra' : '' ?>>
+                <button class="nt-video__abrir" type="button"
+                        data-ver-video
+                        data-id="<?= $esc($v['youtube_id']) ?>"
+                        data-titulo="<?= $esc($v['titulo'] ?? '') ?>"
+                        data-desc="<?= $esc($v['descripcion'] ?? '') ?>"
+                        aria-label="Reproducir «<?= $esc($v['titulo'] ?? 'vídeo') ?>» · se conectará con YouTube">
+                  <?php if (($v['imagen_ruta'] ?? null) !== null): ?>
+                    <?= $sitio->imagen($v, '', ['sizes' => '(min-width:1024px) 31vw, (min-width:768px) 46vw, 92vw']) ?>
+                  <?php else: ?>
+                    <span class="nt-video__sinportada" aria-hidden="true"></span>
+                  <?php endif; ?>
+
+                  <span class="nt-video__play" aria-hidden="true">
+                    <svg viewBox="0 0 68 48" width="68" height="48">
+                      <path d="M66.5 7.5a8.6 8.6 0 0 0-6-6C55.2 0 34 0 34 0S12.8 0 7.5 1.4a8.6 8.6 0 0 0-6 6A90 90 0 0 0 0 24a90 90 0 0 0 1.5 16.5 8.6 8.6 0 0 0 6 6C12.8 48 34 48 34 48s21.2 0 26.5-1.4a8.6 8.6 0 0 0 6-6A90 90 0 0 0 68 24a90 90 0 0 0-1.5-16.5z" fill="currentColor"/>
+                      <path d="M27 34V14l18 10z" fill="#fff"/>
+                    </svg>
+                  </span>
+                </button>
+
+                <h3 class="nt-video__h"><?= $esc($v['titulo'] ?? 'Vídeo') ?></h3>
+
+                <?php if (trim((string) ($v['autor'] ?? '')) !== ''): ?>
+                  <p class="nt-video__autor"><?= $esc($v['autor']) ?></p>
                 <?php endif; ?>
               </li>
             <?php endforeach; ?>
-          </ol>
-        <?php endif; ?>
+          </ul>
 
-      </div>
+          <?php if (count($videos) > $tope): ?>
+            <p class="nt-vmas">
+              <button class="btn btn--linea" type="button" data-mas-videos hidden>
+                Ver más vídeos
+                <span class="nt-vmas__num"><?= count($videos) - $tope ?></span>
+              </button>
+            </p>
+          <?php endif; ?>
+        </div>
+      </section>
+    <?php endif; ?>
 
-      <hr class="noticias__filete">
+  </div><!-- /.nt-cuerpo -->
 
-      <?php /* ══════════════════════════════════════════════════ VÍDEOS ════
-           El editable sólo dibuja los marcos negros con el botón de
-           reproducir: no hay miniaturas ni identificadores de YouTube.
-           Cuando los haya, se pegan en el panel —Páginas → Noticias →
-           Vídeos— en el enlace de cada tarjeta, y de ahí sale el
-           data-video que monta el reproductor rediseno.js.
+  <?php /* La ventana del vídeo. Una sola para toda la página; el <iframe> lo
+           crea el JavaScript al pulsar, no antes: así no hay una petición a
+           YouTube por cada vídeo nada más abrir la página. */ ?>
+  <dialog class="nt-visor" data-visor-video aria-label="Vídeo">
+    <div class="nt-visor__caja">
+      <button class="nt-visor__cerrar" type="button" data-cerrar aria-label="Cerrar">
+        <span aria-hidden="true">&times;</span>
+      </button>
 
-           Mientras tanto data-video va vacío: la tarjeta se ve igual que en
-           el editable y no hace nada al pulsarla. */ ?>
-      <?php
-      $videos = $bloques('videos', [[], [], []]);
-      $ordinales = ['primer', 'segundo', 'tercer', 'cuarto', 'quinto', 'sexto'];
-      ?>
-      <h2 class="videos__h"><?= $esc($campo('videos', 'titulo', 'Videos')) ?></h2>
+      <div class="nt-visor__marco" data-visor-marco></div>
 
-      <div class="rail videos__rail" role="group" aria-label="Vídeos de la visita">
-        <?php foreach ($videos as $i => $v): ?>
-          <?php
-          $idV         = $idVideo((string) ($v['enlace_url'] ?? ''));
-          $tituloVideo = trim((string) ($v['titulo'] ?? ''));
-          $rotuloVideo = $tituloVideo !== ''
-              ? 'Reproducir el vídeo «' . $tituloVideo . '»'
-              : 'Reproducir el ' . ($ordinales[$i] ?? ($i + 1) . '.º') . ' vídeo';
-          ?>
-          <button class="video-card videos__card" type="button"
-                  data-video="<?= $esc($idV) ?>" aria-label="<?= $esc($rotuloVideo) ?>">
-            <?php /* La miniatura es opcional: sin ella queda el marco negro
-                     del editable, que es como está hoy. */ ?>
-            <?= $sitio->imagen($v, '', ['sizes' => '(min-width:1024px) 38vw, 80vw']) ?>
-            <span class="video-card__play" aria-hidden="true"></span>
-          </button>
-        <?php endforeach; ?>
-      </div>
-
+      <h3 class="nt-visor__h" data-visor-titulo></h3>
+      <p class="nt-visor__desc" data-visor-desc></p>
+      <p class="nt-visor__nota">Al reproducirlo se conecta con YouTube, que registrará la reproducción.</p>
     </div>
-  </section>
+  </dialog>
 
 </main>

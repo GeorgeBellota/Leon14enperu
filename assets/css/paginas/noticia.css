@@ -1,0 +1,162 @@
+/* =============================================================================
+   NOTICIA — la página de una noticia
+   -----------------------------------------------------------------------------
+   La «interna» a la que lleva «Ver más» desde el listado.
+
+   El cuerpo lo escribe otra persona en el panel y puede traer párrafos,
+   subtítulos, listas, enlaces e imágenes. Esta hoja tiene que dar forma a
+   todo eso SIN saber qué vendrá: por eso las reglas van sobre las etiquetas
+   dentro de .na-cuerpo y no sobre clases, que el editor no pone.
+
+   Y de ahí la columna estrecha: un texto largo a 1218 px de ancho no se lee.
+   Unos 70 caracteres por línea es lo que aguanta el ojo sin perder el
+   renglón.
+   ========================================================================== */
+
+.na-wrap{
+  width:100%;max-width:calc(820 * var(--u) + var(--gutter) * 2);
+  margin-inline:auto;padding-inline:var(--gutter);
+}
+@media (min-width:1024px){.na-wrap{max-width:calc(820 * var(--u));padding-inline:0}}
+
+.na{background:#E9E9E9;padding-bottom:calc(90 * var(--u))}
+
+/* ── La portada ───────────────────────────────────────────────────────────
+   A todo el ancho y sin recortar de más: 2,6 a 1 deja la escena entera en
+   casi cualquier fotografía apaisada. */
+.na-portada{width:100%;background:#1C1416}
+.na-portada img{
+  display:block;width:100%;height:calc(470 * var(--u));
+  object-fit:cover;object-position:50% 42%;
+}
+
+/* ── Migas ────────────────────────────────────────────────────────────── */
+.na-migas{padding-top:calc(26 * var(--u));font-size:calc(17 * var(--u))}
+.na-migas ol{display:flex;flex-wrap:wrap;gap:calc(8 * var(--u));margin:0;padding:0;list-style:none}
+.na-migas li+li::before{content:"›";margin-right:calc(8 * var(--u));color:#9A9A9A}
+.na-migas a{color:#7A1122}
+.na-migas [aria-current]{color:#7B7B7B}
+
+/* ── La cabecera ──────────────────────────────────────────────────────── */
+.na-cab{padding-top:calc(26 * var(--u))}
+
+.na-fecha{
+  display:flex;flex-wrap:wrap;gap:calc(12 * var(--u));margin:0;
+  font-size:calc(18 * var(--u));line-height:1;font-weight:500;
+  color:#7B7B7B;text-transform:uppercase;letter-spacing:.06em;
+}
+.na-fuente::before{content:"· ";color:#C0C0C0}
+
+/* En granate, no en blanco. Es la queja del correo: «el color blanco del
+   titular dificulta su lectura». Sobre la banda gris clara, el granate es
+   el par con más contraste del sitio. */
+.na-h1{
+  margin:calc(14 * var(--u)) 0 0;
+  font-family:"Neulis",sans-serif;font-weight:700;
+  font-size:calc(52 * var(--u));line-height:calc(58 * var(--u));
+  color:#7A1122;
+}
+
+.na-entradilla{
+  margin:calc(18 * var(--u)) 0 0;
+  font-size:calc(24 * var(--u));line-height:calc(32 * var(--u));
+  font-weight:300;color:#3A3A3A;
+}
+
+/* ── El cuerpo ────────────────────────────────────────────────────────────
+   Todo lo de aquí abajo es sobre etiquetas: el editor no pone clases, y lo
+   que escriba quien redacte tiene que verse bien sin tocar CSS. */
+.na-cuerpo{
+  margin-top:calc(34 * var(--u));
+  font-size:calc(21 * var(--u));line-height:calc(32 * var(--u));
+  font-weight:300;color:#2A2A2A;
+}
+
+/* El espaciado entre párrafos, que el cliente echaba en falta: «sin
+   opciones para […] separar el contenido en párrafos o ajustar el
+   espaciado». Lo pone la hoja, no quien escribe. */
+.na-cuerpo p{margin:0 0 1.15em}
+.na-cuerpo p:last-child{margin-bottom:0}
+
+.na-cuerpo h2,
+.na-cuerpo h3,
+.na-cuerpo h4{
+  font-family:"Neulis",sans-serif;font-weight:700;color:#1C1416;
+  margin:1.8em 0 .5em;line-height:1.2;
+}
+.na-cuerpo h2{font-size:calc(32 * var(--u))}
+.na-cuerpo h3{font-size:calc(27 * var(--u))}
+.na-cuerpo h4{font-size:calc(23 * var(--u))}
+
+/* El reset del sistema pone «list-style:none» en todas las listas, para las
+   de navegación. Aquí hay que devolverlas: una lista sin viñetas dentro de
+   un texto se lee como párrafos sueltos y se pierde que son una enumeración.
+   Y quien escribe en el panel pulsa el botón de lista esperando verlas. */
+.na-cuerpo ul{list-style:disc;margin:0 0 1.15em;padding-left:1.4em}
+.na-cuerpo ol{list-style:decimal;margin:0 0 1.15em;padding-left:1.4em}
+.na-cuerpo li{margin-bottom:.4em}
+
+/* Los enlaces, subrayados. En un cuerpo de texto, un enlace que sólo cambia
+   de color se pierde para quien no distingue bien los colores. */
+.na-cuerpo a{color:#7A1122;text-decoration:underline;font-weight:500}
+.na-cuerpo a:hover{color:#E6A015}
+
+/* Las imágenes dentro del texto. Salen del editor sin medidas, así que la
+   hoja las contiene: una de 2400 px desbordaría la columna. */
+.na-cuerpo img{
+  display:block;max-width:100%;height:auto;
+  margin:1.4em 0;border-radius:calc(6 * var(--u));box-shadow:var(--shadow-soft);
+}
+
+.na-cuerpo figure{margin:1.6em 0}
+.na-cuerpo figure img{margin:0}
+.na-cuerpo figcaption{
+  margin-top:calc(8 * var(--u));
+  font-size:calc(17 * var(--u));line-height:1.4;color:#7B7B7B;
+}
+
+.na-cuerpo blockquote{
+  margin:1.6em 0;padding:calc(4 * var(--u)) 0 calc(4 * var(--u)) calc(22 * var(--u));
+  border-left:calc(4 * var(--u)) solid #E6A015;
+  font-size:calc(23 * var(--u));line-height:1.5;color:#3A3A3A;
+}
+
+.na-cuerpo strong{font-weight:600;color:#1C1416}
+
+/* ── El pie ───────────────────────────────────────────────────────────── */
+.na-pie{
+  margin-top:calc(50 * var(--u));padding-top:calc(28 * var(--u));
+  border-top:1px solid #C9C9C9;
+}
+.na-volver{color:#7A1122;border-color:#7A1122}
+.na-volver:hover{background:#7A1122;color:#F2EFEA}
+
+/* --------------------------------------------------------------------- PIE */
+.site-footer__links{display:flex;flex-wrap:wrap;gap:0 calc(22 * var(--u));order:3;width:100%}
+.site-footer__links a{opacity:.82}
+.site-footer__links a:hover{opacity:1}
+
+/* ===========================================================================
+   TABLET Y MÓVIL
+   =========================================================================== */
+
+@media (max-width:1023px){
+  .na{padding-bottom:clamp(46px,6.6vw,82px)}
+  .na-portada img{height:auto;aspect-ratio:16/9}
+
+  .na-h1{font-size:clamp(27px,5vw,52px);line-height:1.12}
+  .na-entradilla{font-size:clamp(17px,2.5vw,24px);line-height:1.45}
+  .na-fecha{font-size:clamp(13px,1.8vw,18px)}
+
+  .na-cuerpo{
+    margin-top:clamp(22px,3vw,34px);
+    font-size:clamp(16px,2.2vw,21px);line-height:1.6;
+  }
+  .na-cuerpo h2{font-size:clamp(21px,3.2vw,32px)}
+  .na-cuerpo h3{font-size:clamp(19px,2.8vw,27px)}
+  .na-cuerpo h4{font-size:clamp(17px,2.4vw,23px)}
+  .na-cuerpo blockquote{font-size:clamp(17px,2.4vw,23px);padding-left:16px;border-left-width:3px}
+  .na-cuerpo figcaption{font-size:clamp(13px,1.8vw,17px)}
+
+  .site-footer__inner{gap:10px 28px}
+}

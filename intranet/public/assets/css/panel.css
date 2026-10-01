@@ -1925,7 +1925,10 @@ code {
 .editor__area:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .editor__area p { margin: 0 0 .9em; }
 .editor__area h3 { margin: 1.4em 0 .5em; font-size: var(--step-1); }
-.editor__area ul, .editor__area ol { margin: 0 0 .9em 1.4em; }
+/* Con el reset del panel, una lista sin viñetas en el editor hace pensar
+   que el botón no funcionó. */
+.editor__area ul { list-style: disc; margin: 0 0 .9em 1.4em; }
+.editor__area ol { list-style: decimal; margin: 0 0 .9em 1.4em; }
 .editor__area a { color: var(--primary); text-decoration: underline; }
 
 /* Las imágenes dentro del cuerpo, a su tamaño real pero sin desbordar. */
