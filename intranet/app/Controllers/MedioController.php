@@ -126,12 +126,22 @@ final class MedioController extends Controller
                 ? $motor->vector($completa, $base)
                 : $motor->derivar($completa, $base);
 
-            // El archivo que dejó Adjunto ya no hace falta: las variantes son
-            // archivos nuevos. En los SVG sí es el definitivo, así que se
-            // conserva salvo que el vector lo haya copiado a otro nombre.
-            if (!$esVector || $procesada['ruta'] !== $subida) {
-                @unlink($completa);
-            }
+            /* ── El original se queda ─────────────────────────────────
+               Antes se borraba aquí: las variantes son archivos nuevos y el
+               que subió el editor «ya no hacía falta». Para la web es cierto
+               —nadie necesita ocho megas para ver una foto en una tarjeta—,
+               pero la galería de Multimedia sí: un medio que vaya a publicar
+               una fotografía la quiere entera, no recortada a 1600 px.
+
+               Así que se conserva siempre y se anota su ruta. La web sigue
+               sirviendo las variantes, igual que antes; el original sólo se
+               entrega cuando alguien pulsa «Descargar».
+
+               En los SVG no hay variantes y el original ES el archivo que
+               sirve la web, así que no se apunta aparte: duplicaría la misma
+               ruta en dos columnas. */
+            $original = $esVector ? null : $subida;
+            $pesoOriginal = $esVector ? null : (int) @filesize($completa);
         } catch (ErrorDeNegocio $e) {
             // falloAlSubir termina la petición —redirigiendo o con JSON—: no se
             // sigue por aquí.
@@ -146,7 +156,9 @@ final class MedioController extends Controller
                 $nombre,
                 $decorativa ? '' : $alt,
                 $decorativa,
-                $this->c->auth()->id()
+                $this->c->auth()->id(),
+                $original,
+                $pesoOriginal
             );
         } catch (Throwable $e) {
             // Los archivos ya están en disco. Si la fila no llega a escribirse,

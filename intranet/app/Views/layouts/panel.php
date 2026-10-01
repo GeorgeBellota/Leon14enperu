@@ -77,6 +77,7 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
         <?php if ($auth->puede('medios.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/medios') ?>"<?= $activo('/medios') ?>>Imágenes</a>
           <a class="menu__enlace" href="<?= $url('/documentos') ?>"<?= $activo('/documentos') ?>>Documentos</a>
+          <a class="menu__enlace" href="<?= $url('/galeria') ?>"<?= $activo('/galeria') ?>>Multimedia</a>
         <?php endif; ?>
         <?php if ($auth->puede('comunicados.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/comunicados') ?>"<?= $activo('/comunicados') ?>>Comunicados</a>
@@ -135,5 +136,10 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
 <?php /* El calendario de los filtros. Sólo hace algo en las pantallas que
          tienen campos de fecha; en las demás no cuesta nada. */ ?>
 <script src="<?= $e($c->urlAsset('assets/js/fecha.js')) ?>" defer></script>
+<?php /* Sólo en la galería: es la única pantalla con cuadrícula de selección,
+         y cargarlo en las demás sería pedir un archivo para nada. */ ?>
+<?php if (str_starts_with($c->peticion()->ruta(), '/galeria')): ?>
+  <script src="<?= $e($c->urlAsset('assets/js/galeria.js')) ?>" defer></script>
+<?php endif; ?>
 </body>
 </html>

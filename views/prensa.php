@@ -211,23 +211,7 @@ $cuerpo = static function (string $texto) use ($rico): string {
    y que _plantilla.php, así que una variable llamada $destino o $pieza
    pisaría las suyas —la ruta resuelta y la pieza del detalle— y rompería la
    página entera. Todo lo de aquí lleva nombre propio. */
-
-/* El icono de cámara de los marcos de Multimedia. Se dibuja una sola vez y
-   se repite: son tres marcos iguales y el trazado es largo. Decorativo, así
-   que el lector de pantalla se lo salta. */
-ob_start(); ?>
-<svg class="pr-multi__ico" viewBox="0 0 110.5 115" width="110.5" height="115" aria-hidden="true" focusable="false">
-  <rect x="40.7" y="1.7" width="29.1" height="28.6" rx="5" fill="none" stroke="#E9E9E9" stroke-width="3.4"/>
-  <path d="M41.5 31.2h7.2v6.3h-7.2zM61.8 31.2H69v6.3h-7.2z" fill="#E9E9E9"/>
-  <rect x="29" y="37.2" width="52.5" height="24" rx="7" fill="#E9E9E9"/>
-  <rect x="0" y="51.2" width="110.3" height="63" rx="11" fill="#E9E9E9"/>
-  <circle cx="53.8" cy="78" r="34.5" fill="none" stroke="#1C1416" stroke-width="3.5"/>
-  <circle cx="53.8" cy="78" r="28.6" fill="none" stroke="#1C1416" stroke-width="2.75"/>
-  <circle cx="54.2" cy="80" r="6.6" fill="#1C1416"/>
-  <circle cx="67" cy="70.5" r="3.2" fill="#1C1416"/>
-  <path d="M4.4 61v40M105.9 61v40" stroke="#1C1416" stroke-width="2.4" stroke-linecap="round"/>
-</svg>
-<?php $iconoCamara = (string) ob_get_clean(); ?>
+?>
 
 <main id="contenido">
 
@@ -541,46 +525,6 @@ ob_start(); ?>
             <span><?= $esc($rotulo) ?></span>
           </a>
         <?php endforeach; ?>
-      </div>
-    </section>
-    <?php endif; ?>
-
-    <?php /* ════════════════════════════════════════════════ MULTIMEDIA ══
-         Tres marcos negros con el icono de cámara. En el editable están
-         VACÍOS a propósito: el material gráfico todavía no está cerrado y
-         el diseño reserva el hueco.
-
-         Por eso la sección se migra sin bloques y lo que se ve son estos
-         tres marcos de reserva. En cuanto alguien suba una fotografía en
-         Páginas → Prensa → Multimedia, los marcos los sustituyen las piezas
-         reales: la imagen llena el marco y el pie lleva su crédito. */ ?>
-    <?php if ($pinta('multimedia')): ?>
-    <?php
-    $marcos = $bloques('multimedia', [
-        ['texto' => 'Autor: Nombre y apellidos'],
-        ['texto' => 'Autor: Nombre y apellidos'],
-        ['texto' => 'Autor: Nombre y apellidos'],
-    ]);
-    ?>
-    <section class="pr-multimedia" aria-labelledby="t-multimedia">
-      <div class="pr-wrap">
-        <h2 class="pr-h2" id="t-multimedia"><?= $esc($campo('multimedia', 'titulo', 'Multimedia')) ?></h2>
-
-        <ul class="pr-multi__grid">
-          <?php foreach ($marcos as $marco): ?>
-            <?php $pie = trim((string) ($marco['texto'] ?? '')); ?>
-            <li>
-              <figure class="pr-multi">
-                <div class="pr-multi__marco">
-                  <?= $sitio->imagen($marco, $iconoCamara, ['sizes' => '(min-width:1024px) 27vw, 90vw']) ?>
-                </div>
-                <?php if ($pie !== ''): ?>
-                  <figcaption class="pr-multi__pie"><?= $esc($pie) ?></figcaption>
-                <?php endif; ?>
-              </figure>
-            </li>
-          <?php endforeach; ?>
-        </ul>
       </div>
     </section>
     <?php endif; ?>

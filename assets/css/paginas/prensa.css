@@ -317,23 +317,16 @@
    379,2 x 253,4 con 40,2 de hueco y los marcos un píxel más arriba: no es un
    cambio de diseño, son dos exportaciones del mismo dibujo que no redondean
    igual. Manda el editable que hay encima de la mesa. */
-.pr-multimedia{padding-top:calc(73.8 * var(--u));padding-bottom:calc(92.75 * var(--u))}
-.pr-multi__grid{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   column-gap:calc(41.2 * var(--u));row-gap:calc(41.2 * var(--u));
   margin-top:calc(49.8 * var(--u));
 }
-.pr-multi__marco{
   aspect-ratio:378.53 / 252.5;background:#1C1416;
   display:grid;place-items:center;overflow:hidden;
 }
-.pr-multi__ico{width:29.14%;height:auto}
 /* En el editable los marcos van vacíos, con el icono centrado. Cuando el
    panel sube una fotografía, llena el marco entero conservando el encuadre
    del editable (378,5 x 252,5). */
-.pr-multi__marco picture{display:block;width:100%;height:100%}
-.pr-multi__marco img{width:100%;height:100%;object-fit:cover}
-.pr-multi__pie{
   margin-top:calc(12.7 * var(--u));margin-left:calc(1 * var(--u));
   font-size:calc(19.65 * var(--u));line-height:1;font-weight:300;color:#595959;
 }
@@ -470,17 +463,12 @@
   .pr-cta__btn--descarga{justify-content:center;min-width:240px}
   .pr-cta__btn .ico-baja{width:1.05em;height:1.05em}
 
-  .pr-multimedia{padding-top:clamp(44px,6.4vw,78px);padding-bottom:clamp(44px,6.4vw,84px)}
   /* Dos marcos por fila; el tercero queda solo y se centra con la rejilla de 4
      columnas (mismo recurso que las ciudades de la home). */
-  .pr-multi__grid{
     grid-template-columns:repeat(4,minmax(0,1fr));
     column-gap:clamp(14px,2.6vw,34px);row-gap:clamp(20px,3vw,38px);
     margin-top:clamp(24px,3.6vw,46px);
   }
-  .pr-multi__grid>li{grid-column:span 2}
-  .pr-multi__grid>li:last-child{grid-column:2 / span 2}
-  .pr-multi__pie{
     margin-top:clamp(8px,1.2vw,14px);margin-left:0;
     font-size:clamp(13px,1.7vw,20px);line-height:1.35;
   }
@@ -495,9 +483,6 @@
 }
 
 @media (max-width:767px){
-  .pr-multi__grid{grid-template-columns:1fr;max-width:420px;margin-inline:auto}
-  .pr-multi__grid>li,
-  .pr-multi__grid>li:last-child{grid-column:auto}
   /* Dos botones a lo ancho de un teléfono dejan rótulos partidos en tres
      renglones: se apilan, cada uno entero y de la misma anchura. */
   .pr-cta__fila{flex-direction:column;align-items:center}

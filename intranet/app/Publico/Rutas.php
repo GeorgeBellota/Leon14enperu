@@ -57,7 +57,10 @@ final class Rutas
             // /cep/obispos/ cuelga de la sección institucional, y el mapa es
             // texto, así que la jerarquía de tres niveles no cuesta nada.
             'participa'            => ['clave' => 'participa',            'vista' => 'coleccion'],
-            'multimedia'           => ['clave' => 'multimedia',           'vista' => 'coleccion'],
+            /* Vista propia y no «coleccion»: la galería tiene tres niveles
+               —actividad, fecha, fotografías— y sale de sus tablas, no de las
+               secciones del gestor de páginas. */
+            'multimedia'           => ['clave' => 'multimedia',           'vista' => 'multimedia'],
             'cep/obispos'          => ['clave' => 'obispos',              'vista' => 'coleccion'],
             'cep/comisiones'       => ['clave' => 'comisiones',           'vista' => 'coleccion'],
 

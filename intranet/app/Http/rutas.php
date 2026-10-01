@@ -20,6 +20,7 @@ use Intranet\Controllers\ComunicadoController;
 use Intranet\Controllers\ConfiguracionController;
 use Intranet\Controllers\MantenimientoController;
 use Intranet\Controllers\DocumentoController;
+use Intranet\Controllers\GaleriaController;
 use Intranet\Controllers\MedioController;
 use Intranet\Controllers\PaginaController;
 use Intranet\Controllers\PanelController;
@@ -78,6 +79,35 @@ return static function (Router $r): void {
         $r->post('',                 [MedioController::class, 'subir'])->permiso('medios.subir');
         $r->post('/{id:\d+}',        [MedioController::class, 'actualizar'])->permiso('medios.subir');
         $r->post('/{id:\d+}/borrar', [MedioController::class, 'borrar'])->permiso('medios.subir');
+    });
+
+    /* ── Galería de Multimedia ────────────────────────────────────────────
+       Vive aparte de «Páginas» porque el editor de secciones guarda borrando
+       y recreando las piezas, y su formulario no admite archivos. Aquí hace
+       falta lo contrario: subir muchas fotografías de una vez y que lo ya
+       escrito no se mueva.
+
+       Reutiliza los permisos de la biblioteca —«medios.ver» para mirar,
+       «medios.subir» para tocar— porque es lo mismo que hace: subir imágenes.
+       Inventar un permiso nuevo obligaría a repartirlo a mano entre los
+       usuarios que ya pueden subir fotos. */
+    $r->grupo('/galeria', ['auth' => true, 'permiso' => 'medios.ver'], function (Router $r): void {
+        $r->get('',  [GaleriaController::class, 'listar'])->nombre('galeria');
+        $r->post('', [GaleriaController::class, 'crearActividad'])->permiso('medios.subir');
+
+        $r->get('/{id:\d+}', [GaleriaController::class, 'ver1']);
+
+        $r->post('/{id:\d+}',                [GaleriaController::class, 'guardarActividad'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/borrar',         [GaleriaController::class, 'borrarActividad'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/orden',          [GaleriaController::class, 'moverActividad'])->permiso('medios.subir');
+
+        $r->post('/{id:\d+}/subir',          [GaleriaController::class, 'subir'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/biblioteca',     [GaleriaController::class, 'anadirDeBiblioteca'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/mover',          [GaleriaController::class, 'mover'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/quitar',         [GaleriaController::class, 'quitar'])->permiso('medios.subir');
+
+        $r->post('/{id:\d+}/foto/{foto:\d+}',       [GaleriaController::class, 'guardarFoto'])->permiso('medios.subir');
+        $r->post('/{id:\d+}/foto/{foto:\d+}/orden', [GaleriaController::class, 'ordenar'])->permiso('medios.subir');
     });
 
     // ── Biblioteca de documentos ─────────────────────────────────────────

@@ -145,8 +145,15 @@ final class Medio extends Model
      *
      * @param array{ruta:string, ancho:int, alto:int, peso:int, mime:string, variantes:array<string,mixed>|null} $archivo
      */
-    public function registrar(array $archivo, string $nombre, string $alt, bool $decorativa, ?int $usuarioId): int
-    {
+    public function registrar(
+        array $archivo,
+        string $nombre,
+        string $alt,
+        bool $decorativa,
+        ?int $usuarioId,
+        ?string $original = null,
+        ?int $pesoOriginal = null
+    ): int {
         return $this->bd()->insertar('medios', [
             'ruta'           => $archivo['ruta'],
             'nombre_archivo' => mb_substr($nombre, 0, 190),
@@ -157,6 +164,13 @@ final class Medio extends Model
             'variantes'      => $archivo['variantes'] === null
                 ? null
                 : json_encode($archivo['variantes'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            /* El archivo tal cual lo subió el editor, sin recortar ni
+               recomprimir. Es lo que se entrega en «Descargar» de la galería.
+               Nulo en los SVG —ahí el original es el que ya sirve la web— y
+               en las 95 fotografías anteriores a octubre de 2026, cuyo
+               original se borró al subirlas. */
+            'original'       => $original,
+            'peso_original'  => $pesoOriginal,
             'alt'            => mb_substr($alt, 0, 255),
             'decorativa'     => $decorativa ? 1 : 0,
             'creado_por'     => $usuarioId,
