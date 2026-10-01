@@ -93,50 +93,98 @@ final class Medio extends Model
      * ON DELETE SET NULL, así que borrar una imagen en uso no daría error —
      * dejaría la página pública sin foto y sin avisar a nadie.
      *
-     * @return array{secciones: int, bloques: int, paginas: int, total: int, donde: array<int, string>}
+     * @return array{total: int, donde: list<string>}
      */
     public function usos(int $id): array
     {
-        $secciones = $this->bd()->filas(
-            'SELECT p.nombre AS pagina, s.nombre AS seccion
-               FROM secciones s
-               JOIN paginas p ON p.id = s.pagina_id
-              WHERE s.imagen_id = :id',
-            ['id' => $id]
-        );
+        /* ── Dónde se usa una imagen ──────────────────────────────────────
+           Esta lista TIENE que cubrir todas las columnas que apuntan a
+           `medios`. Si falta una, el panel dirá «no se usa en ninguna parte»
+           y quien lo lea borrará una imagen que sí se está viendo.
 
-        $bloques = $this->bd()->filas(
-            'SELECT p.nombre AS pagina, s.nombre AS seccion
-               FROM bloques b
-               JOIN secciones s ON s.id = b.seccion_id
-               JOIN paginas p ON p.id = s.pagina_id
-              WHERE b.imagen_id = :id',
-            ['id' => $id]
-        );
+           Ya pasó: al añadir la galería y las noticias en octubre de 2026,
+           este método se quedó mirando sólo secciones, bloques y portadas de
+           página. Borrar una foto de la galería la quitaba de Multimedia sin
+           avisar —la clave foránea es ON DELETE CASCADE— y una noticia se
+           quedaba sin portada en silencio.
 
-        $paginas = $this->bd()->filas(
-            'SELECT nombre AS pagina FROM paginas WHERE og_imagen_id = :id',
-            ['id' => $id]
-        );
+           Al crear una tabla nueva con una columna que apunte a `medios`,
+           hay que añadirla aquí. */
+        $consultas = [
+            // Secciones: la imagen principal y la de móvil, que es otra
+            // columna y antes no se miraba.
+            ['SELECT p.nombre AS pagina, s.nombre AS donde, \'\' AS nota
+                FROM secciones s JOIN paginas p ON p.id = s.pagina_id
+               WHERE s.imagen_id = :id'],
+            ['SELECT p.nombre AS pagina, s.nombre AS donde, \'versión móvil\' AS nota
+                FROM secciones s JOIN paginas p ON p.id = s.pagina_id
+               WHERE s.imagen_movil_id = :id'],
+
+            // Piezas dentro de una sección.
+            ['SELECT p.nombre AS pagina, s.nombre AS donde, \'pieza\' AS nota
+                FROM bloques b
+                JOIN secciones s ON s.id = b.seccion_id
+                JOIN paginas p ON p.id = s.pagina_id
+               WHERE b.imagen_id = :id'],
+            ['SELECT p.nombre AS pagina, s.nombre AS donde, \'pieza · versión móvil\' AS nota
+                FROM bloques b
+                JOIN secciones s ON s.id = b.seccion_id
+                JOIN paginas p ON p.id = s.pagina_id
+               WHERE b.imagen_movil_id = :id'],
+
+            // La imagen al compartir una página.
+            ['SELECT nombre AS pagina, \'\' AS donde, \'imagen para redes\' AS nota
+                FROM paginas WHERE og_imagen_id = :id'],
+
+            // La galería de Multimedia. Ojo: su clave foránea es CASCADE, así
+            // que borrar aquí la saca de la galería sin preguntar.
+            ['SELECT \'Multimedia\' AS pagina, a.nombre AS donde, \'galería\' AS nota
+                FROM galeria_fotos f
+                JOIN galeria_actividades a ON a.id = f.actividad_id
+               WHERE f.medio_id = :id'],
+
+            // Noticias: la portada, la de redes y la miniatura de un vídeo.
+            ['SELECT \'Noticias\' AS pagina, n.titulo AS donde, \'portada\' AS nota
+                FROM noticias n WHERE n.imagen_id = :id'],
+            ['SELECT \'Noticias\' AS pagina, n.titulo AS donde, \'imagen para redes\' AS nota
+                FROM noticias n WHERE n.og_imagen_id = :id'],
+            ['SELECT \'Noticias\' AS pagina, COALESCE(v.titulo, v.youtube_id) AS donde, \'portada del vídeo\' AS nota
+                FROM noticias_videos v WHERE v.miniatura_id = :id'],
+        ];
 
         $donde = [];
 
-        foreach ($secciones as $s) {
-            $donde[] = $s['pagina'] . ' · ' . $s['seccion'];
-        }
-        foreach ($bloques as $b) {
-            $donde[] = $b['pagina'] . ' · ' . $b['seccion'] . ' (pieza)';
-        }
-        foreach ($paginas as $p) {
-            $donde[] = $p['pagina'] . ' · imagen para redes';
+        foreach ($consultas as [$sql]) {
+            /* Una tabla puede no existir todavía en una instalación a medio
+               migrar. Que falte no puede impedir contestar: se sigue con las
+               demás y, como mucho, se informa de menos usos, nunca de más
+               seguridad de la que hay. */
+            try {
+                $filas = $this->bd()->filas($sql, ['id' => $id]);
+            } catch (\Throwable $e) {
+                continue;
+            }
+
+            foreach ($filas as $f) {
+                $texto = trim((string) $f['pagina']);
+
+                if (trim((string) $f['donde']) !== '') {
+                    $texto .= ' · ' . $f['donde'];
+                }
+
+                if (trim((string) $f['nota']) !== '') {
+                    $texto .= ' (' . $f['nota'] . ')';
+                }
+
+                $donde[] = $texto;
+            }
         }
 
+        $donde = array_values(array_unique($donde));
+
         return [
-            'secciones' => count($secciones),
-            'bloques'   => count($bloques),
-            'paginas'   => count($paginas),
-            'total'     => count($secciones) + count($bloques) + count($paginas),
-            'donde'     => array_values(array_unique($donde)),
+            'total' => count($donde),
+            'donde' => $donde,
         ];
     }
 
