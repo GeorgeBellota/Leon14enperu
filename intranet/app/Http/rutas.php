@@ -80,6 +80,15 @@ return static function (Router $r): void {
         $r->post('',                 [MedioController::class, 'subir'])->permiso('medios.subir');
         $r->post('/{id:\d+}',        [MedioController::class, 'actualizar'])->permiso('medios.subir');
         $r->post('/{id:\d+}/borrar', [MedioController::class, 'borrar'])->permiso('medios.subir');
+
+        /* La ficha de una imagen, en JSON. La pide la rejilla al pulsar una
+           miniatura, para no sacar a nadie del sitio donde estaba. */
+        $r->get('/{id:\d+}/ficha', [MedioController::class, 'ficha']);
+
+        /* Borrado en lote. Va ANTES del patrón «/{id}» porque «borrar» no es
+           un número y no colisiona, pero declararlo antes evita tener que
+           pensarlo cada vez que alguien lea estas rutas. */
+        $r->post('/borrar', [MedioController::class, 'borrarVarias'])->permiso('medios.subir');
     });
 
     /* ── Noticias ─────────────────────────────────────────────────────────

@@ -148,5 +148,10 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
 <?php if (str_starts_with($c->peticion()->ruta(), '/noticias/')): ?>
   <script src="<?= $e($c->urlAsset('assets/js/editor.js')) ?>" defer></script>
 <?php endif; ?>
+
+<?php /* La biblioteca: rejilla, ficha y seleccion multiple. */ ?>
+<?php if ($c->peticion()->ruta() === '/medios'): ?>
+  <script src="<?= $e($c->urlAsset('assets/js/biblioteca.js')) ?>" defer></script>
+<?php endif; ?>
 </body>
 </html>

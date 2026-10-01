@@ -2041,3 +2041,236 @@ code {
   .video-fila { flex-wrap: wrap; }
   .video-fila__acciones { flex-direction: row; width: 100%; justify-content: flex-start; }
 }
+
+/* ===========================================================================
+   BIBLIOTECA DE IMÁGENES
+   ---------------------------------------------------------------------------
+   Rejilla de miniaturas en vez de una lista de filas: con casi cien
+   imágenes, a una foto se la reconoce mirándola, no leyendo «img-6a810094».
+   =========================================================================== */
+
+/* ── Arrastrar para subir ──────────────────────────────────────────────── */
+.soltar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 108px;
+  padding: var(--space-m);
+  border: 2px dashed var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface-alt);
+  text-align: center;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.soltar.is-encima { border-color: var(--primary); background: var(--accent-tint); }
+
+/* El campo de verdad, invisible pero encima de todo: así sigue siendo un
+   <input type="file"> normal —se alcanza con el tabulador, lo abre la barra
+   espaciadora— y además toda la zona es pulsable. */
+.soltar input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.soltar__texto { margin: 0; color: var(--ink-soft); pointer-events: none; }
+.soltar__enlace { color: var(--primary); text-decoration: underline; }
+.soltar input[type="file"]:focus-visible + .soltar__texto { outline: 2px solid var(--focus); outline-offset: 6px; }
+
+/* ── La rejilla ────────────────────────────────────────────────────────── */
+.rejilla-biblioteca {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-s);
+  margin: var(--space-m) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pieza-med { position: relative; margin: 0; }
+
+.pieza-med__abrir {
+  position: relative;
+  display: block;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+
+.pieza-med__abrir:hover { border-color: var(--line-strong); }
+.pieza-med.is-marcada .pieza-med__abrir { border-color: var(--primary); }
+
+/* Cuadrada: con fotos apaisadas y verticales mezcladas, una rejilla de
+   proporciones libres se ve desordenada y cuesta recorrerla con la vista. */
+.pieza-med__abrir img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.pieza-med__marca {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 6px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  cursor: pointer;
+}
+
+.pieza-med__marca input { width: 16px; height: 16px; cursor: pointer; }
+
+/* Las señales de un vistazo: sin descripción, sin original. Antes había que
+   abrir cada una para saberlo. */
+.pieza-med__senas {
+  position: absolute;
+  inset-block-end: 5px;
+  inset-inline-start: 5px;
+  inset-inline-end: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.sena {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
+  color: var(--surface);
+  font-size: 10px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.sena--aviso { background: color-mix(in srgb, var(--primary) 86%, transparent); }
+
+.pieza-med__nombre {
+  margin: 6px 0 0;
+  font-size: var(--step--2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pieza-med__meta { margin: 1px 0 0; font-size: var(--step--2); color: var(--ink-soft); }
+
+/* ── La barra de selección ─────────────────────────────────────────────── */
+.barra-lote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-alt);
+}
+
+.barra-lote.is-vacio .btn--peligro { opacity: .5; }
+
+/* ── La ficha ──────────────────────────────────────────────────────────── */
+.ficha-med {
+  width: min(1040px, 94vw);
+  max-width: none;
+  max-height: 92vh;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.ficha-med::backdrop { background: rgba(14, 10, 11, .66); }
+
+.ficha-med__caja {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  max-height: 92vh;
+}
+
+.ficha-med__vista {
+  display: grid;
+  place-items: center;
+  padding: var(--space-m);
+  background: var(--surface-invert);
+  min-height: 0;
+}
+
+/* Entera, sin recortar: la rejilla ya enseña el recorte cuadrado; aquí es
+   donde se comprueba qué hay de verdad en la foto. */
+.ficha-med__vista img {
+  max-width: 100%;
+  max-height: 72vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.ficha-med__datos {
+  padding: var(--space-m);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ficha-med__nombre { margin: 0; font-size: var(--step-1); word-break: break-word; }
+.ficha-med__meta { margin: 4px 0 0; color: var(--ink-soft); font-size: var(--step--1); }
+
+.ficha-med__usos {
+  margin-top: var(--space-m);
+  padding-top: var(--space-s);
+  border-top: 1px solid var(--line);
+}
+
+.ficha-med__usos h3 { margin: 0 0 4px; font-size: var(--step-0); }
+.ficha-med__usos p { margin: 0; color: var(--ink-soft); font-size: var(--step--1); }
+
+.ficha-med__usos ul {
+  margin: 6px 0 0;
+  padding-left: 1.2em;
+  list-style: disc;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.ficha-med__cerrar {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-end: 8px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ficha-med__cerrar:hover { background: var(--surface-alt); }
+
+[data-f-url] { width: 100%; font-size: var(--step--2); }
+
+@media (max-width: 860px) {
+  /* En estrecho, la foto arriba y los datos debajo: dos columnas de 300 px
+     no sirven ni para ver la foto ni para leer la ficha. */
+  .ficha-med__caja { grid-template-columns: minmax(0, 1fr); }
+  .ficha-med__vista img { max-height: 40vh; }
+  .rejilla-biblioteca { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}

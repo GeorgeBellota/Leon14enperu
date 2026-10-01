@@ -36,14 +36,138 @@ final class MedioController extends Controller
     {
         $modelo = new Medio($this->c);
 
-        $filtros = ['buscar' => $peticion->texto('buscar', '')];
-        $listado = $modelo->listar($filtros, max(1, (int) $peticion->get('pagina', 1)));
+        $filtros = [
+            'buscar' => $peticion->texto('buscar', ''),
+            'estado' => $peticion->texto('estado', ''),
+        ];
+
+        $listado = $modelo->listar($filtros, max(1, (int) $peticion->get('pagina', 1)), 48);
 
         $this->ver('medios/listar', [
-            'titulo'  => 'Imágenes',
-            'listado' => $listado,
-            'filtros' => $filtros,
+            'titulo'     => 'Imágenes',
+            'listado'    => $listado,
+            'filtros'    => $filtros,
+            'recuentos'  => $modelo->recuentos(),
         ]);
+    }
+
+    /**
+     * La ficha de una imagen, en JSON.
+     *
+     * La pide el panel al pulsar una miniatura. Va por detrás y no como
+     * página aparte para que al cerrar la ficha se siga donde se estaba: con
+     * cien imágenes, volver al principio de la rejilla cada vez que miras una
+     * es insufrible.
+     *
+     * Y el DÓNDE SE USA se calcula aquí, no al borrar: enterarse de que una
+     * imagen está en tres sitios cuando ya le diste a borrar es tarde.
+     */
+    public function ficha(Request $peticion, array $params = []): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $modelo = new Medio($this->c);
+        $id     = (int) ($params['id'] ?? 0);
+        $medio  = $modelo->conVariantes($id);
+
+        if ($medio === null) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Esa imagen ya no existe.'], JSON_UNESCAPED_UNICODE);
+
+            return;
+        }
+
+        $usos = $modelo->usos($id);
+        $raiz = rtrim((string) $this->c->config('url.sitio', ''), '/');
+
+        echo json_encode([
+            'id'        => $id,
+            'nombre'    => $medio['nombre_archivo'] ?? '',
+            'alt'       => $medio['alt'] ?? '',
+            'decorativa' => (int) ($medio['decorativa'] ?? 0) === 1,
+            'ancho'     => (int) ($medio['ancho'] ?? 0),
+            'alto'      => (int) ($medio['alto'] ?? 0),
+            'peso'      => (int) ($medio['peso'] ?? 0),
+            'original'  => $medio['original'] ?? null,
+            'peso_original' => (int) ($medio['peso_original'] ?? 0),
+            'creado_en' => $medio['creado_en'] ?? '',
+            'autor'     => $medio['autor'] ?? '',
+            'mime'      => $medio['mime'] ?? '',
+
+            // La dirección pública, que es lo que se copia para pegarla en
+            // una pieza o en el cuerpo de una noticia.
+            'url'       => $raiz . '/' . ltrim((string) $medio['ruta'], '/'),
+            'ruta'      => '/' . ltrim((string) $medio['ruta'], '/'),
+
+            'usos'      => $usos['total'],
+            'donde'     => $usos['donde'],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Borra varias de una vez.
+     *
+     * Las que estén en uso NO se borran y se dicen por su nombre. Es la
+     * diferencia entre «no se pudo» y saber cuál hay que ir a cambiar.
+     */
+    public function borrarVarias(Request $peticion): void
+    {
+        $this->exigirCsrf($peticion);
+
+        $ids = $peticion->post('medios', []);
+        $ids = is_array($ids) ? array_values(array_filter(array_map('intval', $ids))) : [];
+
+        if ($ids === []) {
+            $this->conError('No seleccionaste ninguna imagen.', '/medios');
+        }
+
+        $modelo  = new Medio($this->c);
+        $motor   = new Imagen($this->carpeta());
+        $borradas = 0;
+        $enUso   = [];
+
+        foreach ($ids as $id) {
+            $medio = $modelo->conVariantes($id);
+
+            if ($medio === null) {
+                continue;
+            }
+
+            if ($modelo->usos($id)['total'] > 0) {
+                $enUso[] = (string) ($medio['nombre_archivo'] ?? $id);
+
+                continue;
+            }
+
+            $base = $medio['variantes']['base'] ?? null;
+
+            $modelo->eliminar($id);
+            $motor->borrarFamilia(is_string($base) ? $base : $medio['ruta']);
+
+            Auditoria::registrar($this->c, 'borrar', 'medios', $id, [
+                'nombre' => $medio['nombre_archivo'] ?? '',
+                'lote'   => true,
+            ]);
+
+            $borradas++;
+        }
+
+        if ($borradas === 0) {
+            $this->conError(
+                'No se borró ninguna: ' . count($enUso) . ' están en uso — '
+                . implode(', ', array_slice($enUso, 0, 4)) . (count($enUso) > 4 ? '…' : ''),
+                '/medios'
+            );
+        }
+
+        $aviso = $borradas . ($borradas === 1 ? ' imagen borrada' : ' imágenes borradas');
+
+        if ($enUso !== []) {
+            $aviso .= '. ' . count($enUso) . ' no se pudieron porque están en uso: '
+                    . implode(', ', array_slice($enUso, 0, 4)) . (count($enUso) > 4 ? '…' : '');
+        }
+
+        $this->conExito($aviso . '.', '/medios');
     }
 
     /**

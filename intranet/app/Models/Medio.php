@@ -24,6 +24,62 @@ final class Medio extends Model
      * @param  array{buscar?: string} $filtros
      * @return array{filas: array<int, array<string,mixed>>, total: int, pagina: int, paginas: int, porPagina: int}
      */
+    /**
+     * Las columnas de otras tablas que apuntan a `medios`.
+     *
+     * Sirve para el filtro «sin usar» y para los recuentos. usos() NO sale de
+     * aquí, y no es un descuido: ése tiene que decir dónde está cada imagen
+     * con nombres legibles —«Sedes · León XIV y Chiclayo (pieza)»—, y eso
+     * pide un JOIN distinto por tabla que no se deduce de un par
+     * (tabla, columna).
+     *
+     * Así que son DOS sitios y hay que tocar los dos. Al añadir una tabla con
+     * una columna que apunte a `medios`: esta lista, y una consulta más en
+     * usos(). Si se olvida una, el panel se contradice: dirá que la imagen no
+     * se usa y aun así se negará a borrarla, o peor, al revés.
+     *
+     * @var list<array{0:string,1:string}>  tabla y columna
+     */
+    private const APUNTAN_AQUI = [
+        ['secciones',       'imagen_id'],
+        ['secciones',       'imagen_movil_id'],
+        ['bloques',         'imagen_id'],
+        ['bloques',         'imagen_movil_id'],
+        ['paginas',         'og_imagen_id'],
+        ['galeria_fotos',   'medio_id'],
+        ['noticias',        'imagen_id'],
+        ['noticias',        'og_imagen_id'],
+        ['noticias_videos', 'miniatura_id'],
+    ];
+
+    /**
+     * Un trozo de SQL que vale «esta imagen no se usa en ninguna parte».
+     *
+     * Se arma de APUNTAN_AQUI para que filtrar por «sin usar» y comprobar
+     * antes de borrar digan siempre lo mismo. Las tablas que todavía no
+     * existan se descartan: en una instalación a medio migrar, preguntar por
+     * una tabla ausente tumbaría el listado entero.
+     */
+    private function condicionSinUso(): string
+    {
+        $existentes = $this->bd()->columna(
+            'SELECT `TABLE_NAME` FROM `information_schema`.`TABLES`
+              WHERE `TABLE_SCHEMA` = DATABASE()'
+        );
+
+        $trozos = [];
+
+        foreach (self::APUNTAN_AQUI as [$tabla, $columna]) {
+            if (!in_array($tabla, $existentes, true)) {
+                continue;
+            }
+
+            $trozos[] = "NOT EXISTS (SELECT 1 FROM `{$tabla}` t WHERE t.`{$columna}` = m.`id`)";
+        }
+
+        return $trozos === [] ? '1 = 1' : implode(' AND ', $trozos);
+    }
+
     public function listar(array $filtros, int $pagina, int $porPagina = 24): array
     {
         $condiciones = [];
@@ -40,6 +96,26 @@ final class Medio extends Model
             $params['buscar_a']   = '%' . $buscar . '%';
         }
 
+        /* ── Los dos filtros que de verdad hacen falta ────────────────────
+           Con casi cien imágenes, «buscar por nombre» sirve de poco: nadie
+           recuerda que una foto se llama «img-6a810094». Lo que se pregunta
+           de verdad es «¿cuáles puedo borrar?» y «¿cuáles me faltan por
+           describir?». */
+        switch ((string) ($filtros['estado'] ?? '')) {
+            case 'sin-uso':
+                $condiciones[] = $this->condicionSinUso();
+                break;
+
+            case 'sin-alt':
+                // Las decorativas no cuentan: están sin alt a propósito.
+                $condiciones[] = "(m.`alt` IS NULL OR m.`alt` = '') AND m.`decorativa` = 0";
+                break;
+
+            case 'con-original':
+                $condiciones[] = 'm.`original` IS NOT NULL';
+                break;
+        }
+
         // donde() devuelve la condición sin el WHERE: lo pone quien la usa.
         $where = 'WHERE ' . $this->donde($condiciones);
 
@@ -54,6 +130,30 @@ final class Medio extends Model
             $pagina,
             $porPagina
         );
+    }
+
+    /**
+     * Cuántas hay en cada estado, para los números de las pestañas.
+     *
+     * Una pestaña que dice «Sin usar» sin decir cuántas obliga a pulsarla
+     * para saber si hay algo. Con el número delante, se decide antes.
+     *
+     * @return array{total:int, sin_uso:int, sin_alt:int, con_original:int}
+     */
+    public function recuentos(): array
+    {
+        return [
+            'total'        => (int) $this->bd()->valor('SELECT COUNT(*) FROM `medios`'),
+            'sin_uso'      => (int) $this->bd()->valor(
+                'SELECT COUNT(*) FROM `medios` m WHERE ' . $this->condicionSinUso()
+            ),
+            'sin_alt'      => (int) $this->bd()->valor(
+                "SELECT COUNT(*) FROM `medios` WHERE (`alt` IS NULL OR `alt` = '') AND `decorativa` = 0"
+            ),
+            'con_original' => (int) $this->bd()->valor(
+                'SELECT COUNT(*) FROM `medios` WHERE `original` IS NOT NULL'
+            ),
+        ];
     }
 
     /**
