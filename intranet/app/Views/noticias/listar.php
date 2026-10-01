@@ -79,6 +79,9 @@ $dia = static function (?string $iso): string {
       <?= $puedeEditar ? 'Escribe la primera con el botón de arriba.' : '' ?>
     </p>
   <?php else: ?>
+    <?php /* El envoltorio le da scroll propio: sin el, en un telefono
+             la tabla empuja la pagina entera y se sale 200 px. */ ?>
+    <div class="tabla-envoltorio">
     <table class="tabla">
       <thead>
         <tr>
@@ -133,6 +136,7 @@ $dia = static function (?string $iso): string {
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
 
     <?php if ((int) $listado['paginas'] > 1): ?>
       <nav class="paginacion sep-m" aria-label="Páginas del listado">

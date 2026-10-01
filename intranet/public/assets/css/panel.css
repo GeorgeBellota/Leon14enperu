@@ -2012,6 +2012,24 @@ code {
 
 .tabla__fecha { white-space: nowrap; }
 
+/* ── La tabla de noticias en un teléfono ─────────────────────────────────
+   Con «table-layout:auto» el ancho mínimo de una tabla lo marca su celda
+   más terca, y aquí eran dos: la fecha sin partir y los botones de acción
+   en fila. Entre las dos pedían 557 px en una ventana de 390, y la página
+   entera se desplazaba en horizontal —no sólo la tabla, que para eso tiene
+   su envoltorio con scroll—.
+
+   Se arregla donde está la causa, dejando que la fecha parta y apilando los
+   botones, en vez de poner «table-layout:fixed» en .tabla: eso cambiaría el
+   reparto de columnas de TODAS las tablas del panel por un problema de una. */
+@media (max-width: 600px) {
+  .tabla__fecha { white-space: normal; }
+  .tabla__acciones { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tabla__acciones .btn { width: 100%; text-align: center; }
+  .tabla th, .tabla td { padding-inline: 8px; }
+  .tabla__nota { word-break: break-word; }
+}
+
 .aviso--ojo {
   padding: var(--space-s) var(--space-m);
   border-left: 4px solid var(--gold);

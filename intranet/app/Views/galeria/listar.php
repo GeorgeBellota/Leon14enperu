@@ -79,6 +79,9 @@ $dia = static function (?string $iso): string {
       <?= $puedeEditar ? 'Crea la primera arriba.' : '' ?>
     </p>
   <?php else: ?>
+    <?php /* El envoltorio le da scroll propio: sin el, en un telefono
+             la tabla empuja la pagina entera y se sale 200 px. */ ?>
+    <div class="tabla-envoltorio">
     <table class="tabla">
       <thead>
         <tr>
@@ -126,6 +129,7 @@ $dia = static function (?string $iso): string {
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   <?php endif; ?>
 </section>
 
