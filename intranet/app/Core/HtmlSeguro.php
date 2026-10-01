@@ -33,6 +33,7 @@
  *     contenido: ahí dentro no hay texto que salvar.
  *   · Se eliminan TODOS los atributos salvo los declarados. Es lista blanca:
  *     un atributo nuevo o raro no entra por defecto.
+ *   · En src sólo se admiten imágenes de este mismo sitio (/assets/…).
  *   · En href sólo se admiten http, https, mailto, tel, anclas y rutas
  *     relativas. javascript:, data: y vbscript: quedan fuera.
  *   · Todo enlace que salga del sitio recibe rel="noopener noreferrer".
@@ -67,6 +68,19 @@ final class HtmlSeguro
         'blockquote' => [],
         'small'  => [],
         'span'   => [],
+
+        /* ── Imágenes dentro del texto ────────────────────────────────────
+           Las pidió el cliente para las noticias: «incorporar enlaces e
+           imágenes dentro del contenido».
+
+           El `src` se filtra aparte y SÓLO admite rutas de este sitio. Una
+           imagen externa filtraría la IP de cada visitante al servidor de
+           un tercero con sólo abrir la página, y además la CSP del sitio es
+           «img-src 'self'», así que ni se vería: saldría un hueco roto. Se
+           sube a la biblioteca y se enlaza desde ahí. */
+        'img'    => ['src', 'alt', 'width', 'height'],
+        'figure' => [],
+        'figcaption' => [],
     ];
 
     /** Aquí el contenido tampoco se salva: se va entero con la etiqueta. */
@@ -199,6 +213,29 @@ final class HtmlSeguro
             $elemento->removeAttribute($nombre);
         }
 
+        /* ── El src de una imagen ─────────────────────────────────────────
+           Sólo rutas de este sitio. Una dirección completa a otro servidor
+           —aunque sea https— convierte cada visita en una petición a un
+           tercero, y eso no lo decide quien escribe una noticia. Sin src
+           admisible, la etiqueta se va entera: un <img> roto es peor que
+           ninguno. */
+        if ($etiqueta === 'img') {
+            $fuente = trim($elemento->getAttribute('src'));
+
+            if ($fuente === '' || !self::esDelSitio($fuente)) {
+                $elemento->parentNode?->removeChild($elemento);
+
+                return;
+            }
+
+            // Que no bloquee el pintado de lo que viene detrás ni se cargue
+            // una imagen que nadie va a mirar.
+            $elemento->setAttribute('loading', 'lazy');
+            $elemento->setAttribute('decoding', 'async');
+
+            return;
+        }
+
         if ($etiqueta !== 'a' || !$elemento->hasAttribute('href')) {
             return;
         }
@@ -218,6 +255,20 @@ final class HtmlSeguro
         if (preg_match('#^https?://#i', $destino)) {
             $elemento->setAttribute('rel', 'noopener noreferrer');
         }
+    }
+
+    /**
+     * ¿Esta ruta apunta a una imagen de este mismo sitio?
+     *
+     * Se admite la ruta relativa a la raíz —«/assets/subidos/…»—, que es
+     * como la escribe el selector del panel. Lo demás, no: una dirección
+     * completa, aunque sea a nuestro propio dominio, se escribe sola mal el
+     * día que el dominio cambie, y una externa es justo lo que se evita.
+     */
+    private static function esDelSitio(string $src): bool
+    {
+        return preg_match('~^/assets/[A-Za-z0-9/_.-]+\.(jpe?g|png|webp|gif|svg)$~i', $src) === 1
+            && !str_contains($src, '..');
     }
 
     /** Devuelve el href si es admisible, o null si no lo es. */

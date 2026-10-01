@@ -73,6 +73,7 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
         <p class="menu__grupo">Contenidos</p>
         <?php if ($auth->puede('paginas.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/paginas') ?>"<?= $activo('/paginas') ?>>Páginas</a>
+          <a class="menu__enlace" href="<?= $url('/noticias') ?>"<?= $activo('/noticias') ?>>Noticias</a>
         <?php endif; ?>
         <?php if ($auth->puede('medios.ver')): ?>
           <a class="menu__enlace" href="<?= $url('/medios') ?>"<?= $activo('/medios') ?>>Imágenes</a>
@@ -140,6 +141,12 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
          y cargarlo en las demás sería pedir un archivo para nada. */ ?>
 <?php if (str_starts_with($c->peticion()->ruta(), '/galeria')): ?>
   <script src="<?= $e($c->urlAsset('assets/js/galeria.js')) ?>" defer></script>
+<?php endif; ?>
+
+<?php /* El editor enriquecido, sólo donde se escribe una noticia: en el
+         listado y en los vídeos no hay nada que editar. */ ?>
+<?php if (str_starts_with($c->peticion()->ruta(), '/noticias/')): ?>
+  <script src="<?= $e($c->urlAsset('assets/js/editor.js')) ?>" defer></script>
 <?php endif; ?>
 </body>
 </html>

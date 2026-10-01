@@ -22,6 +22,7 @@ use Intranet\Controllers\MantenimientoController;
 use Intranet\Controllers\DocumentoController;
 use Intranet\Controllers\GaleriaController;
 use Intranet\Controllers\MedioController;
+use Intranet\Controllers\NoticiaController;
 use Intranet\Controllers\PaginaController;
 use Intranet\Controllers\PanelController;
 use Intranet\Controllers\VoluntarioController;
@@ -79,6 +80,37 @@ return static function (Router $r): void {
         $r->post('',                 [MedioController::class, 'subir'])->permiso('medios.subir');
         $r->post('/{id:\d+}',        [MedioController::class, 'actualizar'])->permiso('medios.subir');
         $r->post('/{id:\d+}/borrar', [MedioController::class, 'borrar'])->permiso('medios.subir');
+    });
+
+    /* ── Noticias ─────────────────────────────────────────────────────────
+       Pantalla propia y fuera de «Páginas», como pidió el cliente. No es
+       sólo orden: una noticia tiene fecha, estado, dirección propia, SEO y
+       un cuerpo con imágenes dentro, y nada de eso cabe en un bloque.
+
+       Las rutas de los vídeos van ANTES de «/{id}» a propósito: con el
+       orden al revés, «/noticias/videos» podría entrar por el patrón de
+       abajo según cómo lo resuelva el enrutador, y es el tipo de cosa que
+       se descubre en producción. Declaradas antes, no hay duda. */
+    $r->grupo('/noticias', ['auth' => true, 'permiso' => 'paginas.ver'], function (Router $r): void {
+        $r->get('',  [NoticiaController::class, 'listar'])->nombre('noticias');
+
+        $r->get('/videos',  [NoticiaController::class, 'videos']);
+        $r->post('/videos', [NoticiaController::class, 'anadirVideo'])->permiso('paginas.editar');
+        $r->post('/videos/{id:\d+}',           [NoticiaController::class, 'guardarVideo'])->permiso('paginas.editar');
+        $r->post('/videos/{id:\d+}/orden',     [NoticiaController::class, 'ordenarVideo'])->permiso('paginas.editar');
+        $r->post('/videos/{id:\d+}/refrescar', [NoticiaController::class, 'refrescarVideo'])->permiso('paginas.editar');
+        $r->post('/videos/{id:\d+}/borrar',    [NoticiaController::class, 'borrarVideo'])->permiso('paginas.editar');
+
+        $r->get('/nueva',  [NoticiaController::class, 'nueva'])->permiso('paginas.editar');
+        $r->post('/nueva', [NoticiaController::class, 'guardar'])->permiso('paginas.editar');
+
+        // La sube el editor por detrás, para no sacar a nadie del formulario
+        // a media redacción.
+        $r->post('/imagen', [NoticiaController::class, 'subirDelCuerpo'])->permiso('paginas.editar');
+
+        $r->get('/{id:\d+}',         [NoticiaController::class, 'editar'])->permiso('paginas.editar');
+        $r->post('/{id:\d+}',        [NoticiaController::class, 'guardar'])->permiso('paginas.editar');
+        $r->post('/{id:\d+}/borrar', [NoticiaController::class, 'borrar'])->permiso('paginas.editar');
     });
 
     /* ── Galería de Multimedia ────────────────────────────────────────────

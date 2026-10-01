@@ -1873,3 +1873,150 @@ code {
   .fila-descripcion { flex-wrap: wrap; }
   .fila-descripcion input[type="text"] { flex: 1 1 100%; order: 3; }
 }
+
+/* ===========================================================================
+   EDITOR DE NOTICIAS Y VÍDEOS
+   =========================================================================== */
+
+.editor__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--surface-alt);
+}
+
+.editor__boton {
+  min-width: 32px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step--1);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.editor__boton:hover { background: var(--surface); border-color: var(--line); }
+.editor__sep { width: 1px; height: 18px; background: var(--line); margin: 0 3px; }
+
+/* El área escribible. Hereda la tipografía de lectura del panel para que lo
+   que se ve aquí se parezca a lo que saldrá publicado. */
+.editor__area {
+  min-height: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: var(--space-s) var(--space-m);
+  border: 1px solid var(--line);
+  border-radius: 0 0 8px 8px;
+  background: var(--surface);
+  font-family: var(--font-read);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+
+.editor__area:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.editor__area p { margin: 0 0 .9em; }
+.editor__area h3 { margin: 1.4em 0 .5em; font-size: var(--step-1); }
+.editor__area ul, .editor__area ol { margin: 0 0 .9em 1.4em; }
+.editor__area a { color: var(--primary); text-decoration: underline; }
+
+/* Las imágenes dentro del cuerpo, a su tamaño real pero sin desbordar. */
+.editor__area img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: .4em 0;
+}
+
+.editor__aviso { color: var(--ink-soft); }
+.editor__aviso.is-trabajando { color: var(--primary); }
+
+/* ── Los vídeos ─────────────────────────────────────────────────────────── */
+.video-fila {
+  display: flex;
+  gap: var(--space-m);
+  align-items: flex-start;
+  padding: var(--space-s) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.video-fila.is-oculta { opacity: .55; }
+
+.video-fila__mini {
+  flex: 0 0 auto;
+  width: 160px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 7px;
+  background: var(--surface-alt);
+}
+
+.video-fila__mini--vacia {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-soft);
+  font-size: var(--step--2);
+}
+
+.video-fila__datos { flex: 1 1 auto; min-width: 0; }
+.video-fila__datos input[type="text"],
+.video-fila__datos textarea { width: 100%; }
+
+.video-fila__mandos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+}
+
+.video-fila__acciones {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.pila-compacta { display: grid; gap: 6px; }
+
+/* ── Paginación del listado ────────────────────────────────────────────── */
+.paginacion { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.paginacion__num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.paginacion__num:hover { border-color: var(--line-strong); color: var(--ink); }
+.paginacion__num.is-activa { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
+.tabla__fecha { white-space: nowrap; }
+
+.aviso--ojo {
+  padding: var(--space-s) var(--space-m);
+  border-left: 4px solid var(--gold);
+  background: var(--accent-tint);
+  border-radius: 0 8px 8px 0;
+}
+
+@media (max-width: 720px) {
+  .video-fila { flex-wrap: wrap; }
+  .video-fila__acciones { flex-direction: row; width: 100%; justify-content: flex-start; }
+}
