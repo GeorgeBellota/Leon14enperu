@@ -70,6 +70,9 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
                          calendario corregido y el brillo del botón.
          «senal»         «Señal Oficial» del IRTP: fondo claro, sin botón, con
                          la línea de acreditaciones.
+         «multimedia»    «Recordemos cada momento.» según SALIDE 4 WEB.ai
+                         (oct. 2026): botón dorado «Multimedia» y versión
+                         propia para móvil.
 
        Quien no elija foto en el panel hereda la de la primera lámina, que es
        justo lo que hacían las tres antes de este cambio. */ ?>
@@ -105,15 +108,18 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         /* «preparemonos» es la misma composición que «programa»: comparte con
            ella el encuadre y la veladura de móvil. */
         $esPrograma = $disenoFoto === 'programa' || $disenoFoto === 'preparemonos';
+        $esMultimedia = $disenoFoto === 'multimedia';
         $archivo = [
             'programa'     => 'hero-programa',
             'preparemonos' => 'hero-preparemonos',
             'senal'        => 'hero-senal',
+            'multimedia'   => 'hero-multimedia',
         ][$disenoFoto] ?? 'hero';
         $alt = match (true) {
-            $esSenal    => 'El logotipo del IRTP junto al Papa León XIV, que saluda con la mano en alto',
-            $esPrograma => 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV',
-            default     => 'El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú',
+            $esSenal      => 'El logotipo del IRTP junto al Papa León XIV, que saluda con la mano en alto',
+            $esPrograma   => 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV',
+            $esMultimedia => 'Un fotógrafo dispara su cámara ante el altar donde el Papa León XIV saluda con la mano en alto',
+            default       => 'El Papa León XIV saluda desde el papamóvil rodeado de fieles con banderas del Perú',
         };
         ob_start(); ?>
         <picture>
@@ -126,6 +132,13 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
             <source media="(max-width: 1023px)"
                     srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero-senal-movil.png')) ?>">
           <?php endif; ?>
+          <?php /* «Multimedia» trae su propia composición vertical en el editable. */ ?>
+          <?php if ($esMultimedia): ?>
+            <source media="(max-width: 767px)" type="image/webp"
+                    srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero-multimedia-movil.webp')) ?>">
+            <source media="(max-width: 767px)"
+                    srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/hero-multimedia-movil.jpg')) ?>">
+          <?php endif; ?>
           <source srcset="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.webp')) ?>" type="image/webp">
           <img src="<?= $esc($sitio->asset('assets/img/rediseno/index/' . $archivo . '.jpg')) ?>"
                alt="<?= $esc($alt) ?>" width="2880" height="932"
@@ -134,11 +147,11 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         <?php $respaldoHero = (string) ob_get_clean(); ?>
         <?php /* Sólo la primera fotografía se anuncia. Las otras acompañan a un
                  titular que ya lo dice todo, y leerlas seguidas sería ruido. */ ?>
-        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $esSenal ? ' hero-home__foto--senal' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
+        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $esSenal ? ' hero-home__foto--senal' : '' ?><?= $esMultimedia ? ' hero-home__foto--multimedia' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
              data-slide-foto<?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
           <?php
           $fotoHtml = $sitio->imagen(
-              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma || $esSenal ? [] : $primera),
+              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma || $esSenal || $esMultimedia ? [] : $primera),
               $respaldoHero,
               ['sizes' => '100vw', 'prioridad' => $i === 0]
           );
@@ -167,9 +180,9 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
           $diseno = $disenoDe($lamina);
           $conDescarga = $diseno === 'programa' || $diseno === 'preparemonos';
           $rotulo = (string) ($lamina['enlace_texto'] ?? '')
-              ?: ($conDescarga ? 'Programa Oficial' : ($diseno === 'senal' ? 'Acreditaciones' : 'En directo'));
+              ?: ($conDescarga ? 'Programa Oficial' : ($diseno === 'senal' ? 'Acreditaciones' : ($diseno === 'multimedia' ? 'Multimedia' : 'En directo')));
           $url = (string) ($lamina['enlace_url'] ?? '')
-              ?: $sitio->enlace($conDescarga ? 'agenda/' : ($diseno === 'senal' ? 'prensa/#senal-oficial' : 'en-directo/'));
+              ?: $sitio->enlace($conDescarga ? 'agenda/' : ($diseno === 'senal' ? 'prensa/#senal-oficial' : ($diseno === 'multimedia' ? 'multimedia/' : 'en-directo/')));
           $Etiqueta = $i === 0 ? 'h1' : 'p';
           ?>
           <div class="hero-home__slide<?= $i === 0 ? ' is-active' : '' ?>"
@@ -207,6 +220,23 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
                 <span><a class="hero-home__acredita" href="<?= $esc($url) ?>"><?= $esc($rotulo) ?></a><?= $nota !== '' ? ' ' . $conSaltos($nota) : '' ?></span>
               </p>
             </div>
+          <?php elseif ($diseno === 'multimedia'): ?>
+            <?php
+            /* ── «Multimedia» (SALIDE 4 WEB.ai) ─────────────────────────────
+               El editable escribe «cada momento.» con punto en escritorio y sin
+               él en móvil: el punto final va en su propia caja para poder
+               ocultarlo sólo en la columna estrecha. */
+            $bajada = trim((string) ($lamina['texto'] ?? ''));
+            $punto  = str_ends_with($bajada, '.');
+            $bajada = $punto ? substr($bajada, 0, -1) : $bajada;
+            ?>
+            <<?= $Etiqueta ?> class="hero-home__title">
+              <span class="hero-home__t1"><?= $esc((string) ($lamina['titulo'] ?? '')) ?></span>
+              <span class="hero-home__t2"><?= $esc($bajada) ?><?php if ($punto): ?><span class="hero-home__punto">.</span><?php endif; ?></span>
+            </<?= $Etiqueta ?>>
+            <a class="btn hero-home__multimedia" href="<?= $esc($url) ?>">
+              <span><?= $esc($rotulo) ?></span>
+            </a>
           <?php else: ?>
             <<?= $Etiqueta ?> class="hero-home__title">
               <span class="hero-home__t1"><?= $esc((string) ($lamina['titulo'] ?? '')) ?></span>

@@ -225,11 +225,63 @@
   .hero-home__acredita:hover{color:var(--wine)}
 }
 
+/* ── Lámina «Multimedia» (SALIDE 4 WEB.ai, octubre de 2026) ──────────────────
+   El editable es un recorte de 1900 × 500 de la mesa de siempre: misma escala
+   que SLIDES PÁG HOME (1 px = 1.31922 unidades) y 56.72 unidades recortadas
+   arriba y abajo. Pasado a px de la mesa de 1440 × 466:
+
+     «Recordemos»       Neulis Bold   60.902, #E7A115, base en y 248.76
+     «cada momento.»    Neulis Med.   58.372, #EEEEEE, base en y 302.79
+                        las dos líneas terminan en x 1339.02
+     botón              191.58 × 40.07 desde x 1147.08, y 329.72, #E7A115
+     «Multimedia»       Poppins Medium 25.761, #ECECEC, desde x 1170.45,
+                        base en y 358.19
+     brillo             elipse blanca, degradado radial, «superponer» al 68 %,
+                        centro (1275.37, 300.04), radios 57.36 × 77.31
+     escudo             el mismo emblema, pero 8.27 px más abajo */
+@media (min-width:1024px){
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__title{
+    right:calc(100.98 * var(--u));top:calc(201.41 * var(--u));line-height:.92;
+  }
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t1{
+    font-weight:700;font-size:calc(60.902 * var(--u));color:var(--gold);
+  }
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t2{
+    font-weight:500;font-size:calc(58.372 * var(--u));color:#EEEEEE;
+  }
+  /* El texto no va centrado en el botón: el editable lo corre 1.07 px a la
+     derecha (de ahí el relleno izquierdo) y su base queda 0.58 px por encima
+     de la que da el centrado flexible; en Chrome, que redondea el ascendente
+     de Poppins, eso es bajar el texto 0.92 px (medido a 1440 px). */
+  .hero-home__multimedia{
+    position:absolute;right:calc(101.32 * var(--u));top:calc(329.72 * var(--u));
+    width:calc(191.58 * var(--u));height:calc(40.07 * var(--u));min-width:0;min-height:0;
+    padding:0 0 0 calc(2.14 * var(--u));
+    font-size:calc(25.761 * var(--u));line-height:1;
+    overflow:hidden;isolation:isolate;
+  }
+  .hero-home__multimedia span{position:relative;top:calc(.92 * var(--u))}
+  .hero-home__multimedia::after{
+    content:"";position:absolute;pointer-events:none;
+    left:calc(70.93 * var(--u));top:calc(-106.99 * var(--u));
+    width:calc(114.72 * var(--u));height:calc(154.61 * var(--u));
+    background:radial-gradient(closest-side,#FFFFFF,rgba(255,255,255,0));
+    mix-blend-mode:overlay;opacity:.68;
+  }
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"]) .hero-home__escudo{
+    transform:translateY(calc(8.27 * var(--u)));
+  }
+}
+/* El botón del editable es un rectángulo dorado plano, como el de «programa». */
+.hero-home__multimedia{background-image:none;background-color:var(--gold);color:#ECECEC}
+.hero-home__multimedia:hover{background-color:#F2CA1D;color:var(--wine)}
+
 /* Sobre el blanco de «Señal Oficial» sobran el emblema en negativo de la CEP
    —el editable no lo pone— y el mando claro, que no se vería. El mando además
    baja 14 px: en su sitio de siempre la flecha izquierda tapaba el final de
    «comunicación.», el segundo renglón de la nota. */
-.hero-home__escudo{transition:opacity .68s var(--ease-suave)}
+.hero-home__escudo{transition:opacity .68s var(--ease-suave),transform .68s var(--ease-suave),
+  right .68s var(--ease-suave),top .68s var(--ease-suave),width .68s var(--ease-suave)}
 .hero--home:has(.hero-home__slide.is-active[data-diseno="senal"]) .hero-home__escudo{opacity:0}
 @media (min-width:1024px){
   .hero-home__nav{transition:transform .68s var(--ease-suave)}
@@ -788,4 +840,73 @@
   .ico-check{flex:0 0 auto;width:1.5em;height:1.5em;margin-top:-.08em;color:#6E0B14}
   .hero-home__nota br{display:none}
   .hero-home__acredita{color:#6E0B14;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+}
+
+/* ── «Multimedia» en tableta y móvil ────────────────────────────────────────
+   Tableta (768-1023): la foto ancha de siempre, corrida hacia el granate, y el
+   texto a la derecha y abajo, que es donde la foto deja sitio.
+
+   Móvil (hasta 767): el editable trae su propia mesa de 500 × 550. La foto
+   vertical va entera, arriba y a todo el ancho, y los textos se colocan sobre
+   ella en unidades de esa mesa (--m), así que nada se separa de lo dibujado.
+   Debajo queda la franja granate de las flechas: el fondo de la foto es el
+   mismo #6E0B14 del héroe, y no se nota la costura.
+
+     escudo          tinta de 50.73 de ancho desde (222.45, 18.73)
+     «Recordemos»    Neulis Bold   45.538, base en y 432.98, centrado
+     «cada momento»  Neulis Med.   43.646, base en y 473.38, sin punto
+     botón           143.25 × 29.96 desde (178.25, 492.52)
+     «Multimedia»    Poppins Medium 19.262, base en y 513.81
+     brillo          centro (274.18, 470.32), radios 42.89 × 57.80 */
+@media (min-width:768px) and (max-width:1023px){
+  .hero-home__foto--multimedia{--hero-focus:72% 50%}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"])::after{opacity:0}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"]) .hero-home__inner{justify-content:flex-end}
+  .hero-home__slide[data-diseno="multimedia"]{align-items:flex-end}
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__title{text-align:right;line-height:.9}
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t1{font-weight:700;color:var(--gold);font-size:clamp(32px,6vw,58px)}
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t2{font-weight:500;color:#EEEEEE;font-size:clamp(31px,5.8vw,56px)}
+  .hero-home__multimedia{
+    position:relative;margin-top:clamp(20px,3.2vw,32px);
+    min-width:0;min-height:0;padding:.32em 1.1em;font-size:clamp(17px,2.6vw,26px);
+  }
+}
+@media (max-width:767px){
+  .hero--home{--m:calc(100vw / 500)}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"])::after{opacity:0}
+  .hero-home__foto--multimedia picture{inset:0 0 auto 0}
+  .hero--home .hero-home__foto--multimedia img{height:auto}
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"]) .hero-home__inner{
+    justify-content:flex-start;padding-top:0;padding-inline:0;
+  }
+  .hero-home__slide[data-diseno="multimedia"]{display:block;height:calc(550 * var(--m))}
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__title{
+    position:absolute;left:0;right:0;top:calc(398.9 * var(--m));
+    width:auto;text-align:center;line-height:.92;
+  }
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t1{
+    font-weight:700;font-size:calc(45.538 * var(--m));color:var(--gold);
+  }
+  .hero-home__slide[data-diseno="multimedia"] .hero-home__t2{
+    font-weight:500;font-size:calc(43.646 * var(--m));color:#EEEEEE;
+  }
+  .hero-home__punto{display:none}
+  .hero-home__multimedia{
+    position:absolute;left:calc(178.25 * var(--m));top:calc(492.52 * var(--m));
+    width:calc(143.25 * var(--m));height:calc(29.96 * var(--m));min-width:0;min-height:0;
+    padding:0 0 0 calc(1.63 * var(--m));
+    font-size:calc(19.262 * var(--m));line-height:1;
+    overflow:hidden;isolation:isolate;
+  }
+  .hero-home__multimedia span{position:relative;top:calc(-.43 * var(--m))}
+  .hero-home__multimedia::after{
+    content:"";position:absolute;pointer-events:none;
+    left:calc(53.04 * var(--m));top:calc(-80 * var(--m));
+    width:calc(85.78 * var(--m));height:calc(115.61 * var(--m));
+    background:radial-gradient(closest-side,#FFFFFF,rgba(255,255,255,0));
+    mix-blend-mode:overlay;opacity:.68;
+  }
+  .hero--home:has(.hero-home__slide.is-active[data-diseno="multimedia"]) .hero-home__escudo{
+    right:calc(214.02 * var(--m));top:calc(10 * var(--m));width:calc(71.79 * var(--m));
+  }
 }
