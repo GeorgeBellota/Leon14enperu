@@ -103,7 +103,15 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
         <div class="campo">
           <label class="campo__etiqueta" for="<?= $e($id) ?>"><?= $e($def['etiqueta']) ?></label>
 
-          <?php if ($def['tipo'] === 'lista'): ?>
+          <?php if ($def['tipo'] === 'opciones'): ?>
+            <?php
+            $defCampo    = $def;
+            $nombreCampo = 'datos_' . $clave;
+            $idCampo     = $id;
+            $valorCampo  = $valorDato($seccion, $clave, 'texto');
+            require __DIR__ . '/_campo-opciones.php';
+            ?>
+          <?php elseif ($def['tipo'] === 'lista'): ?>
             <textarea id="<?= $e($id) ?>" name="datos_<?= $e($clave) ?>" rows="6"><?= $e($valorDato($seccion, $clave, 'lista')) ?></textarea>
             <p class="campo__ayuda">Un elemento por línea. Las líneas vacías se descartan.</p>
           <?php elseif ($def['tipo'] === 'area'): ?>

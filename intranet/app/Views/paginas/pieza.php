@@ -87,13 +87,42 @@ $conPagi = !empty($seccion['datos']['detalle']);
       </div>
     <?php endif; ?>
 
+    <?php
+    /* Las listas cerradas van PRIMERO, antes que los campos que gobiernan.
+       «Plantilla» decide cuáles de los demás se usan —la ficha esconde los
+       otros—, así que elegirla al final, que es donde caía por estar en
+       `datos`, era el orden contrario al que tiene sentido. */
+    $mandan = array_filter(
+        $def['datos'] ?? [],
+        static fn (array $d): bool => ($d['tipo'] ?? '') === 'opciones'
+    );
+    ?>
+    <?php foreach ($mandan as $clave => $defDato): ?>
+      <?php $id = 'pd-' . $clave; ?>
+      <div class="campo" data-campo="datos_<?= $e($clave) ?>">
+        <label class="campo__etiqueta" for="<?= $e($id) ?>"><?= $e($defDato['etiqueta']) ?></label>
+        <?php
+        $defCampo    = $defDato;
+        $nombreCampo = 'datos_' . $clave;
+        $idCampo     = $id;
+        $valorCampo  = (string) ($pieza['datos'][$clave] ?? '');
+        require __DIR__ . '/_campo-opciones.php';
+        ?>
+        <?php if (($defDato['ayuda'] ?? '') !== ''): ?>
+          <p class="campo__ayuda"><?= $defDato['ayuda'] /* texto nuestro */ ?></p>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+
     <?php foreach ($def['campos'] as $campo): ?>
       <?php
       $columna = Plantillas::columna($campo);
       $tipo    = Plantillas::campo($campo)['tipo'];
       $id      = 'p-' . $campo;
       ?>
-      <div class="campo">
+      <?php /* `data-campo` es el nombre con el que viaja: así panel.js puede
+               esconder la caja entera cuando la plantilla elegida no lo usa. */ ?>
+      <div class="campo" data-campo="<?= $e($columna) ?>">
         <label class="campo__etiqueta" for="<?= $e($id) ?>"><?= $e(Plantillas::campoBloque($campo)) ?></label>
 
         <?php if ($tipo === 'imagen'): ?>
@@ -136,15 +165,32 @@ $conPagi = !empty($seccion['datos']['detalle']);
            value="<?= $e(json_encode($sobrantes, JSON_UNESCAPED_UNICODE)) ?>">
   <?php endif; ?>
 
-  <?php if (($def['datos'] ?? []) !== []): ?>
-    <section class="tarjeta">
+  <?php
+  /* Lo que no sea una lista cerrada: ésas ya fueron arriba. Si no queda
+     ninguna, la tarjeta no se pinta: un título con el vacío debajo sólo hace
+     dudar de si falta algo por cargar. */
+  $otros = array_diff_key($def['datos'] ?? [], $mandan);
+  ?>
+  <?php if ($otros !== []): ?>
+    <section class="tarjeta" data-tarjeta-campos>
       <header class="tarjeta__cabecera"><h2>Otros textos</h2></header>
 
-      <?php foreach ($def['datos'] as $clave => $defDato): ?>
+      <?php foreach ($otros as $clave => $defDato): ?>
         <?php $id = 'pd-' . $clave; ?>
-        <div class="campo">
+        <div class="campo" data-campo="datos_<?= $e($clave) ?>">
           <label class="campo__etiqueta" for="<?= $e($id) ?>"><?= $e($defDato['etiqueta']) ?></label>
 
+          <?php if ($defDato['tipo'] === 'opciones'): ?>
+            <?php
+            /* Lista cerrada. El parcial se encarga de no descartar un valor
+               guardado que ya no se ofrezca: ver _campo-opciones.php. */
+            $defCampo    = $defDato;
+            $nombreCampo = 'datos_' . $clave;
+            $idCampo     = $id;
+            $valorCampo  = (string) ($pieza['datos'][$clave] ?? '');
+            require __DIR__ . '/_campo-opciones.php';
+            ?>
+          <?php else: ?>
           <?php /* Una caja de cuatro renglones para un campo de una línea
                    —dónde va la fotografía, un subtítulo— invita a escribir un
                    párrafo donde cabe una palabra. La altura la dice el tipo. */ ?>
@@ -161,6 +207,7 @@ $conPagi = !empty($seccion['datos']['detalle']);
                 ? implode("\n", (array) ($valor ?? []))
                 : (is_scalar($valor) ? (string) $valor : ''));
           ?></textarea>
+          <?php endif; ?>
 
           <?php if ($defDato['tipo'] === 'lista'): ?>
             <p class="campo__ayuda">Un elemento por línea.</p>

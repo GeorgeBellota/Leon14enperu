@@ -124,78 +124,55 @@ final class Plantillas
                     // nueva ni un ALTER: una lámina sin estos valores se pinta
                     // exactamente como se pintaba antes.
                     //
-                    // Son campos de texto porque el editor del panel sabe pintar
-                    // tres cosas —imagen, área y texto— y añadir desplegables
-                    // obligaría a tocar la vista del panel. La vista pública
-                    // normaliza lo que llegue: cualquier cosa que no reconozca
-                    // cae en el comportamiento de siempre. Una errata no rompe la
-                    // portada, sólo no cambia nada.
+                    // «Plantilla» era un campo de texto libre con ocho palabras
+                    // mágicas y dos mil caracteres de ayuda explicándolas, de las
+                    // cuales TRES no existían en la vista pública: quien escribía
+                    // «fondo», «fondo-derecha» o «sin-texto» se llevaba el diseño
+                    // partido de siempre sin que nada se lo dijera.
+                    //
+                    // Ahora es una lista cerrada con lo que de verdad hay. La
+                    // vista pública sigue normalizando lo que llegue —cualquier
+                    // cosa que no reconozca cae en el diseño de siempre—, así que
+                    // una lámina guardada antes con un valor raro se sigue
+                    // pintando igual que ayer.
                     'datos'  => [
                         'diseno' => [
-                            'etiqueta' => 'Diseño de la lámina',
-                            'tipo'     => 'texto',
-                            'ayuda'    => '«programa» = la lámina «Preparémonos»: el titular en dorado '
-                                        . 'y negrita sobre su propia fotografía, y un botón dorado con '
-                                        . 'flecha de descarga a la derecha en lugar del granate «En '
-                                        . 'directo» de la izquierda. Con ella la fotografía y el botón '
-                                        . 'salen de la lámina, no de la primera. · '
-                                        . '«preparemonos» = la misma lámina tal como la trae el editable '
-                                        . 'de septiembre de 2026 (SLIDES PÁG HOME): el calendario de la '
-                                        . 'fotografía ya corregido y el brillo del botón. · '
-                                        . '«senal» = «Señal Oficial» del IRTP: fondo blanco, titular en '
-                                        . 'dorado, la bajada en dos renglones (usa un salto de línea en '
-                                        . '«Texto») y, debajo, una línea con un check en la que el texto '
-                                        . 'del enlace va subrayado y enlazado, seguido de la «Nota». No '
-                                        . 'lleva botón. La imagen es la lámina entera sin los textos '
-                                        . '(logotipo y Papa ya dibujados, 2880 × 932); la imagen para '
-                                        . 'móvil es el Papa recortado sobre transparente, y se usa hasta '
-                                        . 'la tableta. · '
-                                        . '«multimedia» = «Recordemos cada momento.» (SALIDE 4 WEB, '
-                                        . 'octubre de 2026): titular en dorado y negrita, bajada en '
-                                        . 'blanco y un botón dorado a la derecha. La imagen es la lámina '
-                                        . 'entera sin los textos (2880 × 932); la imagen para móvil es '
-                                        . 'su versión vertical (1000 × 1100), con los textos centrados '
-                                        . 'abajo. El punto final de «Texto» no se muestra en el móvil, '
-                                        . 'como en el editable. · '
-                                        . 'Vacío = diseño partido, con el texto en el panel de color '
-                                        . 'al lado de la imagen. Es el único que admite el retrato del '
-                                        . 'Santo Padre, que no puede llevar velo ni degradado encima. · '
-                                        . '«fondo» = fotografía a sangre con el texto encima, apoyado a '
-                                        . 'la izquierda. · «fondo-derecha» = igual, pero con el texto a '
-                                        . 'la derecha; se usa cuando el motivo principal de la '
-                                        . 'fotografía cae en el lado izquierdo y el bloque lo taparía. · '
-                                        . '«sin-texto» = sólo la imagen, sin rótulo, titular, bajada ni '
-                                        . 'botones. Para banners ya diseñados que traen su propio texto '
-                                        . 'dentro. La imagen se muestra ENTERA, sin recortar, así que '
-                                        . 'conviene subir además una versión vertical en «imagen para '
-                                        . 'móvil»: un banner muy apaisado se ve diminuto en un teléfono. '
-                                        . 'El campo «Titular» no se pinta pero se usa como texto '
-                                        . 'alternativo de la imagen; escríbelo igualmente.',
-                        ],
-                        // El encuadre y la barandilla salieron de los cambios que
-                        // pidió el cliente en septiembre de 2026: la lámina de los
-                        // cinco santos necesitaba subir el recorte para no perder
-                        // las caras, y decir otra cosa que las fechas y las sedes.
-                        'encuadre' => [
-                            'etiqueta' => 'Encuadre de la fotografía',
-                            'tipo'     => 'texto',
-                            'ayuda'    => 'Sólo para las láminas «fondo». Qué parte de la fotografía se '
-                                        . 'conserva al recortarla a la franja del carrusel. Se escribe '
-                                        . 'como dos porcentajes, horizontal y vertical: «50% 42%» es el '
-                                        . 'centro y es lo que se usa si lo dejas vacío. Bajar el segundo '
-                                        . 'número sube el recorte —«50% 26%» conserva la franja alta, '
-                                        . 'donde suelen estar las caras—.',
-                        ],
-                        'dato' => [
-                            'etiqueta' => 'Barandilla de datos',
-                            'tipo'     => 'area',
-                            'ayuda'    => 'La hilera pequeña que va bajo el texto, sobre los botones. '
-                                        . 'Vacío = «11–16 noviembre 2026 · Lima · Chiclayo · Cusco · '
-                                        . 'Pucallpa», que es lo que dicen las demás láminas. Para poner '
-                                        . 'otra cosa, separa los elementos con una barra vertical (|) y '
-                                        . 'usa un salto de línea para abrir un segundo renglón. '
-                                        . 'En móvil esta hilera no se muestra: la banda de texto sólo da '
-                                        . 'para el rótulo, el titular y un botón.',
+                            'etiqueta' => 'Plantilla',
+                            'tipo'     => 'opciones',
+                            // La clave es lo que se guarda; el valor, lo que se
+                            // lee en el panel. El orden es el de la portada: la
+                            // primera opción es la que sale por defecto.
+                            'opciones' => [
+                                ''             => 'Partido · el texto al lado de la imagen',
+                                'preparemonos' => 'Preparémonos · titular dorado y botón de programa',
+                                'programa'     => 'Programa · botón dorado con flecha de descarga',
+                                'senal'        => 'Señal Oficial · fondo blanco, con enlace y nota',
+                                'multimedia'   => 'Recordemos · titular dorado y botón «Multimedia»',
+                                'imagen-sola'  => 'Sólo imagen · sin textos, toda la lámina es el enlace',
+                            ],
+                            /* Qué campos pinta cada plantilla. La ficha esconde
+                               los demás —doce campos para elegir una foto es lo
+                               que hacía esto difícil—. Se esconde la caja, no se
+                               desactiva el campo: lo escrito sigue viajando y
+                               volver a la plantilla de antes lo devuelve. */
+                            'usa' => [
+                                ''             => ['rotulo', 'titulo', 'texto', 'imagen_id', 'enlace_texto', 'enlace_url'],
+                                'preparemonos' => ['titulo', 'texto', 'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url'],
+                                'programa'     => ['titulo', 'texto', 'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url'],
+                                'senal'        => ['titulo', 'texto', 'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url', 'datos_nota'],
+                                'multimedia'   => ['titulo', 'texto', 'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url'],
+                                'imagen-sola'  => ['titulo', 'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url'],
+                            ],
+                            'ayuda'    => 'Cada plantilla usa unos campos y deja los demás sin pintar. '
+                                        . '«Partido» es el único que admite el retrato del Santo Padre, '
+                                        . 'que no puede llevar velo ni degradado encima. «Señal Oficial» '
+                                        . 'usa la «Nota» y parte la bajada por donde pongas un salto de '
+                                        . 'línea. «Sólo imagen» no pinta rótulo, titular, bajada ni '
+                                        . 'botón: sube la lámina ya diseñada —2880 × 932 para pantalla y '
+                                        . 'una vertical de 1000 × 1100 para móvil— y pon el destino en '
+                                        . '«Enlace»; toda la lámina se vuelve pulsable. Quien no ve la '
+                                        . 'imagen oye la descripción que tenga en la biblioteca, así que '
+                                        . 'descríbela allí: es lo único que cuenta lo que pone dentro.',
                         ],
                         'nota' => [
                             'etiqueta' => 'Nota tras el enlace',
@@ -204,13 +181,6 @@ final class Plantillas
                                         . 'subrayado en la línea del check: «de acceso a la señal oficial '
                                         . 'sin logos ni…». Un salto de línea parte el renglón en '
                                         . 'escritorio, como en el editable; en el móvil no se aplica.',
-                        ],
-                        'segundo_boton' => [
-                            'etiqueta' => 'Segundo botón',
-                            'tipo'     => 'texto',
-                            'ayuda'    => 'Vacío = detrás del botón de la lámina se añade solo «Sé '
-                                        . 'voluntario», que es la única acción abierta hoy. Escribe «no» '
-                                        . 'para dejar únicamente el botón de la lámina.',
                         ],
                     ],
                     'maximo' => 8,

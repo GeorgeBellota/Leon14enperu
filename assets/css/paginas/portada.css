@@ -910,3 +910,63 @@
     right:calc(214.02 * var(--m));top:calc(10 * var(--m));width:calc(71.79 * var(--m));
   }
 }
+
+
+/* ===========================================================================
+   LÁMINA «SÓLO IMAGEN»
+   ---------------------------------------------------------------------------
+   Para banners ya diseñados: la lámina viene entera del gestor, con sus
+   textos dentro, y aquí no se dibuja nada encima. Una imagen para escritorio,
+   otra vertical para móvil, y el enlace cubriendo todo.
+
+   Va al final del archivo y FUERA de cualquier @media a propósito: el velo
+   que apaga se declara dentro de «max-width:1023px», y si la regla que lo
+   quita viviera dentro del mismo tramo habría que acordarse de repetirla cada
+   vez que alguien añada otro. Desde fuera vale para todos los anchos, haya
+   velo o no.
+   =========================================================================== */
+
+/* El héroe lleva un degradado oscuro encima de la fotografía para que el
+   titular blanco se lea. Aquí no hay titular que leer —va dibujado dentro de
+   la imagen— y ese velo sólo serviría para apagar lo que subieron. Es la
+   misma regla que ya tienen «senal» y «multimedia». */
+.hero--home:has(.hero-home__slide.is-active[data-diseno="imagen-sola"])::after {
+  opacity: 0;
+}
+
+/* El enlace cubre la lámina entera: lo pedido es que pinchando en cualquier
+   parte lleve a su sitio.
+
+   Sin z-index propio: así se queda por debajo de las flechas y las marcas del
+   carrusel, que llevan z-index 4. Con uno mayor, un banner con enlace dejaría
+   de poder pasarse de lámina, que es peor que no tener enlace. */
+/* En móvil la lámina activa deja de ser una capa y vuelve al flujo: su alto
+   lo da su contenido. Ésta no tiene contenido —todo va dentro de la imagen—,
+   así que medía CERO y el enlace no cubría nada: se podía pinchar el banner y
+   no pasaba nada. Aquí sigue siendo una capa del alto del héroe, en todos los
+   anchos. El héroe tiene su propio min-height, así que sacarla del flujo no lo
+   encoge. */
+.hero-home__slides:has(.hero-home__slide.is-active[data-diseno="imagen-sola"]),
+.hero-home__slide[data-diseno="imagen-sola"] {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-home__cubre {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* Un enlace que no se ve necesita que se vea al tabular; si no, quien va con
+   el teclado no sabe nunca dónde está. */
+.hero-home__cubre:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: -6px;
+}
+
+/* El escudo de la CEP se dibuja sobre la fotografía en las demás láminas. En
+   un banner ya diseñado sobra: o lo trae dentro, o no lo quiere. */
+.hero--home:has(.hero-home__slide.is-active[data-diseno="imagen-sola"]) .hero-home__escudo {
+  display: none;
+}

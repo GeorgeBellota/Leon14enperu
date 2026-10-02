@@ -109,6 +109,10 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
            ella el encuadre y la veladura de móvil. */
         $esPrograma = $disenoFoto === 'programa' || $disenoFoto === 'preparemonos';
         $esMultimedia = $disenoFoto === 'multimedia';
+        /* «Sólo imagen»: la lámina viene entera del gestor, textos incluidos.
+           Aquí no se dibuja nada encima; lo único que se añade es el enlace,
+           y cubre toda la lámina. */
+        $esSola = $disenoFoto === 'imagen-sola';
         $archivo = [
             'programa'     => 'hero-programa',
             'preparemonos' => 'hero-preparemonos',
@@ -116,6 +120,7 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
             'multimedia'   => 'hero-multimedia',
         ][$disenoFoto] ?? 'hero';
         $alt = match (true) {
+            $esSola       => trim((string) ($lamina['titulo'] ?? '')),
             $esSenal      => 'El logotipo del IRTP junto al Papa León XIV, que saluda con la mano en alto',
             $esPrograma   => 'Unas manos escriben en un portátil que muestra el calendario de noviembre de 2026 con la visita del Papa León XIV',
             $esMultimedia => 'Un fotógrafo dispara su cámara ante el altar donde el Papa León XIV saluda con la mano en alto',
@@ -147,11 +152,11 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
         <?php $respaldoHero = (string) ob_get_clean(); ?>
         <?php /* Sólo la primera fotografía se anuncia. Las otras acompañan a un
                  titular que ya lo dice todo, y leerlas seguidas sería ruido. */ ?>
-        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $esSenal ? ' hero-home__foto--senal' : '' ?><?= $esMultimedia ? ' hero-home__foto--multimedia' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
+        <div class="hero-home__foto<?= $esPrograma ? ' hero-home__foto--programa' : '' ?><?= $esSenal ? ' hero-home__foto--senal' : '' ?><?= $esMultimedia ? ' hero-home__foto--multimedia' : '' ?><?= $esSola ? ' hero-home__foto--sola' : '' ?><?= $i === 0 ? ' is-active' : '' ?>"
              data-slide-foto<?= $i === 0 ? '' : ' aria-hidden="true"' ?>>
           <?php
           $fotoHtml = $sitio->imagen(
-              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma || $esSenal || $esMultimedia ? [] : $primera),
+              ($lamina['imagen_ruta'] ?? '') !== '' ? $lamina : ($esPrograma || $esSenal || $esMultimedia || $esSola ? [] : $primera),
               $respaldoHero,
               ['sizes' => '100vw', 'prioridad' => $i === 0]
           );
@@ -220,6 +225,29 @@ try { $objetivo = $sitio->objetivoCuentaAtras(); } catch (\Throwable $e) {
                 <span><a class="hero-home__acredita" href="<?= $esc($url) ?>"><?= $esc($rotulo) ?></a><?= $nota !== '' ? ' ' . $conSaltos($nota) : '' ?></span>
               </p>
             </div>
+          <?php elseif ($diseno === 'imagen-sola'): ?>
+            <?php
+            /* ── «Sólo imagen» ──────────────────────────────────────────────
+               No se pinta ni rótulo, ni titular, ni bajada, ni botón: todo eso
+               ya viene dentro de la imagen que subieron.
+
+               Lo único que se añade es el enlace, y cubre la lámina entera
+               —eso es lo que se pidió: que pinchando en cualquier parte lleve
+               a su sitio—. Va con su propio texto: un enlace que envuelve a
+               nada no lo anuncia ningún lector de pantalla, y el titular es lo
+               único que describe lo que hay en la imagen.
+
+               Sin «Enlace» no se pinta nada: la lámina queda sólo mirable, que
+               es lo correcto para un banner sin destino. */
+            $rotuloSola = trim((string) ($lamina['enlace_texto'] ?? ''));
+            $destinoSola = trim((string) ($lamina['enlace_url'] ?? ''));
+            $tituloSola = trim((string) ($lamina['titulo'] ?? ''));
+            ?>
+            <?php if ($destinoSola !== ''): ?>
+              <a class="hero-home__cubre" href="<?= $esc($sitio->enlaceDelPanel($destinoSola)) ?>">
+                <span class="visually-hidden"><?= $esc($rotuloSola !== '' ? $rotuloSola : ($tituloSola !== '' ? $tituloSola : 'Ver más')) ?></span>
+              </a>
+            <?php endif; ?>
           <?php elseif ($diseno === 'multimedia'): ?>
             <?php
             /* ── «Multimedia» (SALIDE 4 WEB.ai) ─────────────────────────────

@@ -72,6 +72,80 @@
   });
 
   /* ══════════════════════════════════════════════════════════════════════
+     LA FICHA ENSEÑA SOLO LO QUE SU PLANTILLA USA
+     ----------------------------------------------------------------------
+     Una lamina del carrusel pedia doce campos, y la mitad no los pintaba el
+     diseño elegido. Ahora el <select> de la plantilla trae consigo que campos
+     usa cada opcion, y los demas se pliegan.
+
+     Se esconde la CAJA, no se desactiva el campo: lo escrito sigue viajando
+     al guardar, asi que cambiar de plantilla y volver atras devuelve lo que
+     habia. Desactivarlos lo borraria en el primer «Guardar».
+
+     Sin JavaScript se ven todos, como antes. Esto es una ayuda, no un
+     requisito: nadie se queda sin poder editar algo porque el script falle.
+     ══════════════════════════════════════════════════════════════════════ */
+  Array.prototype.forEach.call(
+    document.querySelectorAll('[data-manda-campos]'),
+    function (select) {
+      var mapa;
+
+      try {
+        mapa = JSON.parse(select.getAttribute('data-manda-campos'));
+      } catch (e) {
+        return; // Con un mapa ilegible, mejor enseñarlo todo.
+      }
+
+      var formulario = select.closest('form');
+      if (!formulario) return;
+
+      /* La caja del propio selector nunca se esconde: es la que manda. */
+      var suya = select.closest('[data-campo]');
+
+      function repartir() {
+        var usa = mapa[select.value];
+
+        /* Un valor que el mapa no conoce —una lamina guardada con algo que ya
+           no se ofrece— no esconde nada. Enseñarlo todo es lo unico honesto:
+           no sabemos que usa. */
+        if (!Array.isArray(usa)) {
+          Array.prototype.forEach.call(
+            formulario.querySelectorAll('[data-campo]'),
+            function (caja) { caja.hidden = false; });
+
+          return;
+        }
+
+        Array.prototype.forEach.call(
+          formulario.querySelectorAll('[data-campo]'),
+          function (caja) {
+            if (caja === suya) { caja.hidden = false; return; }
+
+            caja.hidden = usa.indexOf(caja.getAttribute('data-campo')) === -1;
+          });
+
+        /* Y una tarjeta cuyos campos se han plegado todos se pliega también:
+           un título con el vacío debajo hace dudar de si falta algo por
+           cargar. */
+        Array.prototype.forEach.call(
+          formulario.querySelectorAll('[data-tarjeta-campos]'),
+          function (tarjeta) {
+            var queda = false;
+
+            Array.prototype.forEach.call(
+              tarjeta.querySelectorAll('[data-campo]'),
+              function (caja) { if (!caja.hidden) { queda = true; } });
+
+            tarjeta.hidden = !queda;
+          });
+      }
+
+      select.addEventListener('change', repartir);
+      repartir();
+    }
+  );
+
+  /* ══════════════════════════════════════════════════════════════════════
      DATOS PARA BUSCADORES
 
      Contador de caracteres y vista previa en vivo. Sin esto hay que guardar,
