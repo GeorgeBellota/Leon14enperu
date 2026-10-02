@@ -42,6 +42,14 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
   <?php if (!empty($plantilla['ayuda'])): ?>
     <p class="encabezado__pie"><?= $e($plantilla['ayuda']) ?></p>
   <?php endif; ?>
+
+  <?php /* El historial existía desde el primer día —se guarda una copia en
+           cada «Guardar»— pero no se podía llegar a él desde ninguna parte. */ ?>
+  <p class="encabezado__pie">
+    <a href="<?= $url('/paginas/' . $pagina['clave'] . '/' . $seccion['clave'] . '/historial') ?>">
+      Ver el historial de cambios
+    </a>
+  </p>
 </header>
 
 <form method="post" action="<?= $url('/paginas/' . $pagina['clave'] . '/' . $seccion['clave']) ?>"

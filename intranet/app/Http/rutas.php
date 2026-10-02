@@ -78,6 +78,13 @@ return static function (Router $r): void {
            Van después de /{clave}/{seccion} sin problema: ese patrón se
            compila anclado y con [^/]+, así que no cruza la barra y nunca
            llega a ver estas rutas de cuatro tramos. */
+        /* ── El historial ────────────────────────────────────────────────
+           Cada «Guardar» deja una copia del estado anterior desde el primer
+           día; hasta ahora no había forma de verlas ni de volver a una. */
+        $r->get('/{clave}/{seccion}/historial',               [PaginaController::class, 'historial'])->permiso('paginas.editar');
+        $r->get('/{clave}/{seccion}/historial/{id:\d+}',      [PaginaController::class, 'version'])->permiso('paginas.editar');
+        $r->post('/{clave}/{seccion}/historial/{id:\d+}/restaurar', [PaginaController::class, 'restaurarVersion'])->permiso('paginas.editar');
+
         $r->post('/{clave}/{seccion}/piezas',               [PaginaController::class, 'nuevaPieza'])->permiso('paginas.editar');
         $r->get('/{clave}/{seccion}/piezas/{id:\d+}',       [PaginaController::class, 'pieza'])->permiso('paginas.editar');
         $r->post('/{clave}/{seccion}/piezas/{id:\d+}',      [PaginaController::class, 'guardarPieza'])->permiso('paginas.editar');

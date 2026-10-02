@@ -327,6 +327,113 @@ final class PaginaController extends Controller
      * @return array{0: array<string,mixed>, 1: array<string,mixed>}
      */
     /* ══════════════════════════════════════════════════════════════════
+       EL HISTORIAL
+       ------------------------------------------------------------------
+       Cada «Guardar» deja una copia del estado anterior y se conservan las
+       diez últimas. Eso ya pasaba desde el principio; lo que faltaba era
+       poder verlas y volver a una.
+
+       La cuenta importa para que la pantalla no mienta: la copia fechada el
+       martes no es «lo que se guardó el martes», es «cómo estaba justo antes
+       de guardar el martes». Restaurarla deshace aquel cambio.
+       ══════════════════════════════════════════════════════════════════ */
+
+    /** @param array<string, string> $params */
+    public function historial(Request $peticion, array $params): void
+    {
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo    = new Pagina($this->c);
+        $versiones = $modelo->versiones((int) $seccion['id'], true);
+
+        /* Qué cambió en cada paso. La copia más reciente se compara con lo
+           que hay publicado ahora; cada una de las demás, con la copia
+           siguiente —que es el estado en el que la dejó su propio cambio—. */
+        $antesQue = $seccion;
+
+        foreach ($versiones as $i => $v) {
+            $versiones[$i]['cambios'] = $v['contenido'] === null
+                ? ['No se pudo leer esta copia']
+                : $modelo->diferencias($v['contenido'], $antesQue);
+
+            if ($v['contenido'] !== null) {
+                $antesQue = $v['contenido'];
+            }
+
+            // Ya no hace falta y abulta: diez copias enteras en la vista.
+            unset($versiones[$i]['contenido']);
+        }
+
+        $this->ver('paginas/historial', [
+            'titulo'    => 'Historial · ' . $seccion['nombre'],
+            'pagina'    => $pagina,
+            'seccion'   => $seccion,
+            'plantilla' => Plantillas::de((string) $seccion['plantilla']),
+            'versiones' => $versiones,
+        ]);
+    }
+
+    /** @param array<string, string> $params */
+    public function version(Request $peticion, array $params): void
+    {
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo  = new Pagina($this->c);
+        $version = $modelo->version((int) $seccion['id'], (int) $params['id']);
+        $vuelta  = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'] . '/historial';
+
+        if ($version === null) {
+            $this->conError('Esa copia no existe o no es de esta sección.', $vuelta);
+        }
+
+        $this->ver('paginas/version', [
+            'titulo'    => 'Copia del ' . $version['creado_en'],
+            'pagina'    => $pagina,
+            'seccion'   => $seccion,
+            'plantilla' => Plantillas::de((string) $seccion['plantilla']),
+            'version'   => $version,
+            'cambios'   => $modelo->diferencias($version['contenido'], $seccion),
+            // Para poder enseñar las fotos de aquella versión, no sus números.
+            'medios'    => (new Medio($this->c))->paraElegir(),
+        ]);
+    }
+
+    /** @param array<string, string> $params */
+    public function restaurarVersion(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo = new Pagina($this->c);
+        $id     = (int) $params['id'];
+        $enSec  = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'];
+
+        $avisos = $modelo->restaurar((int) $seccion['id'], $id, $this->c->auth()->id());
+
+        if ($avisos === null) {
+            $this->conError('Esa copia no existe o no es de esta sección.', $enSec . '/historial');
+        }
+
+        Auditoria::registrar($this->c, 'restaurar', 'secciones', (int) $seccion['id'], [
+            'pagina'  => $pagina['clave'],
+            'seccion' => $seccion['clave'],
+            'version' => $id,
+        ]);
+
+        /* Se dice que esto también se deshace. Es la pregunta que se hace
+           cualquiera al pulsar «Restaurar», y la respuesta tranquiliza. */
+        $mensaje = 'Sección restaurada. Antes de hacerlo se guardó una copia de '
+                 . 'cómo estaba, así que esto también se puede deshacer.';
+
+        if ($avisos !== []) {
+            $mensaje .= ' ' . implode(' ', $avisos);
+        }
+
+        $this->conExito($mensaje, $enSec);
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
        UNA PIEZA POR PANTALLA
        ------------------------------------------------------------------
        Una sección con trece comisiones era un formulario de 161 campos en

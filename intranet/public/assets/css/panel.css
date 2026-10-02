@@ -2517,3 +2517,159 @@ code {
     justify-content: flex-start;
   }
 }
+
+/* ===========================================================================
+   EL HISTORIAL DE UNA SECCIÓN
+   ---------------------------------------------------------------------------
+   Una línea de tiempo, no una tabla: lo que se lee aquí es una secuencia —qué
+   pasó, cuándo y quién— y cada entrada tiene tres o cuatro frases de alto. En
+   una tabla, la columna de cambios manda sobre las demás y el resto queda en
+   blanco.
+   =========================================================================== */
+
+.historial {
+  margin: var(--space-s) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historial__fila {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: var(--space-s);
+  padding: var(--space-s) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.historial__fila:last-child { border-bottom: 0; }
+
+/* El punto de la línea de tiempo, con el hilo que baja al siguiente. */
+.historial__hito {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.historial__fila:not(:last-child) .historial__hito::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 13px;
+  width: 1px;
+  height: calc(100% + var(--space-l));
+  background: var(--line);
+}
+
+.historial__cuerpo { min-width: 0; }
+
+.historial__cuando {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.historial__cuando strong { color: var(--ink); }
+
+.historial__cambios {
+  margin: 6px 0 0;
+  padding-left: 1.1em;
+  /* sistema.css quita las viñetas a todas las listas; aquí son una lista de
+     verdad y sin ellas los cambios se leen como un párrafo cortado. */
+  list-style: disc;
+}
+
+.historial__cambios li { font-size: var(--step--1); }
+
+.historial__pie {
+  margin: 6px 0 0;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+}
+
+.historial__mandos {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.historial__mandos .btn { white-space: nowrap; }
+
+/* La barra de «Guardar» se queda pegada abajo porque acompaña a un
+   formulario largo. Aquí son dos botones dentro de una tarjeta corta, y
+   pegada abajo tapa el contenido de la siguiente. */
+.barra-guardar--suelta {
+  position: static;
+  background: none;
+  margin-top: var(--space-s);
+}
+
+/* El <form> no debe formar una caja propia: sus botones van en la misma fila
+   que el enlace de al lado. */
+.barra-guardar form { display: contents; }
+
+/* ── Una copia, vista por dentro ──────────────────────────────────────── */
+
+.version__campos { margin: 0; }
+
+.version__campo {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: var(--space-s);
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.version__campo:last-child { border-bottom: 0; }
+
+.version__campo dt {
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.version__campo dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Lo que ha cambiado desde entonces, marcado al margen: es lo que se viene a
+   mirar, y sin la marca hay que comparar a ojo con la otra pestaña. */
+.version__campo.es-distinto {
+  box-shadow: inset 3px 0 0 var(--primary);
+  padding-left: var(--space-s);
+  margin-left: calc(var(--space-s) * -1);
+}
+
+.version__foto {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--surface-alt);
+}
+
+.version__nombre {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+}
+
+.version__subtitulo {
+  margin: var(--space-m) 0 0;
+  font-size: var(--step-0);
+}
+
+@media (max-width: 600px) {
+  /* Los mandos bajan debajo del texto: a 390 px, tres columnas dejaban
+     «Deshacer este cambio» en dos letras por línea. */
+  .historial__fila { grid-template-columns: 14px minmax(0, 1fr); }
+  .historial__mandos { grid-column: 2; flex-direction: row; flex-wrap: wrap; }
+
+  .version__campo { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}

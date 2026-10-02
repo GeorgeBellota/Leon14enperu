@@ -734,6 +734,323 @@ final class Pagina extends Model
         );
     }
 
+    /* ══════════════════════════════════════════════════════════════════
+       EL HISTORIAL
+       ------------------------------------------------------------------
+       Cada «Guardar» deja en `secciones_versiones` una copia de cómo estaba
+       la sección ANTES del cambio, y se conservan las diez últimas. Eso ya
+       pasaba; lo que no había era forma de verlas ni de volver a ninguna.
+
+       Conviene tener clara la cuenta, porque de ella depende que el texto de
+       la pantalla no mienta: la versión fechada el martes NO es «lo que se
+       guardó el martes», es «cómo estaba justo antes de guardar el martes».
+       Por eso restaurarla es deshacer ese cambio.
+       ══════════════════════════════════════════════════════════════════ */
+
+    /**
+     * Las copias guardadas de una sección, de la más reciente a la más
+     * antigua, con quién las provocó y qué tamaño tenían.
+     *
+     * No se trae `contenido`: son diez copias enteras de la sección y de
+     * todas sus piezas, y la lista sólo necesita la cabecera.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function versiones(int $seccionId, bool $conContenido = false): array
+    {
+        /* El contenido sólo cuando hace falta: son diez copias enteras de la
+           sección y de todas sus piezas, y la lista corriente no las necesita.
+           La pantalla del historial sí, para decir qué cambió en cada paso. */
+        $elTocho = $conContenido ? 'v.contenido,' : '';
+
+        $filas = $this->bd()->filas(
+            "SELECT v.id, v.creado_en, v.usuario_id, {$elTocho}
+                    u.nombre AS usuario,
+                    JSON_LENGTH(v.contenido, '$.bloques') AS piezas,
+                    JSON_UNQUOTE(JSON_EXTRACT(v.contenido, '$.titulo')) AS titulo,
+                    JSON_EXTRACT(v.contenido, '$.activa') AS activa,
+                    OCTET_LENGTH(v.contenido) AS peso
+               FROM secciones_versiones v
+               LEFT JOIN usuarios u ON u.id = v.usuario_id
+              WHERE v.seccion_id = :s
+              ORDER BY v.id DESC",
+            ['s' => $seccionId]
+        );
+
+        if (!$conContenido) {
+            return $filas;
+        }
+
+        foreach ($filas as $i => $f) {
+            $guardado = json_decode((string) $f['contenido'], true);
+            $filas[$i]['contenido'] = is_array($guardado) ? $guardado : null;
+        }
+
+        return $filas;
+    }
+
+    /** Una copia concreta, ya desempaquetada. Null si no es de esta sección. */
+    public function version(int $seccionId, int $id): ?array
+    {
+        $fila = $this->bd()->fila(
+            'SELECT v.*, u.nombre AS usuario
+               FROM secciones_versiones v
+               LEFT JOIN usuarios u ON u.id = v.usuario_id
+              WHERE v.id = :id AND v.seccion_id = :s',
+            ['id' => $id, 's' => $seccionId]
+        );
+
+        if ($fila === null) {
+            return null;
+        }
+
+        $guardado = json_decode((string) $fila['contenido'], true);
+
+        if (!is_array($guardado)) {
+            return null;
+        }
+
+        $guardado['datos'] = $this->decodificar($guardado['datos'] ?? null);
+
+        foreach ($guardado['bloques'] ?? [] as $i => $b) {
+            $guardado['bloques'][$i]['datos'] = $this->decodificar($b['datos'] ?? null);
+        }
+
+        $fila['contenido'] = $guardado;
+
+        return $fila;
+    }
+
+    /**
+     * Qué cambió entre dos estados de la sección.
+     *
+     * Devuelve frases, no un diff de programador: quien abre esta pantalla
+     * quiere saber si merece la pena volver, no leer dos JSON.
+     *
+     * @return array<int, string>
+     */
+    public function diferencias(array $antes, array $ahora): array
+    {
+        $dichas = [];
+
+        $campos = [
+            'activa'    => 'la visibilidad',
+            'nombre'    => 'el nombre',
+            'rotulo'    => 'el rótulo',
+            'titulo'    => 'el título',
+            'subtitulo' => 'el subtítulo',
+            'texto'     => 'el texto',
+            'cta_texto' => 'el texto del botón',
+            'cta_url'   => 'el enlace del botón',
+            'imagen_id' => 'la imagen',
+            'imagen_movil_id' => 'la imagen de móvil',
+        ];
+
+        foreach ($campos as $columna => $comoSeLlama) {
+            if ((string) ($antes[$columna] ?? '') !== (string) ($ahora[$columna] ?? '')) {
+                $dichas[] = 'Cambió ' . $comoSeLlama;
+            }
+        }
+
+        if (json_encode($antes['datos'] ?? []) !== json_encode($ahora['datos'] ?? [])) {
+            $dichas[] = 'Cambiaron otros textos de la sección';
+        }
+
+        /* Las piezas se emparejan por id, que desde que cada una tiene su
+           propia pantalla no cambia al guardar. Antes se borraban y se
+           recreaban, así que una versión vieja puede traer ids que ya no
+           existen: entonces se cuentan como quitadas, que es lo que de hecho
+           le pasó a esa pieza. */
+        $deAntes = [];
+        $deAhora = [];
+
+        foreach ($antes['bloques'] ?? [] as $b) {
+            $deAntes[(int) $b['id']] = $b;
+        }
+
+        foreach ($ahora['bloques'] ?? [] as $b) {
+            $deAhora[(int) $b['id']] = $b;
+        }
+
+        $puestas  = count(array_diff_key($deAhora, $deAntes));
+        $quitadas = count(array_diff_key($deAntes, $deAhora));
+        $tocadas  = 0;
+
+        foreach (array_intersect_key($deAntes, $deAhora) as $id => $b) {
+            if ($this->mismaPieza($b, $deAhora[$id])) {
+                continue;
+            }
+
+            $tocadas++;
+        }
+
+        if ($puestas > 0) {
+            $dichas[] = $puestas === 1 ? 'Se añadió 1 ficha' : "Se añadieron {$puestas} fichas";
+        }
+
+        if ($quitadas > 0) {
+            $dichas[] = $quitadas === 1 ? 'Se quitó 1 ficha' : "Se quitaron {$quitadas} fichas";
+        }
+
+        if ($tocadas > 0) {
+            $dichas[] = $tocadas === 1 ? 'Se editó 1 ficha' : "Se editaron {$tocadas} fichas";
+        }
+
+        return $dichas === [] ? ['Sin cambios visibles'] : $dichas;
+    }
+
+    /** ¿Dos copias de una pieza dicen lo mismo? Se ignoran las marcas de tiempo. */
+    private function mismaPieza(array $a, array $b): bool
+    {
+        foreach (['orden', 'activo', 'rotulo', 'titulo', 'slug', 'texto', 'icono',
+                  'imagen_id', 'imagen_movil_id', 'enlace_texto', 'enlace_url'] as $c) {
+            if ((string) ($a[$c] ?? '') !== (string) ($b[$c] ?? '')) {
+                return false;
+            }
+        }
+
+        return json_encode($a['datos'] ?? null) === json_encode($b['datos'] ?? null);
+    }
+
+    /**
+     * Devuelve la sección al estado que guarda una versión.
+     *
+     * Tres cosas que no son obvias:
+     *
+     *  1. Antes de tocar nada se guarda OTRA versión con el estado actual, así
+     *     que volver atrás también se deshace. Si no, restaurar por error
+     *     sería irreversible, que es justo lo contrario de para qué está esto.
+     *
+     *  2. Las piezas se borran y se reinsertan CON SU ID. No es lo mismo que
+     *     hacía el editor antes: aquí la lista entera viene del volcado, así
+     *     que no hay que emparejar nada, y reinsertar con el id de siempre
+     *     deja intactos los enlaces a la pantalla de cada ficha.
+     *
+     *  3. Una imagen que se haya borrado de la biblioteca desde entonces no
+     *     puede volver: su clave ajena no existe. Se deja el campo vacío y se
+     *     avisa, en lugar de reventar con un error de base de datos que no le
+     *     dice nada a nadie.
+     *
+     * @return array<int, string> los avisos, vacío si todo volvió tal cual
+     */
+    public function restaurar(int $seccionId, int $versionId, ?int $usuarioId): ?array
+    {
+        $version = $this->version($seccionId, $versionId);
+
+        if ($version === null) {
+            return null;
+        }
+
+        return $this->bd()->transaccion(
+            function () use ($seccionId, $version, $usuarioId): array {
+                $avisos   = [];
+                $guardado = $version['contenido'];
+
+                // El estado de ahora, para poder deshacer la restauración.
+                $this->versionar($seccionId, $usuarioId);
+
+                /* Las imágenes que ya no están en la biblioteca. Se comprueban
+                   todas de una vez en lugar de una consulta por campo. */
+                $pedidas = [];
+
+                foreach (['imagen_id', 'imagen_movil_id'] as $c) {
+                    if (!empty($guardado[$c])) {
+                        $pedidas[(int) $guardado[$c]] = true;
+                    }
+                }
+
+                foreach ($guardado['bloques'] ?? [] as $b) {
+                    foreach (['imagen_id', 'imagen_movil_id'] as $c) {
+                        if (!empty($b[$c])) {
+                            $pedidas[(int) $b[$c]] = true;
+                        }
+                    }
+                }
+
+                $vivas = [];
+
+                if ($pedidas !== []) {
+                    $huecos = implode(',', array_fill(0, count($pedidas), '?'));
+                    $vivas  = array_map('intval', $this->bd()->columna(
+                        "SELECT id FROM medios WHERE id IN ({$huecos})",
+                        array_keys($pedidas)
+                    ));
+                }
+
+                $perdidas = array_diff(array_keys($pedidas), $vivas);
+
+                $laImagen = static function (mixed $id) use ($vivas): ?int {
+                    $id = (int) $id;
+
+                    return $id > 0 && in_array($id, $vivas, true) ? $id : null;
+                };
+
+                if ($perdidas !== []) {
+                    $avisos[] = count($perdidas) === 1
+                        ? 'Una imagen de aquella versión ya no está en la biblioteca: ese campo queda vacío.'
+                        : count($perdidas) . ' imágenes de aquella versión ya no están en la biblioteca: esos campos quedan vacíos.';
+                }
+
+                // ── La sección ──────────────────────────────────────────
+                $this->bd()->actualizar('secciones', [
+                    'activa'    => !empty($guardado['activa']) ? 1 : 0,
+                    'rotulo'    => $this->oNulo($guardado['rotulo'] ?? null),
+                    'titulo'    => $this->oNulo($guardado['titulo'] ?? null),
+                    'subtitulo' => $this->oNulo($guardado['subtitulo'] ?? null),
+                    'texto'     => $this->oNulo($guardado['texto'] ?? null),
+                    'imagen_id'       => $laImagen($guardado['imagen_id'] ?? null),
+                    'imagen_movil_id' => $laImagen($guardado['imagen_movil_id'] ?? null),
+                    'cta_texto' => $this->oNulo($guardado['cta_texto'] ?? null),
+                    'cta_url'   => $this->oNulo($guardado['cta_url'] ?? null),
+                    'datos'     => ($guardado['datos'] ?? []) === []
+                        ? null
+                        : json_encode($guardado['datos'], JSON_UNESCAPED_UNICODE),
+                    // Quien restaura es quien deja la sección como queda: la
+                    // lista de secciones debe decir su nombre, no el de quien
+                    // la editó hace tres semanas.
+                    'actualizado_por' => $usuarioId,
+                ], 'id = :id', ['id' => $seccionId]);
+
+                // ── Las piezas ──────────────────────────────────────────
+                $this->bd()->eliminar('bloques', 'seccion_id = :s', ['s' => $seccionId]);
+
+                foreach ($guardado['bloques'] ?? [] as $b) {
+                    $datos = $b['datos'] ?? null;
+
+                    $this->bd()->insertar('bloques', [
+                        // Con su id de siempre: los enlaces a la pantalla de
+                        // cada ficha siguen valiendo.
+                        'id'         => (int) $b['id'],
+                        'seccion_id' => $seccionId,
+                        'orden'      => (int) ($b['orden'] ?? 0),
+                        'activo'     => !empty($b['activo']) ? 1 : 0,
+                        'rotulo'     => $this->oNulo($b['rotulo'] ?? null),
+                        'titulo'     => $this->oNulo($b['titulo'] ?? null),
+                        'slug'       => $this->oNulo($b['slug'] ?? null),
+                        'texto'      => $this->oNulo($b['texto'] ?? null),
+                        'icono'      => $this->oNulo($b['icono'] ?? null),
+                        'imagen_id'       => $laImagen($b['imagen_id'] ?? null),
+                        'imagen_movil_id' => $laImagen($b['imagen_movil_id'] ?? null),
+                        'enlace_texto' => $this->oNulo($b['enlace_texto'] ?? null),
+                        'enlace_url'   => $this->oNulo($b['enlace_url'] ?? null),
+                        'datos'      => is_array($datos) && $datos !== []
+                            ? json_encode($datos, JSON_UNESCAPED_UNICODE)
+                            : null,
+                    ]);
+                }
+
+                $this->bd()->actualizar(
+                    'paginas',
+                    ['actualizado_por' => $usuarioId],
+                    'id = (SELECT pagina_id FROM secciones WHERE id = :s)',
+                    ['s' => $seccionId]
+                );
+
+                return $avisos;
+            }
+        );
+    }
+
     private function versionar(int $seccionId, ?int $usuarioId): void
     {
         $seccion = $this->bd()->fila('SELECT * FROM secciones WHERE id = :id', ['id' => $seccionId]);
