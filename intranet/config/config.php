@@ -59,6 +59,29 @@ $config = [
     ],
 
     // ── Seguridad ────────────────────────────────────────────────────────
+    // ── El tablero de métricas ───────────────────────────────────────────
+    //
+    // Va detrás de una contraseña aparte, además del acceso al panel. Aquí
+    // sólo vive su HASH, nunca la contraseña: este archivo está en el
+    // repositorio, y lo que se escribe aquí queda también en el historial de
+    // los commits viejos aunque después se cambie.
+    //
+    // Se genera así, y el resultado se pega en config.local.php, que no se
+    // versiona:
+    //
+    //     php -r "echo password_hash('TU-CLAVE', PASSWORD_DEFAULT), PHP_EOL;"
+    //
+    // Vacío = el tablero no existe. Ni pregunta ni se puede abrir: es la
+    // única posición segura por defecto, porque una puerta que acepta la
+    // cadena vacía es peor que no tener puerta.
+    'metricas' => [
+        'clave_hash' => '',
+        // Cuánto dura el permiso una vez acertada la contraseña. Pasado ese
+        // rato vuelve a pedirla: un portón que se queda abierto para siempre
+        // no es un portón.
+        'minutos'    => 30,
+    ],
+
     'seguridad' => [
         // Intentos fallidos permitidos por correo/IP antes de bloquear.
         'intentos_max'     => 5,

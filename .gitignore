@@ -128,6 +128,12 @@ documentacion/SEGURIDAD.md
 # de otra y aparece como modificada sin que nadie la toque.
 intranet/almacen/espejo/*.json
 
+# Los registros de métricas: una línea por visita. No son del proyecto, son de
+# lo que pasó en un servidor, y en un día de mucho tráfico son megas. Además
+# dicen qué se visita y cuándo, que no es algo que deba viajar en el
+# repositorio.
+intranet/almacen/metricas/
+
 # ── DOCUMENTOS DE ENTREGA ───────────────────────────────────────────────────
 # Describen la infraestructura y los controles de seguridad, igual que
 # SEGURIDAD.md. Y el acta es un documento de negocio, no código.

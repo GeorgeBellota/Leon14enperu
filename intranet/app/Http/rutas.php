@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 use Intranet\Controllers\AuthController;
 use Intranet\Controllers\CatalogoController;
+use Intranet\Controllers\MetricaController;
 use Intranet\Controllers\ComunicadoController;
 use Intranet\Controllers\ConfiguracionController;
 use Intranet\Controllers\MantenimientoController;
@@ -215,6 +216,18 @@ return static function (Router $r): void {
     // admite. Los nombres y el orden siguen viniendo de las migraciones,
     // porque quedan escritos en 36 000 inscripciones y cambiarlos no es una
     // edición cualquiera.
+    /* ══════════════════════════════════════════════════════════════════════
+       MÉTRICAS · detrás de su propio portón
+       ----------------------------------------------------------------------
+       No lleva permiso propio a propósito: basta con poder entrar al panel,
+       y después la contraseña. Un permiso lo reparte quien administra los
+       roles; esto se abre sólo con algo que no está en la base.
+       ══════════════════════════════════════════════════════════════════════ */
+    $r->get('/metricas',          [MetricaController::class, 'porton']);
+    $r->post('/metricas',         [MetricaController::class, 'abrir']);
+    $r->get('/metricas/tablero',  [MetricaController::class, 'tablero']);
+    $r->post('/metricas/cerrar',  [MetricaController::class, 'cerrar']);
+
     $r->get('/catalogos',  [CatalogoController::class, 'listar'])->permiso('catalogos.editar');
     $r->post('/catalogos', [CatalogoController::class, 'guardar'])->permiso('catalogos.editar');
 

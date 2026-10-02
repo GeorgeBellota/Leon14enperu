@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 use Intranet\Core\Autoloader;
+use Intranet\Core\Medidor;
 use Intranet\Core\Request;
 use Intranet\Publico\Mantenimiento;
 use Intranet\Publico\Sitio;
@@ -20,6 +21,15 @@ $raizIntranet = dirname(__DIR__, 2);
 
 require_once $raizIntranet . '/app/Core/Autoloader.php';
 Autoloader::registrar($raizIntranet . '/app');
+
+/* ── Qué cuesta atender esta visita ───────────────────────────────────────
+   Se arranca lo antes posible, nada más tener el autoloader: así el tiempo
+   que mide es el de la petición entera y no el de un trozo. Lo apunta todo
+   al apagarse, pase lo que pase, incluso si la página termina en un error.
+   El registro va a `intranet/almacen/metricas/`, que nginx devuelve como 404,
+   y además los `.log` están bloqueados por extensión. */
+Medidor::arrancar($raizIntranet . '/almacen/metricas', 'web');
+
 
 $config = require $raizIntranet . '/config/config.php';
 

@@ -71,7 +71,11 @@ $hay = static fn (string $s): bool
     <div class="texto-lectura">
         <!-- COPY PENDIENTE DE VALIDACIÓN -->
       <h2 class="legal__titulo">Este sitio no instala cookies</h2>
-      <p>Ni propias ni de terceros. No hay analítica, no hay píxeles de seguimiento, no hay publicidad y no hay perfilado. Por eso no verás un banner de consentimiento: no habría nada que consentir.</p>
+      <p>Ni propias ni de terceros. No hay píxeles de seguimiento, no hay publicidad y no hay perfilado: nada de lo que se mide aquí permite reconocerte ni seguirte de una página a otra. Por eso no verás un banner de consentimiento.</p>
+      <h2 class="legal__titulo">Lo único que se mide</h2>
+      <p>Al salir de una página, tu navegador envía dos datos: <strong>qué página era y cuántos segundos estuvo a la vista</strong>. Nada más. Sin cookie, sin identificador y sin guardar nada en tu equipo, así que dos visitas tuyas llegan exactamente igual que las de dos personas distintas y no hay forma de unirlas.</p>
+      <p>El servidor apunta además, por su cuenta, cuánto tardó en responder a cada petición y qué página se pidió. Eso no pasa por tu navegador y no dice quién eres: sirve para saber si el sitio aguanta, sobre todo durante la Visita.</p>
+      <p>En resumen: sirve para saber <em>qué se lee y qué no</em>, nunca para saber <em>quién lo lee</em>.</p>
       <h2 class="legal__titulo">Lo que sí guarda tu navegador</h2>
       <p>El sitio usa el <strong>almacenamiento del navegador</strong> para dos cosas, ambas técnicas y ambas dentro de tu propio equipo. Este almacenamiento no se envía al servidor en cada petición, a diferencia de una cookie.</p>
       <p><strong>1. El borrador del formulario de voluntariado.</strong> Clave <code>l14-inscripcion-borrador</code>, en <em>localStorage</em>. Guarda lo que hayas escrito en el formulario para que no lo pierdas si te interrumpen. Solo existe en tu navegador, no se envía a ningún servidor, y el formulario muestra un aviso visible cuando hay un borrador guardado, con un botón para borrarlo.</p>
@@ -79,7 +83,7 @@ $hay = static fn (string $s): bool
       <h2 class="legal__titulo">Cómo eliminarlo</h2>
       <p>Borrar los datos de navegación de tu navegador para este sitio elimina ambas claves. La cuenta del aviso desaparece además al cerrar la pestaña, sin hacer nada. También puedes borrar el borrador del formulario con el botón «Borrar el borrador» que aparece sobre él.</p>
       <h2 class="legal__titulo">Recursos externos</h2>
-      <p>El sitio carga tipografías desde Google Fonts y dos librerías de animación desde jsDelivr. Esos servicios reciben tu dirección IP por el hecho de servir el archivo, como cualquier recurso de internet, pero este sitio no les envía ningún dato tuyo ni instala cookies suyas.</p>
+      <p>Ninguno. Las tipografías, los estilos y los guiones se sirven desde este mismo dominio, así que tu navegador no pide nada a Google, a una red de distribución ni a ningún tercero. La única excepción son los vídeos: si reproduces uno lo sirve YouTube, en su modo sin cookies, y eso sólo ocurre cuando lo pulsas.</p>
       <h2 class="legal__titulo">Si esto cambia</h2>
       <p>Si en el futuro se añade analítica o cualquier tecnología que sí requiera consentimiento, se implantará el aviso correspondiente y esta página se actualizará antes de activarla.</p>
     </div>

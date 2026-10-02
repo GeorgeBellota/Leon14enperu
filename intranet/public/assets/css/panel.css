@@ -2673,3 +2673,124 @@ code {
 
   .version__campo { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+
+
+/* ===========================================================================
+   EL TABLERO DE MÉTRICAS Y SU PORTÓN
+   ---------------------------------------------------------------------------
+   Reutiliza `.cifra`, `.tabla` y `.lista-conteo`, que ya existían. Lo que se
+   añade aquí es lo que no tenía sitio: el tercer renglón de cada cifra, las
+   barras por hora —`.barras` ya estaba cogido por el gráfico semanal del
+   escritorio, que es vertical y de siete columnas— y la pantalla del portón.
+   =========================================================================== */
+
+/* El tercer renglón de una cifra: el matiz. `.cifra__pie` ya es el rótulo. */
+.cifra__nota {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+}
+
+.cifra__numero,
+.cifra__pie,
+.cifra__nota { display: block; }
+
+/* Una cifra que avisa. No se usa el rojo de los botones de peligro: aquí no
+   hay nada que se vaya a romper al pulsar, es una lectura preocupante. */
+.cifra--mala { border-color: var(--primary); }
+.cifra--mala .cifra__numero { color: var(--primary); }
+
+/* ── Las visitas por hora ──────────────────────────────────────────────── */
+
+.horas {
+  margin: var(--space-s) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hora {
+  display: grid;
+  grid-template-columns: 11em minmax(0, 1fr) 5em;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 2px 0;
+}
+
+.hora__rotulo {
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hora__pista {
+  display: block;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--surface-alt);
+  overflow: hidden;
+}
+
+.hora__relleno {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--primary);
+}
+
+.hora__valor {
+  text-align: right;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── El filtro de fechas ───────────────────────────────────────────────── */
+
+.metricas__filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-s);
+}
+
+.metricas__filtro .campo { margin: 0; }
+.metricas__filtro .campo input { width: auto; }
+
+/* ── El portón ─────────────────────────────────────────────────────────── */
+
+.porton {
+  max-width: 30rem;
+  text-align: center;
+}
+
+.porton__icono {
+  width: 52px;
+  height: 52px;
+  color: var(--primary);
+  margin-bottom: var(--space-s);
+}
+
+.porton__form { text-align: left; }
+
+/* ── El acceso desde la barra lateral ──────────────────────────────────── */
+
+.lateral__servidores {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-xs);
+  color: var(--gold-invert);
+  font-size: var(--step--1);
+  text-decoration: none;
+}
+
+.lateral__servidores:hover { color: var(--on-primary); text-decoration: underline; }
+
+.lateral__servidores svg { width: 16px; height: 16px; flex: none; }
+
+@media (max-width: 600px) {
+  /* A 390 px, once ems de rótulo dejan la barra en nada. */
+  .hora { grid-template-columns: 1fr; gap: 2px; padding: 6px 0; }
+  .hora__valor { text-align: left; }
+}

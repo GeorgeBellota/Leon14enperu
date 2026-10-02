@@ -191,6 +191,11 @@ document.documentElement.className += ' js';
          fuera antes que ellos, no encontraría ninguno registrado y no
          arrancaría nada, sin dar error. */ ?>
 <script src="<?= $esc($sitio->asset('assets/js/rediseno.js')) ?>" defer></script>
+<?php /* Cuánto se estuvo mirando la página. No pone cookies, no guarda nada en
+         el navegador y no genera identificador: manda «esta ruta, 47
+         segundos» y nada más, así que no hay forma de unir dos visitas de la
+         misma persona. Por eso va siempre, no detrás del consentimiento. */ ?>
+<script src="<?= $esc($sitio->asset('assets/js/permanencia.js')) ?>" defer></script>
 <?php foreach ($extras as $script): ?>
 <script src="<?= $esc($sitio->asset($script)) ?>" defer></script>
 <?php endforeach; ?>

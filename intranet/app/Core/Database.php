@@ -44,6 +44,11 @@ final class Database
 
     private ?PDO $pdo = null;
 
+    /** Consultas de esta peticion y nanosegundos que han costado. */
+    private static int $cuantas = 0;
+
+    private static int $nanos = 0;
+
     private function __construct(private array $config)
     {
     }
@@ -146,6 +151,15 @@ final class Database
      */
     public function consultar(string $sql, array $params = []): PDOStatement
     {
+        /* Dos contadores, y nada más. Es el unico punto por el que pasa todo
+           el SQL, asi que aqui se sabe cuanto le cuesta a una visita la base
+           sin tocar ni uno de los cien sitios que consultan.
+
+           Son estaticos a proposito: el medidor los lee al final de la
+           peticion sin tener que arrastrar el objeto hasta alli. */
+        $arranque = hrtime(true);
+        self::$cuantas++;
+
         $sentencia = $this->pdo()->prepare($sql);
 
         foreach ($params as $clave => $valor) {
@@ -163,7 +177,15 @@ final class Database
 
         $sentencia->execute();
 
+        self::$nanos += hrtime(true) - $arranque;
+
         return $sentencia;
+    }
+
+    /** Cuántas consultas y cuánto tiempo llevan en esta petición. */
+    public static function gasto(): array
+    {
+        return ['consultas' => self::$cuantas, 'ms' => self::$nanos / 1000000];
     }
 
     /** @return array<string, mixed>|null */

@@ -26,6 +26,74 @@
 
 declare(strict_types=1);
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LA BALIZA · cuánto se estuvo mirando una página
+   --------------------------------------------------------------------------
+   El navegador la manda al salir: la ruta y los segundos, nada más. Sin
+   cookie, sin identificador y sin guardar nada en el navegador, así que no
+   hay forma de unir dos visitas de la misma persona ni de reconocer a nadie.
+   Se suma por página y ahí se acaba.
+
+   Va ANTES de arrancar el sitio a propósito: levantar la configuración, la
+   sesión y la base para apuntar dos números costaría veinte consultas. Así
+   no cuesta ninguna.
+
+   No puede ser un archivo PHP propio —nginx sólo deja pasar cuatro y los
+   demás devuelven 404—, así que entra por aquí, que es donde van a parar
+   todas las direcciones que no son un archivo.
+
+   Se compara el FINAL de la ruta y no la ruta entera: en producción el
+   sitio vive en la raíz del dominio y es «/_m», pero en el equipo de
+   desarrollo cuelga de una carpeta y llega como «/leon14peru/_m».
+   ══════════════════════════════════════════════════════════════════════════ */
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+    && str_ends_with(
+        rtrim((string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH), '/'),
+        '/_m'
+    )) {
+
+    require_once __DIR__ . '/intranet/app/Core/Medidor.php';
+
+    /* Un tope de tamaño antes de leer nada: el cuerpo legítimo son unas
+       decenas de bytes, y sin tope cualquiera puede mandar diez megas y
+       hacer trabajar al servidor de balde. */
+    $cuerpo = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) <= 512
+        ? (string) file_get_contents('php://input', false, null, 0, 512)
+        : '';
+
+    $dato = json_decode($cuerpo, true);
+
+    if (is_array($dato)) {
+        $ruta = (string) ($dato['u'] ?? '');
+        $seg  = (int) ($dato['s'] ?? 0);
+
+        /* La ruta tiene que ser de este sitio y empezar por barra: si no, se
+           tira. Lo que llega del navegador acaba escrito en un archivo, y de
+           ahí a una pantalla. */
+        $valida = $ruta !== ''
+            && $ruta[0] === '/'
+            && !str_contains($ruta, '//')
+            && preg_match('~^/[\x20-\x7E\xC0-\xFF]{0,120}$~u', $ruta) === 1;
+
+        // Media hora de tope: por encima es un reloj mal puesto o una pestaña
+        // olvidada toda la noche, y ninguna de las dos cosas mide nada.
+        if ($valida && $seg > 0 && $seg <= 1800) {
+            \Intranet\Core\Medidor::apuntarPermanencia(
+                __DIR__ . '/intranet/almacen/metricas',
+                $ruta,
+                $seg,
+                !empty($dato['c'])
+            );
+        }
+    }
+
+    /* 204: no hay nada que devolver, y así el navegador no espera cuerpo.
+       Se responde igual aunque el dato fuera basura: contestar distinto
+       según si valía o no sólo sirve para que alguien averigüe qué cuela. */
+    http_response_code(204);
+    exit;
+}
+
 /** @var \Intranet\Publico\Sitio $sitio */
 $sitio = require __DIR__ . '/intranet/app/Publico/arranque.php';
 

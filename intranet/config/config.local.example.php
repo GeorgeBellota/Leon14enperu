@@ -15,6 +15,14 @@
 declare(strict_types=1);
 
 return [
+    // El tablero de métricas, detrás de su propia contraseña. El hash se
+    // genera con:
+    //     php -r "echo password_hash('TU-CLAVE', PASSWORD_DEFAULT), PHP_EOL;"
+    // Sin esta línea, el tablero no existe.
+    'metricas' => [
+        'clave_hash' => 'PEGA-AQUI-EL-HASH',
+    ],
+
     'app' => [
         'entorno' => 'desarrollo',
         'clave'   => 'PEGA-AQUI-LA-CLAVE-BASE64-DE-32-BYTES',

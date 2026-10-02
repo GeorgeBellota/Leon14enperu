@@ -111,6 +111,20 @@ $activo = static function (string $prefijo) use ($rutaActual): string {
         <span><?= $e($usuarioActual['rol_nombre'] ?? '') ?></span>
       </p>
       <a class="lateral__ver" href="<?= $e($c->urlSitio('/')) ?>" target="_blank" rel="noopener">Ver el sitio ↗</a>
+
+      <?php /* El tablero de métricas. Se ve siempre, pero al pulsarlo pide una
+               contraseña propia que no está en la base: sin ella no se abre,
+               por mucho rol que se tenga. Discreto a propósito. */ ?>
+      <a class="lateral__servidores" href="<?= $url('/metricas') ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="3" y="4"  width="18" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <rect x="3" y="14" width="18" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="7" cy="7"  r="1" fill="currentColor"/>
+          <circle cx="7" cy="17" r="1" fill="currentColor"/>
+          <path d="M11 7h6M11 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Métricas</span>
+      </a>
       <form method="post" action="<?= $url('/salir') ?>">
         <?= $csrf->campo() ?>
         <button class="btn btn--linea btn--bloque" type="submit">Cerrar sesión</button>
