@@ -217,7 +217,7 @@ $v = static fn (string $campo, string $porDefecto = ''): string
   <section class="tarjeta">
     <h2 class="tarjeta__titulo">Borrar</h2>
     <form method="post" action="<?= $url('/noticias/' . (int) $noticia['id'] . '/borrar') ?>"
-          onsubmit="return confirm('¿Borrar «<?= $e($noticia['titulo']) ?>»? No se puede deshacer.');">
+          data-confirmar="¿Borrar «<?= $e($noticia['titulo']) ?>»? No se puede deshacer.">
       <?= $csrf->campo() ?>
       <button class="btn btn--peligro" type="submit">Borrar esta noticia</button>
       <span class="campo__ayuda">La fotografía seguirá en la biblioteca.</span>

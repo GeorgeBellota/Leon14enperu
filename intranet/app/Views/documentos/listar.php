@@ -71,14 +71,14 @@ $puedeSubir = $auth->puede('medios.subir');
                    hay que hacer con ella. */ ?>
           <td>
             <input type="text" readonly value="<?= $e($d['ruta']) ?>"
-                   onclick="this.select()" aria-label="Ruta de <?= $e($d['nombre']) ?>">
+                   data-marcar-todo aria-label="Ruta de <?= $e($d['nombre']) ?>">
           </td>
           <td><?= $e($d['peso']) ?></td>
           <td><?= $e($d['fecha']) ?></td>
           <?php if ($puedeSubir): ?>
             <td>
               <form method="post" action="<?= $url('/documentos/borrar') ?>"
-                    onsubmit="return confirm('¿Borrar este documento? Si alguna pieza lo enlaza, su botón de descarga dejará de aparecer.');">
+                    data-confirmar="¿Borrar este documento? Si alguna pieza lo enlaza, su botón de descarga dejará de aparecer.">
                 <?= $csrf->campo() ?>
                 <input type="hidden" name="nombre" value="<?= $e($d['nombre']) ?>">
                 <button class="btn btn--linea" type="submit">Borrar</button>

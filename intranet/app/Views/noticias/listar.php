@@ -65,7 +65,7 @@ $dia = static function (?string $iso): string {
 
   <form method="get" action="<?= $url('/noticias') ?>" class="filtros sep-m">
     <label class="campo__etiqueta" for="estado">Mostrar</label>
-    <select id="estado" name="estado" onchange="this.form.submit()">
+    <select id="estado" name="estado" data-filtro-auto>
       <option value=""           <?= $estado === ''           ? 'selected' : '' ?>>Todas</option>
       <option value="publicada"  <?= $estado === 'publicada'  ? 'selected' : '' ?>>Sólo publicadas</option>
       <option value="borrador"   <?= $estado === 'borrador'   ? 'selected' : '' ?>>Sólo borradores</option>

@@ -169,7 +169,7 @@ $pestanas = [
                marcar nada sólo confunde. */ ?>
       <form method="post" action="<?= $url('/medios/borrar') ?>" id="lote-medios"
             class="barra-lote" data-lote hidden
-            onsubmit="return confirm('¿Borrar las imágenes seleccionadas? Las que estén en uso no se borrarán.');">
+            data-confirmar="¿Borrar las imágenes seleccionadas? Las que estén en uso no se borrarán.">
         <?= $csrf->campo() ?>
         <button class="btn btn--mini" type="button" data-marcar-todas>Marcar todas</button>
         <span class="campo__ayuda" data-marcadas>Ninguna seleccionada</span>
@@ -278,7 +278,7 @@ $pestanas = [
 
       <?php if ($puedeEditar): ?>
         <form method="post" data-f-borrar class="sep-m"
-              onsubmit="return confirm('¿Borrar esta imagen? No se puede deshacer.');">
+              data-confirmar="¿Borrar esta imagen? No se puede deshacer.">
           <?= $csrf->campo() ?>
           <button class="btn btn--peligro btn--mini" type="submit" data-f-borrar-btn>Borrar</button>
           <span class="campo__ayuda" data-f-borrar-nota></span>

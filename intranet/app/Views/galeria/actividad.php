@@ -335,7 +335,7 @@ $vista = $fechaActiva !== null ? '?fecha=' . rawurlencode($fechaActiva) : '';
     </form>
 
     <form method="post" action="<?= $url('/galeria/' . $id . '/borrar') ?>" class="sep-l"
-          onsubmit="return confirm('¿Borrar la actividad «<?= $e($actividad['nombre']) ?>»? Las fotografías seguirán en la biblioteca de imágenes.');">
+          data-confirmar="¿Borrar la actividad «<?= $e($actividad['nombre']) ?>»? Las fotografías seguirán en la biblioteca de imágenes.">
       <?= $csrf->campo() ?>
       <button class="btn btn--peligro" type="submit">Borrar la actividad</button>
       <span class="campo__ayuda">Las fotografías no se borran: siguen en la biblioteca.</span>

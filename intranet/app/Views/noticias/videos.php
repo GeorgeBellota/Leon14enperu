@@ -143,7 +143,7 @@ $activos     = count(array_filter($videos, static fn (array $v): bool => (int) $
             </form>
 
             <form method="post" action="<?= $url('/noticias/videos/' . (int) $v['id'] . '/borrar') ?>" class="en-linea"
-                  onsubmit="return confirm('¿Quitar este vídeo de la página?');">
+                  data-confirmar="¿Quitar este vídeo de la página?">
               <?= $csrf->campo() ?>
               <button class="mando-mini mando-mini--peligro" type="submit">Quitar</button>
             </form>
