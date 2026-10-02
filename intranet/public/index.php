@@ -21,7 +21,11 @@ require $raiz . '/app/Core/Autoloader.php';
    al apagarse, pase lo que pase, incluso si la página termina en un error.
    El registro va a `intranet/almacen/metricas/`, que nginx devuelve como 404,
    y además los `.log` están bloqueados por extensión. */
-\Intranet\Core\Medidor::arrancar($raiz . '/almacen/metricas', 'panel');
+\Intranet\Core\Medidor::arrancar(
+    $raiz . '/almacen/metricas',
+    'panel',
+    30
+);
 
 
 use Intranet\Core\Contenedor;

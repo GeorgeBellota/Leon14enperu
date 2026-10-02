@@ -28,7 +28,11 @@ Autoloader::registrar($raizIntranet . '/app');
    al apagarse, pase lo que pase, incluso si la página termina en un error.
    El registro va a `intranet/almacen/metricas/`, que nginx devuelve como 404,
    y además los `.log` están bloqueados por extensión. */
-Medidor::arrancar($raizIntranet . '/almacen/metricas', 'web');
+Medidor::arrancar(
+    $raizIntranet . '/almacen/metricas',
+    'web',
+    (int) ($config['metricas']['dias'] ?? 30)
+);
 
 
 $config = require $raizIntranet . '/config/config.php';

@@ -51,13 +51,16 @@ final class Medidor
 
     private static bool $enMarcha = false;
 
+    /** Días que se guardan los registros antes de borrarse solos. */
+    private static int $dias = 30;
+
     /**
      * Empieza a medir. Se llama lo antes posible en el punto de entrada.
      *
      * @param string $carpeta dónde dejar los registros
      * @param string $origen  «web», «panel» o «baliza»
      */
-    public static function arrancar(string $carpeta, string $origen = 'web'): void
+    public static function arrancar(string $carpeta, string $origen = 'web', int $dias = 30): void
     {
         if (self::$enMarcha) {
             return;
@@ -66,6 +69,7 @@ final class Medidor
         self::$arranque = hrtime(true);
         self::$carpeta  = rtrim($carpeta, '/\\');
         self::$origen   = $origen;
+        self::$dias     = max(1, $dias);
         self::$enMarcha = true;
 
         /* Al apagar, pase lo que pase: así se apunta también la petición que
@@ -107,6 +111,17 @@ final class Medidor
             }
 
             @file_put_contents($fichero, $linea, FILE_APPEND);
+
+            /* La poda va DESPUÉS de escribir, nunca antes: si falla —permisos,
+               un archivo bloqueado— la medición ya está a salvo.
+
+               Una vez de cada mil. Con 20 000 visitas al día son veinte
+               revisiones diarias, de sobra para que no se acumule nada, y en
+               las otras novecientas noventa y nueve no cuesta ni una llamada
+               al disco. Es lo mismo que hace PHP con sus propias sesiones. */
+            if (random_int(1, 1000) === 1) {
+                self::podar();
+            }
         } catch (\Throwable $e) {
             // Una web no se cae porque no se pueda apuntar una línea.
         }
@@ -152,6 +167,34 @@ final class Medidor
             );
         } catch (\Throwable $e) {
             // Igual que arriba.
+        }
+    }
+
+    /**
+     * Tira los registros pasados de fecha.
+     *
+     * Se decide por el NOMBRE del archivo, que es la fecha, no por su fecha de
+     * modificación: una copia de seguridad o un FTP pueden cambiarle la fecha
+     * a un archivo sin que su contenido envejezca ni un día.
+     */
+    private static function podar(): void
+    {
+        $limite = gmdate('Y-m-d', time() - self::$dias * 86400);
+
+        foreach (glob(self::$carpeta . '/*.log') ?: [] as $archivo) {
+            $nombre = basename($archivo, '.log');
+
+            // «2026-10-02» o «permanencia-2026-10-02»: en los dos casos la
+            // fecha son los diez últimos caracteres.
+            $fecha = substr($nombre, -10);
+
+            if (preg_match('~^\d{4}-\d{2}-\d{2}$~', $fecha) !== 1) {
+                continue; // No es un registro nuestro: no se toca.
+            }
+
+            if ($fecha < $limite) {
+                @unlink($archivo);
+            }
         }
     }
 

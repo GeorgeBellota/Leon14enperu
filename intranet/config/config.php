@@ -62,12 +62,16 @@ $config = [
     // ── El tablero de métricas ───────────────────────────────────────────
     //
     // Va detrás de una contraseña aparte, además del acceso al panel. Aquí
-    // sólo vive su HASH, nunca la contraseña: este archivo está en el
-    // repositorio, y lo que se escribe aquí queda también en el historial de
-    // los commits viejos aunque después se cambie.
+    // vive su HASH, nunca la contraseña.
     //
-    // Se genera así, y el resultado se pega en config.local.php, que no se
-    // versiona:
+    // ⚠ Este archivo SÍ está en el repositorio. Un hash no es la contraseña
+    //   —no se puede «deshacer»— pero sí se puede atacar sin prisa en un
+    //   equipo propio, así que conviene que la contraseña sea larga. Y lo que
+    //   se escriba aquí queda en los commits viejos aunque después se cambie:
+    //   para cambiarla de verdad hay que cambiar la contraseña, no sólo el
+    //   archivo.
+    //
+    // Se genera así:
     //
     //     php -r "echo password_hash('TU-CLAVE', PASSWORD_DEFAULT), PHP_EOL;"
     //
@@ -75,11 +79,15 @@ $config = [
     // única posición segura por defecto, porque una puerta que acepta la
     // cadena vacía es peor que no tener puerta.
     'metricas' => [
-        'clave_hash' => '',
+        'clave_hash' => '$2y$10$6cA9IEiQfDHqXCV7GsPCJOGSr6CtC8rdYzyZoDWHIqX1SCcVj7Hw2',
         // Cuánto dura el permiso una vez acertada la contraseña. Pasado ese
         // rato vuelve a pedirla: un portón que se queda abierto para siempre
         // no es un portón.
         'minutos'    => 30,
+        // Cuántos días se guardan los registros. Pasado ese plazo se borran
+        // solos. A 20 000 visitas diarias son unos 44 MB al mes, así que sin
+        // poda esto crece hasta llenar el disco del servidor.
+        'dias'       => 30,
     ],
 
     'seguridad' => [
