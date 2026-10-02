@@ -3,8 +3,13 @@
  * Editor de una sección.
  *
  * El formulario se dibuja a partir de la plantilla declarada en
- * Cms\Plantillas: qué campos, qué claves JSON y si admite bloques. Añadir una
- * sección administrable en la Fase 2 no exige tocar esta vista.
+ * Cms\Plantillas: qué campos y qué claves JSON. Añadir una sección
+ * administrable no exige tocar esta vista.
+ *
+ * Las piezas de la sección NO se editan aquí. Cada una tiene su pantalla
+ * (pieza.php) y esta sólo las lista: la sábana hacía que corregir una coma en
+ * la segunda de trece comisiones obligase a bajar por las once siguientes, y
+ * que cada «Guardar» reescribiera las trece.
  *
  * @var \Intranet\Core\Contenedor $c
  * @var \Intranet\Core\Csrf       $csrf
@@ -107,35 +112,6 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
     </section>
   <?php endif; ?>
 
-  <!-- ── Bloques repetibles ── -->
-  <?php if ($plantilla['bloques'] !== null): ?>
-    <?php $def = $plantilla['bloques']; ?>
-    <section class="tarjeta">
-      <header class="tarjeta__cabecera">
-        <h2><?= $e($def['plural']) ?></h2>
-        <button class="btn btn--linea" type="button" data-anadir-bloque>Añadir <?= $e(mb_strtolower($def['nombre'])) ?></button>
-      </header>
-
-      <p class="vacio">Se publican en el orden en que aparecen aquí. Usa las flechas para moverlos.</p>
-
-      <div class="bloques" data-bloques
-           data-maximo="<?= (int) ($def['maximo'] ?? 20) ?>"
-           data-nombre="<?= $e($def['nombre']) ?>">
-        <?php foreach ($seccion['bloques'] as $i => $b): ?>
-          <?php require __DIR__ . '/_bloque.php'; ?>
-        <?php endforeach; ?>
-      </div>
-
-      <?php /* Molde del que sale cada bloque nuevo. Va dentro de <template>
-               para que el navegador no lo pinte ni envíe sus campos. El índice
-               lleva __i__, que panel.js sustituye por el número que toque. */ ?>
-      <template data-molde-bloque>
-        <?php $i = '__i__'; $b = ['activo' => 1, 'datos' => []]; ?>
-        <?php require __DIR__ . '/_bloque.php'; ?>
-      </template>
-    </section>
-  <?php endif; ?>
-
   <!-- ── Aviso para la sección de servicios ── -->
   <?php if ($seccion['plantilla'] === 'tarjetas_icono'): ?>
     <section class="tarjeta">
@@ -160,3 +136,23 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
     <button class="btn btn--primario" type="submit">Guardar cambios</button>
   </div>
 </form>
+
+<?php /* ── Las piezas de esta sección ────────────────────────────────────
+         Van FUERA del formulario de arriba y no dentro, como iban antes:
+         cada flecha y el botón de añadir son formularios propios, y un
+         formulario dentro de otro no es HTML válido —el navegador se queda
+         con el de fuera y descarta el de dentro sin decir nada—. */ ?>
+<?php if ($plantilla['bloques'] !== null): ?>
+  <?php $def = $plantilla['bloques']; ?>
+  <?php require __DIR__ . '/_piezas-lista.php'; ?>
+<?php endif; ?>
+
+<?php /* ── La ventana para elegir imagen ───────────────────────────────────
+         UNA para toda la pantalla, fuera del <form> y compartida por todos
+         los campos de imagen.
+
+         Antes la rejilla iba DENTRO de cada campo. En Páginas → Inicio →
+         Itinerario eso eran 14 copias de 96 miniaturas: 1 344 imágenes y 998
+         KB de HTML para editar una jornada, y creciendo con cada foto que se
+         subiera a la biblioteca. */ ?>
+<?php require __DIR__ . '/_biblioteca-ventana.php'; ?>

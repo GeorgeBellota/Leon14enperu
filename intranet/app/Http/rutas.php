@@ -70,6 +70,19 @@ return static function (Router $r): void {
         $r->post('/{clave}/seo',      [PaginaController::class, 'guardarSeo'])->permiso('paginas.editar');
         $r->get('/{clave}/{seccion}', [PaginaController::class, 'editar'])->permiso('paginas.editar');
         $r->post('/{clave}/{seccion}', [PaginaController::class, 'guardar'])->permiso('paginas.editar');
+
+        /* ── Una pantalla por pieza ──────────────────────────────────────
+           Las jornadas del itinerario, las sedes, las comisiones. Antes se
+           editaban las trece a la vez en el formulario de la sección.
+
+           Van después de /{clave}/{seccion} sin problema: ese patrón se
+           compila anclado y con [^/]+, así que no cruza la barra y nunca
+           llega a ver estas rutas de cuatro tramos. */
+        $r->post('/{clave}/{seccion}/piezas',               [PaginaController::class, 'nuevaPieza'])->permiso('paginas.editar');
+        $r->get('/{clave}/{seccion}/piezas/{id:\d+}',       [PaginaController::class, 'pieza'])->permiso('paginas.editar');
+        $r->post('/{clave}/{seccion}/piezas/{id:\d+}',      [PaginaController::class, 'guardarPieza'])->permiso('paginas.editar');
+        $r->post('/{clave}/{seccion}/piezas/{id:\d+}/orden',  [PaginaController::class, 'moverPieza'])->permiso('paginas.editar');
+        $r->post('/{clave}/{seccion}/piezas/{id:\d+}/borrar', [PaginaController::class, 'borrarPieza'])->permiso('paginas.editar');
     });
 
     // ── Biblioteca de imágenes ───────────────────────────────────────────
@@ -123,10 +136,9 @@ return static function (Router $r): void {
     });
 
     /* ── Galería de Multimedia ────────────────────────────────────────────
-       Vive aparte de «Páginas» porque el editor de secciones guarda borrando
-       y recreando las piezas, y su formulario no admite archivos. Aquí hace
-       falta lo contrario: subir muchas fotografías de una vez y que lo ya
-       escrito no se mueva.
+       Vive aparte de «Páginas» porque el formulario de una sección no admite
+       archivos, y aquí hace falta justo eso: subir muchas fotografías de una
+       vez y moverlas de fecha sin que lo ya escrito se mueva.
 
        Reutiliza los permisos de la biblioteca —«medios.ver» para mirar,
        «medios.subir» para tocar— porque es lo mismo que hace: subir imágenes.

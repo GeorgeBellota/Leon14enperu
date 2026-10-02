@@ -11,10 +11,10 @@
  *
  *  ── Por qué no vive en «Páginas» ────────────────────────────────────────
  *
- *  Porque el editor de secciones guarda borrando y recreando las piezas, y su
- *  formulario no admite archivos. Aquí hace falta lo contrario: subir muchas
- *  fotografías de una vez y que lo ya escrito no se mueva. Es el mismo motivo
- *  por el que Documentos tiene pantalla propia.
+ *  Porque el formulario de una sección no admite archivos, y aquí hace falta
+ *  justo eso: subir muchas fotografías de una vez, describirlas y moverlas de
+ *  fecha sin que lo ya escrito se mueva. Es el mismo motivo por el que
+ *  Documentos tiene pantalla propia.
  *
  *  ── Por qué sube aquí y no manda a la biblioteca ────────────────────────
  *

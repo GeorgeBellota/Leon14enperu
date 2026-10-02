@@ -35,6 +35,18 @@
     }
   });
 
+  /* ── Campos que se seleccionan solos al pulsarlos ─────────────────────
+     Una ruta larga en un campo de solo lectura está para copiarla. Esto
+     estaba escrito como onclick en el HTML, donde no llegaba a ejecutarse
+     nunca: la CSP del panel es script-src 'self' y el navegador bloquea los
+     manejadores en línea sin decir nada. */
+  document.addEventListener('focus', function (evento) {
+    var campo = evento.target;
+    if (campo instanceof HTMLInputElement && campo.hasAttribute('data-marcar-todo')) {
+      campo.select();
+    }
+  }, true);
+
   /* ── Filtros que se aplican al cambiar ────────────────────────────────
      En un <select> de filtro, obligar a pulsar «Buscar» sobra. */
   document.querySelectorAll('[data-filtro-auto]').forEach(function (control) {
@@ -58,81 +70,6 @@
       evento.returnValue = '';
     });
   });
-
-  /* ══════════════════════════════════════════════════════════════════════
-     EDITOR DE BLOQUES DEL CMS
-     Añadir, quitar y reordenar los elementos repetibles de una sección.
-
-     Los índices de los campos (bloques[0], bloques[1]…) se renumeran después
-     de cada operación. Sin eso, quitar el bloque del medio dejaría huecos
-     (0, 2, 3) y el orden dependería del hueco en lugar de la posición.
-     ══════════════════════════════════════════════════════════════════════ */
-  (function editorDeBloques() {
-    var lista = document.querySelector('[data-bloques]');
-    if (!lista) return;
-
-    var molde = document.querySelector('[data-molde-bloque]');
-    var anadir = document.querySelector('[data-anadir-bloque]');
-    var maximo = parseInt(lista.getAttribute('data-maximo'), 10) || 20;
-
-    function renumerar() {
-      var bloques = lista.querySelectorAll('[data-bloque]');
-
-      Array.prototype.forEach.call(bloques, function (bloque, indice) {
-        var numero = bloque.querySelector('[data-bloque-num]');
-        if (numero) numero.textContent = String(indice + 1);
-
-        Array.prototype.forEach.call(bloque.querySelectorAll('[name]'), function (campo) {
-          campo.name = campo.name.replace(/^bloques\[[^\]]*\]/, 'bloques[' + indice + ']');
-        });
-
-        /* Las flechas de los extremos no llevan a ninguna parte. */
-        var subir = bloque.querySelector('[data-subir]');
-        var bajar = bloque.querySelector('[data-bajar]');
-        if (subir) subir.disabled = indice === 0;
-        if (bajar) bajar.disabled = indice === bloques.length - 1;
-      });
-
-      if (anadir) anadir.disabled = bloques.length >= maximo;
-    }
-
-    if (anadir && molde) {
-      anadir.addEventListener('click', function () {
-        if (lista.querySelectorAll('[data-bloque]').length >= maximo) return;
-
-        var nuevo = molde.content.cloneNode(true);
-        lista.appendChild(nuevo);
-        renumerar();
-
-        var ultimo = lista.querySelector('[data-bloque]:last-child input[type="text"]');
-        if (ultimo) ultimo.focus();
-      });
-    }
-
-    lista.addEventListener('click', function (evento) {
-      var boton = evento.target.closest('button');
-      if (!boton) return;
-
-      var bloque = boton.closest('[data-bloque]');
-      if (!bloque) return;
-
-      if (boton.hasAttribute('data-quitar')) {
-        var nombre = lista.getAttribute('data-nombre') || 'bloque';
-        if (!window.confirm('¿Quitar este ' + nombre.toLowerCase() + '? El cambio se aplica al guardar.')) return;
-        bloque.remove();
-      } else if (boton.hasAttribute('data-subir') && bloque.previousElementSibling) {
-        bloque.parentNode.insertBefore(bloque, bloque.previousElementSibling);
-      } else if (boton.hasAttribute('data-bajar') && bloque.nextElementSibling) {
-        bloque.parentNode.insertBefore(bloque.nextElementSibling, bloque);
-      } else {
-        return;
-      }
-
-      renumerar();
-    });
-
-    renumerar();
-  })();
 
   /* ══════════════════════════════════════════════════════════════════════
      DATOS PARA BUSCADORES
@@ -369,17 +306,26 @@
 
       if (vacia) vacia.hidden = !!src;
 
-      Array.prototype.forEach.call(caja.querySelectorAll('[data-pieza]'), function (boton) {
-        var suya = boton.getAttribute('data-pieza') === select.value;
-        boton.classList.toggle('es-elegida', suya);
-        boton.setAttribute('aria-pressed', suya ? 'true' : 'false');
-      });
+      /* El nombre, porque a 90 px dos fotos parecidas son la misma. */
+      var rotulo = caja.querySelector('[data-vista-nombre]');
+      if (rotulo) {
+        rotulo.textContent = (opcion && opcion.getAttribute('data-nombre')) || 'Sin imagen';
+      }
+
+      // «Quitar» no tiene sentido si no hay nada puesto.
+      var quitar = caja.querySelector('[data-quitar-imagen]');
+      if (quitar) quitar.hidden = !src;
+
+      /* El <select> se esconde con JavaScript: se maneja desde la ventana.
+         Sigue siendo el campo que viaja en el formulario. */
+      select.hidden = true;
     }
 
     /* Una imagen nueva entra en TODOS los selectores de la pantalla, no sólo
        en el que la pidió: una sección puede tener varios campos de imagen y
        sería absurdo tener que subirla otra vez para el de al lado. */
     function repartir(medio) {
+
       Array.prototype.forEach.call(document.querySelectorAll('[data-selector-imagen]'), function (caja) {
         var select = caja.querySelector('[data-elegir-imagen]');
         if (select && !select.querySelector('option[value="' + medio.id + '"]')) {
@@ -387,25 +333,41 @@
           opcion.value = String(medio.id);
           opcion.setAttribute('data-src', medio.url);
           opcion.setAttribute('data-alt', medio.alt || '');
+          opcion.setAttribute('data-nombre', medio.nombre_archivo);
           opcion.textContent = medio.nombre_archivo + (medio.ancho ? ' (' + medio.ancho + '×' + medio.alto + ')' : '');
           select.appendChild(opcion);
         }
-
-        var rejilla = caja.querySelector('[data-biblioteca]');
-        if (rejilla && !rejilla.querySelector('[data-pieza="' + medio.id + '"]')) {
-          var li = document.createElement('li');
-          li.innerHTML = '<button type="button" class="biblioteca__pieza" data-pieza="' + medio.id
-                       + '" aria-pressed="false"></button>';
-          var boton = li.firstChild;
-          boton.title = medio.nombre_archivo;
-          var img = document.createElement('img');
-          img.src = medio.url;
-          img.alt = medio.alt || '';
-          img.loading = 'lazy';
-          boton.appendChild(img);
-          rejilla.appendChild(li);
-        }
       });
+
+      /* Y en la ventana, que es UNA para toda la pantalla: por eso esto va
+         fuera del bucle. Al principio, que es donde se busca lo recién
+         subido. */
+      var rejilla = document.querySelector('[data-elegir-rejilla]');
+
+      if (rejilla && !rejilla.querySelector('[data-elegir="' + medio.id + '"]')) {
+        var li = document.createElement('li');
+        li.setAttribute('data-nombre', (medio.nombre_archivo + ' ' + (medio.alt || '')).toLowerCase());
+
+        var boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'elegir-img__pieza';
+        boton.title = medio.nombre_archivo;
+        boton.setAttribute('data-elegir', String(medio.id));
+        boton.setAttribute('data-src', medio.url);
+        boton.setAttribute('data-alt', medio.alt || '');
+        boton.setAttribute('data-nombre', medio.nombre_archivo);
+
+        var img = document.createElement('img');
+        img.src = medio.url; img.alt = ''; img.loading = 'lazy';
+        img.width = 120; img.height = 120;
+
+        var pie = document.createElement('span');
+        pie.className = 'elegir-img__pie';
+        pie.textContent = medio.nombre_archivo;
+
+        boton.appendChild(img); boton.appendChild(pie); li.appendChild(boton);
+        rejilla.insertBefore(li, rejilla.firstChild);
+      }
     }
 
     /* El panel de subida. Se construye aquí y no en el HTML porque son campos
@@ -501,6 +463,140 @@
       });
     }
 
+
+    /* ══════════════════════════════════════════════════════════════════════
+       LA VENTANA PARA ELEGIR IMAGEN
+       ----------------------------------------------------------------------
+       Una sola para toda la pantalla, compartida por todos los campos.
+
+       Antes la rejilla iba dentro de cada campo. En Páginas → Inicio →
+       Itinerario eran 14 copias de 96 miniaturas: 1 344 imágenes y 998 KB de
+       HTML para editar una jornada, y creciendo con cada foto subida.
+
+       Quién pidió abrirla se guarda aquí, en `pidiendo`: al elegir, hay que
+       saber en qué <select> escribir.
+       ══════════════════════════════════════════════════════════════════════ */
+    var ventana  = document.querySelector('[data-ventana-biblioteca]');
+    var pidiendo = null;
+
+    function abrirBiblioteca(caja) {
+      if (!ventana || typeof ventana.showModal !== 'function') {
+        /* Sin <dialog> —navegador viejo— el <select> sigue ahí y sirve. Se
+           destapa para que no se quede sin forma de elegir. */
+        var sel = caja.querySelector('[data-elegir-imagen]');
+        if (sel) { sel.hidden = false; sel.focus(); }
+        return;
+      }
+
+      pidiendo = caja;
+
+      // Se marca la que ya tuviera, para que se vea de dónde se parte.
+      var actual = caja.querySelector('[data-elegir-imagen]');
+      var valor  = actual ? actual.value : '';
+
+      Array.prototype.forEach.call(ventana.querySelectorAll('[data-elegir]'), function (b) {
+        var suya = b.getAttribute('data-elegir') === valor;
+        b.classList.toggle('es-elegida', suya);
+        b.setAttribute('aria-pressed', suya ? 'true' : 'false');
+      });
+
+      ventana.showModal();
+    }
+
+    function elegirEnLaVentana(id, src, alt, nombre) {
+      if (!pidiendo) return;
+
+      var select = pidiendo.querySelector('[data-elegir-imagen]');
+
+      if (select) {
+        /* Si la imagen es nueva y todavía no está en el <select> —recién
+           subida desde otro campo— se añade: el <select> es lo que se envía,
+           y un valor que no exista como <option> no viaja. */
+        var op = id ? select.querySelector('option[value="' + id + '"]') : null;
+
+        if (id && !op) {
+          op = document.createElement('option');
+          op.value = String(id);
+          op.textContent = nombre || id;
+          select.appendChild(op);
+        }
+
+        /* Y se le cuelga la ruta, el alt y el nombre. Siempre, no sólo si la
+           opción es nueva: el HTML las trae desnudas a propósito —poner los
+           data-* en las 96 eran 341 KB en esta pantalla— y es la ventana la
+           que se los da a la que se elige, que es la única que sincronizar()
+           necesita leer para pintar la vista previa. */
+        if (op) {
+          op.setAttribute('data-src', src || '');
+          op.setAttribute('data-alt', alt || '');
+          op.setAttribute('data-nombre', nombre || '');
+        }
+
+        select.value = id ? String(id) : '';
+        sincronizar(pidiendo);
+      }
+
+      if (ventana && ventana.open) ventana.close();
+    }
+
+    if (ventana) {
+      ventana.addEventListener('click', function (ev) {
+        if (ev.target === ventana || ev.target.closest('[data-cerrar]')) {
+          ventana.close();
+          return;
+        }
+
+        var pieza = ev.target.closest('[data-elegir]');
+
+        if (pieza) {
+          elegirEnLaVentana(
+            pieza.getAttribute('data-elegir'),
+            pieza.getAttribute('data-src'),
+            pieza.getAttribute('data-alt'),
+            pieza.getAttribute('data-nombre')
+          );
+
+          return;
+        }
+
+        if (ev.target.closest('[data-elegir-ninguna]')) {
+          elegirEnLaVentana('', '', '', '');
+        }
+      });
+
+      ventana.addEventListener('close', function () {
+        if (pidiendo) {
+          var b = pidiendo.querySelector('[data-abrir-biblioteca]');
+          if (b) b.focus();
+        }
+
+        pidiendo = null;
+      });
+
+      /* El buscador filtra lo que ya está pintado, sin volver al servidor:
+         con menos de unos cientos de fotos es instantáneo y evita una
+         petición por cada letra. */
+      var buscar = ventana.querySelector('[data-elegir-buscar]');
+      var vacio  = ventana.querySelector('[data-elegir-sinresultados]');
+
+      if (buscar) {
+        buscar.addEventListener('input', function () {
+          var q = buscar.value.trim().toLowerCase();
+          var vistas = 0;
+
+          Array.prototype.forEach.call(ventana.querySelectorAll('[data-nombre]'), function (li) {
+            if (li.tagName !== 'LI') return;
+
+            var cabe = q === '' || (li.getAttribute('data-nombre') || '').indexOf(q) !== -1;
+            li.hidden = !cabe;
+            if (cabe) vistas++;
+          });
+
+          if (vacio) vacio.hidden = vistas > 0;
+        });
+      }
+    }
+
     /* Todo por delegación: los bloques del CMS se añaden después de cargar la
        página y un escuchador por elemento no los vería. */
     document.addEventListener('click', function (evento) {
@@ -510,13 +606,11 @@
       var caja = boton.closest('[data-selector-imagen]');
       if (!caja) return;
 
-      if (boton.hasAttribute('data-pieza')) {
-        var select = caja.querySelector('[data-elegir-imagen]');
-        if (!select) return;
-        /* Volver a pulsar la elegida la quita: es como se espera que se
-           comporte algo que se enciende al pulsarlo. */
-        select.value = select.value === boton.getAttribute('data-pieza') ? '' : boton.getAttribute('data-pieza');
-        sincronizar(caja);
+      if (boton.hasAttribute('data-abrir-biblioteca')) {
+        abrirBiblioteca(caja);
+      } else if (boton.hasAttribute('data-quitar-imagen')) {
+        var sel = caja.querySelector('[data-elegir-imagen]');
+        if (sel) { sel.value = ''; sincronizar(caja); }
       } else if (boton.hasAttribute('data-abrir-subida')) {
         abrirSubida(caja);
       } else if (boton.hasAttribute('data-subida-enviar')) {

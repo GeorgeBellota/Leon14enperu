@@ -6,9 +6,8 @@
  *
  *  Pantalla propia, fuera de «Páginas», como pidió el cliente. No es sólo
  *  orden: una noticia no se parece a una sección. Tiene fecha, estado,
- *  dirección propia, SEO y un cuerpo con imágenes dentro. El editor de
- *  secciones guarda borrando y recreando las piezas, y eso con un texto
- *  largo es jugársela en cada «Guardar».
+ *  dirección propia, SEO y un cuerpo con imágenes dentro, y nada de eso cabe
+ *  en los campos que declara una plantilla de sección.
  *
  *  ── Lo que entra por el formulario no se guarda tal cual ────────────────
  *

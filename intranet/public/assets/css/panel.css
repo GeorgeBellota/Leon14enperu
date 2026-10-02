@@ -260,6 +260,16 @@ a:hover { color: var(--ink); }
 
 .campo__ayuda { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
 
+/* ── «hidden» tiene que ganar siempre ──────────────────────────────────
+   El navegador le da a [hidden] un display:none desde su propia hoja, y
+   cualquier clase nuestra con display propio lo pisa: .btn es inline-flex,
+   así que un botón marcado hidden se seguía viendo.
+
+   Se notaba en el campo de imagen: «Quitar» salía aunque no hubiera ninguna
+   imagen que quitar. Había tres parches sueltos para casos concretos; esto
+   lo arregla de una vez, y para los que vengan. */
+[hidden] { display: none !important; }
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1417,9 +1427,7 @@ code {
 /* `display: grid` gana al atributo hidden, que sólo vale `display: none` de la
    hoja del navegador. Sin esto la zona de subida se ve siempre, vacía y con su
    borde punteado, como un hueco sin explicación. */
-.subida[hidden],
-.selector-imagen__acciones[hidden],
-.selector-imagen__salida[hidden] { display: none; }
+/* Tres parches donde hacía falta uno: la regla general está más arriba. */
 
 .subida__campos { display: grid; gap: .55rem; }
 .subida__campo  { display: grid; gap: .2rem; font-size: var(--step--1); }
@@ -2273,4 +2281,239 @@ code {
   .ficha-med__caja { grid-template-columns: minmax(0, 1fr); }
   .ficha-med__vista img { max-height: 40vh; }
   .rejilla-biblioteca { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}
+
+/* ===========================================================================
+   LA VENTANA PARA ELEGIR IMAGEN
+   ---------------------------------------------------------------------------
+   Una por pantalla, compartida por todos los campos de imagen. Sustituye a la
+   rejilla que antes iba dentro de cada campo: en Páginas → Inicio →
+   Itinerario eran 14 copias de 96 miniaturas, 998 KB de HTML.
+   =========================================================================== */
+
+.elegir-img {
+  width: min(960px, 94vw);
+  max-width: none;
+  max-height: 88vh;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.elegir-img::backdrop { background: rgba(14, 10, 11, .6); }
+
+.elegir-img__caja {
+  display: flex;
+  flex-direction: column;
+  max-height: 88vh;
+}
+
+.elegir-img__cab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-m);
+  border-bottom: 1px solid var(--line);
+}
+
+.elegir-img__titulo { margin: 0; font-size: var(--step-1); white-space: nowrap; }
+.elegir-img__buscar { flex: 1 1 auto; min-width: 0; }
+
+.elegir-img__cerrar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.elegir-img__cerrar:hover { background: var(--line); }
+
+.elegir-img__rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: var(--space-s);
+  margin: 0;
+  padding: var(--space-m);
+  list-style: none;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.elegir-img__pieza {
+  display: block;
+  width: 100%;
+  padding: 4px;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  background: var(--surface-alt);
+  cursor: pointer;
+  text-align: center;
+}
+
+.elegir-img__pieza:hover { border-color: var(--line-strong); }
+.elegir-img__pieza.es-elegida { border-color: var(--primary); background: var(--accent-tint); }
+
+.elegir-img__pieza img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.elegir-img__pie {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.elegir-img__pie-ventana {
+  display: flex;
+  gap: var(--space-s);
+  align-items: center;
+  padding: var(--space-s) var(--space-m);
+  border-top: 1px solid var(--line);
+}
+
+/* ── El campo, ya sin rejilla dentro ───────────────────────────────────── */
+.selector-imagen__nombre {
+  margin: 0 0 6px;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selector-imagen__acciones { display: flex; flex-wrap: wrap; gap: 5px; }
+
+@media (max-width: 640px) {
+  .elegir-img__cab { flex-wrap: wrap; }
+  .elegir-img__titulo { width: 100%; }
+  .elegir-img__rejilla { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+}
+
+/* ===========================================================================
+   LA LISTA DE PIEZAS DE UNA SECCIÓN
+   ---------------------------------------------------------------------------
+   Sustituye a la sábana: la sección pintaba el formulario entero de cada una
+   de sus piezas, una debajo de otra. Trece comisiones eran 161 campos en una
+   pantalla. Aquí sólo se ve lo que sirve para encontrar la que se busca.
+
+   Es una rejilla de cuatro columnas —número, foto, texto, mandos— en vez de
+   una tabla, porque en móvil la foto y los mandos se recolocan y una tabla
+   obligaría a elegir entre desbordar o encoger el texto a nada.
+   =========================================================================== */
+
+.piezas {
+  margin: var(--space-s) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.pieza-fila {
+  display: grid;
+  grid-template-columns: auto 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pieza-fila.es-oculta { opacity: .62; }
+
+.pieza-fila__num {
+  min-width: 1.6em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.pieza-fila__foto img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--surface-alt);
+}
+
+.pieza-fila__sinfoto {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  background: var(--surface-alt);
+  color: var(--ink-soft);
+}
+
+/* minmax(0,1fr) arriba + min-width:0 aquí: sin los dos, un titular largo
+   ensancha la columna y empuja los mandos fuera de la pantalla. */
+.pieza-fila__texto { min-width: 0; }
+
+.pieza-fila__titulo {
+  display: block;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.pieza-fila__titulo:hover { text-decoration: underline; }
+
+.pieza-fila__pie {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--step--2);
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cada flecha es su propio <form> —cambia algo en el servidor—, así que los
+   mandos son una fila de formularios y no de botones sueltos. */
+.pieza-fila__mandos {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pieza-fila__mandos form { display: contents; }
+
+@media (max-width: 600px) {
+  /* El número se va con el texto y los mandos bajan a su propia línea: a 390
+     px, cuatro columnas dejaban el titular en dos letras. */
+  .pieza-fila {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: var(--space-xs) var(--space-s);
+    padding: var(--space-s) 0;
+  }
+
+  .pieza-fila__num { display: none; }
+
+  .pieza-fila__foto img,
+  .pieza-fila__sinfoto { width: 56px; height: 56px; }
+
+  .pieza-fila__mandos {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
 }

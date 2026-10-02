@@ -353,7 +353,7 @@ final class Pagina extends Model
         $filas = $this->bd()->filas(
             "SELECT p.clave AS pagina, p.ruta,
                     s.clave AS seccion, s.nombre AS seccion_nombre,
-                    b.slug, b.titulo, b.rotulo, b.activo
+                    b.id, b.slug, b.titulo, b.rotulo, b.activo
                FROM bloques b
                JOIN secciones s ON s.id = b.seccion_id
                JOIN paginas   p ON p.id = s.pagina_id
@@ -407,7 +407,7 @@ final class Pagina extends Model
      * @param array<string, mixed>        $campos
      * @param array<int, array<string, mixed>> $bloques
      */
-    public function guardarSeccion(int $seccionId, array $campos, array $bloques, ?int $usuarioId): void
+    public function guardarSeccion(int $seccionId, array $campos, ?array $bloques, ?int $usuarioId): void
     {
         $this->bd()->transaccion(function () use ($seccionId, $campos, $bloques, $usuarioId): void {
             $this->versionar($seccionId, $usuarioId);
@@ -422,45 +422,119 @@ final class Pagina extends Model
 
             $this->bd()->actualizar('secciones', $campos, 'id = :id', ['id' => $seccionId]);
 
-            // Los bloques se reemplazan enteros: es lo que espera un formulario
-            // donde se pueden añadir, borrar y reordenar filas a la vez.
-            // Comparar uno a uno para hacer altas/bajas/modificaciones daría el
-            // mismo resultado con tres veces más código.
-            $this->bd()->eliminar('bloques', 'seccion_id = :s', ['s' => $seccionId]);
+            /* `null` no es lo mismo que una lista vacía: significa «no toques
+               las piezas». El editor de la sección ya no las trae —cada una
+               tiene su propia pantalla— y si esto lo tomara por una lista
+               vacía, cambiar el titular de Itinerario borraría sus seis
+               jornadas sin preguntar y sin un solo mensaje. */
+            if ($bloques === null) {
+                $this->bd()->actualizar(
+                    'paginas',
+                    ['actualizado_por' => $usuarioId],
+                    'id = (SELECT pagina_id FROM secciones WHERE id = :s)',
+                    ['s' => $seccionId]
+                );
+
+                return;
+            }
+
+            /* ── Las piezas ──────────────────────────────────────────────
+             *
+             * Se actualizan una a una, no se borran y se vuelven a crear.
+             *
+             * Antes era un DELETE de todas y un INSERT de todas: menos
+             * código, mismo resultado en pantalla y un id nuevo para cada
+             * pieza en cada Guardar. Con el editor en sábana daba igual
+             * —nadie nombraba una pieza— pero en cuanto cada pieza tiene su
+             * propia pantalla, su dirección es su id: si cambia al guardar,
+             * el enlace que alguien dejó abierto en otra pestaña apunta a
+             * una pieza que ya no existe. Por eso ahora el id viaja en el
+             * formulario y manda.
+             *
+             * Se nota también fuera: `bloques` iba por el id 809 con 80
+             * filas vivas, porque cada Guardar quemaba una tanda entera.
+             */
+            $vivas = array_map('intval', $this->bd()->columna(
+                'SELECT id FROM bloques WHERE seccion_id = :s',
+                ['s' => $seccionId]
+            ));
+
+            /* Qué piezas de las que hay siguen viniendo. Un id que no sea de
+               esta sección se ignora: el formulario llega del navegador, y no
+               puede servir para editar la pieza de otra página. */
+            $siguen = [];
+
+            foreach ($bloques as $b) {
+                $id = (int) ($b['id'] ?? 0);
+
+                if ($id > 0 && in_array($id, $vivas, true)) {
+                    $siguen[] = $id;
+                }
+            }
+
+            // Las que ya no vienen, se van.
+            $sobran = array_values(array_diff($vivas, $siguen));
+
+            if ($sobran !== []) {
+                $huecos = implode(',', array_fill(0, count($sobran), '?'));
+                $this->bd()->eliminar('bloques', "seccion_id = ? AND id IN ({$huecos})",
+                    array_merge([$seccionId], $sobran));
+            }
+
+            /* Y a las que se quedan se les suelta el slug antes de reescribir.
+               `uq_bloques_slug` es único por sección: si dos sedes
+               intercambian dirección, al escribir la primera chocaría con la
+               segunda, que todavía no se ha tocado. Borrando y reinsertando
+               esto no podía pasar; actualizando, sí. */
+            if ($siguen !== []) {
+                $huecos = implode(',', array_fill(0, count($siguen), '?'));
+                $this->bd()->consultar(
+                    "UPDATE `bloques` SET `slug` = NULL WHERE `id` IN ({$huecos})",
+                    $siguen
+                );
+            }
 
             $orden = 0;
+
             foreach ($bloques as $b) {
                 $datos = $b['datos'] ?? null;
 
-                $this->bd()->insertar('bloques', [
-                    'seccion_id'   => $seccionId,
-                    'orden'        => $orden += 10,
-                    'activo'       => !empty($b['activo']) ? 1 : 0,
-                    'rotulo'       => $this->oNulo($b['rotulo'] ?? null),
-                    'titulo'       => $this->oNulo($b['titulo'] ?? null),
-                    // El slug viaja en el formulario y se reinserta tal cual.
-                    // Los bloques se borran y se vuelven a crear al guardar, así
-                    // que si no se arrastrara, editar una sección cambiaría la
-                    // dirección de todas sus piezas y rompería los enlaces ya
-                    // compartidos.
-                    'slug'         => $this->oNulo($b['slug'] ?? null),
-                    'texto'        => $this->oNulo($b['texto'] ?? null),
-                    'icono'        => $this->oNulo($b['icono'] ?? null),
-                    // Las dos fotografías: la de escritorio y la de móvil. Van
-                    // las dos escritas porque esta lista de columnas es
-                    // explícita a propósito —un formulario no puede escribir
-                    // una columna que no esté aquí—, y por eso mismo añadir un
-                    // campo nuevo obliga a acordarse de este sitio: la primera
-                    // vez, la de móvil se guardaba y el siguiente «Guardar» la
-                    // borraba sin decir nada.
+                /* La lista de columnas es explícita a propósito: un
+                   formulario no puede escribir una columna que no esté aquí.
+                   Y por eso mismo, añadir un campo obliga a acordarse de este
+                   sitio: la primera vez, la imagen de móvil se guardaba y el
+                   siguiente «Guardar» la borraba sin decir nada. */
+                $fila = [
+                    'orden'  => $orden += 10,
+                    'activo' => !empty($b['activo']) ? 1 : 0,
+                    'rotulo' => $this->oNulo($b['rotulo'] ?? null),
+                    'titulo' => $this->oNulo($b['titulo'] ?? null),
+                    // El slug viaja en el formulario y se escribe tal cual: se
+                    // fija al crear la pieza y no se recalcula al editar el
+                    // titular, porque la dirección que ya se compartió tiene
+                    // que seguir existiendo.
+                    'slug'   => $this->oNulo($b['slug'] ?? null),
+                    'texto'  => $this->oNulo($b['texto'] ?? null),
+                    'icono'  => $this->oNulo($b['icono'] ?? null),
                     'imagen_id'       => !empty($b['imagen_id']) ? (int) $b['imagen_id'] : null,
                     'imagen_movil_id' => !empty($b['imagen_movil_id']) ? (int) $b['imagen_movil_id'] : null,
-                    'enlace_texto' => $this->oNulo($b['enlace_texto'] ?? null),
-                    'enlace_url'   => $this->oNulo($b['enlace_url'] ?? null),
-                    'datos'        => is_array($datos) && $datos !== []
+                    'enlace_texto'    => $this->oNulo($b['enlace_texto'] ?? null),
+                    'enlace_url'      => $this->oNulo($b['enlace_url'] ?? null),
+                    'datos'  => is_array($datos) && $datos !== []
                         ? json_encode($datos, JSON_UNESCAPED_UNICODE)
                         : null,
-                ]);
+                ];
+
+                $id = (int) ($b['id'] ?? 0);
+
+                if ($id > 0 && in_array($id, $siguen, true)) {
+                    $this->bd()->actualizar('bloques', $fila, 'id = :id', ['id' => $id]);
+
+                    continue;
+                }
+
+                $fila['seccion_id'] = $seccionId;
+                $this->bd()->insertar('bloques', $fila);
             }
 
             $this->bd()->actualizar(
@@ -473,6 +547,193 @@ final class Pagina extends Model
     }
 
     /** Copia del estado actual antes de pisarlo. */
+    /* ══════════════════════════════════════════════════════════════════
+       UNA PIEZA
+       ------------------------------------------------------------------
+       Cada pieza de una sección —una jornada del itinerario, una sede, un
+       santo— tiene ahora su propia pantalla. Antes se editaban las trece a
+       la vez en un formulario de sábana donde corregir una coma obligaba a
+       bajar por las otras doce, y donde cada Guardar reescribía las trece.
+
+       Todas estas operaciones piden el id de la sección además del de la
+       pieza, y comprueban que la pieza sea suya. Los dos vienen de la URL:
+       sin esa comprobación, quien puede editar una página podría tocar las
+       piezas de cualquier otra escribiendo otro número.
+       ══════════════════════════════════════════════════════════════════ */
+
+    /** Una pieza de esta sección, con su `datos` ya decodificado. */
+    public function pieza(int $seccionId, int $id): ?array
+    {
+        $fila = $this->bd()->fila(
+            'SELECT * FROM bloques WHERE id = :id AND seccion_id = :s',
+            ['id' => $id, 's' => $seccionId]
+        );
+
+        if ($fila === null) {
+            return null;
+        }
+
+        $fila['datos'] = $this->decodificar($fila['datos'] ?? null);
+
+        return $fila;
+    }
+
+    /**
+     * Crea una pieza vacía al final y devuelve su id.
+     *
+     * Vacía a propósito: se crea para entrar a rellenarla, y así su pantalla
+     * nace con una dirección estable en lugar de tener que inventar un «id
+     * provisional» que cambiaría al primer Guardar.
+     */
+    public function crearPieza(int $seccionId, ?int $usuarioId): int
+    {
+        return (int) $this->bd()->transaccion(function () use ($seccionId, $usuarioId): int {
+            $this->versionar($seccionId, $usuarioId);
+
+            $ultimo = (int) ($this->bd()->valor(
+                'SELECT MAX(orden) FROM bloques WHERE seccion_id = :s',
+                ['s' => $seccionId]
+            ) ?? 0);
+
+            return $this->bd()->insertar('bloques', [
+                'seccion_id' => $seccionId,
+                'orden'      => $ultimo + 10,
+                // Nace oculta: una pieza en blanco no debe salir en la web
+                // entre que se crea y se termina de rellenar.
+                'activo'     => 0,
+            ]);
+        });
+    }
+
+    /** Guarda una sola pieza. El resto de la sección no se toca. */
+    public function guardarPieza(int $seccionId, int $id, array $campos, ?int $usuarioId): bool
+    {
+        return (bool) $this->bd()->transaccion(
+            function () use ($seccionId, $id, $campos, $usuarioId): bool {
+                if ($this->pieza($seccionId, $id) === null) {
+                    return false;
+                }
+
+                $this->versionar($seccionId, $usuarioId);
+
+                if (array_key_exists('datos', $campos)) {
+                    $campos['datos'] = is_array($campos['datos']) && $campos['datos'] !== []
+                        ? json_encode($campos['datos'], JSON_UNESCAPED_UNICODE)
+                        : null;
+                }
+
+                $this->bd()->actualizar('bloques', $campos, 'id = :id', ['id' => $id]);
+
+                $this->bd()->actualizar(
+                    'paginas',
+                    ['actualizado_por' => $usuarioId],
+                    'id = (SELECT pagina_id FROM secciones WHERE id = :s)',
+                    ['s' => $seccionId]
+                );
+
+                return true;
+            }
+        );
+    }
+
+    /**
+     * Sube o baja una pieza un puesto.
+     *
+     * Se intercambia el `orden` con el de su vecina en vez de renumerar la
+     * sección entera: son dos escrituras en lugar de trece, y las demás
+     * piezas conservan el número que ya tenían.
+     */
+    public function moverPieza(int $seccionId, int $id, string $hacia, ?int $usuarioId): bool
+    {
+        return (bool) $this->bd()->transaccion(
+            function () use ($seccionId, $id, $hacia, $usuarioId): bool {
+                $esta = $this->pieza($seccionId, $id);
+
+                if ($esta === null) {
+                    return false;
+                }
+
+                $arriba = $hacia === 'subir';
+
+                /* El desempate por id va en la consulta porque dos piezas
+                   pueden compartir `orden` —se crearon a la vez, o vienen de
+                   datos viejos— y la lista se pinta con ORDER BY orden, id.
+                   Sin desempatar aquí, la vecina que busca este método no
+                   sería la que se ve encima en pantalla. */
+                $vecina = $this->bd()->fila(
+                    $arriba
+                        ? 'SELECT id, orden FROM bloques
+                            WHERE seccion_id = :s
+                              AND (orden < :o OR (orden = :o2 AND id < :i))
+                            ORDER BY orden DESC, id DESC LIMIT 1'
+                        : 'SELECT id, orden FROM bloques
+                            WHERE seccion_id = :s
+                              AND (orden > :o OR (orden = :o2 AND id > :i))
+                            ORDER BY orden ASC, id ASC LIMIT 1',
+                    ['s' => $seccionId, 'o' => (int) $esta['orden'],
+                     'o2' => (int) $esta['orden'], 'i' => $id]
+                );
+
+                // Ya está la primera o la última: no hay nada que hacer, y no
+                // es un error.
+                if ($vecina === null) {
+                    return true;
+                }
+
+                $this->versionar($seccionId, $usuarioId);
+
+                $mio  = (int) $esta['orden'];
+                $suyo = (int) $vecina['orden'];
+
+                // Si empatan, intercambiarlos no movería nada: se separa.
+                if ($mio === $suyo) {
+                    $suyo = $arriba ? $mio + 1 : $mio - 1;
+                }
+
+                $this->bd()->actualizar('bloques', ['orden' => $mio],
+                    'id = :id', ['id' => (int) $vecina['id']]);
+                $this->bd()->actualizar('bloques', ['orden' => $suyo],
+                    'id = :id', ['id' => $id]);
+
+                return true;
+            }
+        );
+    }
+
+    /** Borra una pieza de esta sección. */
+    public function borrarPieza(int $seccionId, int $id, ?int $usuarioId): bool
+    {
+        return (bool) $this->bd()->transaccion(
+            function () use ($seccionId, $id, $usuarioId): bool {
+                if ($this->pieza($seccionId, $id) === null) {
+                    return false;
+                }
+
+                $this->versionar($seccionId, $usuarioId);
+
+                $this->bd()->eliminar('bloques', 'id = :id AND seccion_id = :s',
+                    ['id' => $id, 's' => $seccionId]);
+
+                return true;
+            }
+        );
+    }
+
+    /**
+     * ¿Hay ya otra pieza de esta sección con esa dirección?
+     *
+     * Se excluye la propia: al guardar sin tocar el slug chocaría consigo
+     * misma, y el formulario diría que está ocupada.
+     */
+    public function slugDePiezaOcupado(int $seccionId, string $slug, int $excepto = 0): bool
+    {
+        return (bool) $this->bd()->valor(
+            'SELECT 1 FROM bloques
+              WHERE seccion_id = :s AND slug = :g AND id <> :e LIMIT 1',
+            ['s' => $seccionId, 'g' => $slug, 'e' => $excepto]
+        );
+    }
+
     private function versionar(int $seccionId, ?int $usuarioId): void
     {
         $seccion = $this->bd()->fila('SELECT * FROM secciones WHERE id = :id', ['id' => $seccionId]);

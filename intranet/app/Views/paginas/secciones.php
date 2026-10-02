@@ -139,7 +139,14 @@ $extracto = static function (array $s): string {
             <?php endif; ?>
             <span><?= $e($plantilla['nombre']) ?></span>
             <?php if ((int) $s['bloques'] > 0): ?>
-              · <?= (int) $s['bloques'] ?> <?= (int) $s['bloques'] === 1 ? 'bloque' : 'bloques' ?>
+              <?php /* Con el nombre que les da su plantilla —«13 personas», «6
+                       jornadas»— y no «13 bloques», que es palabra nuestra y no
+                       la de quien edita. */ ?>
+              <?php $comoSeLlaman = $plantilla['bloques'] ?? null; ?>
+              · <?= (int) $s['bloques'] ?>
+              <?= $e(mb_strtolower($comoSeLlaman === null
+                    ? ((int) $s['bloques'] === 1 ? 'elemento' : 'elementos')
+                    : ((int) $s['bloques'] === 1 ? $comoSeLlaman['nombre'] : $comoSeLlaman['plural']))) ?>
             <?php endif; ?>
             <?php if ($s['editor']): ?>
               · Editada por <?= $e($s['editor']) ?>, <?= $e(View::fecha($s['actualizado_en'], true)) ?>
@@ -170,7 +177,7 @@ $extracto = static function (array $s): string {
               <?php /* Mismo marcado que en la lista de páginas: el nombre en su
                        propio span —para que tenga peso y sea lo que se subraya
                        al pasar— y la dirección empujada al final de la fila. */ ?>
-              <a class="ficha__principal" href="<?= $url('/paginas/' . $pagina['clave'] . '/' . $s['clave'] . '#pieza-' . $f['slug']) ?>">
+              <a class="ficha__principal" href="<?= $url('/paginas/' . $pagina['clave'] . '/' . $s['clave'] . '/piezas/' . (int) $f['id']) ?>">
                 <span class="ficha__nombre"><?= $e($f['titulo']) ?></span>
                 <?php if (($f['rotulo'] ?? '') !== ''): ?>
                   <span class="ficha__rotulo"><?= $e(View::recortar((string) $f['rotulo'], 56)) ?></span>

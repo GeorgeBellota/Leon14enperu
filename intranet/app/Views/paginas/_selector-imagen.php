@@ -2,35 +2,43 @@
 /**
  * Selector de una imagen de la biblioteca.
  *
- * Se usa en el editor de secciones y en cada bloque. Guarda el id, no la ruta,
+ * Se usa en el editor de secciones y en cada pieza. Guarda el id, no la ruta,
  * para que cambiar una foto en la biblioteca la cambie en todas las páginas
  * donde aparece.
  *
- * ── Qué hay aquí y por qué ─────────────────────────────────────────────────
+ * ── Por qué ya no trae la biblioteca dentro ───────────────────────────────
  *
- * Tres capas, de menos a más, y cada una funciona sin la siguiente:
+ * Porque la traía ENTERA, y una vez por campo. Medido en octubre de 2026 en
+ * Páginas → Inicio → Itinerario:
+ *
+ *     7 piezas × 2 campos de imagen = 14 selectores
+ *     14 selectores × 96 fotos      = 1 344 miniaturas
+ *     → 998 KB de HTML en una sola pantalla
+ *
+ * Y empeoraba solo: cada foto subida engordaba TODAS las pantallas de
+ * edición. Con 300 fotos serían más de 4 000 miniaturas.
+ *
+ * Ahora cada selector trae sólo la foto elegida, y la rejilla para escoger
+ * vive en UNA ventana compartida por toda la pantalla
+ * (_biblioteca-ventana.php). Las miniaturas de esa ventana son «lazy», así
+ * que no se piden hasta que alguien la abre.
+ *
+ * ── Las tres capas siguen ─────────────────────────────────────────────────
  *
  *   1. Un <select> normal. Es el que guarda el valor y el que se envía. Sin
  *      JavaScript el campo funciona exactamente igual que siempre.
- *   2. Una rejilla de miniaturas. Se pinta en PHP, así que se ve aunque no
- *      haya JavaScript; con él, pulsar una miniatura mueve el <select>.
- *   3. Una zona de subida. Sólo aparece si hay JavaScript, porque sin él no
- *      hay forma de subir sin salir: el editor de sección ya es un <form> y
- *      no se pueden anidar formularios.
+ *   2. Con JavaScript, el botón «Elegir» abre la ventana y escribe en el
+ *      <select>.
+ *   3. La subida sin salir, que ya era sólo con JavaScript.
  *
- * ── Por qué la subida no envía el formulario de la sección ─────────────────
+ * ── Por qué la subida no envía el formulario de la sección ────────────────
  *
- * Porque ese formulario borra y recrea las piezas al guardar, y no es
- * «multipart». Si se convirtiera y una subida superara post_max_size, PHP
- * entregaría un $_POST VACÍO y la sección se reconstruiría con nada: se
- * perdería entera y sin un solo mensaje de error.
- *
- * Así que la imagen viaja por su cuenta a /medios con fetch, y lo único que
- * vuelve es un id que se mete en el <select>. El formulario de la sección ni
- * se entera, y lo que el usuario llevaba escrito sigue donde estaba.
+ * Porque no es «multipart». Si se convirtiera y una subida superara
+ * post_max_size, PHP entregaría un $_POST VACÍO: se guardaría la pantalla
+ * entera en blanco, y sin un solo mensaje de error.
  *
  * @var \Intranet\Core\Contenedor $c
- * @var array       $medios  la biblioteca
+ * @var array       $medios  la biblioteca (para el <select>, sin miniaturas)
  * @var string      $nombre  name del campo
  * @var string      $idCampo id del <select>
  * @var int|null    $elegida id de la imagen actual
@@ -63,13 +71,27 @@ foreach ($medios as $m) {
     </div>
 
     <div class="selector-imagen__mandos">
+      <?php /* El nombre de lo elegido, para saber qué hay sin mirar la
+               miniatura: a 90 px, dos fotos parecidas son la misma. */ ?>
+      <p class="selector-imagen__nombre" data-vista-nombre>
+        <?= $actual !== null ? $eSel($actual['nombre_archivo']) : 'Sin imagen' ?>
+      </p>
+
+      <?php /* El <select> es el campo de verdad. Con JavaScript se esconde
+               —se maneja desde la ventana— pero sigue siendo lo que viaja en
+               el formulario. Sin JavaScript, es todo lo que hay y basta. */ ?>
       <select id="<?= $eSel($idCampo) ?>" name="<?= $eSel($nombre) ?>" data-elegir-imagen>
         <option value="">— Sin imagen —</option>
-        <?php foreach ($medios as $m): ?>
-          <option value="<?= (int) $m['id'] ?>"
+        <?php foreach ($medios as $m): $esta = (int) $m['id'] === (int) ($elegida ?? 0); ?>
+          <?php /* Los data-* van SOLO en la opción elegida. El JS los lee de la
+                   opción seleccionada para pintar la vista previa, y cuando se
+                   elige otra imagen en la ventana los escribe él mismo. Ponerlos
+                   en las 96 eran 1 344 copias y 341 KB en esta sola pantalla. */ ?>
+          <option value="<?= (int) $m['id'] ?>"<?php if ($esta): ?>
                   data-src="<?= $eSel($c->urlSitio('/' . ltrim((string) $m['ruta'], '/'))) ?>"
                   data-alt="<?= $eSel($m['alt'] ?? '') ?>"
-                  <?= (int) $m['id'] === (int) ($elegida ?? 0) ? 'selected' : '' ?>>
+                  data-nombre="<?= $eSel($m['nombre_archivo']) ?>"
+                  selected<?php endif; ?>>
             <?= $eSel($m['nombre_archivo']) ?><?php
               if (!empty($m['ancho'])) {
                   echo ' (' . (int) $m['ancho'] . '×' . (int) $m['alto'] . ')';
@@ -79,45 +101,23 @@ foreach ($medios as $m) {
         <?php endforeach; ?>
       </select>
 
-      <?php /* Sin JavaScript esto es lo único que hay, y es lo que había antes:
-               un enlace a la biblioteca. Con JavaScript se esconde y en su
-               lugar aparece el botón de subir, que no obliga a salir. */ ?>
+      <?php /* Sin JavaScript esto es lo único que hay, y es lo que había
+               antes: el desplegable de arriba y un enlace a la biblioteca. */ ?>
       <p class="selector-imagen__salida" data-sin-js>
-        <a href="<?= $eSel($c->url('/medios')) ?>" target="_blank" rel="noopener">Subir una imagen nueva ↗</a>
+        <a href="<?= $eSel($c->url('/medios')) ?>" target="_blank" rel="noopener">Ver o subir imágenes ↗</a>
       </p>
 
       <div class="selector-imagen__acciones" data-con-js hidden>
-        <button type="button" class="btn btn--plano" data-abrir-subida>Subir una imagen</button>
+        <button type="button" class="btn btn--mini" data-abrir-biblioteca>Elegir imagen</button>
+        <button type="button" class="btn btn--mini btn--linea" data-abrir-subida>Subir una</button>
+        <button type="button" class="btn btn--mini btn--linea" data-quitar-imagen
+                <?= $actual === null ? 'hidden' : '' ?>>Quitar</button>
       </div>
     </div>
   </div>
 
-  <?php /* La rejilla. Se pinta siempre: incluso sin JavaScript sirve para ver
-           qué hay en la biblioteca sin abrir otra pestaña. Con JavaScript,
-           además, elige. */ ?>
-  <?php if ($medios !== []): ?>
-    <ul class="biblioteca" data-biblioteca>
-      <?php foreach ($medios as $m): ?>
-        <li>
-          <button type="button"
-                  class="biblioteca__pieza<?= (int) $m['id'] === (int) ($elegida ?? 0) ? ' es-elegida' : '' ?>"
-                  data-pieza="<?= (int) $m['id'] ?>"
-                  aria-pressed="<?= (int) $m['id'] === (int) ($elegida ?? 0) ? 'true' : 'false' ?>"
-                  title="<?= $eSel($m['nombre_archivo']) ?>">
-            <img src="<?= $eSel($c->urlSitio('/' . ltrim((string) $m['ruta'], '/'))) ?>"
-                 alt="<?= $eSel($m['alt'] ?? '') ?>" loading="lazy" decoding="async">
-          </button>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-  <?php else: ?>
-    <p class="campo__ayuda" data-biblioteca-vacia>
-      Todavía no hay imágenes en la biblioteca.
-    </p>
-  <?php endif; ?>
-
   <?php /* La zona de subida. Va vacía en el HTML y JavaScript la rellena sólo
-           cuando se pulsa «Subir una imagen»: son inputs sueltos, no un
-           formulario, porque estamos dentro del formulario de la sección. */ ?>
+           cuando se pulsa «Subir una»: son inputs sueltos, no un formulario,
+           porque estamos dentro del formulario de la sección. */ ?>
   <div class="subida" data-subida hidden></div>
 </div>

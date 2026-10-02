@@ -302,134 +302,18 @@ final class PaginaController extends Controller
         }
         $campos['datos'] = $datos;
 
-        // ── Bloques ─────────────────────────────────────────────────────
-        $bloques = [];
-
-        if ($plantilla['bloques'] !== null) {
-            $entrada = $peticion->post('bloques', []);
-            $entrada = is_array($entrada) ? $entrada : [];
-
-            /* ¿Las piezas de esta sección tienen página propia? Lo dice su
-               columna `datos`, no la plantilla: la misma plantilla de
-               tarjetas se usa para las sedes —que sí la tienen— y para los
-               accesos de la portada, que no. */
-            $conDetalle  = !empty($seccion['datos']['detalle']);
-            $slugsUsados = [];
-
-            foreach ($entrada as $fila) {
-                if (!is_array($fila)) {
-                    continue;
-                }
-
-                // Una fila del todo vacía es una que el editor añadió y no
-                // llegó a usar: se descarta en silencio en vez de guardar un
-                // bloque en blanco que luego aparece como hueco en la web.
-                // La imagen cuenta: una pieza que sólo lleva foto es legítima.
-                $tieneAlgo = trim((string) ($fila['imagen_id'] ?? '')) !== '';
-                foreach (['rotulo', 'titulo', 'texto'] as $c) {
-                    if (trim((string) ($fila[$c] ?? '')) !== '') {
-                        $tieneAlgo = true;
-                    }
-                }
-                if (!$tieneAlgo) {
-                    continue;
-                }
-
-                $bloque = ['activo' => !empty($fila['activo'])];
-
-                /* ── La dirección propia de la pieza ──────────────────────
-                 *
-                 * Sólo las secciones marcadas con «detalle» tienen páginas
-                 * por pieza. En las demás no se guarda slug: darle dirección
-                 * a una lámina del carrusel sólo crearía una URL que nadie
-                 * enlaza y que compite en Google con la página buena.
-                 *
-                 * Si el editor lo dejó vacío, se calcula del titular. Si lo
-                 * escribió, se respeta —normalizado— porque a veces hace
-                 * falta cambiarlo a mano. Lo que NO se hace nunca es
-                 * recalcularlo solo al editar el titular: la dirección que ya
-                 * se compartió tiene que seguir existiendo.
-                 */
-                if ($conDetalle) {
-                    $suyo = Slug::normalizar((string) ($fila['slug'] ?? ''));
-
-                    if ($suyo === '' || $suyo === 'pieza') {
-                        $suyo = Slug::desde(
-                            (string) ($fila['titulo'] ?? ''),
-                            static fn (string $s): bool => isset($slugsUsados[$s])
-                        );
-                    }
-
-                    while (isset($slugsUsados[$suyo])) {
-                        $suyo = Slug::desde((string) ($fila['titulo'] ?? ''),
-                            static fn (string $s): bool => isset($slugsUsados[$s]));
-                    }
-
-                    $slugsUsados[$suyo] = true;
-                    $bloque['slug'] = $suyo;
-                }
-
-                foreach ($plantilla['bloques']['campos'] as $campo) {
-                    /* Se pregunta por el TIPO, no por el nombre. Antes decía
-                       «if ($campo === 'imagen')», así que al añadir un segundo
-                       campo de imagen —el de móvil— se habría guardado como si
-                       fuera texto, y en una columna que espera un número. */
-                    if (Plantillas::campo($campo)['tipo'] === 'imagen') {
-                        $columna = Plantillas::columna($campo);
-                        $elegida = trim((string) ($fila[$columna] ?? ''));
-                        $bloque[$columna] = $elegida === '' ? null : (int) $elegida;
-
-                        continue;
-                    }
-
-                    /* Igual que arriba con las imágenes: la columna la dice la
-                       plantilla. Así un campo puede llamarse «titulo_lineas»
-                       en el panel —para salir como área y admitir renglones— y
-                       seguir guardando en la columna `titulo` de siempre, sin
-                       migración y sin tocar lo que ya hay escrito. */
-                    $columna = Plantillas::columna($campo);
-
-                    /* Los renglones se respetan, pero se normalizan: un
-                       navegador manda CRLF y otro LF, y la vista pública los
-                       pasa por nl2br(). Sin esto, el mismo texto guardado
-                       desde dos equipos daría saltos distintos. */
-                    $valor = str_replace(["\r\n", "\r"], "\n", (string) ($fila[$columna] ?? ''));
-
-                    $bloque[$columna] = trim($valor);
-                }
-
-                /* Lo que la plantilla no declara vuelve tal cual desde el campo
-                   oculto. Se decodifica con cuidado: llega del navegador, así
-                   que si no es un objeto JSON válido se descarta en lugar de
-                   escribir cualquier cosa en la columna. */
-                $extra = json_decode((string) ($fila['datos_extra'] ?? ''), true);
-                $datosBloque = is_array($extra) ? $extra : [];
-
-                foreach ($plantilla['bloques']['datos'] ?? [] as $clave => $definicion) {
-                    $valor = $definicion['tipo'] === 'lista'
-                        ? $this->lineas((string) ($fila['datos'][$clave] ?? ''))
-                        : trim((string) ($fila['datos'][$clave] ?? ''));
-
-                    if ($valor !== '' && $valor !== []) {
-                        $datosBloque[$clave] = $valor;
-                    }
-                }
-                $bloque['datos'] = $datosBloque;
-
-                $bloques[] = $bloque;
-
-                if (isset($plantilla['bloques']['maximo']) && count($bloques) >= (int) $plantilla['bloques']['maximo']) {
-                    break;
-                }
-            }
-        }
-
-        $modelo->guardarSeccion((int) $seccion['id'], $campos, $bloques, $this->c->auth()->id());
+        /* ── Las piezas ya no vienen por aquí ─────────────────────────
+         *
+         * Cada una tiene su pantalla y se guarda sola. Se pasa `null`, que
+         * para el modelo significa «no las toques»: pasar una lista vacía
+         * las borraría todas, y entonces corregir una coma en el titular de
+         * Itinerario se llevaría por delante sus seis jornadas.
+         */
+        $modelo->guardarSeccion((int) $seccion['id'], $campos, null, $this->c->auth()->id());
 
         Auditoria::registrar($this->c, 'editar', 'secciones', (int) $seccion['id'], [
             'pagina'  => $pagina['clave'],
             'seccion' => $seccion['clave'],
-            'bloques' => count($bloques),
         ]);
 
         $this->conExito(
@@ -442,6 +326,249 @@ final class PaginaController extends Controller
      * @param array<string, string> $params
      * @return array{0: array<string,mixed>, 1: array<string,mixed>}
      */
+    /* ══════════════════════════════════════════════════════════════════
+       UNA PIEZA POR PANTALLA
+       ------------------------------------------------------------------
+       Una sección con trece comisiones era un formulario de 161 campos en
+       el que corregir una coma obligaba a bajar por las otras doce y a
+       volver a guardarlas todas. Ahora la sección enseña la lista y cada
+       pieza se abre, se corrige y se guarda sola.
+       ══════════════════════════════════════════════════════════════════ */
+
+    /** @param array<string, string> $params */
+    public function pieza(Request $peticion, array $params): void
+    {
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo = new Pagina($this->c);
+        $pieza  = $modelo->pieza((int) $seccion['id'], (int) $params['id']);
+
+        if ($pieza === null) {
+            $this->conError('Esa pieza no existe o no es de esta sección.',
+                '/paginas/' . $pagina['clave'] . '/' . $seccion['clave']);
+        }
+
+        $plantilla = Plantillas::de((string) $seccion['plantilla']);
+
+        if ($plantilla['bloques'] === null) {
+            $this->conError('Esta sección no tiene piezas.',
+                '/paginas/' . $pagina['clave'] . '/' . $seccion['clave']);
+        }
+
+        $hermanas = $seccion['bloques'];
+        $posicion = 0;
+
+        foreach ($hermanas as $n => $h) {
+            if ((int) $h['id'] === (int) $pieza['id']) {
+                $posicion = $n + 1;
+            }
+        }
+
+        $this->ver('paginas/pieza', [
+            'titulo'    => $pieza['titulo'] ?: $plantilla['bloques']['nombre'],
+            'pagina'    => $pagina,
+            'seccion'   => $seccion,
+            'plantilla' => $plantilla,
+            'pieza'     => $pieza,
+            'posicion'  => $posicion,
+            'cuantas'   => count($hermanas),
+            'medios'    => (new Medio($this->c))->paraElegir(),
+        ]);
+    }
+
+    /** @param array<string, string> $params */
+    public function guardarPieza(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo = new Pagina($this->c);
+        $id     = (int) $params['id'];
+        $pieza  = $modelo->pieza((int) $seccion['id'], $id);
+        $vuelta = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'];
+
+        if ($pieza === null) {
+            $this->conError('Esa pieza no existe o no es de esta sección.', $vuelta);
+        }
+
+        $plantilla = Plantillas::de((string) $seccion['plantilla']);
+
+        if ($plantilla['bloques'] === null) {
+            $this->conError('Esta sección no tiene piezas.', $vuelta);
+        }
+
+        $def    = $plantilla['bloques'];
+        $campos = ['activo' => $peticion->casilla('activo') ? 1 : 0];
+
+        // ── La dirección propia ─────────────────────────────────────────
+        //
+        // Sólo en las secciones marcadas con «detalle». En las demás no se
+        // guarda slug: darle dirección a una lámina del carrusel crearía una
+        // URL que nadie enlaza y que compite en Google con la página buena.
+        if (!empty($seccion['datos']['detalle'])) {
+            $suyo = Slug::normalizar((string) $peticion->post('slug', ''));
+
+            if ($suyo === '' || $suyo === 'pieza') {
+                $suyo = Slug::desde(
+                    (string) $peticion->post('titulo', ''),
+                    fn (string $g): bool => $modelo->slugDePiezaOcupado((int) $seccion['id'], $g, $id)
+                );
+            }
+
+            /* Si lo escribió a mano y ya está cogido, no se corrige por
+               detrás: se le dice. Cambiarlo en silencio dejaría la pieza en
+               una dirección que no es la que pidió, y sin avisar. */
+            if ($suyo !== '' && $modelo->slugDePiezaOcupado((int) $seccion['id'], $suyo, $id)) {
+                $this->conError(
+                    'Ya hay otra ficha de esta sección en la dirección «' . $suyo . '».',
+                    $vuelta . '/piezas/' . $id
+                );
+            }
+
+            $campos['slug'] = $suyo !== '' ? $suyo : null;
+        }
+
+        // ── Los campos que declara la plantilla ─────────────────────────
+        foreach ($def['campos'] as $campo) {
+            $columna = Plantillas::columna($campo);
+
+            if (Plantillas::campo($campo)['tipo'] === 'imagen') {
+                $elegida = trim((string) $peticion->post($columna, ''));
+                $campos[$columna] = $elegida === '' ? null : (int) $elegida;
+
+                continue;
+            }
+
+            /* Los renglones se respetan, pero se normalizan: un navegador
+               manda CRLF y otro LF, y la vista pública los pasa por nl2br().
+               Sin esto, el mismo texto escrito desde dos equipos daría saltos
+               distintos. */
+            $valor = str_replace(["\r\n", "\r"], "\n", (string) $peticion->post($columna, ''));
+            $valor = trim($valor);
+
+            $campos[$columna] = $valor === '' ? null : $valor;
+        }
+
+        // ── La columna JSON ─────────────────────────────────────────────
+        //
+        // Se parte de lo que trae el campo oculto: en `datos` puede haber
+        // claves que pone una migración y que esta pantalla no enseña. Si se
+        // empezara de cero, se perderían al primer Guardar.
+        $extra = json_decode((string) $peticion->post('datos_extra', ''), true);
+        $datos = is_array($extra) ? $extra : [];
+
+        foreach ($def['datos'] ?? [] as $clave => $definicion) {
+            $entrada = (string) $peticion->post('datos_' . $clave, '');
+
+            $valor = $definicion['tipo'] === 'lista'
+                ? $this->lineas($entrada)
+                : trim(str_replace(["\r\n", "\r"], "\n", $entrada));
+
+            if ($valor !== '' && $valor !== []) {
+                $datos[$clave] = $valor;
+            } else {
+                unset($datos[$clave]);
+            }
+        }
+
+        $campos['datos'] = $datos;
+
+        if (!$modelo->guardarPieza((int) $seccion['id'], $id, $campos, $this->c->auth()->id())) {
+            $this->conError('No se pudo guardar esa pieza.', $vuelta);
+        }
+
+        Auditoria::registrar($this->c, 'editar', 'bloques', $id, [
+            'pagina'  => $pagina['clave'],
+            'seccion' => $seccion['clave'],
+        ]);
+
+        $this->conExito('Guardado. El cambio ya se ve en la web.',
+            $vuelta . '#pieza-' . $id);
+    }
+
+    /** @param array<string, string> $params */
+    public function nuevaPieza(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $modelo = new Pagina($this->c);
+        $vuelta = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'];
+
+        $plantilla = Plantillas::de((string) $seccion['plantilla']);
+
+        if ($plantilla['bloques'] === null) {
+            $this->conError('Esta sección no tiene piezas.', $vuelta);
+        }
+
+        $tope    = (int) ($plantilla['bloques']['maximo'] ?? 20);
+        $cuantas = count($seccion['bloques']);
+
+        if ($cuantas >= $tope) {
+            $this->conError(
+                'Esta sección admite ' . $tope . ' como máximo. Quita alguna antes de añadir otra.',
+                $vuelta
+            );
+        }
+
+        $id = $modelo->crearPieza((int) $seccion['id'], $this->c->auth()->id());
+
+        Auditoria::registrar($this->c, 'crear', 'bloques', $id, [
+            'pagina'  => $pagina['clave'],
+            'seccion' => $seccion['clave'],
+        ]);
+
+        // Derecho a su pantalla: se crea vacía y oculta, y lo siguiente que
+        // hace falta es rellenarla.
+        $this->conExito(
+            'Ficha creada. Rellénala y marca «Visible» cuando esté lista.',
+            $vuelta . '/piezas/' . $id
+        );
+    }
+
+    /** @param array<string, string> $params */
+    public function moverPieza(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $hacia  = $peticion->post('hacia') === 'subir' ? 'subir' : 'bajar';
+        $vuelta = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'];
+        $modelo = new Pagina($this->c);
+
+        if (!$modelo->moverPieza((int) $seccion['id'], (int) $params['id'], $hacia, $this->c->auth()->id())) {
+            $this->conError('Esa pieza no existe o no es de esta sección.', $vuelta);
+        }
+
+        $this->conExito('Orden cambiado.', $vuelta . '#pieza-' . (int) $params['id']);
+    }
+
+    /** @param array<string, string> $params */
+    public function borrarPieza(Request $peticion, array $params): void
+    {
+        $this->exigirCsrf($peticion);
+
+        [$pagina, $seccion] = $this->cargar($params);
+
+        $vuelta = '/paginas/' . $pagina['clave'] . '/' . $seccion['clave'];
+        $modelo = new Pagina($this->c);
+        $id     = (int) $params['id'];
+
+        if (!$modelo->borrarPieza((int) $seccion['id'], $id, $this->c->auth()->id())) {
+            $this->conError('Esa pieza no existe o no es de esta sección.', $vuelta);
+        }
+
+        Auditoria::registrar($this->c, 'borrar', 'bloques', $id, [
+            'pagina'  => $pagina['clave'],
+            'seccion' => $seccion['clave'],
+        ]);
+
+        $this->conExito('Ficha borrada.', $vuelta);
+    }
+
     private function cargar(array $params): array
     {
         $modelo = new Pagina($this->c);

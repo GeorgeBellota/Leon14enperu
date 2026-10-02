@@ -139,10 +139,11 @@ $estado = static function (array $p) use ($e): void {
             <ul class="fichas__lista">
               <?php foreach ($piezas as $f): ?>
                 <?php
-                /* La ficha se edita dentro del formulario de su sección; el
-                   ancla lleva directamente a su bloque en lugar de dejar a
-                   nadie buscando entre trece formularios iguales. */
-                $editar = '/paginas/' . $p['clave'] . '/' . $f['seccion'] . '#pieza-' . $f['slug'];
+                /* Derecho a la pantalla de la ficha. Antes esto era un ancla
+                   —#pieza-chiclayo— que bajaba hasta su hueco dentro del
+                   formulario de la sección, porque las trece se editaban en
+                   la misma pantalla. Ya no: cada una tiene la suya. */
+                $editar = '/paginas/' . $p['clave'] . '/' . $f['seccion'] . '/piezas/' . (int) $f['id'];
                 $ver    = rtrim((string) $p['ruta'], '/') . '/' . $f['slug'] . '/';
                 ?>
                 <li class="ficha<?= (int) $f['activo'] === 1 ? '' : ' ficha--apagada' ?>">
