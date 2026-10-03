@@ -66,7 +66,22 @@ final class Medidor
             return;
         }
 
-        self::$arranque = hrtime(true);
+        /* El reloj no arranca aquí: arranca cuando PHP recibió la petición.
+
+           Importa porque si no, lo medido depende de en qué línea del
+           arranque se llame a este método, y entonces no se puede mover esa
+           llamada sin falsear el número. Así se mide lo que de verdad costó
+           atender la visita —autoloader y configuración incluidos—.
+
+           hrtime() sigue siendo el que cuenta el intervalo, porque es
+           monótono y no le afecta que alguien cambie la hora del servidor.
+           REQUEST_TIME_FLOAT sólo se usa para retrasar el origen. */
+        $recibida = (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? 0);
+        $ahora    = hrtime(true);
+
+        self::$arranque = $recibida > 0
+            ? $ahora - (int) ((microtime(true) - $recibida) * 1000000000)
+            : $ahora;
         self::$carpeta  = rtrim($carpeta, '/\\');
         self::$origen   = $origen;
         self::$dias     = max(1, $dias);
