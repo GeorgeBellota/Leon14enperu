@@ -46,6 +46,9 @@ final class Sitio
     /** Se calcula una vez por petición. Ver nonce(). */
     private ?string $nonce = null;
     private ?Pagina $paginas = null;
+
+    /** Imágenes ya consultadas en esta petición. */
+    private array $mediosVistos = [];
     private ?Catalogo $catalogo = null;
     private bool $bdCaida = false;
 
@@ -245,6 +248,52 @@ final class Sitio
             $this->bdCaida = true;
 
             return null;
+        }
+    }
+
+    /**
+     * Una imagen de la biblioteca, lista para `imagen()`.
+     *
+     * Hace falta para los vídeos que van dentro del cuerpo de una noticia: lo
+     * que se guarda ahí es el NÚMERO de la portada, no su ruta, para que
+     * cambiar la imagen en la biblioteca la cambie en todas partes.
+     *
+     * Se alias­an las columnas a `imagen_*` porque es lo que espera
+     * `imagen()`, igual que hace la galería.
+     *
+     * Si la base no contesta, devuelve null y la vista pinta el hueco: una
+     * noticia sin la portada de su vídeo se sigue leyendo.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function medio(int $id): ?array
+    {
+        if ($id <= 0) {
+            return null;
+        }
+
+        /* En memoria mientras dure la petición: una nota con tres vídeos del
+           mismo acto no tiene por qué preguntar tres veces. */
+        if (array_key_exists($id, $this->mediosVistos)) {
+            return $this->mediosVistos[$id];
+        }
+
+        try {
+            return $this->mediosVistos[$id] = $this->c->bd()->fila(
+                'SELECT `ruta`      AS `imagen_ruta`,
+                        `variantes` AS `imagen_variantes`,
+                        `ancho`     AS `imagen_ancho`,
+                        `alto`      AS `imagen_alto`,
+                        `alt`       AS `imagen_alt`
+                   FROM `medios`
+                  WHERE `id` = :id',
+                ['id' => $id]
+            );
+        } catch (Throwable $e) {
+            error_log('[sitio] no se pudo cargar la imagen ' . $id . ': ' . $e->getMessage());
+            $this->bdCaida = true;
+
+            return $this->mediosVistos[$id] = null;
         }
     }
 

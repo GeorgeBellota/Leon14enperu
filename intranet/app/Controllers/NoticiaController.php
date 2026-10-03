@@ -122,6 +122,11 @@ final class NoticiaController extends Controller
         $imagenId = (int) $peticion->texto('imagen_id', '0');
         $ogId     = (int) $peticion->texto('og_imagen_id', '0');
 
+        /* Las direcciones de vídeo que no se reconocieron. Se avisan al
+           final: el atajo se queda en su sitio y el redactor lo corrige, en
+           vez de desaparecer en silencio y hacerle creer que puso el vídeo. */
+        $avisoVideos = [];
+
         $datos = [
             'titulo'  => mb_substr($titular, 0, 255),
             'slug'    => $modelo->slugLibre($titular, $peticion->texto('slug', ''), $id > 0 ? $id : null),
@@ -129,8 +134,17 @@ final class NoticiaController extends Controller
 
             /* ── El filtro ────────────────────────────────────────────────
                Aquí es donde el HTML del editor deja de ser lo que escribió
-               el navegador y pasa a ser lo que esta web admite. */
-            'cuerpo'  => HtmlSeguro::limpiar($peticion->post('cuerpo', '')) ?: null,
+               el navegador y pasa a ser lo que esta web admite.
+
+               Antes pasa por el expansor de atajos, que convierte cada
+               [youtube src="…"] en su marca. El orden importa poco para el
+               resultado pero mucho para la regla: lo que entra por el
+               formulario NUNCA se salta el filtro, ni siquiera cuando lo ha
+               construido el propio servidor. */
+            'cuerpo'  => HtmlSeguro::limpiar($this->conVideos(
+                $peticion->post('cuerpo', ''),
+                $avisoVideos
+            )) ?: null,
 
             'imagen_id' => $imagenId > 0 ? $imagenId : null,
             'fecha'     => $fecha,
@@ -156,12 +170,21 @@ final class NoticiaController extends Controller
             Auditoria::registrar($this->c, 'crear', 'noticias', $id, ['titulo' => $titular]);
         }
 
-        $this->conExito(
-            $datos['estado'] === 'publicada'
-                ? 'Noticia publicada.'
-                : 'Guardada como borrador: todavía no se ve en la web.',
-            '/noticias/' . $id
-        );
+        $aviso = $datos['estado'] === 'publicada'
+            ? 'Noticia publicada.'
+            : 'Guardada como borrador: todavía no se ve en la web.';
+
+        /* Si algún atajo de vídeo no se entendió, se dice. El atajo sigue en
+           el cuerpo tal como se escribió, así que basta con corregir la
+           dirección y volver a guardar. */
+        if ($avisoVideos !== []) {
+            $aviso .= count($avisoVideos) === 1
+                ? ' No reconocí este enlace de vídeo: ' . $avisoVideos[0]
+                : ' No reconocí estos enlaces de vídeo: ' . implode(' · ', $avisoVideos);
+            $aviso .= '. El atajo sigue escrito donde lo pusiste.';
+        }
+
+        $this->conExito($aviso, '/noticias/' . $id);
     }
 
     public function borrar(Request $peticion, array $params = []): void
@@ -401,6 +424,46 @@ final class NoticiaController extends Controller
      * Devuelve el id del medio, o null si no se pudo. Null no es un error
      * fatal: el vídeo se guarda igual y se avisa para poner una a mano.
      */
+    /**
+     * Convierte los atajos de vídeo del cuerpo en marcas resueltas.
+     *
+     * Por cada uno baja la portada a la biblioteca, igual que hace la sección
+     * de Vídeos: así la noticia se puede leer sin que el navegador del
+     * visitante le pida nada a YouTube. El <iframe> sólo aparece si alguien
+     * pulsa el play.
+     *
+     * La portada se busca UNA vez por vídeo aunque el mismo esté repetido en
+     * la nota: bajar dos veces la misma imagen sería dejar dos filas iguales
+     * en la biblioteca.
+     *
+     * @param array<int, string> $noValen se rellena con lo que no se reconoció
+     */
+    private function conVideos(string $cuerpo, array &$noValen): string
+    {
+        $yaBajadas = [];
+
+        return YouTube::expandirAtajos(
+            $cuerpo,
+            function (string $yt) use (&$yaBajadas): ?int {
+                if (array_key_exists($yt, $yaBajadas)) {
+                    return $yaBajadas[$yt];
+                }
+
+                /* El título sólo se usa para nombrar el archivo en la
+                   biblioteca. Si YouTube no contesta, el vídeo entra igual con
+                   su identificador por nombre: que una red lenta impida
+                   publicar una nota sería absurdo. */
+                $ficha = YouTube::ficha($yt);
+
+                return $yaBajadas[$yt] = $this->guardarPortada(
+                    $yt,
+                    $ficha['titulo'] ?? ('Vídeo ' . $yt)
+                );
+            },
+            $noValen
+        );
+    }
+
     private function guardarPortada(string $youtubeId, string $nombre): ?int
     {
         $temporal = YouTube::portada($youtubeId);

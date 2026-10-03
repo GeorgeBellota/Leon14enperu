@@ -88,6 +88,7 @@ $v = static fn (string $campo, string $porDefecto = ''): string
         <span class="editor__sep"></span>
         <button class="editor__boton" type="button" data-orden="enlace" title="Enlace">🔗</button>
         <button class="editor__boton" type="button" data-orden="imagen" title="Insertar imagen">🖼</button>
+        <button class="editor__boton" type="button" data-orden="video" title="Insertar un vídeo de YouTube">▶</button>
         <span class="editor__sep"></span>
         <button class="editor__boton" type="button" data-orden="removeFormat" title="Quitar formato">✕</button>
       </div>

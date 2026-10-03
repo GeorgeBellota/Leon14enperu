@@ -160,3 +160,79 @@
 
   .site-footer__inner{gap:10px 28px}
 }
+
+/* ===========================================================================
+   UN VÍDEO DENTRO DEL TEXTO DE UNA NOTICIA
+   ---------------------------------------------------------------------------
+   Lo que se ve es una portada que vive en nuestra biblioteca, con su botón de
+   play. El <iframe> aparece al pulsar, en la ventana compartida: mientras
+   tanto la página no ha hablado con YouTube.
+   =========================================================================== */
+
+.na-video {
+  margin: clamp(22px, 3.4vw, 40px) 0;
+}
+
+.na-video__play {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--grey-300);
+  cursor: pointer;
+  /* El cursor no basta: con el teclado hay que ver dónde se está. */
+  outline-offset: 3px;
+}
+
+.na-video__play img,
+.na-video__play picture {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Sin portada —YouTube no la dio— queda una franja del mismo alto que
+   tendría la imagen, para que el texto no salte al cargar. */
+.na-video__sinportada {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--grey-300);
+}
+
+/* Un velo suave para que el icono se lea sobre cualquier fotograma. */
+.na-video__play::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 10, 11, .18);
+  transition: background .2s ease;
+}
+
+.na-video__play:hover::after,
+.na-video__play:focus-visible::after { background: rgba(14, 10, 11, .3); }
+
+.na-video__icono {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: clamp(54px, 7vw, 74px);
+  color: #D0021B;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .35));
+  transition: transform .2s ease;
+}
+
+.na-video__play:hover .na-video__icono { transform: translate(-50%, -50%) scale(1.07); }
+
+.na-video__icono svg { display: block; width: 100%; height: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .na-video__play::after,
+  .na-video__icono { transition: none; }
+  .na-video__play:hover .na-video__icono { transform: translate(-50%, -50%); }
+}

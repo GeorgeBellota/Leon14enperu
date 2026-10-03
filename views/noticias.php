@@ -55,7 +55,7 @@ $meta = [
     'ruta'        => 'noticias/',
     'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'website',
-    'scripts'     => ['assets/js/noticias.js'],
+    'scripts'     => ['assets/js/noticias.js', 'assets/js/visor-video.js'],
 ];
 
 /** «28 de septiembre de 2026». */
@@ -271,18 +271,6 @@ $tope = \Intranet\Models\Noticia::VIDEOS_VISIBLES;
   <?php /* La ventana del vídeo. Una sola para toda la página; el <iframe> lo
            crea el JavaScript al pulsar, no antes: así no hay una petición a
            YouTube por cada vídeo nada más abrir la página. */ ?>
-  <dialog class="nt-visor" data-visor-video aria-label="Vídeo">
-    <div class="nt-visor__caja">
-      <button class="nt-visor__cerrar" type="button" data-cerrar aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <div class="nt-visor__marco" data-visor-marco></div>
-
-      <h3 class="nt-visor__h" data-visor-titulo></h3>
-      <p class="nt-visor__desc" data-visor-desc></p>
-      <p class="nt-visor__nota">Al reproducirlo se conecta con YouTube, que registrará la reproducción.</p>
-    </div>
-  </dialog>
+  <?php require __DIR__ . '/_visor-video.php'; ?>
 
 </main>

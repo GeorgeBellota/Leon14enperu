@@ -57,7 +57,65 @@ $resumen = \Intranet\Models\Noticia::extracto($noticia, 200);
 /* El SEO propio de la noticia, que es lo que se pidió. Vacío, se usan el
    titular y el extracto: así no hay que rellenarlo dos veces en cada nota y
    se puede cambiar cuando el titular bueno para la web no es el de Google. */
+/* ── Los vídeos del cuerpo ────────────────────────────────────────────────
+   Lo guardado es una marca que escribió el servidor al guardar la noticia:
+
+       <figure data-youtube="eoLVnA036Lw" data-portada="47"></figure>
+
+   Nunca un <iframe>. Aquí se convierte en la portada con su botón de play, y
+   el <iframe> lo crea visor-video.js cuando alguien pulsa. Mientras tanto la
+   página no ha hablado con YouTube: la portada vive en nuestra biblioteca.
+
+   El identificador se vuelve a comprobar aunque venga de nuestra propia base:
+   lo que acaba dentro de un atributo no se da por bueno por su procedencia. */
+$conVideos = static function (string $html) use ($sitio, $esc): string {
+    if (!str_contains($html, 'data-youtube')) {
+        return $html;
+    }
+
+    return (string) preg_replace_callback(
+        '~<figure([^>]*)data-youtube="([^"]+)"([^>]*)></figure>~i',
+        static function (array $m) use ($sitio, $esc): string {
+            $yt = $m[2];
+
+            if (preg_match('~^[A-Za-z0-9_-]{11}$~', $yt) !== 1) {
+                return '';
+            }
+
+            $foto = null;
+
+            if (preg_match('~data-portada="(\d+)"~', $m[1] . $m[3], $d) === 1) {
+                $foto = $sitio->medio((int) $d[1]);
+            }
+
+            ob_start(); ?>
+<figure class="na-video">
+  <button class="na-video__play" type="button"
+          data-ver-video data-id="<?= $esc($yt) ?>"
+          aria-label="Reproducir el vídeo · se conectará con YouTube">
+    <?php if ($foto !== null): ?>
+      <?= $sitio->imagen($foto, '', ['sizes' => '(min-width:768px) 70vw, 94vw']) ?>
+    <?php else: ?>
+      <span class="na-video__sinportada" aria-hidden="true"></span>
+    <?php endif; ?>
+    <span class="na-video__icono" aria-hidden="true">
+      <svg viewBox="0 0 68 48" focusable="false">
+        <path d="M66.5 7.7a8.6 8.6 0 0 0-6-6C55.2 0 34 0 34 0S12.8 0 7.5 1.6a8.6 8.6 0 0 0-6 6A90 90 0 0 0 0 24a90 90 0 0 0 1.5 16.3 8.6 8.6 0 0 0 6 6C12.8 48 34 48 34 48s21.2 0 26.5-1.6a8.6 8.6 0 0 0 6-6A90 90 0 0 0 68 24a90 90 0 0 0-1.5-16.3z" fill="currentColor"/>
+        <path d="M27 34V14l18 10z" fill="#fff"/>
+      </svg>
+    </span>
+  </button>
+</figure>
+<?php
+            return (string) ob_get_clean();
+        },
+        $html
+    );
+};
+
 $meta = [
+    /* La ventana del vídeo, para los que lleve el cuerpo. */
+    'scripts' => ['assets/js/visor-video.js'],
     'titulo'      => trim((string) ($noticia['seo_titulo'] ?? '')) !== ''
         ? (string) $noticia['seo_titulo']
         : $noticia['titulo'] . ' · León XIV en el Perú',
@@ -115,9 +173,11 @@ $meta['og_imagen'] = $ogRuta !== '' ? ltrim($ogRuta, '/') : 'assets/img/og/og-in
         <?php endif; ?>
       </header>
 
-      <?php /* El cuerpo, ya filtrado por HtmlSeguro al guardarse. */ ?>
+      <?php /* El cuerpo, ya filtrado por HtmlSeguro al guardarse. Lo único
+               que se hace aquí es convertir las marcas de vídeo en su
+               portada: el HTML no se vuelve a tocar. */ ?>
       <div class="na-cuerpo">
-        <?= (string) ($noticia['cuerpo'] ?? '') ?>
+        <?= $conVideos((string) ($noticia['cuerpo'] ?? '')) ?>
       </div>
 
       <footer class="na-pie">
@@ -126,5 +186,8 @@ $meta['og_imagen'] = $ogRuta !== '' ? ltrim($ogRuta, '/') : 'assets/img/og/og-in
 
     </div>
   </article>
+
+  <?php /* La ventana donde se reproduce un vídeo del cuerpo. */ ?>
+  <?php require __DIR__ . '/_visor-video.php'; ?>
 
 </main>

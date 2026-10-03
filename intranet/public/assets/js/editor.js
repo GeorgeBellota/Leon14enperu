@@ -95,6 +95,7 @@
 
     if (orden === 'enlace')  { ponerEnlace(); }
     else if (orden === 'imagen') { elegirImagen(); }
+    else if (orden === 'video')  { ponerVideo(); }
     else if (orden === 'formatBlock') {
       document.execCommand('formatBlock', false, boton.getAttribute('data-valor'));
     }
@@ -104,6 +105,37 @@
   });
 
   /* ── Enlaces ──────────────────────────────────────────────────────────── */
+  /* ── Un vídeo de YouTube ────────────────────────────────────────────────
+     Inserta el atajo [youtube src="…"] en su propio párrafo. Lo resuelve el
+     SERVIDOR al guardar: busca el título, baja la portada a la biblioteca y
+     deja la marca lista para pintar.
+
+     Por eso aquí no se valida la dirección más allá de que parezca de
+     YouTube: quien decide es el servidor, y si no la reconoce lo dice al
+     guardar con el atajo todavía en su sitio para corregirlo. Validar aquí
+     con otro criterio sólo serviría para rechazar enlaces que el servidor sí
+     entiende. */
+  function ponerVideo() {
+    var url = window.prompt('Pega la dirección del vídeo de YouTube', 'https://');
+    if (url === null) return;
+
+    url = url.trim();
+
+    if (url === '' || url === 'https://') return;
+
+    if (!/youtu\.?be/i.test(url)) {
+      avisar('Eso no parece un enlace de YouTube. Pega la dirección del vídeo.');
+      return;
+    }
+
+    /* Las comillas se quitan: van dentro de un atributo del atajo y una
+       comilla suelta lo partiría en dos. */
+    document.execCommand('insertHTML', false,
+      '<p>[youtube src="' + url.replace(/["'<>]/g, '') + '"]</p>');
+
+    avisar('Vídeo añadido. Se verá al guardar: el servidor le busca la portada.');
+  }
+
   function ponerEnlace() {
     var seleccion = window.getSelection();
 
