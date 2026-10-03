@@ -383,7 +383,13 @@
       /* El nombre, porque a 90 px dos fotos parecidas son la misma. */
       var rotulo = caja.querySelector('[data-vista-nombre]');
       if (rotulo) {
-        rotulo.textContent = (opcion && opcion.getAttribute('data-nombre')) || 'Sin imagen';
+        /* Sin imagen elegida, el rotulo lo dice la propia opcion vacia del
+           <select>, no un texto fijo aqui: en la portada de una noticia pone
+           «Sin fotografia» y en «Imagen al compartir», «La misma de portada».
+           Con un texto fijo, los tres decian lo mismo y uno de ellos mentia. */
+        rotulo.textContent = (opcion && opcion.getAttribute('data-nombre'))
+          || (opcion && opcion.textContent.trim())
+          || 'Sin imagen';
       }
 
       // «Quitar» no tiene sentido si no hay nada puesto.

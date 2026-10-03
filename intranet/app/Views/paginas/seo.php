@@ -85,7 +85,7 @@ $dominio   = preg_replace('~^https?://~', '', rtrim((string) $c->config('url.sit
         $nombre  = 'og_imagen_id';
         $idCampo = 's-og';
         $elegida = $pagina['og_imagen_id'] ?? null;
-        require __DIR__ . '/_selector-imagen.php';
+        require __DIR__ . '/../_comunes/_selector-imagen.php';
       ?>
       <p class="campo__ayuda">
         La que sale en la tarjeta cuando alguien pega el enlace en WhatsApp,
@@ -115,3 +115,9 @@ $dominio   = preg_replace('~^https?://~', '', rtrim((string) $c->config('url.sit
     <button class="btn btn--primario" type="submit">Guardar</button>
   </div>
 </form>
+
+<?php /* La ventana para elegir imagen. Faltaba aquí: el campo se pintaba pero
+         su botón «Elegir imagen» no encontraba ninguna ventana que abrir y
+         caía en el camino de respaldo —destapar el desplegable—, que es para
+         navegadores sin <dialog>, no para esta pantalla. */ ?>
+<?php require __DIR__ . '/../_comunes/_biblioteca-ventana.php'; ?>

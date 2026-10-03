@@ -79,7 +79,7 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
           $nombre  = $columna;
           $idCampo = $id;
           $elegida = $seccion[$columna] ?? null;
-          require __DIR__ . '/_selector-imagen.php';
+          require __DIR__ . '/../_comunes/_selector-imagen.php';
           ?>
         <?php elseif ($def['tipo'] === 'area'): ?>
           <textarea id="<?= $e($id) ?>" name="<?= $e($columna) ?>" rows="4"><?= $e($seccion[$columna] ?? '') ?></textarea>
@@ -171,4 +171,4 @@ $valorDato = static function (array $fuente, string $clave, string $tipo): strin
          Itinerario eso eran 14 copias de 96 miniaturas: 1 344 imágenes y 998
          KB de HTML para editar una jornada, y creciendo con cada foto que se
          subiera a la biblioteca. */ ?>
-<?php require __DIR__ . '/_biblioteca-ventana.php'; ?>
+<?php require __DIR__ . '/../_comunes/_biblioteca-ventana.php'; ?>

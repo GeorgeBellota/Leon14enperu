@@ -132,7 +132,7 @@ $conPagi = !empty($seccion['datos']['detalle']);
           $nombre  = $columna;
           $idCampo = $id;
           $elegida = $pieza[$columna] ?? null;
-          require __DIR__ . '/_selector-imagen.php';
+          require __DIR__ . '/../_comunes/_selector-imagen.php';
           ?>
         <?php elseif ($tipo === 'area'): ?>
           <?php /* Área, no <input>: un <input> no puede contener un salto de
@@ -241,4 +241,4 @@ $conPagi = !empty($seccion['datos']['detalle']);
 
 <?php /* La ventana para elegir imagen: UNA para toda la pantalla, compartida
          por todos los campos de imagen y fuera del formulario. */ ?>
-<?php require __DIR__ . '/_biblioteca-ventana.php'; ?>
+<?php require __DIR__ . '/../_comunes/_biblioteca-ventana.php'; ?>

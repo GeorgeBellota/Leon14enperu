@@ -120,21 +120,20 @@ $v = static fn (string $campo, string $porDefecto = ''): string
       la noticia sale sólo con texto.
     </p>
 
-    <div class="rejilla-medios sep-m">
-      <label class="medio-elegible">
-        <input type="radio" name="imagen_id" value="0" <?= $v('imagen_id') === '' ? 'checked' : '' ?>>
-        <span class="medio-elegible__pie">Sin fotografía</span>
-      </label>
-
-      <?php foreach ($biblioteca as $m): ?>
-        <label class="medio-elegible">
-          <input type="radio" name="imagen_id" value="<?= (int) $m['id'] ?>"
-                 <?= (int) $v('imagen_id') === (int) $m['id'] ? 'checked' : '' ?>>
-          <img src="<?= $src((string) $m['ruta']) ?>" alt="" loading="lazy" width="120" height="90">
-          <span class="medio-elegible__pie"><?= $e($m['nombre_archivo']) ?></span>
-        </label>
-      <?php endforeach; ?>
-    </div>
+    <?php
+    /* El mismo selector que usan las Páginas: la elegida arriba y en
+       grande, con su nombre, y la galería en una ventana con buscador.
+    
+       Antes esto era la biblioteca ENTERA en una rejilla de radios: con
+       una foto antigua había que bajar por noventa y pico miniaturas
+       buscando cuál tenía el punto encendido. */
+    $medios  = $biblioteca;
+    $nombre  = 'imagen_id';
+    $idCampo = 'n-portada';
+    $vacio   = 'Sin fotografía';
+    $elegida = $v('imagen_id') !== '' ? (int) $v('imagen_id') : null;
+    require __DIR__ . '/../_comunes/_selector-imagen.php';
+    ?>
 
     <p class="campo__ayuda">
       ¿No está la que buscas? Súbela en
@@ -164,14 +163,16 @@ $v = static fn (string $campo, string $porDefecto = ''): string
 
     <div class="campo sep-m">
       <label class="campo__etiqueta" for="og_imagen_id">Imagen al compartir</label>
-      <select id="og_imagen_id" name="og_imagen_id">
-        <option value="0">La misma de portada</option>
-        <?php foreach ($biblioteca as $m): ?>
-          <option value="<?= (int) $m['id'] ?>" <?= (int) $v('og_imagen_id') === (int) $m['id'] ? 'selected' : '' ?>>
-            <?= $e($m['nombre_archivo']) ?>
-          </option>
-        <?php endforeach; ?>
-      </select>
+      <?php
+      /* Igual que la portada. Vacío sigue significando «la misma de
+         portada», que es lo que dice la ayuda de debajo. */
+      $medios  = $biblioteca;
+      $nombre  = 'og_imagen_id';
+      $idCampo = 'og_imagen_id';
+      $vacio   = 'La misma de portada';
+      $elegida = (int) $v('og_imagen_id') ?: null;
+      require __DIR__ . '/../_comunes/_selector-imagen.php';
+      ?>
       <p class="campo__ayuda">
         La que sale al pegar el enlace en WhatsApp o Facebook. Lo mejor es una
         apaisada de 1200 × 630.
@@ -224,3 +225,9 @@ $v = static fn (string $campo, string $porDefecto = ''): string
     </form>
   </section>
 <?php endif; ?>
+
+<?php /* La ventana para elegir imagen: UNA para toda la pantalla, compartida
+         por la portada y por la imagen al compartir. Sus miniaturas son
+         «lazy», así que no se piden hasta que alguien la abre. */ ?>
+<?php $medios = $biblioteca; ?>
+<?php require __DIR__ . '/../_comunes/_biblioteca-ventana.php'; ?>

@@ -42,6 +42,10 @@
  * @var string      $nombre  name del campo
  * @var string      $idCampo id del <select>
  * @var int|null    $elegida id de la imagen actual
+ * @var string|null  $vacio   qué dice la opción de «ninguna»; por defecto
+ *                            «Sin imagen». En «Imagen al compartir» significa
+ *                            otra cosa —«la misma de portada»— y decir «sin
+ *                            imagen» haría pensar que se comparte sin ninguna.
  */
 
 use Intranet\Core\View;
@@ -66,7 +70,7 @@ foreach ($medios as $m) {
              data-vista-imagen>
       <?php else: ?>
         <img src="" alt="" hidden data-vista-imagen>
-        <span class="selector-imagen__vacia" data-vista-vacia>Sin imagen</span>
+        <span class="selector-imagen__vacia" data-vista-vacia><?= $eSel($vacio ?? 'Sin imagen') ?></span>
       <?php endif; ?>
     </div>
 
@@ -74,14 +78,14 @@ foreach ($medios as $m) {
       <?php /* El nombre de lo elegido, para saber qué hay sin mirar la
                miniatura: a 90 px, dos fotos parecidas son la misma. */ ?>
       <p class="selector-imagen__nombre" data-vista-nombre>
-        <?= $actual !== null ? $eSel($actual['nombre_archivo']) : 'Sin imagen' ?>
+        <?= $actual !== null ? $eSel($actual['nombre_archivo']) : $eSel($vacio ?? 'Sin imagen') ?>
       </p>
 
       <?php /* El <select> es el campo de verdad. Con JavaScript se esconde
                —se maneja desde la ventana— pero sigue siendo lo que viaja en
                el formulario. Sin JavaScript, es todo lo que hay y basta. */ ?>
       <select id="<?= $eSel($idCampo) ?>" name="<?= $eSel($nombre) ?>" data-elegir-imagen>
-        <option value="">— Sin imagen —</option>
+        <option value=""><?= $eSel($vacio ?? '— Sin imagen —') ?></option>
         <?php foreach ($medios as $m): $esta = (int) $m['id'] === (int) ($elegida ?? 0); ?>
           <?php /* Los data-* van SOLO en la opción elegida. El JS los lee de la
                    opción seleccionada para pintar la vista previa, y cuando se

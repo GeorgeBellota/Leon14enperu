@@ -46,10 +46,15 @@ a:hover { color: var(--ink); }
 /* Texto que sólo existe para quien navega con lector de pantalla. Se usa donde
    la información la lleva un dibujo: el esquema de una plantilla se entiende
    mirándolo, pero a un lector de pantalla hay que decírselo con palabras. */
+/* Lo de «!important» no es pereza: esta clase tiene que ganarle a CUALQUIER
+   regla que dé ancho a un control, y `.campo input { width: 100% }` tiene más
+   peso que ella. Por eso el campo de archivo del editor de noticias medía 375
+   px escondido y sacaba la pantalla 31 px por la derecha en el móvil: no se
+   veía, pero empujaba. Una utilidad que se deja pisar no es una utilidad. */
 .visualmente-oculto {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 1px !important;
+  height: 1px !important;
   margin: -1px;
   padding: 0;
   overflow: hidden;
@@ -365,7 +370,15 @@ a:hover { color: var(--ink); }
 
 /* La tabla desborda con su propio scroll: la página nunca se mueve en
    horizontal, que es lo que arruina un listado en un portátil pequeño. */
-.tabla-envoltorio { overflow-x: auto; }
+/* `position: relative` no es decorativo: sin él, un hijo posicionado de forma
+   absoluta NO lo recorta este envoltorio —se posiciona contra un ancestro de
+   más arriba— y empuja la página entera.
+
+   Pasaba con el «Acciones» escondido de la cabecera de la tabla, que es
+   absoluto para que lo lean los lectores de pantalla sin verse: sacaba
+   /paginas 232 px y /mantenimiento 18 px a la derecha en el móvil. Invisible,
+   pero la página se desplazaba. */
+.tabla-envoltorio { overflow-x: auto; position: relative; }
 
 .tabla { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
 .tabla th,

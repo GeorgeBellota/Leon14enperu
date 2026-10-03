@@ -79,8 +79,21 @@ final class HtmlSeguro
            «img-src 'self'», así que ni se vería: saldría un hueco roto. Se
            sube a la biblioteca y se enlaza desde ahí. */
         'img'    => ['src', 'alt', 'width', 'height'],
-        'figure' => [],
         'figcaption' => [],
+
+        /* ── Vídeos dentro del texto ──────────────────────────────────────
+           Un <figure> con el identificador del vídeo, NUNCA un <iframe>.
+
+           Si se admitiera el <iframe>, este filtro tendría que vigilar una
+           URL, y una URL nunca se valida del todo bien: hay dominios
+           parecidos, redirecciones, barras de más. Un identificador de
+           YouTube son ONCE caracteres de [A-Za-z0-9_-] y se comprueba de un
+           vistazo.
+
+           La portada es el id de una fila de `medios`, o sea una imagen que
+           ya está en nuestra biblioteca: el navegador del visitante no le
+           pide nada a YouTube hasta que pulsa. */
+        'figure' => ['data-youtube', 'data-portada'],
     ];
 
     /** Aquí el contenido tampoco se salva: se va entero con la etiqueta. */
@@ -200,6 +213,41 @@ final class HtmlSeguro
 
     private static function limpiarAtributos(DOMElement $elemento, string $etiqueta): void
     {
+        /* ── La marca de un vídeo ─────────────────────────────────────────
+           Once caracteres y nada más. Si el identificador no cuadra, el
+           <figure> entero se va: una marca a medias pintaría un hueco negro
+           en mitad de la noticia y nadie sabría por qué. */
+        if ($etiqueta === 'figure' && $elemento->hasAttribute('data-youtube')) {
+            $yt = trim($elemento->getAttribute('data-youtube'));
+
+            if (preg_match('~^[A-Za-z0-9_-]{11}$~', $yt) !== 1) {
+                $elemento->parentNode?->removeChild($elemento);
+
+                return;
+            }
+
+            // La portada es el id de una fila de `medios`: un número y ya.
+            $portada = trim($elemento->getAttribute('data-portada'));
+
+            foreach (iterator_to_array($elemento->attributes ?? []) as $atributo) {
+                $elemento->removeAttribute($atributo->nodeName);
+            }
+
+            $elemento->setAttribute('data-youtube', $yt);
+
+            if (preg_match('~^[1-9][0-9]{0,9}$~', $portada) === 1) {
+                $elemento->setAttribute('data-portada', $portada);
+            }
+
+            /* Sin contenido: lo que se pinte lo decide la vista pública, no
+               lo que venga escrito aquí. */
+            while ($elemento->firstChild !== null) {
+                $elemento->removeChild($elemento->firstChild);
+            }
+
+            return;
+        }
+
         $admitidos = self::PERMITIDAS[$etiqueta];
         $quitar    = [];
 
