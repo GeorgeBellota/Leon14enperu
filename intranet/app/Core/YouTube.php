@@ -38,6 +38,10 @@ final class YouTube
 
     private const ESPERA = 12;
 
+    /** La forma larga del enlace: es la que reconoce cualquiera de un
+     *  vistazo, y la que se devuelve al editor al abrir una noticia. */
+    private const VER = 'https://www.youtube.com/watch?v=';
+
     /**
      * El identificador de un enlace de YouTube, o null.
      *
@@ -248,6 +252,39 @@ final class YouTube
             '~<p>\s*(<figure data-youtube=[^>]*></figure>)\s*</p>~i',
             '$1',
             $expandido
+        );
+    }
+
+    /**
+     * El camino de vuelta: de la marca guardada al atajo que se escribió.
+     *
+     * Lo que queda en la base es `<figure data-youtube="..."></figure>`, una
+     * etiqueta VACÍA. En la página pública se convierte en la portada con su
+     * botón de play, pero el editor del panel es un «contenteditable», y ahí
+     * una etiqueta vacía no ocupa ni un píxel: está en el HTML, no se ve, y no
+     * hay nada que seleccionar. Quien puso un vídeo y luego quiere quitarlo
+     * no tiene por dónde agarrarlo.
+     *
+     * Así que al ABRIR la noticia la marca vuelve a ser lo que se escribió: se
+     * lee, se mueve y se borra como texto corriente.
+     *
+     * `expandirAtajos()` deshace esto al guardar. El viaje de ida y vuelta
+     * tiene que dejar el cuerpo igual que estaba, y de eso hay prueba.
+     *
+     * El identificador se vuelve a comprobar aunque venga de nuestra propia
+     * base: lo que sale de aquí acaba dentro de un atributo.
+     */
+    public static function contraerMarcas(string $html): string
+    {
+        if (!str_contains($html, 'data-youtube')) {
+            return $html;
+        }
+
+        return (string) preg_replace_callback(
+            '~<figure\b[^>]*\bdata-youtube="([A-Za-z0-9_-]{11})"[^>]*>\s*</figure>~i',
+            static fn (array $m): string => '<p>[youtube src="'
+                . self::VER . $m[1] . '"]</p>',
+            $html
         );
     }
 

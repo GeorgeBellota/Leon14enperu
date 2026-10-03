@@ -84,6 +84,12 @@ final class NoticiaController extends Controller
             $this->conError('Esa noticia ya no existe.', '/noticias');
         }
 
+        /* Los vídeos vuelven a ser el atajo que se escribió. Lo guardado es
+           un <figure> vacío —la portada la pone la página pública— y en el
+           editor eso no se ve ni se puede borrar: sin esta línea, poner un
+           vídeo sería una decisión irreversible. */
+        $noticia['cuerpo'] = YouTube::contraerMarcas((string) ($noticia['cuerpo'] ?? ''));
+
         $this->ver('noticias/editar', [
             'titulo'     => $noticia['titulo'],
             'noticia'    => $noticia,
@@ -466,6 +472,25 @@ final class NoticiaController extends Controller
 
     private function guardarPortada(string $youtubeId, string $nombre): ?int
     {
+        /* Si la portada de este vídeo ya está en la biblioteca, se reutiliza.
+           Hace falta porque el cuerpo vuelve al editor como atajo: cada vez
+           que se guarda la noticia los vídeos se expanden otra vez, y sin
+           esto editar tres veces una nota dejaría tres portadas idénticas.
+           De paso, dos noticias con el mismo vídeo comparten la imagen.
+
+           Se busca por `original`, que es la ruta que escribe este método
+           —`…/yt-<identificador>-<azar>.jpg`—, no por `ruta`, que la decide
+           el derivador de imágenes. El guion bajo es un comodín en LIKE y el
+           identificador de YouTube puede llevarlo, así que se escapa. */
+        $ya = $this->c->bd()->valor(
+            "SELECT `id` FROM `medios` WHERE `original` LIKE :r ESCAPE '\\\\' ORDER BY `id` LIMIT 1",
+            ['r' => self::CARPETA . '/yt-' . str_replace('_', '\_', $youtubeId) . '-%']
+        );
+
+        if ($ya !== null) {
+            return (int) $ya;
+        }
+
         $temporal = YouTube::portada($youtubeId);
 
         if ($temporal === null) {
