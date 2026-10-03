@@ -78,8 +78,14 @@ $config = [
     // Vacío = el tablero no existe. Ni pregunta ni se puede abrir: es la
     // única posición segura por defecto, porque una puerta que acepta la
     // cadena vacía es peor que no tener puerta.
+    //
+    // POR ESO SE QUEDA VACÍO AQUÍ. El repositorio es público: el hash que
+    // hubo en estas líneas quedó legible para cualquiera y hubo que cambiar
+    // la contraseña, no el archivo. El hash de verdad vive sólo en el
+    // config.php del servidor, que no se sube nunca. En local, si hace falta
+    // el tablero, va en config.local.php, que sí está ignorado por git.
     'metricas' => [
-        'clave_hash' => '$2y$10$6cA9IEiQfDHqXCV7GsPCJOGSr6CtC8rdYzyZoDWHIqX1SCcVj7Hw2',
+        'clave_hash' => '',
         // Cuánto dura el permiso una vez acertada la contraseña. Pasado ese
         // rato vuelve a pedirla: un portón que se queda abierto para siempre
         // no es un portón.
