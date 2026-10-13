@@ -40,7 +40,6 @@ $meta = [
     'descripcion' => 'El logotipo y el lema «Abramos el corazón» de la Visita Apostólica del Papa '
                    . 'León XIV al Perú: qué significa, cómo se diseñó, su color y sus versiones.',
     'ruta'        => 'logo-y-lema/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 

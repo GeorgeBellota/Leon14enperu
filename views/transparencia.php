@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Transparencia · Viaje de León XIV al Perú',
     'descripcion' => 'Compromiso de rendición de cuentas de los aportes recibidos para el viaje apostólico del Papa León XIV al Perú.',
     'ruta'        => 'transparencia/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

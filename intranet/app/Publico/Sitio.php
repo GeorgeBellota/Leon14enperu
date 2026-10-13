@@ -429,7 +429,7 @@ final class Sitio
      * Devuelve un array vacío y el sitio sigue con los textos de la vista. El
      * SEO es importante, pero no tanto como que la página se pinte.
      *
-     * @return array{titulo?:string, descripcion?:string, og_imagen?:string}
+     * @return array{titulo?:string, descripcion?:string, og_imagen_id?:int}
      */
     public function seo(string $clave): array
     {
@@ -460,12 +460,51 @@ final class Sitio
             }
         }
 
-        $imagen = trim((string) ($fila['og_imagen_ruta'] ?? ''));
-        if ($imagen !== '') {
-            $seo['og_imagen'] = ltrim($imagen, '/');
+        // La imagen va por número: la versión para compartir la prepara
+        // compartir(), que es quien decide además si gana otra.
+        if ((int) ($fila['og_imagen_id'] ?? 0) > 0) {
+            $seo['og_imagen_id'] = (int) $fila['og_imagen_id'];
         }
 
         return $seo;
+    }
+
+    /**
+     * La imagen que sale al compartir esta página, con su URL absoluta.
+     *
+     * El orden lo decide Cms\Compartir: la propia de lo que se comparte (una
+     * noticia, una ficha), la de la página, la general y, por último, el
+     * pantallazo del banner de la portada, que va con el código.
+     *
+     * Si la base no responde se sirve el pantallazo: una tarjeta con la imagen
+     * de por defecto es mejor que una página que no se pinta.
+     *
+     * @param  int $propia  la imagen de lo que se comparte, si la tiene
+     * @param  int $pagina  la elegida para la página en el panel
+     * @return array{ruta:string, url:string, origen:string, ancho:int, alto:int}
+     */
+    public function compartir(int $propia = 0, int $pagina = 0): array
+    {
+        if (!$this->bdCaida) {
+            try {
+                return (new \Intranet\Cms\Compartir($this->c))->resolver($propia, $pagina);
+            } catch (Throwable $e) {
+                error_log('[sitio] no se pudo resolver la imagen al compartir: ' . $e->getMessage());
+                $this->bdCaida = true;
+            }
+        }
+
+        $ruta = \Intranet\Cms\Compartir::POR_DEFECTO;
+
+        [$ancho, $alto] = \Intranet\Core\ImagenSocial::medidas($ruta);
+
+        return [
+            'ruta'   => $ruta,
+            'url'    => $this->url($ruta) . '?v=' . self::version(dirname(__DIR__, 3) . '/' . $ruta),
+            'origen' => 'defecto',
+            'ancho'  => $ancho,
+            'alto'   => $alto,
+        ];
     }
 
     /**

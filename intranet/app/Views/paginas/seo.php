@@ -16,6 +16,9 @@
  * @var \Intranet\Core\Csrf       $csrf
  * @var array $pagina
  * @var array $medios
+ * @var array  $tarjeta  la imagen que sale hoy al compartir (Cms\Compartir)
+ * @var string $enlace   la dirección pública de la página
+ * @var string $fresco   la misma, con la marca que obliga a WhatsApp a releerla
  */
 
 use Intranet\Core\View;
@@ -30,7 +33,7 @@ $dominio   = preg_replace('~^https?://~', '', rtrim((string) $c->config('url.sit
 
 <header class="encabezado">
   <p class="rotulo">
-    <a href="<?= $url('/paginas') ?>">Páginas</a> ·
+    <a href="<?= $url('/seo') ?>">SEO y redes</a> ·
     <a href="<?= $url('/paginas/' . $pagina['clave']) ?>"><?= $e($pagina['nombre']) ?></a>
   </p>
   <h1>Datos para buscadores</h1>
@@ -89,9 +92,56 @@ $dominio   = preg_replace('~^https?://~', '', rtrim((string) $c->config('url.sit
       ?>
       <p class="campo__ayuda">
         La que sale en la tarjeta cuando alguien pega el enlace en WhatsApp,
-        Facebook o X. Apaisada y de al menos 1200 píxeles de ancho. Si la dejas
-        vacía se usa la imagen general del sitio.
+        Facebook o X. Medida ideal: <strong>1200 × 630 px</strong>, que se ve
+        completa en todas las redes; se sirve entera, sin recortes ni franjas.
+        Si la dejas vacía se usa la imagen general del sitio (SEO y redes →
+        Imagen general).
       </p>
+    </div>
+  </section>
+
+  <?php /* Lo que se comparte HOY, guardado. Cambia al guardar, no al elegir:
+           enseñar aquí la imagen recién elegida sin guardar haría creer que
+           ya está en la web. */ ?>
+  <section class="tarjeta">
+    <header class="tarjeta__cabecera">
+      <h2>Así se comparte ahora</h2>
+    </header>
+
+    <div class="seo-general">
+      <figure class="seo-general__vista">
+        <img src="<?= $e($tarjeta['url']) ?>" alt="La imagen que sale al compartir esta página"
+             width="<?= (int) $tarjeta['ancho'] ?>" height="<?= (int) $tarjeta['alto'] ?>" loading="lazy">
+        <figcaption class="vacio">
+          <?= match ($tarjeta['origen']) {
+              'pagina'  => 'La imagen propia de esta página.',
+              'general' => 'La imagen general del sitio: esta página no tiene una propia.',
+              default   => 'La de por defecto (el pantallazo del banner de la portada): no hay propia ni general.',
+          } ?>
+        </figcaption>
+      </figure>
+
+      <div>
+        <div class="campo">
+          <label class="campo__etiqueta" for="s-fresco">Enlace para compartir</label>
+          <div class="enlace-fresco">
+            <input type="text" id="s-fresco" class="enlace-fresco__campo tabla__mono" readonly
+                   value="<?= $e($fresco) ?>" data-marcar-todo>
+            <button type="button" class="btn btn--plano" data-copiar="#s-fresco">Copiar</button>
+          </div>
+          <p class="campo__ayuda">
+            Con el enlace de siempre, WhatsApp puede tardar horas o días en
+            enseñar el cambio (es su propia copia, no depende de esta web). Este
+            sale ya con la imagen nueva y abre la misma página.
+          </p>
+        </div>
+        <p>
+          <a class="enlace-flecha" href="<?= $e('https://developers.facebook.com/tools/debug/?q=' . rawurlencode($enlace)) ?>"
+             target="_blank" rel="noopener">Revisar en Facebook ↗</a>
+          <span class="vacio">— y pulsa «Volver a extraer» para que Facebook,
+          Messenger e Instagram tomen el cambio.</span>
+        </p>
+      </div>
     </div>
   </section>
 

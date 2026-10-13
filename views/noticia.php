@@ -126,13 +126,10 @@ $meta = [
     'og_tipo'     => 'article',
 ];
 
-/* La imagen al compartir: la elegida para eso, si no la portada, si no la
-   del sitio. El enlace en WhatsApp sin imagen se ve pobre. */
-$ogRuta = trim((string) ($noticia['og_ruta'] ?? '')) !== ''
-    ? (string) $noticia['og_ruta']
-    : (string) ($noticia['imagen_ruta'] ?? '');
-
-$meta['og_imagen'] = $ogRuta !== '' ? ltrim($ogRuta, '/') : 'assets/img/og/og-inicio.jpg';
+/* La imagen al compartir: la elegida para eso, si no la portada. Si no hay
+   ninguna, la plantilla sigue con la de la página y la general. Va por
+   número: la tarjeta de 1200 × 630 la prepara Cms\Compartir. */
+$meta['og_medio'] = (int) ($noticia['og_imagen_id'] ?? 0) ?: (int) ($noticia['imagen_id'] ?? 0);
 ?>
 
 <main id="contenido">

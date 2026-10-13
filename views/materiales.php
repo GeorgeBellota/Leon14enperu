@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Materiales de pastoral · Viaje de León XIV al Perú',
     'descripcion' => 'Subsidios de oración, catequesis y animación para preparar la visita del Papa León XIV en tu parroquia, tu colegio o tu casa.',
     'ruta'        => 'materiales/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

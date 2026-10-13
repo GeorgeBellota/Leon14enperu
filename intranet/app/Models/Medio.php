@@ -77,6 +77,13 @@ final class Medio extends Model
             $trozos[] = "NOT EXISTS (SELECT 1 FROM `{$tabla}` t WHERE t.`{$columna}` = m.`id`)";
         }
 
+        /* La imagen general para compartir no vive en una columna sino en un
+           ajuste (SEO y redes → Imagen general). Sin esto saldría «sin usar»
+           y se podría borrar, y todas las páginas sin imagen propia volverían
+           al pantallazo del banner de la portada sin avisar a nadie. */
+        $trozos[] = "NOT EXISTS (SELECT 1 FROM `ajustes` a
+                                  WHERE a.`clave` = 'seo.og_imagen_id' AND CAST(a.`valor` AS UNSIGNED) = m.`id`)";
+
         return $trozos === [] ? '1 = 1' : implode(' AND ', $trozos);
     }
 
@@ -250,6 +257,10 @@ final class Medio extends Model
                 FROM noticias n WHERE n.og_imagen_id = :id'],
             ['SELECT \'Noticias\' AS pagina, COALESCE(v.titulo, v.youtube_id) AS donde, \'portada del vídeo\' AS nota
                 FROM noticias_videos v WHERE v.miniatura_id = :id'],
+
+            // La imagen general para compartir: es un ajuste, no una columna.
+            ['SELECT \'SEO y redes\' AS pagina, \'Imagen general\' AS donde, \'imagen para redes\' AS nota
+                FROM ajustes WHERE clave = \'seo.og_imagen_id\' AND CAST(valor AS UNSIGNED) = :id'],
         ];
 
         $donde = [];

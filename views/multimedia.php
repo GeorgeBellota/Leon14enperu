@@ -39,7 +39,6 @@ $meta = [
     'descripcion' => 'Galería de imágenes de la Visita Apostólica del Papa León XIV al Perú, '
                    . 'agrupadas por actividad y fecha.',
     'ruta'        => 'multimedia/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'scripts'     => ['assets/js/multimedia.js'],
 ];

@@ -82,8 +82,8 @@ $meta = [
 ];
 
 /* La imagen de la pieza es también la que se ve al compartir el enlace. */
-if (!empty($pieza['imagen_ruta'])) {
-    $meta['og_imagen'] = (string) $pieza['imagen_ruta'];
+if (!empty($pieza['imagen_id'])) {
+    $meta['og_medio'] = (int) $pieza['imagen_id'];
 }
 
 /* ── Las fichas hermanas, para el carrusel del pie ────────────────────────

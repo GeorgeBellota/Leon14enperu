@@ -1,0 +1,11 @@
+# Archivos subidos desde el panel. Se sirven como lo que son —imágenes y
+# documentos— y nunca se ejecutan.
+#
+# La comprobación de contenido al subir ya impide que entre un .php disfrazado,
+# pero esto es la segunda barrera: si algún día esa comprobación falla o se
+# cambia sin querer, aquí no se ejecuta nada de todas formas.
+php_flag engine off
+
+<IfModule mod_rewrite.c>
+  RewriteRule \.(php|phtml|phar|cgi|pl|py|sh)$ - [F,L]
+</IfModule>

@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'En directo · Viaje de León XIV al Perú',
     'descripcion' => 'Dónde seguir en directo las celebraciones del viaje apostólico del Papa León XIV al Perú, del 11 al 16 de noviembre de 2026.',
     'ruta'        => 'en-directo/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

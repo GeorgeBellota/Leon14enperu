@@ -57,7 +57,6 @@ $meta = [
     'og_titulo'      => 'Seis ciudades, una sola nación',
     'og_descripcion' => 'La costa, el norte, los Andes y la Amazonía. Seis maneras de ser Iglesia en el mismo país.',
     'ruta'           => 'sedes/',
-    'og_imagen'      => 'assets/img/og/og-sedes.jpg',
     'og_tipo'        => 'article',
     /* Las cuatro jurisdicciones, para el buscador. Se conserva del sitio
        anterior: son datos verificados y llevan meses indexados. */

@@ -32,7 +32,6 @@ $meta = [
                    . 'Viaje Apostólico de Su Santidad el Papa León XIV al Perú, '
                    . '11–16 de noviembre de 2026.',
     'ruta'        => 'contacto/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'website',
 ];
 

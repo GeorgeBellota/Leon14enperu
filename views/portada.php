@@ -26,7 +26,6 @@ $meta = [
     'descripcion' => 'Sitio oficial de la Visita Apostólica de Su Santidad el Papa León XIV al Perú, '
                    . 'del 11 al 16 de noviembre de 2026. Lima, Callao, Chiclayo, Santa Cruz, Cusco y Pucallpa.',
     'ruta'        => '',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'website',
 ];
 

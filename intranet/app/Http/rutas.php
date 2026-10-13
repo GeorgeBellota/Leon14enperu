@@ -26,6 +26,7 @@ use Intranet\Controllers\MedioController;
 use Intranet\Controllers\NoticiaController;
 use Intranet\Controllers\PaginaController;
 use Intranet\Controllers\PanelController;
+use Intranet\Controllers\SeoController;
 use Intranet\Controllers\VoluntarioController;
 use Intranet\Core\Router;
 
@@ -91,6 +92,16 @@ return static function (Router $r): void {
         $r->post('/{clave}/{seccion}/piezas/{id:\d+}',      [PaginaController::class, 'guardarPieza'])->permiso('paginas.editar');
         $r->post('/{clave}/{seccion}/piezas/{id:\d+}/orden',  [PaginaController::class, 'moverPieza'])->permiso('paginas.editar');
         $r->post('/{clave}/{seccion}/piezas/{id:\d+}/borrar', [PaginaController::class, 'borrarPieza'])->permiso('paginas.editar');
+    });
+
+    /* ── SEO y redes ──────────────────────────────────────────────────────
+       Lo que sale al compartir un enlace, para todas las páginas a la vez.
+       Mirar es de quien ve las páginas; cambiar, de quien las edita. Editar
+       una página concreta sigue siendo /paginas/{clave}/seo. */
+    $r->grupo('/seo', ['auth' => true, 'permiso' => 'paginas.ver'], function (Router $r): void {
+        $r->get('',           [SeoController::class, 'listar'])->nombre('seo');
+        $r->post('/general',  [SeoController::class, 'guardarGeneral'])->permiso('paginas.editar');
+        $r->post('/refrescar', [SeoController::class, 'refrescar'])->permiso('paginas.editar');
     });
 
     // ── Biblioteca de imágenes ───────────────────────────────────────────

@@ -25,7 +25,7 @@
  *    $esc        escapador
  *    $activa     clave de la página, para marcar el menú
  *    $contenido  el HTML que produjo la vista
- *    $meta       titulo, descripcion, ruta, og_imagen, css, scripts, body_attr
+ *    $meta       titulo, descripcion, ruta, og_medio, css, scripts, body_attr
  *
  *  @var \Intranet\Publico\Sitio $sitio
  */
@@ -41,11 +41,30 @@ $raiz = $sitio->enlace('');   // prefijo de TODOS los enlaces de cabecera y pie
    y esto no llega a notarse. */
 $seoPanel = $sitio->seo((string) ($activa ?? ''));
 
-$titulo      = (string) ($seoPanel['titulo']      ?? $meta['titulo']      ?? 'León XIV en el Perú');
-$descripcion = (string) ($seoPanel['descripcion'] ?? $meta['descripcion'] ?? '');
+/* Una noticia o una ficha interna (/sedes/lima/) se pinta con la clave de la
+   página que la contiene, así que el SEO del panel que llega es el de esa
+   página. Antes pisaba el título de la ficha: todas las noticias se
+   compartían como «Noticias · León XIV en el Perú». En una ficha manda lo
+   suyo, y el de la página sólo cubre lo que la ficha no traiga. */
+$esFicha = !empty($noticia) || !empty($pieza);
+
+$titulo      = (string) ($esFicha
+    ? ($meta['titulo']      ?? $seoPanel['titulo']      ?? 'León XIV en el Perú')
+    : ($seoPanel['titulo']  ?? $meta['titulo']          ?? 'León XIV en el Perú'));
+$descripcion = (string) ($esFicha
+    ? ($meta['descripcion'] ?? $seoPanel['descripcion'] ?? '')
+    : ($seoPanel['descripcion'] ?? $meta['descripcion'] ?? ''));
 $rutaPagina  = ltrim((string) ($meta['ruta'] ?? ''), '/');
-$ogImagen    = (string) ($seoPanel['og_imagen']   ?? $meta['og_imagen']   ?? 'assets/img/og/og-inicio.jpg');
 $ogTipo      = (string) ($meta['og_tipo'] ?? 'article');
+
+/* ── La imagen al compartir ───────────────────────────────────────────────
+   Ya no la escribe cada vista: la decide Cms\Compartir para todo el sitio.
+   Primero la propia de lo que se comparte —una noticia o una ficha la dejan
+   en $meta['og_medio']—, después la que se eligió para la página en el panel,
+   después la general y, si no hay ninguna, el pantallazo del banner de la portada.
+   Sale entera y comprimida, con una dirección que cambia cuando cambia la
+   imagen, que es lo que obliga a WhatsApp y a las redes a pedirla de nuevo. */
+$compartir = $sitio->compartir((int) ($meta['og_medio'] ?? 0), (int) ($seoPanel['og_imagen_id'] ?? 0));
 
 /* ── La fase del sitio ────────────────────────────────────────────────────
    «pre» antes del viaje, «live» durante los días de visita y «post» después.
@@ -93,13 +112,18 @@ if ($vistaActual !== '') {
 <meta property="og:url" content="<?= $esc($canonica) ?>">
 <meta property="og:title" content="<?= $esc($ogTitulo) ?>">
 <meta property="og:description" content="<?= $esc($ogDesc) ?>">
-<meta property="og:image" content="<?= $esc($sitio->url($ogImagen)) ?>">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="<?= $esc($compartir['url']) ?>">
+<?php if (str_starts_with($compartir['url'], 'https://')): ?>
+<meta property="og:image:secure_url" content="<?= $esc($compartir['url']) ?>">
+<?php endif; ?>
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="<?= (int) $compartir['ancho'] ?>">
+<meta property="og:image:height" content="<?= (int) $compartir['alto'] ?>">
+<meta property="og:image:alt" content="<?= $esc($ogTitulo) ?>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<?= $esc($ogTitulo) ?>">
 <meta name="twitter:description" content="<?= $esc($ogDesc) ?>">
-<meta name="twitter:image" content="<?= $esc($sitio->url($ogImagen)) ?>">
+<meta name="twitter:image" content="<?= $esc($compartir['url']) ?>">
 <meta name="theme-color" content="#6E0B14">
 
 <?php /* ── El icono de la pestaña ──────────────────────────────────────────

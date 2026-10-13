@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Política de privacidad · leon14enperu.com',
     'descripcion' => 'Qué datos personales recoge este sitio, para qué, durante cuánto tiempo y cómo ejercer tus derechos.',
     'ruta'        => 'privacidad/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Guía del peregrino · Viaje de León XIV al Perú',
     'descripcion' => 'Qué llevar, cómo prepararte y qué esperar de las celebraciones del viaje apostólico. Los detalles de acceso se publicarán con el programa oficial.',
     'ruta'        => 'guia-del-peregrino/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

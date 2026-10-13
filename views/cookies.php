@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Cookies · leon14enperu.com',
     'descripcion' => 'Este sitio no usa cookies. Solo almacenamiento del navegador para el borrador del formulario y el aviso de la portada.',
     'ruta'        => 'cookies/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

@@ -7,10 +7,12 @@ declare(strict_types=1);
 
 namespace Intranet\Controllers;
 
+use Intranet\Cms\Compartir;
 use Intranet\Cms\Plantillas;
 use Intranet\Cms\Slug;
 use Intranet\Core\Auditoria;
 use Intranet\Core\Controller;
+use Intranet\Core\ImagenSocial;
 use Intranet\Core\Request;
 use Intranet\Models\Catalogo;
 use Intranet\Models\Medio;
@@ -73,10 +75,19 @@ final class PaginaController extends Controller
             $this->conError('Esa página no existe.', '/paginas');
         }
 
+        /* La tarjeta que sale hoy al compartirla, resuelta igual que en la web:
+           la propia si la tiene, si no la general o la de por defecto. */
+        $compartir = new Compartir($this->c);
+        $tarjeta   = $compartir->resolver(0, (int) ($pagina['og_imagen_id'] ?? 0));
+        $enlace    = $this->c->urlSitio((string) $pagina['ruta']);
+
         $this->ver('paginas/seo', [
-            'titulo' => 'Buscadores · ' . $pagina['nombre'],
-            'pagina' => $pagina,
-            'medios' => (new Medio($this->c))->paraElegir(),
+            'titulo'  => 'Buscadores · ' . $pagina['nombre'],
+            'pagina'  => $pagina,
+            'medios'  => (new Medio($this->c))->paraElegir(),
+            'tarjeta' => $tarjeta,
+            'enlace'  => $enlace,
+            'fresco'  => $compartir->enlaceFresco($enlace, $tarjeta['ruta']),
         ]);
     }
 
@@ -98,6 +109,21 @@ final class PaginaController extends Controller
            Por eso el 0 se convierte en null y no en cadena vacía. */
         $imagen = (int) $peticion->entero('og_imagen_id', 0);
 
+        /* Se prepara ya la versión para compartir, y de paso se comprueba que
+           se pueda: con un SVG o un archivo que falta en el servidor la página
+           seguiría saliendo con otra imagen sin que nadie supiera por qué. */
+        if ($imagen > 0) {
+            $medio = (new Medio($this->c))->buscar($imagen);
+
+            if ($medio === null || ImagenSocial::de($medio) === null) {
+                $this->conError(
+                    'Esa imagen no sirve para compartir: no es una foto (un SVG, por ejemplo) '
+                    . 'o su archivo no está en el servidor. Elige otra.',
+                    $destino
+                );
+            }
+        }
+
         $modelo->guardarSeo(
             (string) $pagina['clave'],
             $peticion->texto('titulo_seo', ''),
@@ -111,7 +137,10 @@ final class PaginaController extends Controller
             'accion' => 'datos para buscadores',
         ]);
 
-        $this->conExito('Datos guardados. Ya salen en la página.', $destino);
+        $this->conExito(
+            'Datos guardados. Para verlos ya en WhatsApp, comparte el «enlace para compartir» de abajo.',
+            $destino
+        );
     }
 
     /**

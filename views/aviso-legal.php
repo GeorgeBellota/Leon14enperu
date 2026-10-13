@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Aviso legal · leon14enperu.com',
     'descripcion' => 'Titularidad, condiciones de uso y propiedad intelectual del sitio informativo del viaje apostólico de León XIV al Perú.',
     'ruta'        => 'aviso-legal/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];
