@@ -28,7 +28,6 @@ $meta = [
     'descripcion' => 'Acreditación, contacto y condiciones de uso del material gráfico para los medios '
                    . 'que cubran la Visita Apostólica del Papa León XIV al Perú.',
     'ruta'        => 'prensa/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 

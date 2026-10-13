@@ -48,7 +48,6 @@ $meta = [
                    . 'hacerla visible en la vida cotidiana. Santa Rosa de Lima, San Martín de Porres, '
                    . 'San Juan Macías, San Francisco Solano y Santo Toribio de Mogrovejo.',
     'ruta'        => 'santos/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 

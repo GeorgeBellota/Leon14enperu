@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Patrocinios · Viaje de León XIV al Perú',
     'descripcion' => 'Espacios, señalética, indumentaria, pantallas y transporte. Cómo una empresa o institución puede apoyar la organización del viaje apostólico.',
     'ruta'        => 'patrocinios/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

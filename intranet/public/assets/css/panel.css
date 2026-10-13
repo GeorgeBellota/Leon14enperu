@@ -600,6 +600,56 @@ a:hover { color: var(--ink); }
   color: var(--ink-soft);
 }
 
+/* ══════════════ SEO Y REDES ══════════════
+   La imagen que sale al compartir, en pequeño y con SU proporción: cada una
+   conserva la suya, así que la miniatura no la recorta. Lo que se ve en la
+   lista es lo que verá quien pegue el enlace. */
+
+.seo-miniatura {
+  display: block;
+  width: 160px;
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+.seo-miniatura img { display: block; width: 100%; height: auto; }
+
+.seo-pasos { margin: 0 0 var(--space-s); padding-left: 1.3em; }
+.seo-pasos li + li { margin-top: var(--space-2xs); }
+
+.seo-general {
+  display: grid;
+  grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+  gap: var(--space-m);
+  align-items: start;
+}
+.seo-general__vista { margin: 0; }
+.seo-general__vista img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius);
+}
+@media (max-width: 860px) {
+  .seo-general { grid-template-columns: 1fr; }
+}
+
+.seo-titulo { margin: var(--space-2xs) 0 0; font-size: var(--step--1); }
+
+.enlace-fresco {
+  display: flex;
+  gap: var(--space-2xs);
+  align-items: center;
+  margin-bottom: var(--space-2xs);
+}
+.enlace-fresco__campo {
+  flex: 1 1 auto;
+  min-width: 14rem;
+  font-size: var(--step--1);
+}
+
 /* El contador de caracteres. Avisa al pasarse, no lo impide: los límites de
    Google son aproximados y dependen del ancho real de las letras. */
 .contador {

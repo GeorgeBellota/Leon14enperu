@@ -52,7 +52,6 @@ $meta = [
     'og_titulo'      => 'Agenda · León XIV en el Perú',
     'og_descripcion' => 'El Papa León XIV estará en el Perú del 11 al 16 de noviembre de 2026.',
     'ruta'           => 'agenda/',
-    'og_imagen'      => 'assets/img/og/og-agenda.jpg',
     'og_tipo'        => 'article',
 ];
 

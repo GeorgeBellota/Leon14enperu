@@ -42,7 +42,6 @@ $meta = [
                    . 'San Agustín y primer Papa nacido en Estados Unidos con nacionalidad peruana. '
                    . 'Su historia, su escudo y su magisterio.',
     'ruta'        => 'papa-leon-xiv/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 

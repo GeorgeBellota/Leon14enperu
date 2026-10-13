@@ -262,7 +262,6 @@ $meta = [
     'og_titulo'      => 'Los amigos de León · Voluntariado del viaje apostólico',
     'og_descripcion' => 'Seis servicios, una sola misión: servir con alegría. Inscríbete como voluntario.',
     'ruta'        => 'voluntariado/',
-    'og_imagen'   => 'assets/img/og/og-voluntariado.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre" data-ancla data-form-fijo',
     // Esta página no lleva la barra fija de «Sé voluntario»: ya está en

@@ -19,6 +19,7 @@ use Intranet\Core\Auditoria;
 use Intranet\Core\Controller;
 use Intranet\Core\ErrorDeNegocio;
 use Intranet\Core\Imagen;
+use Intranet\Core\ImagenSocial;
 use Intranet\Core\Request;
 use Intranet\Core\Response;
 use Intranet\Models\Medio;
@@ -143,6 +144,7 @@ final class MedioController extends Controller
 
             $modelo->eliminar($id);
             $motor->borrarFamilia(is_string($base) ? $base : $medio['ruta']);
+            ImagenSocial::olvidar($id);
 
             Auditoria::registrar($this->c, 'borrar', 'medios', $id, [
                 'nombre' => $medio['nombre_archivo'] ?? '',
@@ -395,6 +397,7 @@ final class MedioController extends Controller
 
         $modelo->eliminar($id);
         (new Imagen($this->carpeta()))->borrarFamilia(is_string($base) ? $base : $medio['ruta']);
+        ImagenSocial::olvidar($id);
 
         Auditoria::registrar($this->c, 'borrar', 'medios', $id, [
             'nombre' => $medio['nombre_archivo'] ?? '',

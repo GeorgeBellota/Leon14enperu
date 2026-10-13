@@ -47,6 +47,33 @@
     }
   }, true);
 
+  /* ── Botón «Copiar» ───────────────────────────────────────────────────
+     data-copiar apunta al campo cuyo valor se copia. Sin permiso para el
+     portapapeles (http sin cifrar, navegador antiguo) se deja el texto
+     seleccionado, que es lo más cerca de copiar que se puede llegar. */
+  document.addEventListener('click', function (evento) {
+    var boton = evento.target instanceof Element ? evento.target.closest('[data-copiar]') : null;
+    if (!boton) return;
+
+    var campo = document.querySelector(boton.getAttribute('data-copiar'));
+    if (!(campo instanceof HTMLInputElement)) return;
+
+    campo.focus();
+    campo.select();
+
+    var hecho = function () {
+      var antes = boton.textContent;
+      boton.textContent = 'Copiado';
+      window.setTimeout(function () { boton.textContent = antes; }, 1600);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(campo.value).then(hecho, function () {});
+    } else if (document.execCommand && document.execCommand('copy')) {
+      hecho();
+    }
+  });
+
   /* ── Filtros que se aplican al cambiar ────────────────────────────────
      En un <select> de filtro, obligar a pulsar «Buscar» sobra. */
   document.querySelectorAll('[data-filtro-auto]').forEach(function (control) {

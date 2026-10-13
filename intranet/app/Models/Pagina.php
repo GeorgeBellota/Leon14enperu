@@ -226,7 +226,7 @@ final class Pagina extends Model
     public function seoDe(string $clave): ?array
     {
         return $this->bd()->fila(
-            'SELECT p.titulo_seo, p.descripcion_seo, m.ruta AS og_imagen_ruta
+            'SELECT p.titulo_seo, p.descripcion_seo, p.og_imagen_id, m.ruta AS og_imagen_ruta
                FROM paginas p
                LEFT JOIN medios m ON m.id = p.og_imagen_id
               WHERE p.clave = :clave

@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'León XIV, el Papa que volvió a ser peruano · Biografía',
     'descripcion' => 'Robert Francis Prevost, agustino, misionero en Chulucanas, formador en Trujillo y obispo de Chiclayo. Biografía del 267.º Papa y su vínculo con el Perú.',
     'ruta'        => 'el-papa/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
 ];

@@ -37,7 +37,6 @@ $meta = [
                    . 'la visita del Papa León XIV al Perú en la parroquia, el colegio y la familia. '
                    . 'Descarga libre y uso gratuito.',
     'ruta'        => 'subsidios/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 

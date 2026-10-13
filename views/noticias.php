@@ -53,7 +53,6 @@ $meta = [
     'descripcion' => 'Actualidad y comunicaciones oficiales sobre la Visita Apostólica '
                    . 'del Papa León XIV al Perú.',
     'ruta'        => 'noticias/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'website',
     'scripts'     => ['assets/js/noticias.js', 'assets/js/visor-video.js'],
 ];

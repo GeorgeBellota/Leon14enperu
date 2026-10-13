@@ -15,7 +15,6 @@ $meta = [
     'titulo'      => 'Donativo · Viaje de León XIV al Perú',
     'descripcion' => 'Cómo colaborar con un donativo con los trabajos organizativos y pastorales del viaje apostólico del Papa León XIV al Perú.',
     'ruta'        => 'donativo/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'body_attr'   => 'data-phase="pre"',
     /* Los botones de copiar de las cuentas. El módulo no pinta nada si el

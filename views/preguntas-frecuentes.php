@@ -195,7 +195,6 @@ $meta = [
     'descripcion' => 'Fechas, sedes, cómo asistir, voluntariado y cómo seguir la visita del Papa '
                    . 'León XIV al Perú, del 11 al 16 de noviembre de 2026.',
     'ruta'        => 'preguntas-frecuentes/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
     'head_extra'  => $fichaFaq,
 ];

@@ -36,7 +36,6 @@ $meta = [
                    . 'acogen el viaje apostólico del Papa León XIV al Perú: Lima, Callao, '
                    . 'Chiclayo y Santa Cruz, Cusco y Pucallpa.',
     'ruta'        => 'cep/',
-    'og_imagen'   => 'assets/img/og/og-inicio.jpg',
     'og_tipo'     => 'article',
 ];
 
